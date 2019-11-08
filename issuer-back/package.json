@@ -1,0 +1,27 @@
+{
+	"name": "api",
+	"version": "2.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon server.js"
+	},
+	"keywords": [
+		"API",
+		"resful",
+		"json",
+		"node",
+		"mongodb",
+		"express"
+	],
+	"dependencies": {
+		"body-parser": "^1.19.0",
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"express-validator": "^6.2.0",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^5.6.4",
+		"node-pre-gyp": "^0.13.0",
+		"nodemon": "^1.19.4"
+	}
+}
