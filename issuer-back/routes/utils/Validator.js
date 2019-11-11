@@ -81,22 +81,28 @@ let _doValidate = function(param, isBody) {
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA:
 					validation.custom(data => {
 						if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
+						dataJson = JSON.parse(data);
 
-						const dataJson = JSON.parse(data);
 						for (let dataElement of dataJson) {
 							const missingField = !dataElement || !dataElement.name || !dataElement.type;
 							if (missingField) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_DATA(param.name));
 
 							const invalidType = !Constants.CERT_FIELD_TYPES[dataElement.type];
-							if (invalidType) {
-								return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
-							}
+							if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 
 							const checkboxMissingOptions =
 								!dataElement.options && dataElement.type == Constants.CERT_FIELD_TYPES.Checkbox;
 							if (checkboxMissingOptions)
 								return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
 						}
+
+						return Promise.resolve(data);
+					});
+					break;
+				case Constants.IS_TEMPLATE_DATA_TYPE:
+					validation.custom(data => {
+						if (Object.values(Constants.DATA_TYPES).indexOf(data))
+							return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_TYPE(data));
 
 						return Promise.resolve(data);
 					});

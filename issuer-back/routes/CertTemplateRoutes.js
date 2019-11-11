@@ -4,6 +4,7 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
+const Messages = require("../constants/Messages");
 
 router.get(
 	"/all",
@@ -89,7 +90,7 @@ router.post(
 );
 
 router.put(
-	"/:id/certData",
+	"/:id/data",
 	Validator.validateHead([
 		{
 			name: "token",
@@ -98,73 +99,36 @@ router.put(
 	]),
 	Validator.validateBody([
 		{
-			name: "certData",
+			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const certData = JSON.parse(req.body.certData);
-		const id = req.params.id;
-
-		try {
-			const template = await CertTemplateService.addCertData(id, certData);
-			return ResponseHandler.sendRes(res, template);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-router.put(
-	"/:id/othersData",
-	Validator.validateHead([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
 		}
 	]),
 	Validator.validateBody([
 		{
-			name: "othersData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const othersData = JSON.parse(req.body.othersData);
+		const data = JSON.parse(req.body.data);
 		const id = req.params.id;
+		const type = req.body.type;
 
 		try {
-			const template = await CertTemplateService.addOthersData(id, othersData);
-			return ResponseHandler.sendRes(res, template);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
+			let template;
+			switch (type) {
+				case Constants.DATA_TYPES.CERT:
+					template = await CertTemplateService.addCertData(id, data);
+					break;
+				case Constants.DATA_TYPES.PARTICIPANT:
+					template = await CertTemplateService.addParticipantData(id, data);
+					break;
+				case Constants.DATA_TYPES.OTHERS:
+					template = await CertTemplateService.addOthersData(id, data);
+					break;
+			}
 
-router.put(
-	"/:id/participantData",
-	Validator.validateHead([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
-		}
-	]),
-	Validator.validateBody([
-		{
-			name: "participantData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const participantData = JSON.parse(req.body.participantData);
-		const id = req.params.id;
-
-		try {
-			const template = await CertTemplateService.addParticipantData(id, participantData);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -201,7 +165,7 @@ router.put(
 );
 
 router.delete(
-	"/:id/certData",
+	"/:id/data",
 	Validator.validateHead([
 		{
 			name: "token",
@@ -210,73 +174,36 @@ router.delete(
 	]),
 	Validator.validateBody([
 		{
-			name: "certData",
+			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const id = req.params.id;
-		const certData = JSON.parse(req.body.certData);
-
-		try {
-			const template = await CertTemplateService.deleteCertData(id, certData);
-			return ResponseHandler.sendRes(res, template);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-router.delete(
-	"/:id/participantData",
-	Validator.validateHead([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
 		}
 	]),
 	Validator.validateBody([
 		{
-			name: "participantData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
-		const participantData = JSON.parse(req.body.participantData);
+		const data = JSON.parse(req.body.data);
+		const type = req.body.type;
 
 		try {
-			const template = await CertTemplateService.deleteParticipantData(id, participantData);
-			return ResponseHandler.sendRes(res, template);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
+			let template;
+			switch (type) {
+				case Constants.DATA_TYPES.CERT:
+					template = await CertTemplateService.deleteCertData(id, data);
+					break;
+				case Constants.DATA_TYPES.PARTICIPANT:
+					template = await CertTemplateService.deleteParticipantData(id, data);
+					break;
+				case Constants.DATA_TYPES.OTHERS:
+					template = await CertTemplateService.deleteOthersData(id, data);
+					break;
+			}
 
-router.delete(
-	"/:id/othersData",
-	Validator.validateHead([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
-		}
-	]),
-	Validator.validateBody([
-		{
-			name: "othersData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const id = req.params.id;
-		const othersData = JSON.parse(req.body.othersData);
-
-		try {
-			const template = await CertTemplateService.deleteOthersData(id, othersData);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

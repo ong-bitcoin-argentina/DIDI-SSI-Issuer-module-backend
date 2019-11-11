@@ -55,9 +55,7 @@ app.use(function(error, _, _, next) {
 });
 
 const route = "/api/" + Constants.API_VERSION + "/didi_issuer";
-if (Constants.DEBUGG) {
-	console.log("route: " + route);
-}
+if (Constants.DEBUGG) console.log("route: " + route);
 
 app.use(route + "/user", UserRoutes);
 app.use(route + "/template", CertTemplateRoutes);

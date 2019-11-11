@@ -33,8 +33,16 @@ module.exports = {
 		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",
 		IS_PASSWORD: "isPassword",
-		IS_TEMPLATE_DATA: "isTemplateData"
+		IS_TEMPLATE_DATA: "isTemplateData",
+		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType"
 	},
+
+	DATA_TYPES: {
+		CERT: "certData",
+		OTHERS: "othersData",
+		PARTICIPANT: "participantData"
+	},
+
 	COMMON_PASSWORDS: ["123456", "contraseña", "password"],
 	PASSWORD_MIN_LENGTH: 6,
 	SALT_WORK_FACTOR: 16,

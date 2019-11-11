@@ -28,6 +28,11 @@ module.exports = {
 	VALIDATION: {
 		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido" },
 		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador" },
+		TEMPLATE_DATA_TYPE: {
+			INVALID_DATA_TYPE: function(data) {
+				return { code: "INVALID_DATA_TYPE", message: data + " no es una secion valida del certificado" };
+			}
+		},
 		TEMPLATE_DATA: {
 			NO_DATA: function(type) {
 				return { code: "NO_DATA", message: "el campo " + type + " no contiene data" };
