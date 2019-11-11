@@ -1,0 +1,36 @@
+.Templates {
+	display: flex;
+	flex-direction: column;
+}
+
+.createButton {
+	width: 150px;
+	margin-bottom: 10px;
+	align-self: flex-end;
+	display: flex;
+	flex-direction: row;
+}
+
+.createButtonText {
+	padding-top: 0px;
+}
+
+.logoutButton {
+	align-self: center;
+}
+
+.Template-Table {
+	background-color: aliceblue;
+	color: black;
+	margin-bottom: 10px;
+}
+
+.Actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.DeleteAction {
+	margin-left: 10px;
+}

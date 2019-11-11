@@ -1,0 +1,223 @@
+import React, { Component } from "react";
+import { withRouter, Redirect } from "react-router";
+import "./Templates.css";
+
+import ReactTable from "react-table";
+import "react-table/react-table.css";
+
+import Cookie from "js-cookie";
+
+import ApiService from "../../../services/ApiService";
+import Constants from "../../../constants/Constants";
+import MaterialIcon from "material-icons-react";
+
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
+class Templates extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			loading: true,
+			isDialogOpen: false,
+			name: ""
+		};
+	}
+
+	getTemplateData = (self, template) => {
+		return {
+			_id: template._id,
+			name: template.name,
+			actions: (
+				<div className="Actions">
+					<div
+						className="EditAction"
+						onClick={() => {
+							self.onTemplateEdit(template._id);
+						}}
+					>
+						Editar
+					</div>
+					<div
+						className="DeleteAction"
+						onClick={() => {
+							self.onTemplateDelete(template._id);
+						}}
+					>
+						Borrar
+					</div>
+				</div>
+			)
+		};
+	};
+
+	componentDidMount() {
+		const token = Cookie.get("token");
+		const self = this;
+		ApiService.getTemplates(
+			token,
+			async function(templates) {
+				templates = templates.map(template => {
+					return self.getTemplateData(self, template);
+				});
+				self.setState({ templates: templates, loading: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	}
+
+	onTemplateCreate = () => {
+		const token = Cookie.get("token");
+		const name = this.state.name;
+		const self = this;
+		self.setState({ loading: true });
+		ApiService.createTemplate(
+			token,
+			name,
+			async function(template) {
+				const templates = self.state.templates;
+				templates.push(self.getTemplateData(self, template));
+				self.setState({ isDialogOpen: false, templates: templates, loading: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
+	onTemplateDelete = id => {
+		const token = Cookie.get("token");
+		const self = this;
+		self.setState({ loading: true });
+		ApiService.deleteTemplate(
+			token,
+			id,
+			async function(template) {
+				const templates = self.state.templates.filter(t => t._id !== template._id);
+				self.setState({ templates: templates, loading: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
+	onTemplateEdit = id => {
+		this.props.history.push(Constants.ROUTES.EDIT_TEMPLATE + id);
+	};
+
+	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
+	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
+
+	updateName = event => {
+		this.setState({ name: event.target.value, error: "" });
+	};
+
+	onLogout = () => {
+		Cookie.set("token", "");
+		this.props.history.push(Constants.ROUTES.LOGIN);
+	};
+
+	render() {
+		if (!Cookie.get("token")) {
+			return <Redirect to={Constants.ROUTES.LOGIN} />;
+		}
+
+		const loading = this.state.loading;
+		const isDialogOpen = this.state.isDialogOpen;
+		return (
+			<div className="Templates">
+				{isDialogOpen && this.renderDialog()}
+				{this.renderCreateButton()}
+				{!loading && this.renderTable()}
+				{this.renderButtons()}
+				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+			</div>
+		);
+	}
+
+	renderDialog = () => {
+		return (
+			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">Crear Modelo</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="name"
+						label="Nombre"
+						type="text"
+						onChange={this.updateName}
+						fullWidth
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={this.onTemplateCreate} color="primary">
+						Crear
+					</Button>
+					<Button onClick={this.onDialogClose} color="primary">
+						Cerrar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
+
+	renderTable = () => {
+		const templates = this.state.templates;
+		const columns = [
+			/*{
+				Header: "Id",
+				accessor: "_id"
+			},*/
+			{
+				Header: "Nombre",
+				accessor: "name"
+			},
+			{
+				Header: "",
+				accessor: "actions"
+			}
+		];
+
+		return (
+			<div className="Template-Table">
+				<ReactTable
+					data={templates}
+					columns={columns}
+					defaultPageSize={Constants.TEMPLATES.TABLE.PAGE_SIZE}
+					minRows={Constants.TEMPLATES.TABLE.MIN_ROWS}
+				/>
+			</div>
+		);
+	};
+
+	renderCreateButton = () => {
+		return (
+			<button className="createButton" onClick={this.onDialogOpen}>
+				<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+				<div className="createButtonText">CREAR CERTIFICADO</div>
+			</button>
+		);
+	};
+
+	renderButtons = () => {
+		return (
+			<button className="logoutButton" onClick={this.onLogout}>
+				Salir
+			</button>
+		);
+	};
+}
+
+export default withRouter(Templates);
