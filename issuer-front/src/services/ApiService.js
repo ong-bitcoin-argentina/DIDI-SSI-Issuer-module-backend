@@ -153,6 +153,33 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
+	static toggleRequiredForTemplateField(token, id, dataElem, type, cb, errCb) {
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				data: JSON.stringify([dataElem]),
+				type: type
+			})
+		};
+
+		fetch(Constants.API_ROUTES.TOGGLE_REQUIRED_TEMPLATE_FIELD(id), data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
 	static deleteTemplateField(token, id, dataElem, type, cb, errCb) {
 		const data = {
 			method: "DELETE",

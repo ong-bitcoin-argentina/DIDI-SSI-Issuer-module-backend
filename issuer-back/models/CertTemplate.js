@@ -91,6 +91,7 @@ CertTemplateSchema.methods._doToggleRequired = async function(data, field) {
 		if (names.includes(dataElem.name)) {
 			dataElem.required = !dataElem.required;
 		}
+		return dataElem;
 	});
 
 	try {
@@ -132,7 +133,7 @@ CertTemplateSchema.methods.deleteCertData = async function(data) {
 	return await this._doDeleteData(data, "cert");
 };
 
-CertTemplateSchema.methods._doDeleteData= async function(data, field) {
+CertTemplateSchema.methods._doDeleteData = async function(data, field) {
 	const names = data.map(newDataElement => newDataElement.name);
 	this.data[field] = this.data[field].filter(dataElem => !names.includes(dataElem.name));
 
@@ -143,7 +144,6 @@ CertTemplateSchema.methods._doDeleteData= async function(data, field) {
 		return Promise.reject(err);
 	}
 };
-
 
 CertTemplateSchema.methods.delete = async function() {
 	const updateQuery = { _id: this._id };

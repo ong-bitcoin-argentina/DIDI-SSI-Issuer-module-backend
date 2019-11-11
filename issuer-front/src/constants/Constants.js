@@ -11,6 +11,9 @@ module.exports = {
 		CREATE_TEMPLATE_FIELD: id => {
 			return API + "/template/" + id + "/data";
 		},
+		TOGGLE_REQUIRED_TEMPLATE_FIELD: id => {
+			return API + "/template/" + id + "/required";
+		},
 		DELETE_TEMPLATE: id => {
 			return API + "/template/" + id;
 		},

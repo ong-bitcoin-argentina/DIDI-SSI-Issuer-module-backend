@@ -88,6 +88,27 @@ class Template extends Component {
 		);
 	};
 
+	toggleRequired = (data, type) => {
+		const id = this.state.id;
+		const token = Cookie.get("token");
+		const self = this;
+
+		this.setState({ loading: true });
+		ApiService.toggleRequiredForTemplateField(
+			token,
+			id,
+			data,
+			type,
+			async function(template) {
+				self.setState({ template: template, loading: false, isDialogOpen: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
 	deleteField = (data, type) => {
 		const id = this.state.id;
 		const token = Cookie.get("token");
@@ -270,7 +291,12 @@ class Template extends Component {
 							<div className="Data-Name">{dataElem.name}</div>
 							<div className="Data-Elem">
 								<div className="Data-Default">{dataElem.defaultValue}</div>
-								<div className="Data-Required">
+								<div
+									className="Data-Required"
+									onClick={() => {
+										this.toggleRequired(dataElem, type);
+									}}
+								>
 									<MaterialIcon icon={icon} color="#bdbfbe" />
 									<div>{Messages.EDIT.BUTTONS.REQUIRED}</div>
 								</div>

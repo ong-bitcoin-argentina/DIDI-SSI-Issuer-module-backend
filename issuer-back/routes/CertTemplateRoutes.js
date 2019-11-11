@@ -154,12 +154,12 @@ router.put(
 				name: "type",
 				validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
 			}
-		]),
+		])
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
-		const data = req.body.data;
+		const data = JSON.parse(req.body.data);
 		const type = req.body.type;
 
 		try {
@@ -172,7 +172,7 @@ router.put(
 					template = await CertTemplateService.toggleRequiredForParticipantData(id, data);
 					break;
 				case Constants.DATA_TYPES.OTHERS:
-						template = await CertTemplateService.toggleRequiredForOthersData(id, data);
+					template = await CertTemplateService.toggleRequiredForOthersData(id, data);
 					break;
 			}
 
