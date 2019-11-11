@@ -83,6 +83,42 @@ module.exports.addOthersData = async function(id, othersData) {
 	}
 };
 
+module.exports.toggleRequiredForCertData = async function(id, data) {
+	try {
+		let template = await getById(id);
+		template = await template.toggleRequiredCertData(data);
+		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+		return Promise.resolve(template);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+	}
+};
+
+module.exports.toggleRequiredForParticipantData = async function(id, data) {
+	try {
+		let template = await getById(id);
+		template = await template.toggleRequiredForParticipantData(data);
+		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+		return Promise.resolve(template);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+	}
+};
+
+module.exports.toggleRequiredForOthersData = async function(id, data) {
+	try {
+		let template = await getById(id);
+		template = await template.toggleRequiredForOthersData(data);
+		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+		return Promise.resolve(template);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+	}
+};
+
 module.exports.deleteCertData = async function(id, certData) {
 	try {
 		let template = await getById(id);

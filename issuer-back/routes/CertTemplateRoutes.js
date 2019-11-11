@@ -137,6 +137,53 @@ router.put(
 );
 
 router.put(
+	"/:id/required",
+	Validator.validateHead([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+		},
+		Validator.validateBody([
+			{
+				name: "data",
+				validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
+			}
+		]),
+		Validator.validateBody([
+			{
+				name: "type",
+				validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
+			}
+		]),
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		const data = req.body.data;
+		const type = req.body.type;
+
+		try {
+			let template;
+			switch (type) {
+				case Constants.DATA_TYPES.CERT:
+					template = await CertTemplateService.toggleRequiredForCertData(id, data);
+					break;
+				case Constants.DATA_TYPES.PARTICIPANT:
+					template = await CertTemplateService.toggleRequiredForParticipantData(id, data);
+					break;
+				case Constants.DATA_TYPES.OTHERS:
+						template = await CertTemplateService.toggleRequiredForOthersData(id, data);
+					break;
+			}
+
+			return ResponseHandler.sendRes(res, template);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.put(
 	"/:id/rename",
 	Validator.validateHead([
 		{
