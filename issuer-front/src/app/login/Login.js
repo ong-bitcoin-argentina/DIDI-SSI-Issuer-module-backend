@@ -6,6 +6,7 @@ import Cookie from "js-cookie";
 
 import ApiService from "../../services/ApiService";
 import Constants from "../../constants/Constants";
+import Messages from "../../constants/Messages";
 
 class Login extends Component {
 	constructor(props) {
@@ -48,11 +49,11 @@ class Login extends Component {
 
 		return (
 			<div className="Login">
-				<h1 className="loginTitle">BIENVENIDO AL EMISOR DE CERTIFICADOS WEB</h1>
+				<h1 className="loginTitle">{Messages.LOGIN.WELCOME}</h1>
 				<input className="loginInput" type="text" onChange={this.updateName}></input>
 				<input className="loginInput" type="password" onChange={this.updatePass}></input>
 				<button className="loginButton" onClick={this.onLogin}>
-					Ingresar
+					{Messages.LOGIN.BUTTONS.ENTER}
 				</button>
 
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>

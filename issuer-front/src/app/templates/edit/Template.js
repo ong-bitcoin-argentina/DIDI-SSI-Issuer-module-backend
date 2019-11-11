@@ -7,6 +7,7 @@ import MaterialIcon from "material-icons-react";
 
 import ApiService from "../../../services/ApiService";
 import Constants from "../../../constants/Constants";
+import Messages from "../../../constants/Messages";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -138,13 +139,13 @@ class Template extends Component {
 		const isCheckbox = this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX;
 		return (
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">Crear Modelo</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
 				<DialogContent>
 					<TextField
 						autoFocus
 						margin="dense"
 						id="name"
-						label="Nombre"
+						label={Messages.EDIT.DIALOG.NAME}
 						type="text"
 						onChange={event => this.setState({ name: event.target.value })}
 						fullWidth
@@ -156,7 +157,7 @@ class Template extends Component {
 								autoFocus
 								margin="dense"
 								id="option"
-								label="Opcion"
+								label={Messages.EDIT.DIALOG.OPTION}
 								type="text"
 								onChange={event => this.setState({ option: event.target.value })}
 								fullWidth
@@ -195,7 +196,7 @@ class Template extends Component {
 						})}
 
 					<div id="Types">
-						<InputLabel>Types</InputLabel>
+						<InputLabel>{Messages.EDIT.DIALOG.TYPES}</InputLabel>
 						<Select
 							autoFocus
 							value={this.state.dataType}
@@ -221,15 +222,15 @@ class Template extends Component {
 								this.setState({ required: event.target.checked });
 							}}
 						></input>
-						<div className="RequiredText">Requerido</div>
+						<div className="RequiredText">{Messages.EDIT.DIALOG.REQUIRED}</div>
 					</div>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={this.createField} color="primary">
-						Crear
+						{Messages.EDIT.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
-						Cerrar
+						{Messages.EDIT.DIALOG.CLOSE}
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -242,16 +243,16 @@ class Template extends Component {
 		return (
 			<div className="Template-Content">
 				{this.renderSection(
-					"DATOS DEL CERTIFICADO",
+					Messages.EDIT.DATA.CERT,
 					[nameData, ...template.data.cert],
 					Constants.TEMPLATES.DATA_TYPES.CERT
 				)}
 				{this.renderSection(
-					"DATOS DEL PARTICIPANTE",
+					Messages.EDIT.DATA.PART,
 					template.data.participant,
 					Constants.TEMPLATES.DATA_TYPES.PARTICIPANT
 				)}
-				{this.renderSection("OTROS DATOS", template.data.others, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
+				{this.renderSection(Messages.EDIT.DATA.OTHER, template.data.others, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
 			</div>
 		);
 	};
@@ -271,7 +272,7 @@ class Template extends Component {
 								<div className="Data-Default">{dataElem.defaultValue}</div>
 								<div className="Data-Required">
 									<MaterialIcon icon={icon} color="#bdbfbe" />
-									<div>{"Requerido"}</div>
+									<div>{Messages.EDIT.BUTTONS.REQUIRED}</div>
 								</div>
 
 								{!dataElem.mandatory && (
@@ -282,7 +283,7 @@ class Template extends Component {
 										}}
 									>
 										<MaterialIcon icon={Constants.TEMPLATES.EDIT.ICONS.DELETE} color="#eb4646" />
-										<div>{"Delete"}</div>
+										<div>{Messages.EDIT.BUTTONS.DELETE}</div>
 									</div>
 								)}
 							</div>
@@ -297,7 +298,7 @@ class Template extends Component {
 				>
 					<div className="addButton">
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="addButtonText">NUEVO CAMPO</div>
+						<div className="addButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
 					</div>
 				</button>
 			</div>
@@ -308,10 +309,10 @@ class Template extends Component {
 		return (
 			<div className="Template-Buttons">
 				<button className="backButton" onClick={this.onBack}>
-					Volver
+					{Messages.EDIT.BUTTONS.BACK}
 				</button>
 				<button className="logoutButton" onClick={this.onLogout}>
-					Salir
+					{Messages.EDIT.BUTTONS.EXIT}
 				</button>
 			</div>
 		);

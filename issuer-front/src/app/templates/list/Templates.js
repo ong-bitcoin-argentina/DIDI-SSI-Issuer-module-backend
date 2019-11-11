@@ -9,6 +9,8 @@ import Cookie from "js-cookie";
 
 import ApiService from "../../../services/ApiService";
 import Constants from "../../../constants/Constants";
+import Messages from "../../../constants/Messages";
+
 import MaterialIcon from "material-icons-react";
 
 import TextField from "@material-ui/core/TextField";
@@ -41,7 +43,7 @@ class Templates extends Component {
 							self.onTemplateEdit(template._id);
 						}}
 					>
-						Editar
+						{Messages.LIST.BUTTONS.EDIT}
 					</div>
 					<div
 						className="DeleteAction"
@@ -49,7 +51,7 @@ class Templates extends Component {
 							self.onTemplateDelete(template._id);
 						}}
 					>
-						Borrar
+						{Messages.LIST.BUTTONS.DELETE}
 					</div>
 				</div>
 			)
@@ -149,13 +151,13 @@ class Templates extends Component {
 	renderDialog = () => {
 		return (
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">Crear Modelo</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.TITLE}</DialogTitle>
 				<DialogContent>
 					<TextField
 						autoFocus
 						margin="dense"
 						id="name"
-						label="Nombre"
+						label={Messages.LIST.DIALOG.NAME}
 						type="text"
 						onChange={this.updateName}
 						fullWidth
@@ -163,10 +165,10 @@ class Templates extends Component {
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={this.onTemplateCreate} color="primary">
-						Crear
+						{Messages.LIST.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
-						Cerrar
+						{Messages.LIST.DIALOG.CLOSE}
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -181,7 +183,7 @@ class Templates extends Component {
 				accessor: "_id"
 			},*/
 			{
-				Header: "Nombre",
+				Header: Messages.LIST.TABLE.NAME,
 				accessor: "name"
 			},
 			{
@@ -193,6 +195,8 @@ class Templates extends Component {
 		return (
 			<div className="Template-Table">
 				<ReactTable
+					previousText={Messages.LIST.TABLE.PREV}
+					nextText={Messages.LIST.TABLE.NEXT}
 					data={templates}
 					columns={columns}
 					defaultPageSize={Constants.TEMPLATES.TABLE.PAGE_SIZE}
@@ -206,7 +210,7 @@ class Templates extends Component {
 		return (
 			<button className="createButton" onClick={this.onDialogOpen}>
 				<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-				<div className="createButtonText">CREAR CERTIFICADO</div>
+				<div className="createButtonText">{Messages.LIST.BUTTONS.CREATE}</div>
 			</button>
 		);
 	};
@@ -214,7 +218,7 @@ class Templates extends Component {
 	renderButtons = () => {
 		return (
 			<button className="logoutButton" onClick={this.onLogout}>
-				Salir
+				{Messages.LIST.BUTTONS.EXIT}
 			</button>
 		);
 	};
