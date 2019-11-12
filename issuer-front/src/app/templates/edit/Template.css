@@ -3,7 +3,7 @@
 	flex-direction: column;
 }
 
-.addButton {
+.AddButton {
 	padding-top: 1px;
 	margin: 2px;
 	display: flex;
@@ -12,11 +12,11 @@
 	float: center;
 }
 
-.addButtonText {
+.AddButtonText {
 	padding-top: 4px;
 }
 
-.logoutButton {
+.LogoutButton {
 	margin-left: 10px;
 }
 
@@ -46,23 +46,23 @@
 	flex-direction: column;
 }
 
-.Data-Name {
+.DataName {
 	align-self: flex-start;
 }
 
-.Data-Elem {
+.DataElem {
 	display: flex;
 	flex-direction: row;
 	margin-bottom: 10px;
 }
 
-.Data-Required {
+.DataRequired {
 	display: flex;
 	flex-direction: row;
 	font-size: 18px;
 }
 
-.Data-Delete {
+.DataDelete {
 	display: flex;
 	flex-direction: row;
 	font-size: 18px;
@@ -74,7 +74,7 @@
 	margin-left: 5px;
 }
 
-.Data-Default {
+.DataDefault {
 	background-color: aliceblue;
 	color: black;
 
@@ -86,6 +86,24 @@
 	text-align: left;
 }
 
-.Template-Section-Content {
+.DataDefaultInput {
+	font-size: 18px !important;
+}
+
+.Mandatory {
+	padding-top: 10px;
+	height: 30px;
+}
+
+.Paragraph {
+	height: 100px;
+}
+
+.Boolean {
+	width: 510px;
+	height: 45px;
+}
+
+.TemplateSectionContent {
 	margin-bottom: 20px;
 }

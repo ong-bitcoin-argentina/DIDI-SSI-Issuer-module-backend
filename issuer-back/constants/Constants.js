@@ -34,7 +34,8 @@ module.exports = {
 		IS_STRING: "isString",
 		IS_PASSWORD: "isPassword",
 		IS_TEMPLATE_DATA: "isTemplateData",
-		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType"
+		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
+		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue"
 	},
 
 	DATA_TYPES: {

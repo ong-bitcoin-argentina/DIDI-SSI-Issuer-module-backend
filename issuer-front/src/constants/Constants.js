@@ -14,6 +14,9 @@ module.exports = {
 		TOGGLE_REQUIRED_TEMPLATE_FIELD: id => {
 			return API + "/template/" + id + "/required";
 		},
+		SET_DEFAULT_TEMPLATE_FIELD: id => {
+			return API + "/template/" + id + "/default";
+		},
 		DELETE_TEMPLATE: id => {
 			return API + "/template/" + id;
 		},
@@ -33,16 +36,21 @@ module.exports = {
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
-			MIN_ROWS: 0
+			MIN_ROWS: 3
 		},
 		EDIT: {
+			BOOLEAN: {
+				TRUE: "Si",
+				FALSE: "No"
+			},
 			ICONS: {
 				REQUIRED: "check_circle_outline",
 				NOT_REQUIRED: "radio_button_unchecked",
 				ADD_OPTION: "add_circle_outline",
 				REMOVE_OPTION: "clear",
 				DELETE: "cancel_presentation"
-			}
+			},
+			TYPING_TIMEOUT: 1000
 		},
 		TYPES: {
 			TEXT: "Text",

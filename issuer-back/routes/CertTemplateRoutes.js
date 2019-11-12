@@ -8,10 +8,11 @@ const Messages = require("../constants/Messages");
 
 router.get(
 	"/all",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
@@ -30,10 +31,11 @@ router.get(
 
 router.get(
 	"/:id",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
@@ -52,13 +54,12 @@ router.get(
 
 router.post(
 	"/",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
-		}
-	]),
-	Validator.validateBody([
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "certData",
@@ -91,19 +92,16 @@ router.post(
 
 router.put(
 	"/:id/data",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
-		}
-	]),
-	Validator.validateBody([
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
-	]),
-	Validator.validateBody([
+		},
 		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
@@ -137,24 +135,70 @@ router.put(
 );
 
 router.put(
-	"/:id/required",
-	Validator.validateHead([
+	"/:id/default",
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
 		},
-		Validator.validateBody([
-			{
-				name: "data",
-				validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
+		{
+			name: "data",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
+		},
+		{
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
+		},
+		{
+			name: "defaultValue",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_VALUE]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		const data = JSON.parse(req.body.data);
+		const defaultValue = req.body.defaultValue;
+		const type = req.body.type;
+
+		try {
+			let template;
+			switch (type) {
+				case Constants.DATA_TYPES.CERT:
+					template = await CertTemplateService.setDefaultForCertData(id, data, defaultValue);
+					break;
+				case Constants.DATA_TYPES.PARTICIPANT:
+					template = await CertTemplateService.setDefaultForParticipantData(id, data, defaultValue);
+					break;
+				case Constants.DATA_TYPES.OTHERS:
+					template = await CertTemplateService.setDefaultForOthersData(id, data, defaultValue);
+					break;
 			}
-		]),
-		Validator.validateBody([
-			{
-				name: "type",
-				validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
-			}
-		])
+
+			return ResponseHandler.sendRes(res, template);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.put(
+	"/:id/required",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
+		{
+			name: "data",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
+		},
+		{
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
@@ -185,13 +229,12 @@ router.put(
 
 router.put(
 	"/:id/rename",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
-		}
-	]),
-	Validator.validateBody([
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
 		{
 			name: "name",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
@@ -213,19 +256,16 @@ router.put(
 
 router.delete(
 	"/:id/data",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
-		}
-	]),
-	Validator.validateBody([
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
-	]),
-	Validator.validateBody([
+		},
 		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE]
@@ -260,10 +300,11 @@ router.delete(
 
 router.delete(
 	"/:id",
-	Validator.validateHead([
+	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,

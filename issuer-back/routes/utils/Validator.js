@@ -28,10 +28,10 @@ let _getUserFromToken = async function(token) {
 	}
 };
 
-let _doValidate = function(param, isBody) {
+let _doValidate = function(param, isHead) {
 	let validation;
 
-	let section = isBody ? body(param.name) : header(param.name);
+	let section = isHead ? header(param.name) : body(param.name);
 	if (param.optional) {
 		validation = section.optional();
 	} else {
@@ -95,7 +95,6 @@ let _doValidate = function(param, isBody) {
 							if (checkboxMissingOptions)
 								return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
 						}
-
 						return Promise.resolve(data);
 					});
 					break;
@@ -103,8 +102,53 @@ let _doValidate = function(param, isBody) {
 					validation.custom(data => {
 						if (Object.values(Constants.DATA_TYPES).indexOf(data))
 							return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_TYPE(data));
-
 						return Promise.resolve(data);
+					});
+					break;
+				case Constants.IS_TEMPLATE_DATA_VALUE:
+					validation.custom((value, { req }) => {
+						console.log("entra2");
+						console.log(value);
+						const data = JSON.parse(req.body.data);
+
+						let type = data[0]["type"];
+						for (let dataElement of data) {
+							if (!dataElement["type"] || type != dataElement["type"])
+								return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+							if (Constants.CERT_FIELD_TYPES.Checkbox && !dataElement["options"].includes(value))
+								return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+						}
+
+						switch (type) {
+							case Constants.CERT_FIELD_TYPES.Boolean:
+								console.log("bool");
+								if (value !== "true" && value !== "fakse")
+									return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+								break;
+							case Constants.CERT_FIELD_TYPES.Date:
+								console.log("date");
+								const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9]Z)/;
+								if (!value.match(regex))
+									return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+								break;
+							case Constants.CERT_FIELD_TYPES.Number:
+								console.log("number");
+								if (isNaN(value))
+									return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+								break;
+							case Constants.CERT_FIELD_TYPES.Paragraph:
+								console.log("paragraph");
+								if (!value)
+									return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+								break;
+							case Constants.CERT_FIELD_TYPES.Text:
+								console.log("string");
+								if (!value)
+									return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name));
+								break;
+						}
+						console.log("sale2");
+						return Promise.resolve(value);
 					});
 					break;
 			}
@@ -120,19 +164,10 @@ let _doValidate = function(param, isBody) {
 	return validation;
 };
 
-module.exports.validateHead = function(params) {
+module.exports.validate= function(params) {
 	const validations = [];
 	params.forEach(param => {
-		validation = _doValidate(param, false);
-		validations.push(validation);
-	});
-	return validations;
-};
-
-module.exports.validateBody = function(params) {
-	const validations = [];
-	params.forEach(param => {
-		validation = _doValidate(param, true);
+		validation = _doValidate(param, param.isHead);
 		validations.push(validation);
 	});
 	return validations;

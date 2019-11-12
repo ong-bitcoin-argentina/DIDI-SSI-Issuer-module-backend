@@ -33,6 +33,11 @@ module.exports = {
 				return { code: "INVALID_DATA_TYPE", message: data + " no es una secion valida del certificado" };
 			}
 		},
+		TEMPLATE_DATA_VALUE: {
+			INVALID_DATA_TYPE: function(type) {
+				return { code: "TEMPLATE_DATA_VALUE", message: "el campo " + type + " no es un valor por defecto valido para ese campo" };
+			}
+		},
 		TEMPLATE_DATA: {
 			NO_DATA: function(type) {
 				return { code: "NO_DATA", message: "el campo " + type + " no contiene data" };

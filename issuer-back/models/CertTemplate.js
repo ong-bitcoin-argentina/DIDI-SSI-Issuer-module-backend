@@ -48,18 +48,6 @@ const CertTemplateSchema = mongoose.Schema({
 
 CertTemplateSchema.index({ name: 1 });
 
-CertTemplateSchema.methods.addCertData = async function(data) {
-	return await this._doAddData(data, "cert");
-};
-
-CertTemplateSchema.methods.addOthersData = async function(data) {
-	return await this._doAddData(data, "others");
-};
-
-CertTemplateSchema.methods.addParticipantData = async function(data) {
-	return await this._doAddData(data, "participant");
-};
-
 CertTemplateSchema.methods._doAddData = async function(data, field) {
 	const names = data.map(newDataElement => newDataElement.name);
 	this.data[field] = this.data[field].filter(dataElem => !names.includes(dataElem.name));
@@ -73,16 +61,16 @@ CertTemplateSchema.methods._doAddData = async function(data, field) {
 	}
 };
 
-CertTemplateSchema.methods.toggleRequiredCertData = async function(data) {
-	return await this._doToggleRequired(data, "cert");
+CertTemplateSchema.methods.addCertData = async function(data) {
+	return await this._doAddData(data, "cert");
 };
 
-CertTemplateSchema.methods.toggleRequiredForParticipantData = async function(data) {
-	return await this._doToggleRequired(data, "participant");
+CertTemplateSchema.methods.addOthersData = async function(data) {
+	return await this._doAddData(data, "others");
 };
 
-CertTemplateSchema.methods.toggleRequiredForParticipantData = async function(data) {
-	return await this._doToggleRequired(data, "others");
+CertTemplateSchema.methods.addParticipantData = async function(data) {
+	return await this._doAddData(data, "participant");
 };
 
 CertTemplateSchema.methods._doToggleRequired = async function(data, field) {
@@ -100,6 +88,18 @@ CertTemplateSchema.methods._doToggleRequired = async function(data, field) {
 	} catch (err) {
 		return Promise.reject(err);
 	}
+};
+
+CertTemplateSchema.methods.toggleRequiredCertData = async function(data) {
+	return await this._doToggleRequired(data, "cert");
+};
+
+CertTemplateSchema.methods.toggleRequiredForParticipantData = async function(data) {
+	return await this._doToggleRequired(data, "participant");
+};
+
+CertTemplateSchema.methods.toggleRequiredForOthersData = async function(data) {
+	return await this._doToggleRequired(data, "others");
 };
 
 CertTemplateSchema.methods.rename = async function(name) {
@@ -121,6 +121,66 @@ CertTemplateSchema.methods.rename = async function(name) {
 	}
 };
 
+CertTemplateSchema.methods._doSetDefaultData = async function(data, defaultValue, field) {
+	const names = data.map(dataElement => dataElement.name);
+	this.data[field] = this.data[field].map(dataElem => {
+		if (names.includes(dataElem.name)) {
+			switch (dataElem.type) {
+				case Constants.CERT_FIELD_TYPES.Boolean:
+					dataElem.defaultValue = defaultValue == "true";
+					break;
+				case Constants.CERT_FIELD_TYPES.Checkbox:
+					dataElem.defaultValue = defaultValue;
+					break;
+				case Constants.CERT_FIELD_TYPES.Date:
+					dataElem.defaultValue = defaultValue;
+					break;
+				case Constants.CERT_FIELD_TYPES.Number:
+					dataElem.defaultValue = parseInt(defaultValue, 10);
+					break;
+				case Constants.CERT_FIELD_TYPES.Paragraph:
+					dataElem.defaultValue = defaultValue;
+					break;
+				case Constants.CERT_FIELD_TYPES.Text:
+					dataElem.defaultValue = defaultValue;
+					break;
+			}
+		}
+		return dataElem;
+	});
+
+	try {
+		await this.save();
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
+CertTemplateSchema.methods.setDefaultForParticipantData = async function(data, defaultValue) {
+	return await this._doSetDefaultData(data, defaultValue, "participant");
+};
+
+CertTemplateSchema.methods.setDefaultForOthersData = async function(data, defaultValue) {
+	return await this._doSetDefaultData(data, defaultValue, "others");
+};
+
+CertTemplateSchema.methods.setDefaultForCertData = async function(data, defaultValue) {
+	return await this._doSetDefaultData(data, defaultValue, "cert");
+};
+
+CertTemplateSchema.methods._doDeleteData = async function(data, field) {
+	const names = data.map(dataElement => dataElement.name);
+	this.data[field] = this.data[field].filter(dataElem => !names.includes(dataElem.name));
+
+	try {
+		await this.save();
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
 CertTemplateSchema.methods.deleteParticipantData = async function(data) {
 	return await this._doDeleteData(data, "participant");
 };
@@ -131,18 +191,6 @@ CertTemplateSchema.methods.deleteOthersData = async function(data) {
 
 CertTemplateSchema.methods.deleteCertData = async function(data) {
 	return await this._doDeleteData(data, "cert");
-};
-
-CertTemplateSchema.methods._doDeleteData = async function(data, field) {
-	const names = data.map(newDataElement => newDataElement.name);
-	this.data[field] = this.data[field].filter(dataElem => !names.includes(dataElem.name));
-
-	try {
-		await this.save();
-		return Promise.resolve(this);
-	} catch (err) {
-		return Promise.reject(err);
-	}
 };
 
 CertTemplateSchema.methods.delete = async function() {

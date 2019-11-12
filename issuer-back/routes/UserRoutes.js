@@ -8,7 +8,7 @@ const Constants = require("../constants/Constants");
 
 router.post(
 	"/",
-	Validator.validateBody([
+	Validator.validate([
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "password",
@@ -31,7 +31,7 @@ router.post(
 
 router.post(
 	"/login",
-	Validator.validateBody([
+	Validator.validate([
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "password",

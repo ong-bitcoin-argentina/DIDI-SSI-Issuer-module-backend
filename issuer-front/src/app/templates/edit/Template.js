@@ -9,6 +9,10 @@ import ApiService from "../../../services/ApiService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import dateFormat from "dateformat";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -25,6 +29,8 @@ class Template extends Component {
 
 		this.state = {
 			loading: true,
+			typingTimeout: 0,
+			typing: false,
 			isDialogOpen: false,
 			options: [],
 			dataType: Constants.TEMPLATES.TYPES.TEXT
@@ -109,6 +115,44 @@ class Template extends Component {
 		);
 	};
 
+	defaultValueChanged = (data, defaultValue, type) => {
+		const self = this;
+		if (self.state.typingTimeout) {
+			clearTimeout(self.state.typingTimeout);
+		}
+
+		data.defaultValue = defaultValue;
+
+		self.setState({
+			typing: false,
+			typingTimeout: setTimeout(function() {
+				self.setDefaultValue(data, defaultValue, type);
+			}, Constants.TEMPLATES.EDIT.TYPING_TIMEOUT)
+		});
+	};
+
+	setDefaultValue = (data, defaultValue, type) => {
+		const id = this.state.id;
+		const token = Cookie.get("token");
+		const self = this;
+
+		this.setState({ loading: true });
+		ApiService.setTemplateDefaultField(
+			token,
+			id,
+			data,
+			defaultValue,
+			type,
+			async function(template) {
+				self.setState({ template: template, loading: false, isDialogOpen: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
 	deleteField = (data, type) => {
 		const id = this.state.id;
 		const token = Cookie.get("token");
@@ -162,89 +206,10 @@ class Template extends Component {
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
 				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label={Messages.EDIT.DIALOG.NAME}
-						type="text"
-						onChange={event => this.setState({ name: event.target.value })}
-						fullWidth
-					/>
-
-					{isCheckbox && (
-						<div id="Options">
-							<TextField
-								autoFocus
-								margin="dense"
-								id="option"
-								label={Messages.EDIT.DIALOG.OPTION}
-								type="text"
-								onChange={event => this.setState({ option: event.target.value })}
-								fullWidth
-							/>
-
-							<div
-								id="OptionAdd"
-								onClick={() => {
-									this.state.options.push(this.state.option);
-									this.setState({ options: this.state.options, option: "" });
-								}}
-							>
-								<MaterialIcon id="AddOptionIcon" icon={Constants.TEMPLATES.EDIT.ICONS.ADD_OPTION} color={"#3f51b5"} />
-							</div>
-						</div>
-					)}
-
-					{isCheckbox &&
-						this.state.options.map((op, key) => {
-							return (
-								<div key={"opt-" + key}>
-									{op}
-
-									<MaterialIcon
-										id="DeleteIcon"
-										icon={Constants.TEMPLATES.EDIT.ICONS.REMOVE_OPTION}
-										color={"rgb(235, 70, 70)"}
-										onClick={() => {
-											console.log(op);
-											const endOpt = this.state.options.filter(opt => opt !== op);
-											this.setState({ options: endOpt, option: "" });
-										}}
-									/>
-								</div>
-							);
-						})}
-
-					<div id="Types">
-						<InputLabel>{Messages.EDIT.DIALOG.TYPES}</InputLabel>
-						<Select
-							autoFocus
-							value={this.state.dataType}
-							onChange={event => {
-								this.setState({ dataType: event.target.value });
-							}}
-						>
-							{Object.values(Constants.TEMPLATES.TYPES).map((type, key) => {
-								return (
-									<MenuItem value={type} key={"type-" + key}>
-										{type}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</div>
-
-					<div id="Required">
-						<input
-							className="RequiredInput"
-							type="checkbox"
-							onChange={event => {
-								this.setState({ required: event.target.checked });
-							}}
-						></input>
-						<div className="RequiredText">{Messages.EDIT.DIALOG.REQUIRED}</div>
-					</div>
+					{this.renderDialogName()}
+					{isCheckbox && this.renderDialogCheckbox()}
+					{this.renderDialogTypes()}
+					{this.renderDialogRequired()}
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={this.createField} color="primary">
@@ -255,6 +220,104 @@ class Template extends Component {
 					</Button>
 				</DialogActions>
 			</Dialog>
+		);
+	};
+
+	renderDialogName = () => {
+		return (
+			<TextField
+				autoFocus
+				margin="dense"
+				id="name"
+				label={Messages.EDIT.DIALOG.NAME}
+				type="text"
+				onChange={event => this.setState({ name: event.target.value })}
+				fullWidth
+			/>
+		);
+	};
+
+	renderDialogRequired = () => {
+		return (
+			<div id="Required">
+				<input
+					className="RequiredInput"
+					type="checkbox"
+					onChange={event => {
+						this.setState({ required: event.target.checked });
+					}}
+				></input>
+				<div className="RequiredText">{Messages.EDIT.DIALOG.REQUIRED}</div>
+			</div>
+		);
+	};
+
+	renderDialogTypes = () => {
+		return (
+			<div id="Types">
+				<InputLabel>{Messages.EDIT.DIALOG.TYPES}</InputLabel>
+				<Select
+					autoFocus
+					value={this.state.dataType}
+					onChange={event => {
+						this.setState({ dataType: event.target.value });
+					}}
+				>
+					{Object.values(Constants.TEMPLATES.TYPES).map((type, key) => {
+						return (
+							<MenuItem value={type} key={"type-" + key}>
+								{type}
+							</MenuItem>
+						);
+					})}
+				</Select>
+			</div>
+		);
+	};
+
+	renderDialogCheckbox = () => {
+		return (
+			<div>
+				<div id="Options">
+					<TextField
+						autoFocus
+						margin="dense"
+						id="option"
+						label={Messages.EDIT.DIALOG.OPTION}
+						type="text"
+						onChange={event => this.setState({ option: event.target.value })}
+						fullWidth
+					/>
+
+					<div
+						id="OptionAdd"
+						onClick={() => {
+							this.state.options.push(this.state.option);
+							this.setState({ options: this.state.options, option: "" });
+						}}
+					>
+						<MaterialIcon id="AddOptionIcon" icon={Constants.TEMPLATES.EDIT.ICONS.ADD_OPTION} color={"#3f51b5"} />
+					</div>
+				</div>
+
+				{this.state.options.map((op, key) => {
+					return (
+						<div key={"opt-" + key}>
+							{op}
+
+							<MaterialIcon
+								id="DeleteIcon"
+								icon={Constants.TEMPLATES.EDIT.ICONS.REMOVE_OPTION}
+								color={"rgb(235, 70, 70)"}
+								onClick={() => {
+									this.state.options.splice(key, 1);
+									this.setState({ options: this.state.options, option: "" });
+								}}
+							/>
+						</div>
+					);
+				})}
+			</div>
 		);
 	};
 
@@ -280,54 +343,162 @@ class Template extends Component {
 
 	renderSection = (title, data, type) => {
 		return (
-			<div className="Template-Section-Content">
+			<div className="TemplateSectionContent">
 				<h2>{title}</h2>
 				{data.map((dataElem, index) => {
-					const icon = dataElem.required
-						? Constants.TEMPLATES.EDIT.ICONS.REQUIRED
-						: Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
 					return (
 						<div className="Data" key={"template-elem-" + index}>
-							<div className="Data-Name">{dataElem.name}</div>
-							<div className="Data-Elem">
-								<div className="Data-Default">{dataElem.defaultValue}</div>
-								<div
-									className="Data-Required"
-									onClick={() => {
-										this.toggleRequired(dataElem, type);
-									}}
-								>
-									<MaterialIcon icon={icon} color="#bdbfbe" />
-									<div>{Messages.EDIT.BUTTONS.REQUIRED}</div>
-								</div>
-
-								{!dataElem.mandatory && (
-									<div
-										className="Data-Delete"
-										onClick={() => {
-											this.deleteField(dataElem, type);
-										}}
-									>
-										<MaterialIcon icon={Constants.TEMPLATES.EDIT.ICONS.DELETE} color="#eb4646" />
-										<div>{Messages.EDIT.BUTTONS.DELETE}</div>
-									</div>
-								)}
+							<div className="DataName">{dataElem.name}</div>
+							<div className="DataElem">
+								{this.renderSectionDefaultValue(dataElem, type)}
+								{this.renderSectionRequired(dataElem, type)}
+								{this.renderSectionDelete(dataElem, type)}
 							</div>
 						</div>
 					);
 				})}
-				<button
-					className="addButton"
-					onClick={() => {
-						this.onDialogOpen(type);
-					}}
-				>
-					<div className="addButton">
-						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="addButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
-					</div>
-				</button>
+				{this.renderSectionButtons(type)}
 			</div>
+		);
+	};
+
+	renderSectionDefaultValue = (dataElem, type) => {
+		if (dataElem.mandatory)
+			return <div className="DataDefault DataDefaultInput Mandatory">{dataElem.defaultValue}</div>;
+
+		switch (dataElem.type) {
+			case Constants.TEMPLATES.TYPES.BOOLEAN:
+				return (
+					<Select
+						className="DataDefault DataDefaultInput Boolean"
+						autoFocus
+						value={dataElem.defaultValue}
+						onChange={event => {
+							this.setDefaultValue(dataElem, event.target.value, type);
+						}}
+					>
+						<MenuItem className="DataDefaultInput" value={"true"}>
+							{Constants.TEMPLATES.EDIT.BOOLEAN.TRUE}
+						</MenuItem>
+						<MenuItem className="DataDefaultInput" value={"false"}>
+							{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
+						</MenuItem>
+					</Select>
+				);
+			case Constants.TEMPLATES.TYPES.CHECKBOX:
+				return (
+					<Select
+						className="DataDefault DataDefaultInput Boolean"
+						autoFocus
+						value={dataElem.defaultValue}
+						onChange={event => {
+							this.setDefaultValue(dataElem, event.target.value, type);
+						}}
+					>
+						{dataElem.options.map((opt, key) => {
+							return (
+								<MenuItem value={opt} key={"option-" + key} className="DataDefaultInput">
+									{opt}
+								</MenuItem>
+							);
+						})}
+					</Select>
+				);
+			case Constants.TEMPLATES.TYPES.DATE:
+				return (
+					<DatePicker
+						className="DataDefault DataDefaultInput"
+						selected={dataElem.defaultValue ? new Date(dataElem.defaultValue) : new Date()}
+						onChange={date => {
+							date = dateFormat(date, "yyyy-mm-dd hh:MM:ss");
+							this.setDefaultValue(dataElem, date.replace(" ", "T") + "Z", type);
+						}}
+						dateFormat="dd-MM-yyyy"
+					/>
+				);
+			case Constants.TEMPLATES.TYPES.NUMBER:
+				return (
+					<input
+						type="text"
+						pattern="[0-9]*"
+						className="DataDefault DataDefaultInput"
+						value={dataElem.defaultValue}
+						onChange={event => {
+							this.defaultValueChanged(dataElem, event.target.value, type);
+						}}
+					/>
+				);
+			case Constants.TEMPLATES.TYPES.PARAGRAPH:
+				return (
+					<textarea
+						className="DataDefault DataDefaultInput Paragraph"
+						value={dataElem.defaultValue}
+						onChange={event => {
+							this.defaultValueChanged(dataElem, event.target.value, type);
+						}}
+					/>
+				);
+			case Constants.TEMPLATES.TYPES.TEXT:
+			default:
+				return (
+					<input
+						type="text"
+						className="DataDefault DataDefaultInput"
+						value={dataElem.defaultValue}
+						onChange={event => {
+							this.defaultValueChanged(dataElem, event.target.value, type);
+						}}
+					/>
+				);
+		}
+	};
+
+	renderSectionDelete = (dataElem, type) => {
+		if (dataElem.mandatory) return <div></div>;
+
+		return (
+			<div
+				className="DataDelete"
+				onClick={() => {
+					this.deleteField(dataElem, type);
+				}}
+			>
+				<MaterialIcon icon={Constants.TEMPLATES.EDIT.ICONS.DELETE} color="#eb4646" />
+				<div>{Messages.EDIT.BUTTONS.DELETE}</div>
+			</div>
+		);
+	};
+
+	renderSectionRequired = (dataElem, type) => {
+		const icon = dataElem.required
+			? Constants.TEMPLATES.EDIT.ICONS.REQUIRED
+			: Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
+		return (
+			<div
+				className="DataRequired"
+				onClick={() => {
+					this.toggleRequired(dataElem, type);
+				}}
+			>
+				<MaterialIcon icon={icon} color="#bdbfbe" />
+				<div>{Messages.EDIT.BUTTONS.REQUIRED}</div>
+			</div>
+		);
+	};
+
+	renderSectionButtons = type => {
+		return (
+			<button
+				className="AddButton"
+				onClick={() => {
+					this.onDialogOpen(type);
+				}}
+			>
+				<div className="AddButton">
+					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+					<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
+				</div>
+			</button>
 		);
 	};
 
@@ -337,7 +508,7 @@ class Template extends Component {
 				<button className="backButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
 				</button>
-				<button className="logoutButton" onClick={this.onLogout}>
+				<button className="LogoutButton" onClick={this.onLogout}>
 					{Messages.EDIT.BUTTONS.EXIT}
 				</button>
 			</div>

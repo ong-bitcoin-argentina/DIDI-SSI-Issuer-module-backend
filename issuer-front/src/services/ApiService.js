@@ -103,6 +103,33 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
+	static toggleRequiredForTemplateField(token, id, dataElem, type, cb, errCb) {
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				data: JSON.stringify([dataElem]),
+				type: type
+			})
+		};
+
+		fetch(Constants.API_ROUTES.TOGGLE_REQUIRED_TEMPLATE_FIELD(id), data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
 	static createTemplateField(token, id, dataElem, type, cb, errCb) {
 		const data = {
 			method: "PUT",
@@ -130,16 +157,21 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static deleteTemplate(token, id, cb, errCb) {
+	static setTemplateDefaultField(token, id, dataElem, defaultValue, type, cb, errCb) {
 		const data = {
-			method: "DELETE",
+			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 				token: token
-			}
+			},
+			body: JSON.stringify({
+				data: JSON.stringify([dataElem]),
+				type: type,
+				defaultValue: defaultValue
+			})
 		};
 
-		fetch(Constants.API_ROUTES.DELETE_TEMPLATE(id), data)
+		fetch(Constants.API_ROUTES.SET_DEFAULT_TEMPLATE_FIELD(id), data)
 			.then(data => {
 				return data.json();
 			})
@@ -153,20 +185,16 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static toggleRequiredForTemplateField(token, id, dataElem, type, cb, errCb) {
+	static deleteTemplate(token, id, cb, errCb) {
 		const data = {
-			method: "PUT",
+			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json",
 				token: token
-			},
-			body: JSON.stringify({
-				data: JSON.stringify([dataElem]),
-				type: type
-			})
+			}
 		};
 
-		fetch(Constants.API_ROUTES.TOGGLE_REQUIRED_TEMPLATE_FIELD(id), data)
+		fetch(Constants.API_ROUTES.DELETE_TEMPLATE(id), data)
 			.then(data => {
 				return data.json();
 			})

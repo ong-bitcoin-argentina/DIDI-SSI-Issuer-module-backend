@@ -13,6 +13,18 @@ var getById = async function(id) {
 };
 module.exports.getById = getById;
 
+var _getAndEdit = async function(id, data, editMethod, defaultValue) {
+	try {
+		let template = await getById(id);
+		template = await template[editMethod](data, defaultValue);
+		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+		return Promise.resolve(template);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+	}
+};
+
 module.exports.getAll = async function() {
 	try {
 		let templates = await CertTemplate.getAll();
@@ -36,123 +48,55 @@ module.exports.create = async function(name, certData, participantData, othersDa
 };
 
 module.exports.rename = async function(id, name) {
-	try {
-		let template = await getById(id);
-		template = await template.rename(name);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, name, "rename");
 };
 
 module.exports.addCertData = async function(id, certData) {
-	try {
-		let template = await getById(id);
-		template = await template.addCertData(certData);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, certData, "addCertData");
 };
 
 module.exports.addParticipantData = async function(id, partData) {
-	try {
-		let template = await getById(id);
-		template = await template.addParticipantData(partData);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, partData, "addParticipantData");
 };
 
 module.exports.addOthersData = async function(id, othersData) {
-	try {
-		let template = await getById(id);
-		template = await template.addOthersData(othersData);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, othersData, "addOthersData");
 };
 
 module.exports.toggleRequiredForCertData = async function(id, data) {
-	try {
-		let template = await getById(id);
-		template = await template.toggleRequiredCertData(data);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, data, "toggleRequiredCertData");
 };
 
 module.exports.toggleRequiredForParticipantData = async function(id, data) {
-	try {
-		let template = await getById(id);
-		template = await template.toggleRequiredForParticipantData(data);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, data, "toggleRequiredForParticipantData");
 };
 
 module.exports.toggleRequiredForOthersData = async function(id, data) {
-	try {
-		let template = await getById(id);
-		template = await template.toggleRequiredForOthersData(data);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, data, "toggleRequiredForOthersData");
+};
+
+module.exports.setDefaultForCertData = async function(id, data, defaultValue) {
+	return await _getAndEdit(id, data, "setDefaultForCertData", defaultValue);
+};
+
+module.exports.setDefaultForParticipantData = async function(id, data, defaultValue) {
+	return await _getAndEdit(id, data, "setDefaultForParticipantData", defaultValue);
+};
+
+module.exports.setDefaultForOthersData = async function(id, data, defaultValue) {
+	return await _getAndEdit(id, data, "setDefaultForOthersData", defaultValue);
 };
 
 module.exports.deleteCertData = async function(id, certData) {
-	try {
-		let template = await getById(id);
-		template = await template.deleteCertData(certData);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, certData, "deleteCertData");
 };
 
 module.exports.deleteParticipantData = async function(id, partData) {
-	try {
-		let template = await getById(id);
-		template = await template.deleteParticipantData(partData);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, partData, "deleteParticipantData");
 };
 
 module.exports.deleteOthersData = async function(id, othersData) {
-	try {
-		let template = await getById(id);
-		template = await template.deleteOthersData(othersData);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-		return Promise.resolve(template);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
-	}
+	return await _getAndEdit(id, othersData, "deleteOthersData");
 };
 
 module.exports.delete = async function(id) {

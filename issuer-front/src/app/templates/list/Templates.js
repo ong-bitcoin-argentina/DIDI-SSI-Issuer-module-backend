@@ -193,7 +193,7 @@ class Templates extends Component {
 		];
 
 		return (
-			<div className="Template-Table">
+			<div className="TemplateTable">
 				<ReactTable
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
@@ -208,16 +208,16 @@ class Templates extends Component {
 
 	renderCreateButton = () => {
 		return (
-			<button className="createButton" onClick={this.onDialogOpen}>
+			<button className="CreateButton" onClick={this.onDialogOpen}>
 				<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-				<div className="createButtonText">{Messages.LIST.BUTTONS.CREATE}</div>
+				<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE}</div>
 			</button>
 		);
 	};
 
 	renderButtons = () => {
 		return (
-			<button className="logoutButton" onClick={this.onLogout}>
+			<button className="LogoutButton" onClick={this.onLogout}>
 				{Messages.LIST.BUTTONS.EXIT}
 			</button>
 		);

@@ -1,9 +1,10 @@
 .Templates {
 	display: flex;
 	flex-direction: column;
+	width: 80%;
 }
 
-.createButton {
+.CreateButton {
 	width: 150px;
 	margin-bottom: 10px;
 	align-self: flex-end;
@@ -11,15 +12,15 @@
 	flex-direction: row;
 }
 
-.createButtonText {
+.CreateButtonText {
 	padding-top: 0px;
 }
 
-.logoutButton {
+.LogoutButton {
 	align-self: center;
 }
 
-.Template-Table {
+.TemplateTable {
 	background-color: aliceblue;
 	color: black;
 	margin-bottom: 10px;
