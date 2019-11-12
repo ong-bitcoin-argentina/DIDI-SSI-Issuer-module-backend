@@ -74,6 +74,10 @@
 	margin-left: 5px;
 }
 
+.DialogTypeDropdown {
+	width: 165px;
+}
+
 .DataDefault {
 	background-color: aliceblue;
 	color: black;
@@ -93,6 +97,10 @@
 .Mandatory {
 	padding-top: 10px;
 	height: 30px;
+}
+
+.Number {
+	width: 510px;
 }
 
 .Paragraph {

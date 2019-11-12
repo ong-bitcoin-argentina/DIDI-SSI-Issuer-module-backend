@@ -9,6 +9,7 @@ import ApiService from "../../../services/ApiService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import NumericInput from "react-numeric-input";
 import dateFormat from "dateformat";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -257,6 +258,7 @@ class Template extends Component {
 			<div id="Types">
 				<InputLabel>{Messages.EDIT.DIALOG.TYPES}</InputLabel>
 				<Select
+					className={"DialogTypeDropdown"}
 					autoFocus
 					value={this.state.dataType}
 					onChange={event => {
@@ -390,7 +392,7 @@ class Template extends Component {
 					<Select
 						className="DataDefault DataDefaultInput Boolean"
 						autoFocus
-						value={dataElem.defaultValue}
+						value={dataElem.defaultValue ? dataElem.defaultValue : dataElem.options[0]}
 						onChange={event => {
 							this.setDefaultValue(dataElem, event.target.value, type);
 						}}
@@ -418,13 +420,11 @@ class Template extends Component {
 				);
 			case Constants.TEMPLATES.TYPES.NUMBER:
 				return (
-					<input
-						type="text"
-						pattern="[0-9]*"
-						className="DataDefault DataDefaultInput"
+					<NumericInput
+						className="DataDefault DataDefaultInput Number"
 						value={dataElem.defaultValue}
-						onChange={event => {
-							this.defaultValueChanged(dataElem, event.target.value, type);
+						onChange={value => {
+							this.defaultValueChanged(dataElem, value, type);
 						}}
 					/>
 				);
