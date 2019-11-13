@@ -213,7 +213,14 @@ class Template extends Component {
 					{this.renderDialogRequired()}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.createField} color="primary">
+					<Button
+						onClick={this.createField}
+						disabled={
+							!this.state.name ||
+							(this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX && !this.state.options.length)
+						}
+						color="primary"
+					>
 						{Messages.EDIT.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">

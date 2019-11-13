@@ -61,7 +61,7 @@ class Templates extends Component {
 	componentDidMount() {
 		const token = Cookie.get("token");
 		const self = this;
-		
+
 		self.setState({ loading: true });
 		ApiService.getTemplates(
 			token,
@@ -166,7 +166,7 @@ class Templates extends Component {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.onTemplateCreate} color="primary">
+					<Button onClick={this.onTemplateCreate} disabled={!this.state.name} color="primary">
 						{Messages.LIST.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
