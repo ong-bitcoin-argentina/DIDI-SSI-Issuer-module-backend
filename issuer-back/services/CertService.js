@@ -35,6 +35,17 @@ module.exports.create = async function(template, partData, data) {
 	}
 };
 
+module.exports.emmit = async function(id) {
+	try {
+		let cert = await getById(id);
+		await cert.emmit();
+		return Promise.resolve(cert);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.CERT.ERR.CREATE);
+	}
+};
+
 module.exports.delete = async function(id) {
 	try {
 		let cert = await getById(id);

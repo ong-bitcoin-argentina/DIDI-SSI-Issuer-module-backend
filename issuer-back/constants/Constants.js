@@ -4,13 +4,19 @@ const MONGO_PORT = process.env.MONGO_PORT || "27017";
 const MONGO_USER = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 const MONGO_DB = process.env.MONGO_DB || "didi_issuer";
+
+const SERVER_DID = process.env.SERVER_DID || "***REMOVED***";
 const SERVER_PRIVATE_KEY =
 	process.env.SERVER_PRIVATE_KEY || "***REMOVED***";
+const SUB = process.env.SUB || "did:ethr:0xa9ec70fd9371dd3b7ef73fb8f537c172b6d3c73d";
+
 const PORT = process.env.PORT || 3500;
 
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
 const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
+
+const MOURO_URL = process.env.MOURO_URL || "http://192.168.2.137:3001/graphql";
 
 const USER_TYPES = { Admin: "Admin" };
 const CERT_FIELD_TYPES = {
@@ -25,8 +31,6 @@ const CERT_FIELD_TYPES = {
 module.exports = {
 	API_VERSION: "1.0",
 	DEBUGG: DEBUGG,
-
-	SERVER_PRIVATE_KEY: SERVER_PRIVATE_KEY,
 
 	VALIDATION_TYPES: {
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
@@ -52,6 +56,19 @@ module.exports = {
 	USER_TYPES: USER_TYPES,
 	CERT_FIELD_TYPES: CERT_FIELD_TYPES,
 
+	SUB: SUB,
+	NOT_BACK_FROM: 1562950282,
+	CREDENTIALS: {
+		TYPES: {
+			VERIFIABLE: "VerifiableCredential"
+		},
+		CONTEXT: "https://www.w3.org/2018/credentials/v1"
+	},
+
+	SERVER_DID: SERVER_DID,
+	SERVER_PRIVATE_KEY: SERVER_PRIVATE_KEY,
 	MONGO_URL: MONGO_URL,
+	MOURO_URL: MOURO_URL,
+	SERVER_DID: SERVER_DID,
 	PORT: PORT
 };

@@ -26,22 +26,36 @@ class Certificates extends Component {
 	}
 
 	getCertificatesData = (self, cert) => {
+		console.log(cert);
+		const emmited = cert.emmitedOn;
 		return {
 			_id: cert._id,
 			certName: cert.name,
-			createdOn: cert.emmitedOn ? cert.emmitedOn.split("T")[0] : "-",
+			createdOn: emmited ? cert.emmitedOn.split("T")[0] : "-",
 			participantFirstName: cert.participant.name,
 			participantLastName: cert.participant.lastName,
 			actions: (
 				<div className="Actions">
-					<div
-						className="EditAction"
-						onClick={() => {
-							self.onCertificateEdit(cert._id);
-						}}
-					>
-						{Messages.LIST.BUTTONS.EDIT}
-					</div>
+					{!emmited && (
+						<div
+							className="EmmitAction"
+							onClick={() => {
+								self.onCertificateEmmit(cert._id);
+							}}
+						>
+							{Messages.LIST.BUTTONS.EMMIT}
+						</div>
+					)}
+					{!emmited && (
+						<div
+							className="EditAction"
+							onClick={() => {
+								self.onCertificateEdit(cert._id);
+							}}
+						>
+							{Messages.LIST.BUTTONS.EDIT}
+						</div>
+					)}
 					<div
 						className="DeleteAction"
 						onClick={() => {
@@ -94,6 +108,26 @@ class Certificates extends Component {
 		);
 	};
 
+	onCertificateEmmit = id => {
+		const token = Cookie.get("token");
+		const self = this;
+
+		self.setState({ loading: true });
+		CertificateService.emmit(
+			token,
+			id,
+			async function(cert) {
+				const matchingCert = self.state.certificates.find(certificate => certificate._id === cert._id);
+				matchingCert.emmitedOn = cert.emmitedOn;
+				self.setState({ certificates: self.state.certificates, loading: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
 	onCertificateEdit = id => {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
@@ -135,7 +169,7 @@ class Certificates extends Component {
 				</div>
 				<button className="CreateButton">
 					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT}</div>
+					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
 				</button>
 			</div>
 		);

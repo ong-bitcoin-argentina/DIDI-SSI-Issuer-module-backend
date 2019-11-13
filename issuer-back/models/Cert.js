@@ -73,6 +73,23 @@ CertSchema.methods.delete = async function() {
 	}
 };
 
+CertSchema.methods.emmit = async function() {
+	const now = new Date();
+
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: { emmitedOn: now }
+	};
+
+	try {
+		await Cert.findOneAndUpdate(updateQuery, updateAction);
+		this.emmitedOn = now;
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
 const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 

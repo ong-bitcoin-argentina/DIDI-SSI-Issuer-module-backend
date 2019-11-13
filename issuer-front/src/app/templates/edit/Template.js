@@ -107,7 +107,7 @@ class Template extends Component {
 			data,
 			type,
 			async function(template) {
-				self.setState({ template: template, loading: false, isDialogOpen: false });
+				self.setState({ template: template, loading: false });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -166,7 +166,7 @@ class Template extends Component {
 			data,
 			type,
 			async function(template) {
-				self.setState({ template: template, loading: false, isDialogOpen: false });
+				self.setState({ template: template, loading: false });
 			},
 			function(err) {
 				self.setState({ error: err });

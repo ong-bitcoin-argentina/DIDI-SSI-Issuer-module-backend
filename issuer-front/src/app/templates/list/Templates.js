@@ -167,7 +167,7 @@ class Templates extends Component {
 				</div>
 				<button className="CreateButton" onClick={this.onDialogOpen}>
 					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE}</div>
+					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
 				</button>
 			</div>
 		);

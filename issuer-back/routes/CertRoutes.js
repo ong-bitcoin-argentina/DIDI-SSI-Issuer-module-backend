@@ -1,12 +1,13 @@
 const router = require("express").Router();
-const CertService = require("../services/CertService");
 const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
+const CertService = require("../services/CertService");
 const CertTemplateService = require("../services/CertTemplateService");
+const MouroService = require("../services/MouroService");
 
 router.get(
 	"/all",
@@ -22,7 +23,7 @@ router.get(
 		try {
 			const certs = await CertService.getAll();
 			const result = certs.map(cert => {
-				return { _id: cert._id, name: cert.name, createdOn: cert.createdOn, participant: cert.participant };
+				return { _id: cert._id, name: cert.name, emmitedOn: cert.emmitedOn, participant: cert.participant };
 			});
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -45,8 +46,60 @@ router.get(
 		const id = req.params.id;
 		try {
 			const cert = await CertService.getById(id);
-			delete cert.deleted;
-			delete cert.createdOn;
+			return ResponseHandler.sendRes(res, cert);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.post(
+	"/:id/emmit",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		try {
+			const cert = await CertService.emmit(id);
+
+			const data = {
+				certificateData: cert.data.cert.map(data => {
+					return { value: data.value, name: data.name };
+				}),
+				participantData: cert.data.participant.map(data => {
+					return { value: data.value, name: data.name };
+				}),
+				otherData: cert.data.others.map(data => {
+					return { value: data.value, name: data.name };
+				}),
+				emmitedOn: cert.emmitedOn
+			};
+
+			cert.data.cert.push({
+				name: Messages.CERTIFICATE.CERT_FIELDS.NAME,
+				value: cert.name
+			});
+			cert.data.participant.push({
+				name: Messages.CERTIFICATE.CERT_FIELDS.PARTICIPANT_NAME,
+				value: cert.participant.name
+			});
+			cert.data.participant.push({
+				name: Messages.CERTIFICATE.CERT_FIELDS.PARTICIPANT_LAST_NAME,
+				value: cert.participant.lastName
+			});
+
+			const credential = MouroService.createCertificate(data);
+			if (Constants.DEBUGG) console.log(credential);
+
+			// mandar certificado a mouro
+			await CertificateService.saveCertificate(cert);
+
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

@@ -26,7 +26,10 @@ module.exports = {
 			}
 		},
 		CERTIFICATES: {
-			CREATE: API + "/cert/",
+			CREATE: API + "/cert",
+			EMMIT: id => {
+				return API + "/cert/" + id + "/emmit";
+			},
 			GET_ALL: API + "/cert/all",
 			GET: id => {
 				return API + "/cert/" + id;

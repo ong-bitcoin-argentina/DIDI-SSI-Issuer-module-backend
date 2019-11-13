@@ -33,6 +33,13 @@ module.exports = {
 			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado" }
 		}
 	},
+	CERTIFICATE: {
+		CERT_FIELDS: {
+			NAME: "NOMBRE DEL CERTIFICADO O CURSO",
+			PARTICIPANT_NAME: "NOMBRE",
+			PARTICIPANT_LAST_NAME: "APELLIDO"
+		}
+	},
 	VALIDATION: {
 		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido" },
 		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador" },
