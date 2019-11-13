@@ -17,7 +17,8 @@ const dataElement = {
 	},
 	options: [
 		{
-			type: String
+			type: String,
+			required: false
 		}
 	],
 	required: {

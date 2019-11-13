@@ -33,7 +33,7 @@ module.exports = {
 		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",
 		IS_PASSWORD: "isPassword",
-		IS_CERT_DATA: "isTemplateData",
+		IS_CERT_DATA: "isCertData",
 		IS_TEMPLATE_DATA: "isTemplateData",
 		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
 		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue"

@@ -7,6 +7,8 @@ import CertificateService from "../../../services/CertificateService";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
+import MaterialIcon from "material-icons-react";
+
 import Cookie from "js-cookie";
 
 import Constants from "../../../constants/Constants";
@@ -27,7 +29,7 @@ class Certificates extends Component {
 		return {
 			_id: cert._id,
 			certName: cert.name,
-			createdOn: cert.createdOn.split('T')[0],
+			createdOn: cert.emmitedOn ? cert.emmitedOn.split("T")[0] : "-",
 			participantFirstName: cert.participant.name,
 			participantLastName: cert.participant.lastName,
 			actions: (
@@ -96,6 +98,10 @@ class Certificates extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
 
+	moveToTemplates = () => {
+		this.props.history.push(Constants.ROUTES.TEMPLATES);
+	};
+
 	onLogout = () => {
 		Cookie.set("token", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);
@@ -108,12 +114,32 @@ class Certificates extends Component {
 		const loading = this.state.loading;
 		return (
 			<div className="Certificates">
+				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
 			</div>
 		);
 	}
+
+	renderSectionButtons = () => {
+		return (
+			<div className="HeadButtons">
+				<div className="SectionButtons">
+					<button className="MoveButton" disabled>
+						{Messages.LIST.BUTTONS.TO_CERTIFICATES}
+					</button>
+					<button className="MoveButton" onClick={this.moveToTemplates}>
+						{Messages.LIST.BUTTONS.TO_TEMPLATES}
+					</button>
+				</div>
+				<button className="CreateButton">
+					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+					<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT}</div>
+				</button>
+			</div>
+		);
+	};
 
 	renderTable = () => {
 		const certificates = this.state.certificates;

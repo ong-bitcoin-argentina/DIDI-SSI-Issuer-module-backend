@@ -47,6 +47,9 @@ const CertSchema = mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	emmitedOn: {
+		type: Date
+	},
 	createdOn: {
 		type: Date,
 		default: Date.now()
@@ -74,16 +77,6 @@ const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
 Cert.generate = async function(template, participantData, data) {
-	try {
-		const query = { name: name, deleted: false };
-		let cert = await Cert.findOne(query);
-
-		if (cert) cert = new Cert();
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(err);
-	}
-
 	let cert = new Cert();
 	cert.participant = participantData;
 	cert.templateId = template._id;

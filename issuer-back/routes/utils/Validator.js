@@ -107,7 +107,7 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
-	let validateValueMatchesType = function (type, value, err) {			
+	let validateValueMatchesType = function(type, value, err) {
 		switch (type) {
 			case Constants.CERT_FIELD_TYPES.Boolean:
 				if (value !== "true" && value !== "fakse") return Promise.reject(err);
@@ -127,7 +127,7 @@ let _doValidate = function(param, isHead) {
 				break;
 		}
 		return Promise.resolve(value);
-	}
+	};
 
 	let validateValueTypes = function(validation, param) {
 		validation.custom((value, { req }) => {
@@ -139,7 +139,8 @@ let _doValidate = function(param, isHead) {
 			let type = data[0]["type"];
 			for (let dataElement of data) {
 				if (!dataElement["type"] || type != dataElement["type"]) return Promise.reject(err);
-				if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value)) return Promise.reject(err);
+				if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value))
+					return Promise.reject(err);
 			}
 
 			validateValueMatchesType(type, value, err);
@@ -148,20 +149,20 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateValueInTemplate = function(validation, param) {
-		validation.custom(async function (value, { req }) {
+		validation.custom(async function(value, { req }) {
 			const templateId = JSON.parse(req.body.templateId);
 			let template;
 			try {
 				template = await TemplateService.getById(templateId);
-				if(!template) return Promise.reject(Messages.VALIDATION.CERT_DATA(param.name));
+				if (!template) return Promise.reject(Messages.VALIDATION.CERT_DATA(param.name));
 			} catch (err) {
 				return Promise.reject(err);
 			}
-
 			const data = JSON.parse(req.body.certData);
+
 			const templateData = template.data;
 
-			for(let key in Object.keys(templateData)) {
+			for (let key in Object.keys(templateData)) {
 				const dataSection = data[key];
 				const templateDataSection = templateData[key];
 
@@ -169,18 +170,15 @@ let _doValidate = function(param, isHead) {
 				dataSection.forEach(elem => {
 					if (!allTemplateNames.contains(elem.name))
 						return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
-
-					if (elem.type == Constants.CERT_FIELD_TYPES.Checkbox && !elem.options.includes(value)) return Promise.reject(err);
 					validateValueMatchesType(elem.type, elem.value, err);
 				});
 
 				const allNames = dataSection.map(elem => elem.name);
 				templateDataSection.forEach(elem => {
-					if (!allNames.contains(elem.name))
+					if (elem.required && !allNames.contains(elem.name))
 						return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
 				});
 			}
-
 			return Promise.resolve(value);
 		});
 	};

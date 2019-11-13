@@ -5,7 +5,7 @@ var getById = async function(id) {
 	try {
 		let cert = await Cert.getById(id);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.GET);
-		return Promise.resolve(template);
+		return Promise.resolve(cert);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.CERT.ERR.GET);

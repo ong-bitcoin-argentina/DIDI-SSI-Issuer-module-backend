@@ -22,7 +22,7 @@ router.get(
 		try {
 			const certs = await CertService.getAll();
 			const result = certs.map(cert => {
-				return { _id: cert._id, name: cert.name };
+				return { _id: cert._id, name: cert.name, createdOn: cert.createdOn, participant: cert.participant };
 			});
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -73,7 +73,7 @@ router.post(
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const templateId = req.body.templateId;
-		const data = JSON.parse(req.body.certData);
+		const data = JSON.parse(req.body.data);
 
 		const partData = {
 			name: req.body.firstName,

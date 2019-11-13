@@ -127,6 +127,10 @@ class Templates extends Component {
 		this.setState({ name: event.target.value, error: "" });
 	};
 
+	moveToCertificates = () => {
+		this.props.history.push(Constants.ROUTES.CERTIFICATES);
+	};
+
 	onLogout = () => {
 		Cookie.set("token", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);
@@ -141,14 +145,33 @@ class Templates extends Component {
 		const isDialogOpen = this.state.isDialogOpen;
 		return (
 			<div className="Templates">
+				{this.renderSectionButtons()}
 				{isDialogOpen && this.renderDialog()}
-				{this.renderCreateButton()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
 			</div>
 		);
 	}
+
+	renderSectionButtons = () => {
+		return (
+			<div className="HeadButtons">
+				<div className="SectionButtons">
+					<button className="MoveButton" onClick={this.moveToCertificates}>
+						{Messages.LIST.BUTTONS.TO_CERTIFICATES}
+					</button>
+					<button className="MoveButton" disabled>
+						{Messages.LIST.BUTTONS.TO_TEMPLATES}
+					</button>
+				</div>
+				<button className="CreateButton" onClick={this.onDialogOpen}>
+					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE}</div>
+				</button>
+			</div>
+		);
+	};
 
 	renderDialog = () => {
 		return (
@@ -205,15 +228,6 @@ class Templates extends Component {
 					minRows={Constants.TEMPLATES.TABLE.MIN_ROWS}
 				/>
 			</div>
-		);
-	};
-
-	renderCreateButton = () => {
-		return (
-			<button className="CreateButton" onClick={this.onDialogOpen}>
-				<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-				<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE}</div>
-			</button>
 		);
 	};
 
