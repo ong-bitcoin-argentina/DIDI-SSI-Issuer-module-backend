@@ -4,7 +4,7 @@ import "./Login.css";
 
 import Cookie from "js-cookie";
 
-import ApiService from "../../services/ApiService";
+import UserService from "../../services/UserService";
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
 
@@ -20,7 +20,7 @@ class Login extends Component {
 
 	onLogin = () => {
 		let self = this;
-		ApiService.login(
+		UserService.login(
 			this.state.name,
 			this.state.password,
 			async function(token) {

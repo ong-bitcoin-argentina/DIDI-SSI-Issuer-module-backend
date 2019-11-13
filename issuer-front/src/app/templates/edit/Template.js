@@ -5,7 +5,7 @@ import "./Template.css";
 import Cookie from "js-cookie";
 import MaterialIcon from "material-icons-react";
 
-import ApiService from "../../../services/ApiService";
+import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
@@ -45,7 +45,7 @@ class Template extends Component {
 
 		const self = this;
 		this.setState({ loading: true });
-		ApiService.getTemplate(
+		TemplateService.get(
 			token,
 			id,
 			async function(template) {
@@ -76,11 +76,11 @@ class Template extends Component {
 			name: this.state.name,
 			type: this.state.dataType,
 			required: this.state.required,
-			options: this.state.options
+			options: this.state.options.length ? this.state.options : undefined
 		};
 
 		this.setState({ loading: true });
-		ApiService.createTemplateField(
+		TemplateService.createField(
 			token,
 			id,
 			data,
@@ -101,7 +101,7 @@ class Template extends Component {
 		const self = this;
 
 		this.setState({ loading: true });
-		ApiService.toggleRequiredForTemplateField(
+		TemplateService.toggleRequired(
 			token,
 			id,
 			data,
@@ -138,7 +138,7 @@ class Template extends Component {
 		const self = this;
 
 		this.setState({ loading: true });
-		ApiService.setTemplateDefaultField(
+		TemplateService.setDefaultField(
 			token,
 			id,
 			data,
@@ -160,7 +160,7 @@ class Template extends Component {
 		const self = this;
 
 		this.setState({ loading: true });
-		ApiService.deleteTemplateField(
+		TemplateService.deleteField(
 			token,
 			id,
 			data,

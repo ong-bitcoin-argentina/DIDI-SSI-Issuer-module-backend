@@ -2,30 +2,30 @@ import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
 import "./Certificate.css";
 
+import CertificateService from "../../../services/CertificateService";
+
 import Cookie from "js-cookie";
 
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
-
 
 class Certificate extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: true,
+			loading: true
 		};
 	}
 
 	componentDidMount() {
-				/* TODO
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
 		const token = Cookie.get("token");
 
 		const self = this;
 		this.setState({ loading: true });
-		ApiService.getCertificate(
+		CertificateService.get(
 			token,
 			id,
 			async function(cert) {
@@ -36,7 +36,6 @@ class Certificate extends Component {
 				console.log(err);
 			}
 		);
-		*/
 	}
 
 	onBack = () => {
@@ -60,7 +59,6 @@ class Certificate extends Component {
 			</div>
 		);
 	}
-
 
 	renderButtons = () => {
 		return (

@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
 import "./Certificates.css";
 
+import CertificateService from "../../../services/CertificateService";
+
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
@@ -22,13 +24,12 @@ class Certificates extends Component {
 	}
 
 	getCertificatesData = (self, cert) => {
-		/* TODO
 		return {
 			_id: cert._id,
 			certName: cert.name,
-			createdOn: cert.createdOn,
-			participantFirstName: cert.participan.name,
-			participantLastName: cert.participan.lastName,
+			createdOn: cert.createdOn.split('T')[0],
+			participantFirstName: cert.participant.name,
+			participantLastName: cert.participant.lastName,
 			actions: (
 				<div className="Actions">
 					<div
@@ -50,16 +51,14 @@ class Certificates extends Component {
 				</div>
 			)
 		};
-		*/
 	};
 
 	componentDidMount() {
-		/* TODO
 		const token = Cookie.get("token");
 		const self = this;
 
 		self.setState({ loading: true });
-		ApiService.getCertificates(
+		CertificateService.getAll(
 			token,
 			async function(certificates) {
 				certificates = certificates.map(certificate => {
@@ -72,20 +71,18 @@ class Certificates extends Component {
 				console.log(err);
 			}
 		);
-		*/
 	}
 
 	onCertificateDelete = id => {
-		/* TODO
 		const token = Cookie.get("token");
 		const self = this;
 
 		self.setState({ loading: true });
-		ApiService.deleteCertificate(
+		CertificateService.delete(
 			token,
 			id,
-			async function(certificate) {
-				const certificate = self.state.certificates.filter(t => t._id !== certificate._id);
+			async function(cert) {
+				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
 				self.setState({ certificates: certificates, loading: false });
 			},
 			function(err) {
@@ -93,7 +90,6 @@ class Certificates extends Component {
 				console.log(err);
 			}
 		);
-		*/
 	};
 
 	onCertificateEdit = id => {

@@ -1,34 +1,8 @@
 import Constants from "../constants/Constants";
 
-export default class ApiService {
-	static login(user, pass, cb, errCb) {
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				name: user,
-				password: pass
-			})
-		};
+export default class TemplateService {
 
-		fetch(Constants.API_ROUTES.LOGIN, data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					const token = data.data.token;
-					return cb(token);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
-	}
-
-	static createTemplate(token, name, cb, errCb) {
+	static create(token, name, cb, errCb) {
 		const data = {
 			method: "POST",
 			headers: {
@@ -43,7 +17,7 @@ export default class ApiService {
 			})
 		};
 
-		fetch(Constants.API_ROUTES.CREATE_TEMPLATE, data)
+		fetch(Constants.API_ROUTES.TEMPLATES.CREATE, data)
 			.then(data => {
 				return data.json();
 			})
@@ -57,7 +31,7 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static getTemplates(token, cb, errCb) {
+	static getAll(token, cb, errCb) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -66,7 +40,7 @@ export default class ApiService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.GET_TEMPLATES, data)
+		fetch(Constants.API_ROUTES.TEMPLATES.GET_ALL, data)
 			.then(data => {
 				return data.json();
 			})
@@ -80,7 +54,7 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static getTemplate(token, id, cb, errCb) {
+	static get(token, id, cb, errCb) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -89,7 +63,7 @@ export default class ApiService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.GET_TEMPLATE(id), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.GET(id), data)
 			.then(data => {
 				return data.json();
 			})
@@ -103,7 +77,7 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static toggleRequiredForTemplateField(token, id, dataElem, type, cb, errCb) {
+	static toggleRequired(token, id, dataElem, type, cb, errCb) {
 		const data = {
 			method: "PUT",
 			headers: {
@@ -116,7 +90,7 @@ export default class ApiService {
 			})
 		};
 
-		fetch(Constants.API_ROUTES.TOGGLE_REQUIRED_TEMPLATE_FIELD(id), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.TOGGLE_REQUIRED(id), data)
 			.then(data => {
 				return data.json();
 			})
@@ -130,7 +104,7 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static createTemplateField(token, id, dataElem, type, cb, errCb) {
+	static createField(token, id, dataElem, type, cb, errCb) {
 		const data = {
 			method: "PUT",
 			headers: {
@@ -143,7 +117,7 @@ export default class ApiService {
 			})
 		};
 
-		fetch(Constants.API_ROUTES.CREATE_TEMPLATE_FIELD(id), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.CREATE_FIELD(id), data)
 			.then(data => {
 				return data.json();
 			})
@@ -157,7 +131,7 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static setTemplateDefaultField(token, id, dataElem, defaultValue, type, cb, errCb) {
+	static setDefaultField(token, id, dataElem, defaultValue, type, cb, errCb) {
 		const data = {
 			method: "PUT",
 			headers: {
@@ -171,7 +145,7 @@ export default class ApiService {
 			})
 		};
 
-		fetch(Constants.API_ROUTES.SET_DEFAULT_TEMPLATE_FIELD(id), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.SET_DEFAULT_FIELD(id), data)
 			.then(data => {
 				return data.json();
 			})
@@ -194,7 +168,7 @@ export default class ApiService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.DELETE_TEMPLATE(id), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.DELETE(id), data)
 			.then(data => {
 				return data.json();
 			})
@@ -208,7 +182,7 @@ export default class ApiService {
 			.catch(err => errCb(err));
 	}
 
-	static deleteTemplateField(token, id, dataElem, type, cb, errCb) {
+	static deleteField(token, id, dataElem, type, cb, errCb) {
 		const data = {
 			method: "DELETE",
 			headers: {
@@ -221,7 +195,7 @@ export default class ApiService {
 			})
 		};
 
-		fetch(Constants.API_ROUTES.DELETE_TEMPLATE_FIELD(id), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.DELETE_FIELD(id), data)
 			.then(data => {
 				return data.json();
 			})

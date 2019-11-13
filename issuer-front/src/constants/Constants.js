@@ -3,25 +3,37 @@ const API = "http://localhost:3500/api/1.0/didi_issuer";
 module.exports = {
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
-		GET_TEMPLATES: API + "/template/all",
-		GET_TEMPLATE: id => {
-			return API + "/template/" + id;
+		TEMPLATES: {
+			GET_ALL: API + "/template/all",
+			GET: id => {
+				return API + "/template/" + id;
+			},
+			CREATE: API + "/template/",
+			CREATE_FIELD: id => {
+				return API + "/template/" + id + "/data";
+			},
+			TOGGLE_REQUIRED: id => {
+				return API + "/template/" + id + "/required";
+			},
+			SET_DEFAULT_FIELD: id => {
+				return API + "/template/" + id + "/default";
+			},
+			DELETE: id => {
+				return API + "/template/" + id;
+			},
+			DELETE_FIELD: id => {
+				return API + "/template/" + id + "/data";
+			}
 		},
-		CREATE_TEMPLATE: API + "/template/",
-		CREATE_TEMPLATE_FIELD: id => {
-			return API + "/template/" + id + "/data";
-		},
-		TOGGLE_REQUIRED_TEMPLATE_FIELD: id => {
-			return API + "/template/" + id + "/required";
-		},
-		SET_DEFAULT_TEMPLATE_FIELD: id => {
-			return API + "/template/" + id + "/default";
-		},
-		DELETE_TEMPLATE: id => {
-			return API + "/template/" + id;
-		},
-		DELETE_TEMPLATE_FIELD: id => {
-			return API + "/template/" + id + "/data";
+		CERTIFICATES: {
+			CREATE: API + "/cert/",
+			GET_ALL: API + "/cert/all",
+			GET: id => {
+				return API + "/cert/" + id;
+			},
+			DELETE: id => {
+				return API + "/cert/" + id;
+			}
 		}
 	},
 	ROUTES: {

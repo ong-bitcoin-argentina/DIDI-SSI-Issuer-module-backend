@@ -7,7 +7,7 @@ import "react-table/react-table.css";
 
 import Cookie from "js-cookie";
 
-import ApiService from "../../../services/ApiService";
+import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
@@ -63,7 +63,7 @@ class Templates extends Component {
 		const self = this;
 
 		self.setState({ loading: true });
-		ApiService.getTemplates(
+		TemplateService.getAll(
 			token,
 			async function(templates) {
 				templates = templates.map(template => {
@@ -83,7 +83,7 @@ class Templates extends Component {
 		const name = this.state.name;
 		const self = this;
 		self.setState({ loading: true });
-		ApiService.createTemplate(
+		TemplateService.create(
 			token,
 			name,
 			async function(template) {
@@ -102,7 +102,7 @@ class Templates extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
-		ApiService.deleteTemplate(
+		TemplateService.delete(
 			token,
 			id,
 			async function(template) {
