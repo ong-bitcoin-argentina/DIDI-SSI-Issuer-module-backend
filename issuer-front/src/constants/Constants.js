@@ -27,7 +27,9 @@ module.exports = {
 	ROUTES: {
 		LOGIN: "/login",
 		TEMPLATES: "/templates",
-		EDIT_TEMPLATE: "/templates/edit/"
+		EDIT_TEMPLATE: "/templates/edit/",
+		CERTIFICATES: "/certificates",
+		EDIT_CERT: "/certificates/edit/"
 	},
 
 	TEMPLATES: {
@@ -64,6 +66,13 @@ module.exports = {
 			CERT: "certData",
 			OTHERS: "othersData",
 			PARTICIPANT: "participantData"
+		}
+	},
+
+	CERTIFICATES: {
+		TABLE: {
+			PAGE_SIZE: 10,
+			MIN_ROWS: 3
 		}
 	}
 };

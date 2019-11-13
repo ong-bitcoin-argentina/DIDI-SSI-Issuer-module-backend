@@ -36,9 +36,13 @@ module.exports = {
 			CLOSE: "Cerrar"
 		},
 		TABLE: {
-			NAME: "Nombre",
-			PREV: "Anterior",
-			NEXT: "Siguiente"
+			TEMPLATE: "TEMPLATE DE CERTIFICADO",
+			CERT: "CERTIFICADO",
+			LAST_NAME: "APELLIDO",
+			NAME: "NOMBRE",
+			PREV: "ANTERIOR",
+			NEXT: "SIGUIENTE",
+			EMISSION_DATE: "FECHA DE EMISSION"
 		},
 		BUTTONS: {
 			EDIT: "Editar",

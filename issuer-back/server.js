@@ -9,6 +9,7 @@ const Messages = require("./constants/Messages");
 
 const UserRoutes = require("./routes/UserRoutes");
 const CertTemplateRoutes = require("./routes/CertTemplateRoutes");
+const CertRoutes = require("./routes/CertRoutes");
 
 const app = express();
 
@@ -59,6 +60,7 @@ if (Constants.DEBUGG) console.log("route: " + route);
 
 app.use(route + "/user", UserRoutes);
 app.use(route + "/template", CertTemplateRoutes);
+app.use(route + "/cert", CertRoutes);
 
 app.listen(Constants.PORT, function() {
 	console.log(Messages.INDEX.MSG.RUNNING_ON + Constants.PORT);

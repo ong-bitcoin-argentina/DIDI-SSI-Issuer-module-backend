@@ -326,6 +326,10 @@ class Template extends Component {
 	renderTemplate = () => {
 		const template = this.state.template;
 		const nameData = { name: "name", defaultValue: this.state.template.name, required: true, mandatory: true };
+		const participantData = [
+			{ name: "firstName", defaultValue: "", required: true, mandatory: true },
+			{ name: "lastName", defaultValue: "", required: true, mandatory: true }
+		];
 		return (
 			<div className="Template-Content">
 				{this.renderSection(
@@ -335,7 +339,7 @@ class Template extends Component {
 				)}
 				{this.renderSection(
 					Messages.EDIT.DATA.PART,
-					template.data.participant,
+					[...participantData, ...template.data.participant],
 					Constants.TEMPLATES.DATA_TYPES.PARTICIPANT
 				)}
 				{this.renderSection(Messages.EDIT.DATA.OTHER, template.data.others, Constants.TEMPLATES.DATA_TYPES.OTHERS)}

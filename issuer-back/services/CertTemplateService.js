@@ -36,9 +36,9 @@ module.exports.getAll = async function() {
 	}
 };
 
-module.exports.create = async function(name, certData, participantData, othersData) {
+module.exports.create = async function(name, data) {
 	try {
-		const template = await CertTemplate.generate(name, certData, participantData, othersData);
+		const template = await CertTemplate.generate(name, data);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
 		return Promise.resolve(template);
 	} catch (err) {

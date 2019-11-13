@@ -122,29 +122,27 @@ CertTemplateSchema.methods.rename = async function(name) {
 };
 
 CertTemplateSchema.methods._doSetDefaultData = async function(data, defaultValue, field) {
+	var formatDataByType = function(type, value) {
+		switch (type) {
+			case Constants.CERT_FIELD_TYPES.Boolean:
+				return value == "true";
+			case Constants.CERT_FIELD_TYPES.Checkbox:
+				return value;
+			case Constants.CERT_FIELD_TYPES.Date:
+				return value;
+			case Constants.CERT_FIELD_TYPES.Number:
+				return parseInt(value, 10);
+			case Constants.CERT_FIELD_TYPES.Paragraph:
+				return value;
+			case Constants.CERT_FIELD_TYPES.Text:
+				return value;
+		}
+	};
 	const names = data.map(dataElement => dataElement.name);
+
 	this.data[field] = this.data[field].map(dataElem => {
 		if (names.includes(dataElem.name)) {
-			switch (dataElem.type) {
-				case Constants.CERT_FIELD_TYPES.Boolean:
-					dataElem.defaultValue = defaultValue == "true";
-					break;
-				case Constants.CERT_FIELD_TYPES.Checkbox:
-					dataElem.defaultValue = defaultValue;
-					break;
-				case Constants.CERT_FIELD_TYPES.Date:
-					dataElem.defaultValue = defaultValue;
-					break;
-				case Constants.CERT_FIELD_TYPES.Number:
-					dataElem.defaultValue = parseInt(defaultValue, 10);
-					break;
-				case Constants.CERT_FIELD_TYPES.Paragraph:
-					dataElem.defaultValue = defaultValue;
-					break;
-				case Constants.CERT_FIELD_TYPES.Text:
-					dataElem.defaultValue = defaultValue;
-					break;
-			}
+			dataElem.defaultValue = formatDataByType(dataElem.type, defaultValue);
 		}
 		return dataElem;
 	});
@@ -211,26 +209,19 @@ CertTemplateSchema.methods.delete = async function() {
 const CertTemplate = mongoose.model("CertTemplate", CertTemplateSchema);
 module.exports = CertTemplate;
 
-CertTemplate.generate = async function(name, certData, participantData, othersData) {
-	let template;
+CertTemplate.generate = async function(name, data) {
 	try {
 		const query = { name: name, deleted: false };
-		template = await CertTemplate.findOne(query);
+		const template = await CertTemplate.findOne(query);
+		if (template) return null;
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
 	}
 
-	if (!template) {
-		template = new CertTemplate();
-	}
-
+	let template = new CertTemplate();
 	template.name = name;
-	template.data = {
-		cert: certData,
-		participant: participantData,
-		others: othersData
-	};
+	template.data = data;
 	template.createdOn = new Date();
 	template.deleted = false;
 

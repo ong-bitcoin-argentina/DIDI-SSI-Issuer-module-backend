@@ -17,9 +17,17 @@ module.exports = {
 			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido" }
 		}
 	},
+	CERT: {
+		ERR: {
+			CREATE: { code: "CERT_CREATE", message: "El certificado no pudo ser creado" },
+			GET: { code: "CERT_GET", message: "El certificado no pudo ser obtenido" },
+			EDIT: { code: "CERT_EDIT", message: "El certificado no pudo ser modificado" },
+			DELETE: { code: "CERT_DELETE", message: "El certificado no pudo ser borrado" }
+		}
+	},
 	TEMPLATE: {
 		ERR: {
-			CREATE: { code: "UTEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado" },
+			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado" },
 			GET: { code: "TEMPLATE_GET", message: "El modelo de certificado no pudo ser obtenido" },
 			EDIT: { code: "TEMPLATE_EDIT", message: "El modelo de certificado no pudo ser modificado" },
 			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado" }
@@ -35,7 +43,10 @@ module.exports = {
 		},
 		TEMPLATE_DATA_VALUE: {
 			INVALID_DATA_TYPE: function(type) {
-				return { code: "TEMPLATE_DATA_VALUE", message: "el campo " + type + " no es un valor por defecto valido para ese campo" };
+				return {
+					code: "TEMPLATE_DATA_VALUE",
+					message: "el campo " + type + " no es un valor por defecto valido para ese campo"
+				};
 			}
 		},
 		TEMPLATE_DATA: {
@@ -53,6 +64,17 @@ module.exports = {
 					code: "MISSING_CHECKBOX_OPTIONS",
 					message: "el campo " + type + " es de tipo 'checkbox' pero le falta el campo 'options'"
 				};
+			}
+		},
+		CERT_DATA: {
+			INVALID_TEMPLATE_ID: function(type) {
+				return { code: "INVALID_TEMPLATE_ID", message: "el campo " + type + " es invalido" };
+			},
+			EXTRA_ELEMENT: function(name) {
+				return { code: "EXTRA_ELEMENT", message: "el campo " + name + " no se encuentra en el modelo de certificado" };
+			},
+			MISSING_ELEMENT: function(name) {
+				return { code: "MISSING_ELEMENT", message: "el campo " + name + " esta faltando en el certificado" };
 			}
 		},
 		REQUESTER_IS: user => {

@@ -4,7 +4,6 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
-const Messages = require("../constants/Messages");
 
 router.get(
 	"/all",
@@ -77,12 +76,15 @@ router.post(
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const name = req.body.name;
-		const certData = JSON.parse(req.body.certData);
-		const participantData = JSON.parse(req.body.participantData);
-		const othersData = JSON.parse(req.body.othersData);
+
+		const data = {
+			cert: JSON.parse(req.body.certData),
+			participant: JSON.parse(req.body.participantData),
+			others: JSON.parse(req.body.othersData)
+		};
 
 		try {
-			const template = await CertTemplateService.create(name, certData, participantData, othersData);
+			const template = await CertTemplateService.create(name, data);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

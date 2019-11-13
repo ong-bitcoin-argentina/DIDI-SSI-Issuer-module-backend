@@ -1,0 +1,37 @@
+.Certificates {
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+}
+
+.CreateButton {
+	width: 150px;
+	margin-bottom: 10px;
+	align-self: flex-end;
+	display: flex;
+	flex-direction: row;
+}
+
+.CreateButtonText {
+	padding-top: 0px;
+}
+
+.LogoutButton {
+	align-self: center;
+}
+
+.CertificateTable {
+	background-color: aliceblue;
+	color: black;
+	margin-bottom: 10px;
+}
+
+.Actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.DeleteAction {
+	margin-left: 10px;
+}

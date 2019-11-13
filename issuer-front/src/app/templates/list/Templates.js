@@ -61,6 +61,8 @@ class Templates extends Component {
 	componentDidMount() {
 		const token = Cookie.get("token");
 		const self = this;
+		
+		self.setState({ loading: true });
 		ApiService.getTemplates(
 			token,
 			async function(templates) {
@@ -183,7 +185,7 @@ class Templates extends Component {
 				accessor: "_id"
 			},*/
 			{
-				Header: Messages.LIST.TABLE.NAME,
+				Header: Messages.LIST.TABLE.TEMPLATE,
 				accessor: "name"
 			},
 			{

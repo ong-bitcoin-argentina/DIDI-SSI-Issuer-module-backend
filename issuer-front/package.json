@@ -4,6 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"@material-ui/core": "^4.6.0",
+		"@material/react-tab-bar": "^0.15.0",
 		"dateformat": "^3.0.3",
 		"js-cookie": "^2.2.1",
 		"material-icons-react": "^1.0.4",
