@@ -22,6 +22,7 @@ module.exports = {
 		},
 		BUTTONS: {
 			CREATE: "NUEVO CAMPO",
+			SAVE: "Guardar",
 			BACK: "Volver",
 			EXIT: "Salir",
 			REQUIRED: "Requerido",

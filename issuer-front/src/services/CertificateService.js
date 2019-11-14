@@ -1,23 +1,48 @@
 import Constants from "../constants/Constants";
 
 export default class CertificateService {
-	static create(token, name, cb, errCb) {
+	static save(token, cert, cb, errCb) {
+		const certData = {
+			cert: cert.data.cert.map(data => {
+				return {
+					name: data.name,
+					value: data.value
+				};
+			}),
+			participant: cert.data.participant.map(data => {
+				return {
+					name: data.name,
+					value: data.value
+				};
+			}),
+			others: cert.data.others.map(data => {
+				return {
+					name: data.name,
+					value: data.value
+				};
+			})
+		};
+
+		const method = cert._id ? "PUT" : "POST";
+		const url = cert._id ? Constants.API_ROUTES.CERTIFICATES.EDIT(cert._id) : Constants.API_ROUTES.CERTIFICATES.CREATE;
 		const data = {
-			method: "POST",
+			method: method,
 			headers: {
 				"Content-Type": "application/json",
 				token: token
 			},
 			body: JSON.stringify({
-				name: name,
-				certData: "[]",
-				participantData: "[]",
-				othersData: "[]"
+				templateId: cert.templateId,
+				firstName: cert.participant.name,
+				lastName: cert.participant.lastName,
+				did: cert.participant.did,
+				data: JSON.stringify(certData)
 			})
 		};
 
-		fetch(Constants.API_ROUTES.CERTIFICATES.CREATE, data)
+		fetch(url, data)
 			.then(data => {
+				console.log(data);
 				return data.json();
 			})
 			.then(data => {

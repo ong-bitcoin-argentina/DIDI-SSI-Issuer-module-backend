@@ -124,6 +124,26 @@ class Certificate extends Component {
 		);
 	};
 
+	onSave = () => {
+		const token = Cookie.get("token");
+		const cert = this.state.cert;
+		const self = this;
+
+		self.setState({ loading: true });
+		CertificateService.save(
+			token,
+			cert,
+			async function(_) {
+				self.setState({ loading: false });
+				self.props.history.push(Constants.ROUTES.CERTIFICATES);
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
 	onBack = () => {
 		this.props.history.push(Constants.ROUTES.CERTIFICATES);
 	};
@@ -206,7 +226,7 @@ class Certificate extends Component {
 			<Select
 				className="DataDefault DataDefaultInput TemplateSelector"
 				autoFocus
-				value={this.state.selectedTemplate}
+				value={this.state.selectedTemplate ? this.state.selectedTemplate : this.state.templates[0]}
 				onChange={event => {
 					this.templateSelected(event.target.value);
 				}}
@@ -225,6 +245,9 @@ class Certificate extends Component {
 	renderButtons = () => {
 		return (
 			<div className="CertificateButtons">
+				<button className="saveButton" onClick={this.onSave}>
+					{Messages.EDIT.BUTTONS.SAVE}
+				</button>
 				<button className="backButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
 				</button>

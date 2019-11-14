@@ -27,6 +27,9 @@ module.exports = {
 		},
 		CERTIFICATES: {
 			CREATE: API + "/cert",
+			EDIT: id => {
+				return API + "/cert/" + id;
+			},
 			EMMIT: id => {
 				return API + "/cert/" + id + "/emmit";
 			},
@@ -89,7 +92,7 @@ module.exports = {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
 		},
-		PARTICIPANT: {
+		PARTICIPANT: {
 			NAME: "Nombre",
 			LAST_NAME: "Apellido"
 		}

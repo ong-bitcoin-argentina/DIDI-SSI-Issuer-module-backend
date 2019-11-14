@@ -38,7 +38,7 @@ module.exports.create = async function(template, data, partData) {
 module.exports.edit = async function(id, partData, data) {
 	try {
 		let cert = await getById(id);
-		cert = await Cert.edit(partData, data);
+		cert = await cert.edit(partData, data);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
@@ -48,21 +48,45 @@ module.exports.edit = async function(id, partData, data) {
 };
 
 module.exports.addTemplateDataToCert = function(cert, template) {
-	for (let key in Object.keys(cert.data)) {
-		if (cert.data[key] instanceof Object) {
-			cert.data[key] = cert.data[key].map(elem => {
-				const templateElem = template.data[key].find(tempElem => tempElem.name === elem.name);
-				return {
-					name: elem.name,
-					type: templateElem.type,
-					options: templateElem.options,
-					value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
-					required: templateElem.required
-				};
-			});
-		}
-	}
-	return cert;
+	const data = {
+		cert: cert.data.cert.map(elem => {
+			const templateElem = template.data.cert.find(tempElem => tempElem.name === elem.name);
+			return {
+				name: elem.name,
+				type: templateElem.type,
+				options: templateElem.options,
+				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
+				required: templateElem.required
+			};
+		}),
+		participant: cert.data.participant.map(elem => {
+			const templateElem = template.data.participant.find(tempElem => tempElem.name === elem.name);
+			return {
+				name: elem.name,
+				type: templateElem.type,
+				options: templateElem.options,
+				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
+				required: templateElem.required
+			};
+		}),
+		others: cert.data.others.map(elem => {
+			const templateElem = template.data.others.find(tempElem => tempElem.name === elem.name);
+			return {
+				name: elem.name,
+				type: templateElem.type,
+				options: templateElem.options,
+				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
+				required: templateElem.required
+			};
+		})
+	};
+	return {
+		_id: cert._id,
+		templateId: cert.templateId,
+		name: cert.name,
+		participant: cert.participant,
+		data: data
+	};
 };
 
 module.exports.emmit = async function(id) {

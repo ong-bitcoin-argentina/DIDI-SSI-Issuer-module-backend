@@ -150,7 +150,7 @@ let _doValidate = function(param, isHead) {
 
 	let validateValueInTemplate = function(validation, param) {
 		validation.custom(async function(value, { req }) {
-			const templateId = JSON.parse(req.body.templateId);
+			const templateId = req.body.templateId;
 			let template;
 			try {
 				template = await TemplateService.getById(templateId);
@@ -158,19 +158,17 @@ let _doValidate = function(param, isHead) {
 			} catch (err) {
 				return Promise.reject(err);
 			}
-			const data = JSON.parse(req.body.certData);
 
+			const data = JSON.parse(req.body.data);
 			const templateData = template.data;
 
 			for (let key in Object.keys(templateData)) {
 				const dataSection = data[key];
 				const templateDataSection = templateData[key];
 
-				const allTemplateNames = templateDataSection.map(elem => elem.name);
 				dataSection.forEach(elem => {
 					const template = templateDataSection.find(template => template.name === elem.name);
-					if (!template)
-						return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+					if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
 					validateValueMatchesType(template.type, elem.value, err);
 				});
 

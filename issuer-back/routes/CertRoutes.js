@@ -54,8 +54,8 @@ router.get(
 		let template;
 		try {
 			template = await CertTemplateService.getById(cert.templateId);
-			cert = CertService.addTemplateDataToCert(cert, template);
-			return ResponseHandler.sendRes(res, cert);
+			const result = CertService.addTemplateDataToCert(cert, template);
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

@@ -87,6 +87,19 @@ CertSchema.methods.emmit = async function() {
 	}
 };
 
+CertSchema.methods.edit = async function(participantData, data) {
+	this.participant = participantData;
+	this.data = copyData(data);
+
+	try {
+		await this.save();
+		return Promise.resolve(this);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
 const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
@@ -115,19 +128,6 @@ Cert.generate = async function(template, data, participantData) {
 	cert.name = template.name;
 	cert.createdOn = new Date();
 	cert.deleted = false;
-
-	try {
-		cert = await cert.save();
-		return Promise.resolve(cert);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(err);
-	}
-};
-
-Cert.edit = async function(participantData, data) {
-	cert.participant = participantData;
-	cert.data = copyData(data);
 
 	try {
 		cert = await cert.save();
