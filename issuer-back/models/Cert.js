@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.ObjectId;
-const Constants = require("../constants/Constants");
 
 const dataElement = {
 	name: {
@@ -9,13 +8,7 @@ const dataElement = {
 	},
 	value: {
 		type: String,
-		default: "",
-		required: true
-	},
-	type: {
-		type: String,
-		enum: Object.keys(Constants.CERT_FIELD_TYPES),
-		required: true
+		default: ""
 	}
 };
 
@@ -29,6 +22,10 @@ const CertSchema = mongoose.Schema({
 		required: true
 	},
 	participant: {
+		did: {
+			type: String,
+			required: true
+		},
 		name: {
 			type: String,
 			required: true
@@ -93,14 +90,44 @@ CertSchema.methods.emmit = async function() {
 const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
-Cert.generate = async function(template, participantData, data) {
+var copyData = function(data) {
+	return {
+		cert: data.cert.map(data => {
+			return {
+				name: data.name,
+				value: data.value ? data.value : ""
+			};
+		}),
+		participant: data.participant.map(data => {
+			return { name: data.name, value: data.value ? data.value : "" };
+		}),
+		others: data.others.map(data => {
+			return { name: data.name, value: data.value ? data.value : "" };
+		})
+	};
+};
+
+Cert.generate = async function(template, data, participantData) {
 	let cert = new Cert();
 	cert.participant = participantData;
 	cert.templateId = template._id;
+	cert.data = copyData(data);
 	cert.name = template.name;
-	cert.data = data;
 	cert.createdOn = new Date();
 	cert.deleted = false;
+
+	try {
+		cert = await cert.save();
+		return Promise.resolve(cert);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+Cert.edit = async function(participantData, data) {
+	cert.participant = participantData;
+	cert.data = copyData(data);
 
 	try {
 		cert = await cert.save();

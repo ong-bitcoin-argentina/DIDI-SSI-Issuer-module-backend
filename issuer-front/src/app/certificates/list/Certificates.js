@@ -14,6 +14,13 @@ import Cookie from "js-cookie";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
 class Certificates extends Component {
 	constructor(props) {
 		super(props);
@@ -21,12 +28,12 @@ class Certificates extends Component {
 		this.state = {
 			loading: false,
 			certificates: [],
+			isDialogOpen: false,
 			name: ""
 		};
 	}
 
 	getCertificatesData = (self, cert) => {
-		console.log(cert);
 		const emmited = cert.emmitedOn;
 		return {
 			_id: cert._id,
@@ -132,6 +139,10 @@ class Certificates extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
 
+	onCertificateCreate = () => {
+		this.props.history.push(Constants.ROUTES.EDIT_CERT);
+	};
+
 	moveToTemplates = () => {
 		this.props.history.push(Constants.ROUTES.TEMPLATES);
 	};
@@ -141,13 +152,18 @@ class Certificates extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
+	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
+
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 		const loading = this.state.loading;
+		const isDialogOpen = this.state.isDialogOpen;
 		return (
 			<div className="Certificates">
+				{isDialogOpen && this.renderDialog()}
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
@@ -155,6 +171,33 @@ class Certificates extends Component {
 			</div>
 		);
 	}
+
+	renderDialog = () => {
+		return (
+			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.TITLE}</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="name"
+						label={Messages.LIST.DIALOG.NAME}
+						type="text"
+						onChange={this.updateName}
+						fullWidth
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={this.onCertificateCreate} disabled={!this.state.name} color="primary">
+						{Messages.LIST.DIALOG.CREATE}
+					</Button>
+					<Button onClick={this.onDialogClose} color="primary">
+						{Messages.LIST.DIALOG.CLOSE}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
 
 	renderSectionButtons = () => {
 		return (
@@ -167,7 +210,7 @@ class Certificates extends Component {
 						{Messages.LIST.BUTTONS.TO_TEMPLATES}
 					</button>
 				</div>
-				<button className="CreateButton">
+				<button className="CreateButton" onClick={this.onCertificateCreate}>
 					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
 					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
 				</button>

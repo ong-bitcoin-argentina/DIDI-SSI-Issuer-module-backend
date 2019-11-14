@@ -8,7 +8,6 @@ const MONGO_DB = process.env.MONGO_DB || "didi_issuer";
 const SERVER_DID = process.env.SERVER_DID || "***REMOVED***";
 const SERVER_PRIVATE_KEY =
 	process.env.SERVER_PRIVATE_KEY || "***REMOVED***";
-const SUB = process.env.SUB || "did:ethr:0xa9ec70fd9371dd3b7ef73fb8f537c172b6d3c73d";
 
 const PORT = process.env.PORT || 3500;
 
@@ -56,7 +55,6 @@ module.exports = {
 	USER_TYPES: USER_TYPES,
 	CERT_FIELD_TYPES: CERT_FIELD_TYPES,
 
-	SUB: SUB,
 	NOT_BACK_FROM: 1562950282,
 	CREDENTIALS: {
 		TYPES: {

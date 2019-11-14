@@ -159,7 +159,7 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static deleteTemplate(token, id, cb, errCb) {
+	static delete(token, id, cb, errCb) {
 		const data = {
 			method: "DELETE",
 			headers: {

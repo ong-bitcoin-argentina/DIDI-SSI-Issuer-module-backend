@@ -24,15 +24,45 @@ module.exports.getAll = async function() {
 	}
 };
 
-module.exports.create = async function(template, partData, data) {
+module.exports.create = async function(template, data, partData) {
 	try {
-		const cert = await Cert.generate(template, partData, data);
+		const cert = await Cert.generate(template, data, partData);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.CERT.ERR.CREATE);
 	}
+};
+
+module.exports.edit = async function(id, partData, data) {
+	try {
+		let cert = await getById(id);
+		cert = await Cert.edit(partData, data);
+		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
+		return Promise.resolve(cert);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.CERT.ERR.CREATE);
+	}
+};
+
+module.exports.addTemplateDataToCert = function(cert, template) {
+	for (let key in Object.keys(cert.data)) {
+		if (cert.data[key] instanceof Object) {
+			cert.data[key] = cert.data[key].map(elem => {
+				const templateElem = template.data[key].find(tempElem => tempElem.name === elem.name);
+				return {
+					name: elem.name,
+					type: templateElem.type,
+					options: templateElem.options,
+					value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
+					required: templateElem.required
+				};
+			});
+		}
+	}
+	return cert;
 };
 
 module.exports.emmit = async function(id) {

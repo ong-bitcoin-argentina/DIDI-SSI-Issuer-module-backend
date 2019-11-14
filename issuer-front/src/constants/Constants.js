@@ -88,6 +88,10 @@ module.exports = {
 		TABLE: {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
+		},
+		PARTICIPANT: {
+			NAME: "Nombre",
+			LAST_NAME: "Apellido"
 		}
 	}
 };

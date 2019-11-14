@@ -5,14 +5,11 @@ import "./Template.css";
 import Cookie from "js-cookie";
 import MaterialIcon from "material-icons-react";
 
+import DataRenderer from "../../utils/dataRenderer";
+
 import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
-
-import NumericInput from "react-numeric-input";
-import dateFormat from "dateformat";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -76,7 +73,7 @@ class Template extends Component {
 			name: this.state.name,
 			type: this.state.dataType,
 			required: this.state.required,
-			options: this.state.options.length ? this.state.options : undefined
+			options: this.state.options.length ? this.state.options : []
 		};
 
 		this.setState({ loading: true });
@@ -137,7 +134,6 @@ class Template extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
-		this.setState({ loading: true });
 		TemplateService.setDefaultField(
 			token,
 			id,
@@ -145,7 +141,7 @@ class Template extends Component {
 			defaultValue,
 			type,
 			async function(template) {
-				self.setState({ template: template, loading: false, isDialogOpen: false });
+				self.setState({ template: template, isDialogOpen: false });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -363,136 +359,14 @@ class Template extends Component {
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
 							<div className="DataElem">
-								{this.renderSectionDefaultValue(dataElem, type)}
-								{this.renderSectionRequired(dataElem, type)}
-								{this.renderSectionDelete(dataElem, type)}
+								{DataRenderer.renderData(dataElem, type, this.defaultValueChanged)}
+								{DataRenderer.renderRequired(dataElem, type, this.toggleRequired)}
+								{DataRenderer.renderDelete(dataElem, type, this.deleteField)}
 							</div>
 						</div>
 					);
 				})}
 				{this.renderSectionButtons(type)}
-			</div>
-		);
-	};
-
-	renderSectionDefaultValue = (dataElem, type) => {
-		if (dataElem.mandatory)
-			return <div className="DataDefault DataDefaultInput Mandatory">{dataElem.defaultValue}</div>;
-
-		switch (dataElem.type) {
-			case Constants.TEMPLATES.TYPES.BOOLEAN:
-				return (
-					<Select
-						className="DataDefault DataDefaultInput Boolean"
-						autoFocus
-						value={dataElem.defaultValue}
-						onChange={event => {
-							this.setDefaultValue(dataElem, event.target.value, type);
-						}}
-					>
-						<MenuItem className="DataDefaultInput" value={"true"}>
-							{Constants.TEMPLATES.EDIT.BOOLEAN.TRUE}
-						</MenuItem>
-						<MenuItem className="DataDefaultInput" value={"false"}>
-							{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
-						</MenuItem>
-					</Select>
-				);
-			case Constants.TEMPLATES.TYPES.CHECKBOX:
-				return (
-					<Select
-						className="DataDefault DataDefaultInput Boolean"
-						autoFocus
-						value={dataElem.defaultValue ? dataElem.defaultValue : dataElem.options[0]}
-						onChange={event => {
-							this.setDefaultValue(dataElem, event.target.value, type);
-						}}
-					>
-						{dataElem.options.map((opt, key) => {
-							return (
-								<MenuItem value={opt} key={"option-" + key} className="DataDefaultInput">
-									{opt}
-								</MenuItem>
-							);
-						})}
-					</Select>
-				);
-			case Constants.TEMPLATES.TYPES.DATE:
-				return (
-					<DatePicker
-						className="DataDefault DataDefaultInput"
-						selected={dataElem.defaultValue ? new Date(dataElem.defaultValue) : new Date()}
-						onChange={date => {
-							date = dateFormat(date, "yyyy-mm-dd hh:MM:ss");
-							this.setDefaultValue(dataElem, date.replace(" ", "T") + "Z", type);
-						}}
-						dateFormat="dd-MM-yyyy"
-					/>
-				);
-			case Constants.TEMPLATES.TYPES.NUMBER:
-				return (
-					<NumericInput
-						className="DataDefault DataDefaultInput Number"
-						value={dataElem.defaultValue}
-						onChange={value => {
-							this.defaultValueChanged(dataElem, value, type);
-						}}
-					/>
-				);
-			case Constants.TEMPLATES.TYPES.PARAGRAPH:
-				return (
-					<textarea
-						className="DataDefault DataDefaultInput Paragraph"
-						value={dataElem.defaultValue}
-						onChange={event => {
-							this.defaultValueChanged(dataElem, event.target.value, type);
-						}}
-					/>
-				);
-			case Constants.TEMPLATES.TYPES.TEXT:
-			default:
-				return (
-					<input
-						type="text"
-						className="DataDefault DataDefaultInput"
-						value={dataElem.defaultValue}
-						onChange={event => {
-							this.defaultValueChanged(dataElem, event.target.value, type);
-						}}
-					/>
-				);
-		}
-	};
-
-	renderSectionDelete = (dataElem, type) => {
-		if (dataElem.mandatory) return <div></div>;
-
-		return (
-			<div
-				className="DataDelete"
-				onClick={() => {
-					this.deleteField(dataElem, type);
-				}}
-			>
-				<MaterialIcon icon={Constants.TEMPLATES.EDIT.ICONS.DELETE} color="#eb4646" />
-				<div>{Messages.EDIT.BUTTONS.DELETE}</div>
-			</div>
-		);
-	};
-
-	renderSectionRequired = (dataElem, type) => {
-		const icon = dataElem.required
-			? Constants.TEMPLATES.EDIT.ICONS.REQUIRED
-			: Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
-		return (
-			<div
-				className="DataRequired"
-				onClick={() => {
-					this.toggleRequired(dataElem, type);
-				}}
-			>
-				<MaterialIcon icon={icon} color="#bdbfbe" />
-				<div>{Messages.EDIT.BUTTONS.REQUIRED}</div>
 			</div>
 		);
 	};
@@ -515,7 +389,7 @@ class Template extends Component {
 
 	renderButtons = () => {
 		return (
-			<div className="Template-Buttons">
+			<div className="TemplateButtons">
 				<button className="backButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
 				</button>

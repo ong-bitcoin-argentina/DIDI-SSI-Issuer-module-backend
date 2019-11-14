@@ -168,9 +168,10 @@ let _doValidate = function(param, isHead) {
 
 				const allTemplateNames = templateDataSection.map(elem => elem.name);
 				dataSection.forEach(elem => {
-					if (!allTemplateNames.contains(elem.name))
+					const template = templateDataSection.find(template => template.name === elem.name);
+					if (!template)
 						return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
-					validateValueMatchesType(elem.type, elem.value, err);
+					validateValueMatchesType(template.type, elem.value, err);
 				});
 
 				const allNames = dataSection.map(elem => elem.name);

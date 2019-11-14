@@ -47,14 +47,15 @@ module.exports.saveCertificate = async function(cert) {
 };
 
 // genera un certificado asociando la informaciòn recibida en "subject" con el did
-module.exports.createCertificate = async function(subject) {
+module.exports.createCertificate = async function(subject, did) {
+
 	const vcissuer = new EthrDID({
 		address: Constants.SERVER_DID,
 		privateKey: Constants.SERVER_PRIVATE_KEY
 	});
 
 	const vcPayload = {
-		sub: Constants.SUB,
+		sub: did,
 		nbf: Constants.NOT_BACK_FROM,
 		vc: {
 			"@context": [Constants.CREDENTIALS.CONTEXT],
