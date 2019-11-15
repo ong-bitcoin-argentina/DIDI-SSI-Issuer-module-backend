@@ -36,19 +36,15 @@ module.exports.getAll = async function() {
 	}
 };
 
-module.exports.create = async function(name, data) {
+module.exports.create = async function(name) {
 	try {
-		const template = await CertTemplate.generate(name, data);
+		const template = await CertTemplate.generate(name);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
 		return Promise.resolve(template);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
 	}
-};
-
-module.exports.rename = async function(id, name) {
-	return await _getAndEdit(id, name, "rename");
 };
 
 module.exports.addCertData = async function(id, certData) {

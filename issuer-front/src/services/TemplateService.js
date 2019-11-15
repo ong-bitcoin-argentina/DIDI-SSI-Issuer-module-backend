@@ -10,10 +10,7 @@ export default class TemplateService {
 				token: token
 			},
 			body: JSON.stringify({
-				name: name,
-				certData: "[]",
-				participantData: "[]",
-				othersData: "[]"
+				name: name
 			})
 		};
 

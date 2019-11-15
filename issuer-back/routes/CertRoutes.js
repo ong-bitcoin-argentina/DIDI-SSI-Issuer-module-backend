@@ -3,7 +3,6 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
-const Messages = require("../constants/Messages");
 
 const CertService = require("../services/CertService");
 const CertTemplateService = require("../services/CertTemplateService");
@@ -23,7 +22,13 @@ router.get(
 		try {
 			const certs = await CertService.getAll();
 			const result = certs.map(cert => {
-				return { _id: cert._id, name: cert.name, emmitedOn: cert.emmitedOn, participant: cert.participant };
+				return {
+					_id: cert._id,
+					name: cert.data.cert[0].value,
+					emmitedOn: cert.emmitedOn,
+					firstName: cert.data.cert[1].value,
+					lastName: cert.data.cert[2].value
+				};
 			});
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -90,22 +95,8 @@ router.post(
 				emmitedOn: cert.emmitedOn
 			};
 
-			cert.data.cert.push({
-				name: Messages.CERTIFICATE.CERT_FIELDS.NAME,
-				value: cert.name
-			});
-			cert.data.participant.push({
-				name: Messages.CERTIFICATE.CERT_FIELDS.PARTICIPANT_NAME,
-				value: cert.participant.name
-			});
-			cert.data.participant.push({
-				name: Messages.CERTIFICATE.CERT_FIELDS.PARTICIPANT_LAST_NAME,
-				value: cert.participant.lastName
-			});
-
 			const credential = await MouroService.createCertificate(data, cert.participant.did);
 
-			// mandar certificado a mouro
 			await MouroService.saveCertificate(credential);
 
 			return ResponseHandler.sendRes(res, cert);
@@ -124,9 +115,6 @@ router.post(
 			isHead: true
 		},
 		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{ name: "did", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{ name: "firstName", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{ name: "lastName", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
@@ -134,24 +122,11 @@ router.post(
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const templateId = req.body.templateId;
 		const data = JSON.parse(req.body.data);
-
-		const partData = {
-			did: req.body.did,
-			name: req.body.firstName,
-			lastName: req.body.lastName
-		};
-
-		let template;
-		try {
-			template = await CertTemplateService.getById(templateId);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
+		const templateId = req.body.templateId;
 
 		try {
-			const cert = await CertService.create(template, data, partData);
+			const cert = await CertService.create(data, templateId);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -167,9 +142,7 @@ router.put(
 			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
 			isHead: true
 		},
-		{ name: "did", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{ name: "firstName", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{ name: "lastName", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
@@ -180,14 +153,8 @@ router.put(
 		const id = req.params.id;
 		const data = JSON.parse(req.body.data);
 
-		const partData = {
-			did: req.body.did,
-			name: req.body.firstName,
-			lastName: req.body.lastName
-		};
-
 		try {
-			const cert = await CertService.edit(id, partData, data);
+			const cert = await CertService.edit(id, data);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

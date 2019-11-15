@@ -24,6 +24,10 @@ const dataElement = {
 	required: {
 		type: Boolean,
 		required: true
+	},
+	mandatory: {
+		type: Boolean,
+		default: false
 	}
 };
 
@@ -76,10 +80,10 @@ CertTemplateSchema.methods.addParticipantData = async function(data) {
 
 CertTemplateSchema.methods._doToggleRequired = async function(data, field) {
 	const names = data.map(newDataElement => newDataElement.name);
+
 	this.data[field] = this.data[field].map(dataElem => {
-		if (names.includes(dataElem.name)) {
+		if (!dataElem.mandatory && names.includes(dataElem.name))
 			dataElem.required = !dataElem.required;
-		}
 		return dataElem;
 	});
 
@@ -101,25 +105,6 @@ CertTemplateSchema.methods.toggleRequiredForParticipantData = async function(dat
 
 CertTemplateSchema.methods.toggleRequiredForOthersData = async function(data) {
 	return await this._doToggleRequired(data, "others");
-};
-
-CertTemplateSchema.methods.rename = async function(name) {
-	if (this.name == name) {
-		return Promise.resolve(this);
-	}
-
-	const updateQuery = { _id: this._id };
-	const updateAction = {
-		$set: { name: name }
-	};
-
-	try {
-		await CertTemplate.findOneAndUpdate(updateQuery, updateAction);
-		this.name = name;
-		return Promise.resolve(this);
-	} catch (err) {
-		return Promise.reject(err);
-	}
 };
 
 CertTemplateSchema.methods._doSetDefaultData = async function(data, defaultValue, field) {
@@ -210,7 +195,7 @@ CertTemplateSchema.methods.delete = async function() {
 const CertTemplate = mongoose.model("CertTemplate", CertTemplateSchema);
 module.exports = CertTemplate;
 
-CertTemplate.generate = async function(name, data) {
+CertTemplate.generate = async function(name) {
 	try {
 		const query = { name: name, deleted: false };
 		const template = await CertTemplate.findOne(query);
@@ -222,7 +207,34 @@ CertTemplate.generate = async function(name, data) {
 
 	let template = new CertTemplate();
 	template.name = name;
-	template.data = data;
+	template.data = {
+		cert: [
+			{
+				name: Constants.CERT_FIELD_MANDATORY.NAME,
+				defaultValue: name,
+				type: Constants.CERT_FIELD_TYPES.Text,
+				required: true,
+				mandatory: true
+			},
+			{
+				name: Constants.CERT_FIELD_MANDATORY.FIRST_NAME,
+				defaultValue: "",
+				type: Constants.CERT_FIELD_TYPES.Text,
+				required: true,
+				mandatory: true
+			},
+			{
+				name: Constants.CERT_FIELD_MANDATORY.LAST_NAME,
+				defaultValue: "",
+				type: Constants.CERT_FIELD_TYPES.Text,
+				required: true,
+				mandatory: true
+			}
+		],
+		participant: [],
+		others: []
+	};
+
 	template.createdOn = new Date();
 	template.deleted = false;
 

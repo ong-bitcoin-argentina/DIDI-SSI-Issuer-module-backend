@@ -17,7 +17,8 @@ export default class DataRenderer {
 	static renderData = (dataElem, type, onChange) => {
 		const value = dataElem.value ? dataElem.value : dataElem.defaultValue;
 
-		if (dataElem.mandatory) return <div className="DataDefault DataDefaultInput Mandatory">{value}</div>;
+		if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
+			return <div className="DataDefault DataDefaultInput Mandatory">{value}</div>;
 
 		switch (dataElem.type) {
 			case Constants.TEMPLATES.TYPES.BOOLEAN:

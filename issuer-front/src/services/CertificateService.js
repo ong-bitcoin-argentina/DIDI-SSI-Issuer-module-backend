@@ -33,9 +33,6 @@ export default class CertificateService {
 			},
 			body: JSON.stringify({
 				templateId: cert.templateId,
-				firstName: cert.participant.name,
-				lastName: cert.participant.lastName,
-				did: cert.participant.did,
 				data: JSON.stringify(certData)
 			})
 		};

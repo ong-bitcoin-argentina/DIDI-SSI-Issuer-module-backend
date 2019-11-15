@@ -328,21 +328,12 @@ class Template extends Component {
 
 	renderTemplate = () => {
 		const template = this.state.template;
-		const nameData = { name: "name", defaultValue: this.state.template.name, required: true, mandatory: true };
-		const participantData = [
-			{ name: "firstName", defaultValue: "", required: true, mandatory: true },
-			{ name: "lastName", defaultValue: "", required: true, mandatory: true }
-		];
 		return (
 			<div className="Template-Content">
-				{this.renderSection(
-					Messages.EDIT.DATA.CERT,
-					[nameData, ...template.data.cert],
-					Constants.TEMPLATES.DATA_TYPES.CERT
-				)}
+				{this.renderSection(Messages.EDIT.DATA.CERT, template.data.cert, Constants.TEMPLATES.DATA_TYPES.CERT)}
 				{this.renderSection(
 					Messages.EDIT.DATA.PART,
-					[...participantData, ...template.data.participant],
+					template.data.participant,
 					Constants.TEMPLATES.DATA_TYPES.PARTICIPANT
 				)}
 				{this.renderSection(Messages.EDIT.DATA.OTHER, template.data.others, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
@@ -390,7 +381,7 @@ class Template extends Component {
 	renderButtons = () => {
 		return (
 			<div className="TemplateButtons">
-				<button className="backButton" onClick={this.onBack}>
+				<button className="BackButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
 				</button>
 				<button className="LogoutButton" onClick={this.onLogout}>

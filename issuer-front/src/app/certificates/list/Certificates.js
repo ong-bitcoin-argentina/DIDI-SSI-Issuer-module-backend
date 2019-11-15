@@ -35,12 +35,14 @@ class Certificates extends Component {
 
 	getCertificatesData = (self, cert) => {
 		const emmited = cert.emmitedOn;
+		console.log(cert);
+
 		return {
 			_id: cert._id,
 			certName: cert.name,
 			createdOn: emmited ? cert.emmitedOn.split("T")[0] : "-",
-			participantFirstName: cert.participant.name,
-			participantLastName: cert.participant.lastName,
+			firstName: cert.firstName,
+			lastName: cert.lastName,
 			actions: (
 				<div className="Actions">
 					{!emmited && (
@@ -227,11 +229,11 @@ class Certificates extends Component {
 			},*/
 			{
 				Header: Messages.LIST.TABLE.LAST_NAME,
-				accessor: "participantLastName"
+				accessor: "lastName"
 			},
 			{
 				Header: Messages.LIST.TABLE.NAME,
-				accessor: "participantFirstName"
+				accessor: "firstName"
 			},
 			{
 				Header: Messages.LIST.TABLE.CERT,

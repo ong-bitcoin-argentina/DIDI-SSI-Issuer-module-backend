@@ -13,32 +13,14 @@ const dataElement = {
 };
 
 const CertSchema = mongoose.Schema({
-	templateId: {
-		type: ObjectId,
-		required: true
-	},
-	name: {
-		type: String,
-		required: true
-	},
-	participant: {
-		did: {
-			type: String,
-			required: true
-		},
-		name: {
-			type: String,
-			required: true
-		},
-		lastName: {
-			type: String,
-			required: true
-		}
-	},
 	data: {
 		cert: [dataElement],
 		participant: [dataElement],
 		others: [dataElement]
+	},
+	templateId: {
+		type: ObjectId,
+		required: true
 	},
 	deleted: {
 		type: Boolean,
@@ -87,22 +69,6 @@ CertSchema.methods.emmit = async function() {
 	}
 };
 
-CertSchema.methods.edit = async function(participantData, data) {
-	this.participant = participantData;
-	this.data = copyData(data);
-
-	try {
-		await this.save();
-		return Promise.resolve(this);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(err);
-	}
-};
-
-const Cert = mongoose.model("Cert", CertSchema);
-module.exports = Cert;
-
 var copyData = function(data) {
 	return {
 		cert: data.cert.map(data => {
@@ -120,12 +86,26 @@ var copyData = function(data) {
 	};
 };
 
-Cert.generate = async function(template, data, participantData) {
+
+CertSchema.methods.edit = async function(data) {
+	this.data = copyData(data);
+
+	try {
+		await this.save();
+		return Promise.resolve(this);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+const Cert = mongoose.model("Cert", CertSchema);
+module.exports = Cert;
+
+Cert.generate = async function(data, templateId) {
 	let cert = new Cert();
-	cert.participant = participantData;
-	cert.templateId = template._id;
 	cert.data = copyData(data);
-	cert.name = template.name;
+	cert.templateId = templateId;
 	cert.createdOn = new Date();
 	cert.deleted = false;
 
@@ -141,8 +121,8 @@ Cert.generate = async function(template, data, participantData) {
 Cert.getAll = async function() {
 	try {
 		const query = { deleted: false };
-		const template = await Cert.find(query);
-		return Promise.resolve(template);
+		const certs = await Cert.find(query);
+		return Promise.resolve(certs);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
@@ -152,8 +132,8 @@ Cert.getAll = async function() {
 Cert.getById = async function(id) {
 	try {
 		const query = { _id: id, deleted: false };
-		const template = await Cert.findOne(query);
-		return Promise.resolve(template);
+		const cert = await Cert.findOne(query);
+		return Promise.resolve(cert);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

@@ -2,10 +2,12 @@
 	margin-top: 30px;
 }
 
-.TemplateSelector {
-	margin-top: 30px;
+.SaveButton {
+	margin-right: 10px;
 }
 
-.saveButton {
-	margin-right: 10px;
+.TemplateSelector {
+	margin-top: 30px;
+	display: flex;
+	flex-direction: column;
 }

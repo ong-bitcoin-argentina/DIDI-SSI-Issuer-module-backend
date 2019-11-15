@@ -84,17 +84,23 @@ module.exports = {
 			CERT: "certData",
 			OTHERS: "othersData",
 			PARTICIPANT: "participantData"
+		},
+		MANDATORY_DATA: {
+			NAME: "NOMBRE DEL CURSO"
 		}
 	},
 
 	CERTIFICATES: {
+		MANDATORY_DATA: {
+			FIRST_NAME: "NOMBRE",
+			LAST_NAME: "APELLIDO"
+		},
+		EDIT: {
+			TEMPLATE_SELECT: "NOMBRE DEL CURSO"
+		},
 		TABLE: {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
-		},
-		PARTICIPANT: {
-			NAME: "Nombre",
-			LAST_NAME: "Apellido"
 		}
 	}
 };

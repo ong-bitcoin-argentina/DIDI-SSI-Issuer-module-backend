@@ -24,9 +24,9 @@ module.exports.getAll = async function() {
 	}
 };
 
-module.exports.create = async function(template, data, partData) {
+module.exports.create = async function(data, templateId) {
 	try {
-		const cert = await Cert.generate(template, data, partData);
+		const cert = await Cert.generate(data, templateId);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
@@ -35,10 +35,10 @@ module.exports.create = async function(template, data, partData) {
 	}
 };
 
-module.exports.edit = async function(id, partData, data) {
+module.exports.edit = async function(id, data) {
 	try {
 		let cert = await getById(id);
-		cert = await cert.edit(partData, data);
+		cert = await cert.edit(data);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
@@ -56,7 +56,8 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 				type: templateElem.type,
 				options: templateElem.options,
 				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
-				required: templateElem.required
+				required: templateElem.required,
+				mandatory: templateElem.mandatory
 			};
 		}),
 		participant: cert.data.participant.map(elem => {
@@ -66,7 +67,8 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 				type: templateElem.type,
 				options: templateElem.options,
 				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
-				required: templateElem.required
+				required: templateElem.required,
+				mandatory: templateElem.mandatory
 			};
 		}),
 		others: cert.data.others.map(elem => {
@@ -76,15 +78,14 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 				type: templateElem.type,
 				options: templateElem.options,
 				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
-				required: templateElem.required
+				required: templateElem.required,
+				mandatory: templateElem.mandatory
 			};
 		})
 	};
 	return {
 		_id: cert._id,
 		templateId: cert.templateId,
-		name: cert.name,
-		participant: cert.participant,
 		data: data
 	};
 };

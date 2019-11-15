@@ -59,32 +59,14 @@ router.post(
 			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
 			isHead: true
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{
-			name: "certData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		},
-		{
-			name: "participantData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		},
-		{
-			name: "othersData",
-			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA]
-		}
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const name = req.body.name;
 
-		const data = {
-			cert: JSON.parse(req.body.certData),
-			participant: JSON.parse(req.body.participantData),
-			others: JSON.parse(req.body.othersData)
-		};
-
 		try {
-			const template = await CertTemplateService.create(name, data);
+			const template = await CertTemplateService.create(name);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -128,7 +110,6 @@ router.put(
 					template = await CertTemplateService.addOthersData(id, data);
 					break;
 			}
-
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -177,7 +158,6 @@ router.put(
 					template = await CertTemplateService.setDefaultForOthersData(id, data, defaultValue);
 					break;
 			}
-
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -221,34 +201,6 @@ router.put(
 					template = await CertTemplateService.toggleRequiredForOthersData(id, data);
 					break;
 			}
-
-			return ResponseHandler.sendRes(res, template);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-router.put(
-	"/:id/rename",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
-			isHead: true
-		},
-		{
-			name: "name",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const name = req.body.name;
-		const id = req.params.id;
-
-		try {
-			const template = await CertTemplateService.rename(id, name);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -292,7 +244,6 @@ router.delete(
 					template = await CertTemplateService.deleteOthersData(id, data);
 					break;
 			}
-
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
