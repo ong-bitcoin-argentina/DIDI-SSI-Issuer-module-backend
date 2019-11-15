@@ -41,12 +41,23 @@ class Certificate extends Component {
 						id,
 						function(cert) {
 							const selectedTemplate = templates.find(template => template._id === cert.templateId);
-							self.setState({
-								selectedTemplate: selectedTemplate,
-								cert: cert,
-								templates: templates,
-								loading: false
-							});
+							TemplateService.get(
+								token,
+								selectedTemplate._id,
+								function(template) {
+									self.setState({
+										selectedTemplate: selectedTemplate,
+										cert: cert,
+										template: template,
+										templates: templates,
+										loading: false
+									});
+								},
+								function(err) {
+									self.setState({ error: err });
+									console.log(err);
+								}
+							);
 						},
 						function(err) {
 							self.setState({ error: err });
@@ -66,42 +77,34 @@ class Certificate extends Component {
 
 	certFromTemplate = template => {
 		const data = {
-			cert: template.data.cert.map(data => {
-				return {
-					name: data.name,
-					type: data.type,
-					options: data.options,
-					value: data.defaultValue ? data.defaultValue : "",
-					required: data.required,
-					mandatory: data.mandatory
-				};
-			}),
-			participant: template.data.participant.map(data => {
-				return {
-					name: data.name,
-					type: data.type,
-					options: data.options,
-					value: data.defaultValue ? data.defaultValue : "",
-					required: data.required,
-					mandatory: data.mandatory
-				};
-			}),
-			others: template.data.others.map(data => {
-				return {
-					name: data.name,
-					type: data.type,
-					options: data.options,
-					value: data.defaultValue ? data.defaultValue : "",
-					required: data.required,
-					mandatory: data.mandatory
-				};
-			})
+			cert: this.certDataFromTemplate(template, "cert"),
+			participant: [this.certDataFromTemplate(template, "participant")],
+			others: this.certDataFromTemplate(template, "others")
 		};
 
 		return {
 			templateId: template._id,
 			data: data
 		};
+	};
+
+	certDataFromTemplate = (template, field) => {
+		return template.data[field].map(data => {
+			return {
+				name: data.name,
+				type: data.type,
+				options: data.options,
+				value: data.defaultValue ? data.defaultValue : "",
+				required: data.required,
+				mandatory: data.mandatory
+			};
+		});
+	};
+
+	addParticipant = () => {
+		const participant = this.state.cert.data.participant;
+		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
+		this.setState({ cert: this.state.cert });
 	};
 
 	templateSelected = selectedTemplate => {
@@ -113,7 +116,12 @@ class Certificate extends Component {
 			token,
 			selectedTemplate._id,
 			function(template) {
-				self.setState({ selectedTemplate: selectedTemplate, cert: self.certFromTemplate(template), loading: false });
+				self.setState({
+					selectedTemplate: selectedTemplate,
+					template: template,
+					cert: self.certFromTemplate(template),
+					loading: false
+				});
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -155,7 +163,7 @@ class Certificate extends Component {
 		if (!this.state.cert) return true;
 
 		const cert = this.state.cert.data.cert;
-		const participant = this.state.cert.data.participant;
+		const participant = this.state.cert.data.participant.flat();
 		const others = this.state.cert.data.others;
 
 		const all = cert.concat(participant).concat(others);
@@ -190,22 +198,37 @@ class Certificate extends Component {
 
 		const certData = cert.data.cert;
 		const othersData = cert.data.others;
-		const participantData = cert.data.participant;
+		const partData = cert.data.participant;
 
 		return (
 			<div className="CertificateContent">
 				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
 				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
-				{this.renderSection(cert, participantData, Constants.TEMPLATES.DATA_TYPES.PARTICIPANT)}
+
+				{partData.map((data, key) => {
+					return (
+						<div className="ParticipantContent" key={"part-" + key}>
+							{this.renderSection(cert, data, "hola")}
+						</div>
+					);
+				})}
+
+				<button className="AddParticipantButton" onClick={this.addParticipant}>
+					{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
+				</button>
 			</div>
 		);
 	};
 
 	renderSection = (cert, data, type) => {
 		const self = this;
+
 		return (
 			<div className="CertSectionContent">
 				{data.map((dataElem, index) => {
+					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
+						return <div key={"template-elem-" + index}></div>;
+
 					return (
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>

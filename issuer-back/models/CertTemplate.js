@@ -231,7 +231,15 @@ CertTemplate.generate = async function(name) {
 				mandatory: true
 			}
 		],
-		participant: [],
+		participant: [
+			{
+				name: Constants.CERT_FIELD_MANDATORY.DID,
+				defaultValue: "",
+				type: Constants.CERT_FIELD_TYPES.Text,
+				required: true,
+				mandatory: true
+			}
+		],
 		others: []
 	};
 

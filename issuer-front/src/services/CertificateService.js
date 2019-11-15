@@ -9,11 +9,13 @@ export default class CertificateService {
 					value: data.value
 				};
 			}),
-			participant: cert.data.participant.map(data => {
-				return {
-					name: data.name,
-					value: data.value
-				};
+			participant: cert.data.participant.map(array => {
+				return array.map(data => {
+					return {
+						name: data.name,
+						value: data.value
+					};
+				});
 			}),
 			others: cert.data.others.map(data => {
 				return {
@@ -39,7 +41,6 @@ export default class CertificateService {
 
 		fetch(url, data)
 			.then(data => {
-				console.log(data);
 				return data.json();
 			})
 			.then(data => {

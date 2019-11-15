@@ -1,5 +1,6 @@
 .CertSectionContent {
 	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
 .SaveButton {
@@ -10,4 +11,13 @@
 	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
+}
+
+.ParticipantContent {
+	border-style: solid;
+	padding: 5px;
+	border-width: 2px;
+
+	margin-top: 0px;
+	margin-bottom: 10px;
 }

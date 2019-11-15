@@ -60,16 +60,18 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 				mandatory: templateElem.mandatory
 			};
 		}),
-		participant: cert.data.participant.map(elem => {
-			const templateElem = template.data.participant.find(tempElem => tempElem.name === elem.name);
-			return {
-				name: elem.name,
-				type: templateElem.type,
-				options: templateElem.options,
-				value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
-				required: templateElem.required,
-				mandatory: templateElem.mandatory
-			};
+		participant: cert.data.participant.map(array => {
+			return array.map(elem => {
+				const templateElem = template.data.participant.find(tempElem => tempElem.name === elem.name);
+				return {
+					name: elem.name,
+					type: templateElem.type,
+					options: templateElem.options,
+					value: elem.value ? elem.value : templateElem.defaultValue ? templateElem.defaultValue : "",
+					required: templateElem.required,
+					mandatory: templateElem.mandatory
+				};
+			});
 		}),
 		others: cert.data.others.map(elem => {
 			const templateElem = template.data.others.find(tempElem => tempElem.name === elem.name);

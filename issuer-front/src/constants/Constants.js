@@ -92,6 +92,7 @@ module.exports = {
 
 	CERTIFICATES: {
 		MANDATORY_DATA: {
+			DID: "DID",
 			FIRST_NAME: "NOMBRE",
 			LAST_NAME: "APELLIDO"
 		},

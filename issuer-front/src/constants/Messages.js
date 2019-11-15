@@ -21,6 +21,7 @@ module.exports = {
 			CLOSE: "Cerrar"
 		},
 		BUTTONS: {
+			ADD_PARTICIPANTS: "Nuevo Participante",
 			CREATE: "NUEVO CAMPO",
 			SAVE: "Guardar",
 			BACK: "Volver",

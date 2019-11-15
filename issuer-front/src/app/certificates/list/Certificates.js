@@ -35,7 +35,6 @@ class Certificates extends Component {
 
 	getCertificatesData = (self, cert) => {
 		const emmited = cert.emmitedOn;
-		console.log(cert);
 
 		return {
 			_id: cert._id,

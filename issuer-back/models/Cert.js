@@ -15,7 +15,7 @@ const dataElement = {
 const CertSchema = mongoose.Schema({
 	data: {
 		cert: [dataElement],
-		participant: [dataElement],
+		participant: [[dataElement]],
 		others: [dataElement]
 	},
 	templateId: {
@@ -77,15 +77,16 @@ var copyData = function(data) {
 				value: data.value ? data.value : ""
 			};
 		}),
-		participant: data.participant.map(data => {
-			return { name: data.name, value: data.value ? data.value : "" };
+		participant: data.participant.map(array => {
+			return array.map(data => {
+				return { name: data.name, value: data.value ? data.value : "" };
+			});
 		}),
 		others: data.others.map(data => {
 			return { name: data.name, value: data.value ? data.value : "" };
 		})
 	};
 };
-
 
 CertSchema.methods.edit = async function(data) {
 	this.data = copyData(data);
