@@ -151,6 +151,23 @@ class Certificate extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	missingRequiredField = () => {
+		if (!this.state.cert) return true;
+
+		const cert = this.state.cert.data.cert;
+		const participant = this.state.cert.data.participant;
+		const others = this.state.cert.data.others;
+
+		const all = cert.concat(participant).concat(others);
+		for (let index in all) {
+			const dataElem = all[index];
+			if (dataElem.required && !dataElem.value) {
+				return true;
+			}
+		}
+		return false;
+	};
+
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -193,14 +210,10 @@ class Certificate extends Component {
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
 							<div className="DataElem">
-								{DataRenderer.renderData(
-									dataElem,
-									type,
-									(data, value, type) => {
-										dataElem.value = value;
-										self.setState({ cert: cert });
-									}
-								)}
+								{DataRenderer.renderData(dataElem, type, (data, value, type) => {
+									dataElem.value = value;
+									self.setState({ cert: cert });
+								})}
 							</div>
 						</div>
 					);
@@ -241,7 +254,7 @@ class Certificate extends Component {
 	renderButtons = () => {
 		return (
 			<div className="CertificateButtons">
-				<button className="SaveButton" onClick={this.onSave}>
+				<button className="SaveButton" disabled={this.missingRequiredField()} onClick={this.onSave}>
 					{Messages.EDIT.BUTTONS.SAVE}
 				</button>
 				<button className="BackButton" onClick={this.onBack}>

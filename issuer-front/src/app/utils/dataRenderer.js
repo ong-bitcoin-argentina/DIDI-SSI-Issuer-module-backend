@@ -26,7 +26,7 @@ export default class DataRenderer {
 					<Select
 						className="DataDefault DataDefaultInput Boolean"
 						autoFocus
-						value={value ? value : dataElem.options[0]}
+						value={value ? value : undefined}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
 						}}
@@ -44,7 +44,7 @@ export default class DataRenderer {
 					<Select
 						className="DataDefault DataDefaultInput Boolean"
 						autoFocus
-						value={value ? value : dataElem.options[0]}
+						value={value ? value : undefined}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
 						}}
