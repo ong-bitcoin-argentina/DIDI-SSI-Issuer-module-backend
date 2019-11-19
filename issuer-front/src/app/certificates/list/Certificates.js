@@ -61,17 +61,19 @@ class Certificates extends Component {
 								self.onCertificateEdit(cert._id);
 							}}
 						>
-							{ emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
+							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
 						</div>
 					}
-					<div
-						className="DeleteAction"
-						onClick={() => {
-							self.onCertificateDelete(cert._id);
-						}}
-					>
-						{Messages.LIST.BUTTONS.DELETE}
-					</div>
+					{!emmited && (
+						<div
+							className="DeleteAction"
+							onClick={() => {
+								self.onCertificateDelete(cert._id);
+							}}
+						>
+							{Messages.LIST.BUTTONS.DELETE}
+						</div>
+					)}
 				</div>
 			)
 		};
@@ -124,10 +126,8 @@ class Certificates extends Component {
 		CertificateService.emmit(
 			token,
 			id,
-			async function(cert) {
-				const matchingCert = self.state.certificates.find(certificate => certificate._id === cert._id);
-				matchingCert.emmitedOn = cert.emmitedOn;
-				self.setState({ certificates: self.state.certificates, loading: false });
+			async function(_) {
+				self.componentDidMount();
 			},
 			function(err) {
 				self.setState({ error: err });

@@ -101,7 +101,7 @@ router.post(
 					emmitedOn: cert.emmitedOn
 				};
 
-				const credential = await MouroService.createCertificate(data, data.participant[0].value.trim());
+				const credential = await MouroService.createCertificate(data, data.participant[0].value);
 				await MouroService.saveCertificate(credential);
 				credentials.push(credential);
 			});

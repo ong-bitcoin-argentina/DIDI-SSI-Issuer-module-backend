@@ -34,6 +34,7 @@ module.exports = {
 		}
 	},
 	CERTIFICATE: {
+		CERTIFICATE_SAVED: "Certificado guardado",
 		CERT_FIELDS: {
 			NAME: "NOMBRE DEL CERTIFICADO O CURSO",
 			PARTICIPANT_NAME: "NOMBRE",

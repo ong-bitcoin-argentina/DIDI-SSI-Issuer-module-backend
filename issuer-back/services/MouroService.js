@@ -38,7 +38,7 @@ module.exports.saveCertificate = async function(cert) {
 				cert: cert
 			}
 		});
-		console.log(Messages.CERTIFICATE_SAVED);
+		console.log(Messages.CERTIFICATE.CERTIFICATE_SAVED);
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);
@@ -65,7 +65,7 @@ module.exports.createCertificate = async function(subject, did) {
 
 	try {
 		let result = await createVerifiableCredential(vcPayload, vcissuer);
-		// if (Constants.DEBUGG) console.log(result);
+		if (Constants.DEBUGG) console.log(result);
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);

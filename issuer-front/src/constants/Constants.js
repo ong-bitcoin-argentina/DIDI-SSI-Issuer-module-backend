@@ -1,4 +1,4 @@
-const API = "http://localhost:3500/api/1.0/didi_issuer";
+const API = process.env.API_URL || "http://localhost:3500/api/1.0/didi_issuer";
 
 module.exports = {
 	API_ROUTES: {

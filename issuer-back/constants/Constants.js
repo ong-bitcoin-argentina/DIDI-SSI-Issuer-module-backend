@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3500;
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
 const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
+console.log(MONGO_URL);
 
 const MOURO_URL = process.env.MOURO_URL || "http://192.168.2.137:3001/graphql";
 

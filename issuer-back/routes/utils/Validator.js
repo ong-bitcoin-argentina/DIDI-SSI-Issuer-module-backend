@@ -102,7 +102,7 @@ let _doValidate = function(param, isHead) {
 
 	let validateTemplateDataType = function(validation) {
 		return validation.custom(data => {
-			if (!Object.values(Constants.DATA_TYPES).indexOf(data))
+			if (Object.values(Constants.DATA_TYPES).indexOf(data) < 0)
 				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_TYPE(data));
 			return Promise.resolve(data);
 		});

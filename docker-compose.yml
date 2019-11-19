@@ -1,0 +1,48 @@
+version: "3.7"
+
+services:
+  issuer-front:
+    container_name: issuer-front
+    restart: always
+    build: ./issuer-front/
+    environment:
+      API_URL: ${API_URL}
+      PORT: ${PORT_FRONT}
+    ports:
+      - "${PORT_FRONT}:${PORT_FRONT}"
+    links:
+      - issuer-back
+
+  issuer-back:
+    container_name: issuer-back
+    restart: always
+    build: ./issuer-back/
+    environment:
+      MONGO_USERNAME: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_DB: ${MONGO_DB}
+      MONGO_DIR: ${MONGO_DIR}
+      SERVER_DID: ${SERVER_DID}
+      SERVER_PRIVATE_KEY: ${SERVER_PRIVATE_KEY}
+      MOURO_URL: ${MOURO_URL}
+      DEBUGG_MODE: ${DEBUGG}
+      MONGO_PORT: ${MONGO_PORT}
+      PORT: ${PORT_BACK}
+    ports:
+      - "${PORT_BACK}:${PORT_BACK}"
+    links:
+      - mongo
+
+  mongo:
+    container_name: mongo
+    image: mongo:4.2.1
+    command: mongod --port ${MONGO_PORT}
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./data:/data/db
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
