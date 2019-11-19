@@ -81,9 +81,9 @@ module.exports = {
 			CHECKBOX: "Checkbox"
 		},
 		DATA_TYPES: {
-			CERT: "certData",
-			OTHERS: "othersData",
-			PARTICIPANT: "participantData"
+			CERT: "cert",
+			OTHERS: "others",
+			PARTICIPANT: "participant"
 		},
 		MANDATORY_DATA: {
 			NAME: "NOMBRE DEL CURSO"

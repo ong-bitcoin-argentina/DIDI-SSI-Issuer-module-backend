@@ -94,14 +94,14 @@ router.post(
 					certificateData: cert.data.cert.map(data => {
 						return { value: data.value, name: data.name };
 					}),
-					participantData: element,
+					participant: element,
 					otherData: cert.data.others.map(data => {
 						return { value: data.value, name: data.name };
 					}),
 					emmitedOn: cert.emmitedOn
 				};
 
-				const credential = await MouroService.createCertificate(data, data.participantData[0].value);
+				const credential = await MouroService.createCertificate(data, data.participant[0].value);
 				await MouroService.saveCertificate(credential);
 				credentials.push(credential);
 			});

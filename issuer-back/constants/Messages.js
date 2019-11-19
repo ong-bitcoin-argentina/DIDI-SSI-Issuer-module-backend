@@ -49,9 +49,9 @@ module.exports = {
 			}
 		},
 		TEMPLATE_DATA_VALUE: {
-			INVALID_DATA_TYPE: function(type) {
+			INVALID_DATA_VALUE: function(type) {
 				return {
-					code: "TEMPLATE_DATA_VALUE",
+					code: "INVALID_DATA_VALUE",
 					message: "el campo " + type + " no es un valor por defecto valido para ese campo"
 				};
 			}

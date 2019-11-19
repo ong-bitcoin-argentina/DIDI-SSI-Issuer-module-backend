@@ -3,6 +3,7 @@ const Constants = require("../../constants/Constants");
 const ResponseHandler = require("./ResponseHandler");
 const { header, body, validationResult } = require("express-validator");
 
+const TemplateService = require("../../services/CertTemplateService");
 const TokenService = require("../../services/TokenService");
 const UserService = require("../../services/UserService");
 
@@ -42,7 +43,7 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateToken = function(validation) {
-		validation.custom(async function(token, { req }) {
+		return validation.custom(async function(token, { req }) {
 			try {
 				const user = await _getUserFromToken(token);
 				if (req.params.userId && req.params.userId != user._id) {
@@ -56,7 +57,7 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateTokenCorrespondsToAdmin = function(validation) {
-		validation.custom(async function(token) {
+		return validation.custom(async function(token) {
 			try {
 				const user = await _getUserFromToken(token);
 				if (user.type !== Constants.USER_TYPES.Admin) return Promise.reject(Messages.VALIDATION.NOT_ADMIN);
@@ -69,18 +70,18 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateIsString = function(validation, param) {
-		validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
+		return validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
 	};
 
 	let validatePasswordIsNotCommon = function(validation) {
-		validation
+		return validation
 			.not()
 			.isIn(Constants.COMMON_PASSWORDS)
 			.withMessage(Messages.VALIDATION.COMMON_PASSWORD);
 	};
 
 	let validateTemplateData = function(validation, param) {
-		validation.custom(data => {
+		return validation.custom(data => {
 			if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
 			const dataJson = JSON.parse(data);
 
@@ -100,8 +101,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateTemplateDataType = function(validation) {
-		validation.custom(data => {
-			if (Object.values(Constants.DATA_TYPES).indexOf(data))
+		return validation.custom(data => {
+			if (!Object.values(Constants.DATA_TYPES).indexOf(data))
 				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_TYPE(data));
 			return Promise.resolve(data);
 		});
@@ -130,17 +131,16 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateValueTypes = function(validation, param) {
-		validation.custom((value, { req }) => {
+		return validation.custom((value, { req }) => {
 			const data = JSON.parse(req.body.data);
-			const err = Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_VALUE(param.name);
+			const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
 
 			if (!data[0] || !data[0]["type"]) return Promise.reject(err);
 
 			let type = data[0]["type"];
 			for (let dataElement of data) {
 				if (!dataElement["type"] || type != dataElement["type"]) return Promise.reject(err);
-				if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value))
-					return Promise.reject(err);
+				if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value)) return Promise.reject(err);
 			}
 
 			validateValueMatchesType(type, value, err);
@@ -149,34 +149,50 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateValueInTemplate = function(validation, param) {
-		validation.custom(async function(value, { req }) {
+		let _doValidateValueInTemplate = function(dataSection, templateDataSection) {
+			dataSection.forEach(elem => {
+				const template = templateDataSection.find(template => template.name === elem.name);
+
+				if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+
+				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
+				validateValueMatchesType(template.type, elem.value, err);
+			});
+
+			const allNames = dataSection.map(elem => elem.name);
+			templateDataSection.forEach(elem => {
+				if (elem.required && allNames.indexOf(elem.name) < 0)
+					return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
+			});
+		};
+
+		return validation.custom(async function(value, { req }) {
 			const templateId = req.body.templateId;
 			let template;
+
 			try {
 				template = await TemplateService.getById(templateId);
 				if (!template) return Promise.reject(Messages.VALIDATION.CERT_DATA(param.name));
 			} catch (err) {
+				console.log(err);
 				return Promise.reject(err);
 			}
 
 			const data = JSON.parse(req.body.data);
 			const templateData = template.data;
 
-			for (let key in Object.keys(templateData)) {
-				const dataSection = data[key];
-				const templateDataSection = templateData[key];
-
-				dataSection.forEach(elem => {
-					const template = templateDataSection.find(template => template.name === elem.name);
-					if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
-					validateValueMatchesType(template.type, elem.value, err);
-				});
-
-				const allNames = dataSection.map(elem => elem.name);
-				templateDataSection.forEach(elem => {
-					if (elem.required && !allNames.contains(elem.name))
-						return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
-				});
+			for (let key of Object.values(Constants.DATA_TYPES)) {
+				if (key === Constants.DATA_TYPES.PARTICIPANT) {
+					const templateDataSection = templateData[key];
+					const dataSection = data[key];
+					dataSection.forEach(section => {
+						_doValidateValueInTemplate(section, templateDataSection);
+					});
+				} else {
+					const dataSection = data[key];
+					const templateDataSection = templateData[key];
+					_doValidateValueInTemplate(dataSection, templateDataSection);
+				}
 			}
 			return Promise.resolve(value);
 		});
@@ -188,28 +204,28 @@ let _doValidate = function(param, isHead) {
 		param.validate.forEach(validationType => {
 			switch (validationType) {
 				case Constants.TOKEN_MATCHES_USER_ID:
-					validateToken(validation);
+					validation = validateToken(validation);
 					break;
 				case Constants.VALIDATION_TYPES.IS_ADMIN:
-					validateTokenCorrespondsToAdmin(validation);
+					validation = validateTokenCorrespondsToAdmin(validation);
 					break;
 				case Constants.VALIDATION_TYPES.IS_PASSWORD:
-					validatePasswordIsNotCommon(validation);
+					validation = validatePasswordIsNotCommon(validation);
 					break;
 				case Constants.VALIDATION_TYPES.IS_STRING:
-					validateIsString(validation, param);
+					validation = validateIsString(validation, param);
 					break;
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA:
-					validateTemplateData(validation, param);
+					validation = validateTemplateData(validation, param);
 					break;
-				case Constants.IS_TEMPLATE_DATA_TYPE:
-					validateTemplateDataType(validation);
+				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE:
+					validation = validateTemplateDataType(validation);
 					break;
-				case Constants.IS_TEMPLATE_DATA_VALUE:
-					validateValueTypes(validation, param);
+				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_VALUE:
+					validation = validateValueTypes(validation, param);
 					break;
-				case Constants.IS_CERT_DATA:
-					validateValueInTemplate(validation, param);
+				case Constants.VALIDATION_TYPES.IS_CERT_DATA:
+					validation = validateValueInTemplate(validation, param);
 					break;
 			}
 		});

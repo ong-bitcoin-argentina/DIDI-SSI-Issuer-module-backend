@@ -43,9 +43,9 @@ module.exports = {
 	},
 
 	DATA_TYPES: {
-		CERT: "certData",
-		OTHERS: "othersData",
-		PARTICIPANT: "participantData"
+		CERT: "cert",
+		OTHERS: "others",
+		PARTICIPANT: "participant"
 	},
 
 	COMMON_PASSWORDS: ["123456", "contraseña", "password"],
