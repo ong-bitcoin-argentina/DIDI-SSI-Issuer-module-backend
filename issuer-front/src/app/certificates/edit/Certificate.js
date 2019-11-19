@@ -106,6 +106,11 @@ class Certificate extends Component {
 		this.setState({ cert: this.state.cert });
 	};
 
+	removeParticipant = key => {
+		this.state.cert.data.participant.splice(key);
+		this.setState({ cert: this.state.cert });
+	};
+
 	templateSelected = selectedTemplate => {
 		const token = Cookie.get("token");
 
@@ -207,6 +212,9 @@ class Certificate extends Component {
 				{partData.map((data, key) => {
 					return (
 						<div className="ParticipantContent" key={"part-" + key}>
+							<button className="RemoveParticipantButton" onClick={() => this.removeParticipant(key)}>
+								{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
+							</button>
 							{this.renderSection(cert, data, "hola")}
 						</div>
 					);
@@ -225,8 +233,7 @@ class Certificate extends Component {
 		return (
 			<div className="CertSectionContent">
 				{data.map((dataElem, index) => {
-					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
-						return <div key={"template-elem-" + index}></div>;
+					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME) return <div key={"template-elem-" + index}></div>;
 
 					return (
 						<div className="Data" key={"template-elem-" + index}>
