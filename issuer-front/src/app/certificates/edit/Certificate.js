@@ -20,7 +20,8 @@ class Certificate extends Component {
 		super(props);
 
 		this.state = {
-			loading: false
+			loading: false,
+			editing: true
 		};
 	}
 
@@ -39,6 +40,8 @@ class Certificate extends Component {
 						token,
 						id,
 						function(cert) {
+							console.log(cert);
+							const editing = !cert.emmitedOn;
 							const selectedTemplate = templates.find(template => template._id === cert.templateId);
 							TemplateService.get(
 								token,
@@ -49,7 +52,8 @@ class Certificate extends Component {
 										cert: cert,
 										template: template,
 										templates: templates,
-										loading: false
+										loading: false,
+										editing: editing
 									});
 								},
 								function(err) {
@@ -124,7 +128,8 @@ class Certificate extends Component {
 					selectedTemplate: selectedTemplate,
 					template: template,
 					cert: self.certFromTemplate(template),
-					loading: false
+					loading: false,
+					editing: true
 				});
 			},
 			function(err) {
@@ -212,7 +217,7 @@ class Certificate extends Component {
 				{partData.map((data, key) => {
 					return (
 						<div className="ParticipantContent" key={"part-" + key}>
-							<button className="RemoveParticipantButton" onClick={() => this.removeParticipant(key)}>
+							<button className="RemoveParticipantButton" hidden={!this.state.editing} onClick={() => this.removeParticipant(key)}>
 								{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
 							</button>
 							{this.renderSection(cert, data, "hola")}
@@ -220,7 +225,7 @@ class Certificate extends Component {
 					);
 				})}
 
-				<button className="AddParticipantButton" onClick={this.addParticipant}>
+				<button className="AddParticipantButton" hidden={!this.state.editing} onClick={this.addParticipant}>
 					{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
 				</button>
 			</div>
@@ -239,7 +244,7 @@ class Certificate extends Component {
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
 							<div className="DataElem">
-								{DataRenderer.renderData(dataElem, type, (data, value, type) => {
+								{DataRenderer.renderData(dataElem, type, this.state.editing, (data, value, type) => {
 									dataElem.value = value;
 									self.setState({ cert: cert });
 								})}
@@ -283,7 +288,12 @@ class Certificate extends Component {
 	renderButtons = () => {
 		return (
 			<div className="CertificateButtons">
-				<button className="SaveButton" disabled={this.missingRequiredField()} onClick={this.onSave}>
+				<button
+					hidden={!this.state.editing}
+					className="SaveButton"
+					disabled={this.missingRequiredField()}
+					onClick={this.onSave}
+				>
 					{Messages.EDIT.BUTTONS.SAVE}
 				</button>
 				<button className="BackButton" onClick={this.onBack}>

@@ -350,7 +350,7 @@ class Template extends Component {
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
 							<div className="DataElem">
-								{DataRenderer.renderData(dataElem, type, this.defaultValueChanged)}
+								{DataRenderer.renderData(dataElem, type, true, this.defaultValueChanged)}
 								{DataRenderer.renderRequired(dataElem, type, this.toggleRequired)}
 								{DataRenderer.renderDelete(dataElem, type, this.deleteField)}
 							</div>

@@ -88,6 +88,7 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 	return {
 		_id: cert._id,
 		templateId: cert.templateId,
+		emmitedOn: cert.emmitedOn,
 		data: data
 	};
 };

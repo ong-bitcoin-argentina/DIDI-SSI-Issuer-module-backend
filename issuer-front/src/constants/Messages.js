@@ -53,6 +53,7 @@ module.exports = {
 			CREATE_TEMPLATE: "CREAR CERTIFICADO",
 			CREATE_CERT: "EMITIR CERTIFICADO",
 			EMMIT: "Emitir",
+			VIEW: "Ver",
 			EDIT: "Editar",
 			DELETE: "Borrar",
 			EXIT: "Salir"

@@ -15,7 +15,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default class DataRenderer {
-	static renderData = (dataElem, type, onChange) => {
+	static renderData = (dataElem, type, allowEdit, onChange) => {
 		const value = dataElem.value ? dataElem.value : dataElem.defaultValue;
 
 		if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
@@ -26,6 +26,7 @@ export default class DataRenderer {
 				return (
 					<Select
 						className="DataInput Boolean"
+						disabled={!allowEdit}
 						autoFocus
 						value={value ? value : undefined}
 						onChange={event => {
@@ -44,6 +45,7 @@ export default class DataRenderer {
 				return (
 					<Select
 						className="DataInput Boolean"
+						disabled={!allowEdit}
 						autoFocus
 						value={value ? value : undefined}
 						onChange={event => {
@@ -62,6 +64,7 @@ export default class DataRenderer {
 			case Constants.TEMPLATES.TYPES.DATE:
 				return (
 					<DatePicker
+						disabled={!allowEdit}
 						className="DataInput"
 						selected={value ? new Date(value) : new Date()}
 						onChange={date => {
@@ -75,6 +78,7 @@ export default class DataRenderer {
 				return (
 					<NumericInput
 						className="DataInput Number"
+						disabled={!allowEdit}
 						value={value}
 						onChange={value => {
 							onChange(dataElem, value, type);
@@ -85,6 +89,7 @@ export default class DataRenderer {
 				return (
 					<textarea
 						className="DataInput Paragraph"
+						disabled={!allowEdit}
 						value={value}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
@@ -97,6 +102,7 @@ export default class DataRenderer {
 					<input
 						type="text"
 						className="DataInput"
+						disabled={!allowEdit}
 						value={value}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);

@@ -54,16 +54,16 @@ class Certificates extends Component {
 							{Messages.LIST.BUTTONS.EMMIT}
 						</div>
 					)}
-					{!emmited && (
+					{
 						<div
 							className="EditAction"
 							onClick={() => {
 								self.onCertificateEdit(cert._id);
 							}}
 						>
-							{Messages.LIST.BUTTONS.EDIT}
+							{ emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
 						</div>
-					)}
+					}
 					<div
 						className="DeleteAction"
 						onClick={() => {
