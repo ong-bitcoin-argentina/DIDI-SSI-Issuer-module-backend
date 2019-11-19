@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
-import "./Certificates.css";
+import "./Certificates.scss";
 
 import CertificateService from "../../../services/CertificateService";
 

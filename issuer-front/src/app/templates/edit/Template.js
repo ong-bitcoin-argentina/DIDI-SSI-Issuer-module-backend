@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
-import "./Template.css";
+import "./Template.scss";
 
 import Cookie from "js-cookie";
 import MaterialIcon from "material-icons-react";
 
-import DataRenderer from "../../utils/dataRenderer";
+import DataRenderer from "../../utils/DataRenderer";
 
 import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
@@ -201,7 +201,7 @@ class Template extends Component {
 		const isCheckbox = this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX;
 		return (
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
+				<DialogTitle class="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
 				<DialogContent>
 					{this.renderDialogName()}
 					{isCheckbox && this.renderDialogCheckbox()}
@@ -344,7 +344,7 @@ class Template extends Component {
 	renderSection = (title, data, type) => {
 		return (
 			<div className="TemplateSectionContent">
-				<h2>{title}</h2>
+				<h2 className="DataTitle">{title}</h2>
 				{data.map((dataElem, index) => {
 					return (
 						<div className="Data" key={"template-elem-" + index}>

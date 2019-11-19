@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
-import "./Login.css";
+import "./Login.scss";
 
 import Cookie from "js-cookie";
 
@@ -49,10 +49,10 @@ class Login extends Component {
 
 		return (
 			<div className="Login">
-				<h1 className="loginTitle">{Messages.LOGIN.WELCOME}</h1>
-				<input className="loginInput" type="text" onChange={this.updateName}></input>
-				<input className="loginInput" type="password" onChange={this.updatePass}></input>
-				<button className="loginButton" onClick={this.onLogin}>
+				<h1 className="BackgroundText">{Messages.LOGIN.WELCOME}</h1>
+				<input className="LoginInput" type="text" onChange={this.updateName}></input>
+				<input className="LoginInput" type="password" onChange={this.updatePass}></input>
+				<button className="LoginButton" onClick={this.onLogin}>
 					{Messages.LOGIN.BUTTONS.ENTER}
 				</button>
 

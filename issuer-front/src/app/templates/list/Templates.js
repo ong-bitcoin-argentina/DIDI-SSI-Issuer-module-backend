@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
-import "./Templates.css";
+import "./Templates.scss";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";

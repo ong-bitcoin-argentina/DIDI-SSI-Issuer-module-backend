@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
-import "./Certificate.css";
+import "./Certificate.scss";
 
 import CertificateService from "../../../services/CertificateService";
 import TemplateService from "../../../services/TemplateService";
 
-import DataRenderer from "../../utils/dataRenderer";
+import DataRenderer from "../../utils/DataRenderer";
 
 import Cookie from "js-cookie";
 
@@ -20,7 +20,6 @@ class Certificate extends Component {
 		super(props);
 
 		this.state = {
-			isDialogOpen: false,
 			loading: false
 		};
 	}
@@ -255,7 +254,7 @@ class Certificate extends Component {
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT}</div>
 				<Select
-					className="DataDefault DataDefaultInput"
+					className="DataInput"
 					autoFocus
 					value={this.state.selectedTemplate ? this.state.selectedTemplate : this.state.templates[0]}
 					onChange={event => {
@@ -264,7 +263,7 @@ class Certificate extends Component {
 				>
 					{templates.map((opt, key) => {
 						return (
-							<MenuItem value={opt} key={"option-" + key} className="DataDefaultInput">
+							<MenuItem value={opt} key={"option-" + key} className="DataInput">
 								{opt.name}
 							</MenuItem>
 						);

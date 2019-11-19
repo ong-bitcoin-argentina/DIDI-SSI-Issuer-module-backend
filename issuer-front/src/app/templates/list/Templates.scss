@@ -1,3 +1,5 @@
+@import "../../../styles/Colors.scss";
+
 .Templates {
 	display: flex;
 	flex-direction: column;
@@ -41,8 +43,8 @@
 }
 
 .TemplateTable {
-	background-color: aliceblue;
-	color: black;
+	background-color: $TableBackground;
+	color: $TableText;
 	margin-bottom: 10px;
 }
 

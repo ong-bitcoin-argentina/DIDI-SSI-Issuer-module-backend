@@ -1,3 +1,5 @@
+@import "../../../styles/Colors.scss";
+
 .Certificates {
 	display: flex;
 	flex-direction: column;
@@ -40,8 +42,8 @@
 }
 
 .CertificateTable {
-	background-color: aliceblue;
-	color: black;
+	background-color: $TableBackground;
+	color: $TableText;
 	margin-bottom: 10px;
 }
 

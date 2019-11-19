@@ -1,3 +1,5 @@
+@import "../../../styles/Colors.scss";
+
 .Template {
 	display: flex;
 	flex-direction: column;
@@ -33,8 +35,8 @@
 
 #Required {
 	display: flex;
-	color: rgba(0, 0, 0, 0.54);
 }
+
 
 #Types {
 	margin-top: 20px;
@@ -46,7 +48,12 @@
 	flex-direction: column;
 }
 
+.DataTitle {
+	color: $BackgroundText;
+}
+
 .DataName {
+	color: $BackgroundText;
 	align-self: flex-start;
 }
 
@@ -57,6 +64,7 @@
 }
 
 .DataRequired {
+	color: $BackgroundText;
 	display: flex;
 	flex-direction: row;
 	font-size: 18px;
@@ -66,7 +74,7 @@
 	display: flex;
 	flex-direction: row;
 	font-size: 18px;
-	color: #eb4646;
+	color: $Delete;
 }
 
 .material-icons {
@@ -76,40 +84,6 @@
 
 .DialogTypeDropdown {
 	width: 165px;
-}
-
-.DataDefault {
-	background-color: aliceblue;
-	color: black;
-
-	padding-left: 5px;
-
-	width: 500px;
-	height: 40px;
-
-	text-align: left;
-}
-
-.DataDefaultInput {
-	font-size: 18px !important;
-}
-
-.Mandatory {
-	padding-top: 10px;
-	height: 30px;
-}
-
-.Number {
-	width: 510px;
-}
-
-.Paragraph {
-	height: 100px;
-}
-
-.Boolean {
-	width: 510px;
-	height: 45px;
 }
 
 .TemplateSectionContent {
