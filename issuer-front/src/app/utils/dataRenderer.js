@@ -1,5 +1,5 @@
 import React from "react";
-import "./DataRenderer.scss"
+import "./DataRenderer.scss";
 
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
@@ -44,7 +44,7 @@ export default class DataRenderer {
 			case Constants.TEMPLATES.TYPES.CHECKBOX:
 				return (
 					<Select
-						className="DataInput Boolean"
+						className="DataInput Checkbox"
 						disabled={!allowEdit}
 						autoFocus
 						value={value ? value : undefined}
@@ -103,7 +103,7 @@ export default class DataRenderer {
 						type="text"
 						className="DataInput"
 						disabled={!allowEdit}
-						value={value}
+						value={value.trim()}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
 						}}
@@ -113,9 +113,7 @@ export default class DataRenderer {
 	};
 
 	static renderRequired = (dataElem, type, onChange) => {
-		const icon = dataElem.required
-			? Constants.TEMPLATES.EDIT.ICONS.REQUIRED
-			: Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
+		const icon = dataElem.required ? Constants.TEMPLATES.EDIT.ICONS.REQUIRED : Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
 		return (
 			<div
 				className="DataRequired"
