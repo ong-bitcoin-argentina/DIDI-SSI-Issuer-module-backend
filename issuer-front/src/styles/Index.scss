@@ -19,5 +19,21 @@ button {
 }
 
 .BackgroundText {
-	color: $BackgroundText
+	color: $BackgroundText;
+}
+
+.chip {
+	display: none;
+}
+
+.search-result {
+	width: 495px;
+}
+
+input.input-box {
+	width: 470px;
+}
+
+.MuiRadio-root {
+	color: $InputBackground !important;
 }

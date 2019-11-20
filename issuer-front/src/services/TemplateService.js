@@ -1,7 +1,6 @@
 import Constants from "../constants/Constants";
 
 export default class TemplateService {
-
 	static create(token, name, cb, errCb) {
 		const data = {
 			method: "POST",
@@ -115,6 +114,33 @@ export default class TemplateService {
 		};
 
 		fetch(Constants.API_ROUTES.TEMPLATES.CREATE_FIELD(id), data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
+	static setPreviewFields(token, id, preview, type, cb, errCb) {
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				preview: preview,
+				type: type
+			})
+		};
+
+		fetch(Constants.API_ROUTES.TEMPLATES.SET_PREVIEW_FIELD(id), data)
 			.then(data => {
 				return data.json();
 			})

@@ -37,6 +37,7 @@ const CertTemplateSchema = mongoose.Schema({
 		required: true
 	},
 	previewData: [{ type: String }],
+	previewType: { type: String },
 	data: {
 		cert: [dataElement],
 		participant: [dataElement],
@@ -192,10 +193,10 @@ CertTemplateSchema.methods.delete = async function() {
 	}
 };
 
-CertTemplateSchema.methods.setPreviewData = async function(previewData) {
+CertTemplateSchema.methods.setPreviewData = async function(previewData, previewType) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
-		$set: { previewData: previewData }
+		$set: { previewData: previewData, previewType: previewType }
 	};
 
 	try {
@@ -222,6 +223,7 @@ CertTemplate.generate = async function(name) {
 
 	let template = new CertTemplate();
 	template.name = name;
+	template.previewType = "1";
 	template.previewData = [Constants.CERT_FIELD_MANDATORY.FIRST_NAME, Constants.CERT_FIELD_MANDATORY.LAST_NAME];
 	template.data = {
 		cert: [

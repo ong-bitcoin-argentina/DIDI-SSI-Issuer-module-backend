@@ -20,6 +20,11 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
+import ListItemText from "@material-ui/core/ListItemText";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
 
 class Template extends Component {
 	constructor(props) {
@@ -30,6 +35,8 @@ class Template extends Component {
 			typingTimeout: 0,
 			typing: false,
 			isDialogOpen: false,
+			radioValue: 1,
+			previewFields: [],
 			options: [],
 			dataType: Constants.TEMPLATES.TYPES.TEXT
 		};
@@ -47,7 +54,14 @@ class Template extends Component {
 			token,
 			id,
 			async function(template) {
-				self.setState({ id: id, isDialogOpen: false, template: template, loading: false });
+				self.setState({
+					id: id,
+					isDialogOpen: false,
+					template: template,
+					radioValue: template.previewType,
+					previewFields: template.previewData,
+					loading: false
+				});
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -60,7 +74,7 @@ class Template extends Component {
 	onBack = () => {
 		this.props.history.push(Constants.ROUTES.TEMPLATES);
 	};
-	
+
 	// volver a login
 	onLogout = () => {
 		Cookie.set("token", "");
@@ -158,6 +172,36 @@ class Template extends Component {
 		);
 	};
 
+	// seleccionar los campos a mostrarse por defecto en el certificado
+	setPreviewFields = (previewElems, type) => {
+		const id = this.state.id;
+		const token = Cookie.get("token");
+		const self = this;
+
+		TemplateService.setPreviewFields(
+			token,
+			id,
+			previewElems,
+			type,
+			async function(template) {
+				self.setState({ template: template });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
+	onPreviewFieldsSelected = event => {
+		const previewElems = event.target.value;
+
+		if (previewElems.length === Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[this.state.radioValue])
+			this.setPreviewFields(previewElems, this.state.radioValue);
+
+		this.setState({ previewFields: previewElems });
+	};
+
 	// borrar campo
 	deleteField = (data, type) => {
 		const id = this.state.id;
@@ -202,6 +246,7 @@ class Template extends Component {
 		return (
 			<div className="Template">
 				{this.renderDialog()}
+				{!loading && this.renderTemplateType()}
 				{!loading && this.renderTemplate()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
@@ -213,7 +258,7 @@ class Template extends Component {
 		const isCheckbox = this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX;
 		return (
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle class="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
+				<DialogTitle className="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
 				<DialogContent>
 					{this.renderDialogName()}
 					{isCheckbox && this.renderDialogCheckbox()}
@@ -334,6 +379,85 @@ class Template extends Component {
 						</div>
 					);
 				})}
+			</div>
+		);
+	};
+
+	renderTemplateType = () => {
+		const template = this.state.template;
+		const templateElements = template.data.cert
+			.concat(template.data.others)
+			.concat(template.data.participant)
+			.filter(elemData => elemData.required)
+			.map(elementData => elementData.name);
+
+		const missing = Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[this.state.radioValue] - this.state.previewFields.length;
+		const radioValue = this.state.radioValue;
+
+		return (
+			<div className="Template-Type">
+				<h2 className="DataTitle">{"CAMPOS A PREVISUALIZAR"}</h2>
+
+				<RadioGroup
+					className="PreviewFieldTypePicker"
+					aria-label="gender"
+					name="gender1"
+					value={this.state.radioValue}
+					onChange={event => {
+						this.setState({ radioValue: event.target.value });
+					}}
+				>
+					<div className="PreviewFieldItem">
+						<FormControlLabel value="1" checked={radioValue === "1"} control={<Radio />} />
+						<img src={require("./Preview/1.png")} className="PreviewFieldTypeImage" alt="type 1" />
+					</div>
+
+					<div className="PreviewFieldItem">
+						<FormControlLabel value="2" checked={radioValue === "2"} control={<Radio />} />
+						<img src={require("./Preview/2.png")} className="PreviewFieldTypeImage" alt="type 2" />
+					</div>
+
+					<div className="PreviewFieldItem">
+						<FormControlLabel value="3" checked={radioValue === "3"} control={<Radio />} />
+						<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 3" />
+					</div>
+
+					<div className="PreviewFieldItem">
+						<FormControlLabel value="4" checked={radioValue === "4"} control={<Radio />} />
+						<img src={require("./Preview/1.png")} className="PreviewFieldTypeImage" alt="type 4" />
+					</div>
+
+					<div className="PreviewFieldItem">
+						<FormControlLabel value="5" checked={radioValue === "5"} control={<Radio />} />
+						<img src={require("./Preview/2.png")} className="PreviewFieldTypeImage" alt="type 5" />
+					</div>
+
+					<div className="PreviewFieldItem">
+						<FormControlLabel value="6" checked={radioValue === "6"} control={<Radio />} />
+						<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 6" />
+					</div>
+				</RadioGroup>
+
+				<Select
+					className="PreviewFieldsSelect"
+					multiple
+					displayEmpty
+					value={this.state.previewFields}
+					onChange={this.onPreviewFieldsSelected}
+					renderValue={selected => selected.join(", ")}
+				>
+					{templateElements.map((elem, key) => {
+						return (
+							<MenuItem key={"PreviewFields-" + key} value={elem}>
+								<Checkbox checked={this.state.previewFields.indexOf(elem) > -1} />
+								<ListItemText primary={elem} />
+							</MenuItem>
+						);
+					})}
+				</Select>
+
+				{missing > 0 && <div>Seleccione {missing} mas</div>}
+				{missing < 0 && <div>Agrego de mas, quite {-1 * missing}</div>}
 			</div>
 		);
 	};

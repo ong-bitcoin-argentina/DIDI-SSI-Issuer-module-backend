@@ -47,10 +47,10 @@ module.exports.create = async function(name) {
 	}
 };
 
-module.exports.setPreviewData = async function(id, previewData) {
+module.exports.setPreviewData = async function(id, previewData, type) {
 	try {
 		let template = await getById(id);
-		template = await template.setPreviewData(previewData);
+		template = await template.setPreviewData(previewData, type);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
 		return Promise.resolve(template);
 	} catch (err) {

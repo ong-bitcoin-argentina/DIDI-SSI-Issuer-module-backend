@@ -146,16 +146,16 @@ let _doValidate = function(param, isHead) {
 			try {
 				const data = JSON.parse(req.body.data);
 				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
-	
+
 				if (!data[0] || !data[0]["type"]) return Promise.reject(err);
-	
+
 				let type = data[0]["type"];
 				for (let dataElement of data) {
 					if (!dataElement["type"] || type != dataElement["type"]) return Promise.reject(err);
 					if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value))
 						return Promise.reject(err);
 				}
-	
+
 				validateValueMatchesType(type, value, err);
 				return Promise.resolve(value);
 			} catch (err) {
@@ -184,14 +184,13 @@ let _doValidate = function(param, isHead) {
 		};
 
 		return validation.custom(async function(value, { req }) {
-
 			try {
 				const templateId = req.body.templateId;
 				let template = await TemplateService.getById(templateId);
-	
+
 				const data = JSON.parse(req.body.data);
 				const templateData = template.data;
-	
+
 				for (let key of Object.values(Constants.DATA_TYPES)) {
 					if (key === Constants.DATA_TYPES.PARTICIPANT) {
 						const templateDataSection = templateData[key];
@@ -225,9 +224,10 @@ let _doValidate = function(param, isHead) {
 				return Promise.reject(err);
 			}
 			const preview = req.body.preview;
-			if (Constants.PREVIEW_ELEMS_LENGTH.indexOf(preview.length) < 0) {
+			const type = req.body.type;
+
+			if (Constants.PREVIEW_ELEMS_LENGTH[type] !== preview.length)
 				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);
-			}
 
 			const templateData = template.data.cert
 				.concat(template.data.participant)

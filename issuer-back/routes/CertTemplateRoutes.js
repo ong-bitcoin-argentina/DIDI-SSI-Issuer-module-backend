@@ -176,15 +176,20 @@ router.put(
 		{
 			name: "preview",
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA]
+		},
+		{
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
 		const preview = req.body.preview;
+		const type = req.body.type;
 
 		try {
-			template = await CertTemplateService.setPreviewData(id, preview);
+			template = await CertTemplateService.setPreviewData(id, preview, type);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

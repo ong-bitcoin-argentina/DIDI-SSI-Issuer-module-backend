@@ -15,7 +15,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default class DataRenderer {
-
 	// mostrar / editar campos genericos
 	static renderData = (dataElem, type, allowEdit, onChange) => {
 		const value = dataElem.value ? dataElem.value : dataElem.defaultValue;
@@ -68,7 +67,7 @@ export default class DataRenderer {
 					<DatePicker
 						disabled={!allowEdit}
 						className="DataInput"
-						selected={value ? new Date(value) : new Date()}
+						selected={value ? new Date(value) : undefined}
 						onChange={date => {
 							date = dateFormat(date, "yyyy-mm-dd hh:MM:ss");
 							onChange(dataElem, date.replace(" ", "T") + "Z", type);
@@ -115,7 +114,7 @@ export default class DataRenderer {
 		}
 	};
 
-	// mostrar boton de requerido	
+	// mostrar boton de requerido
 	static renderRequired = (dataElem, type, onChange) => {
 		const icon = dataElem.required
 			? Constants.TEMPLATES.EDIT.ICONS.REQUIRED

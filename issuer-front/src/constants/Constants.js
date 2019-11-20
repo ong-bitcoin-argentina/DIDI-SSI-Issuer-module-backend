@@ -15,6 +15,9 @@ module.exports = {
 			TOGGLE_REQUIRED: id => {
 				return API + "/template/" + id + "/required";
 			},
+			SET_PREVIEW_FIELD: id => {
+				return API + "/template/" + id + "/preview";
+			},
 			SET_DEFAULT_FIELD: id => {
 				return API + "/template/" + id + "/default";
 			},
@@ -51,6 +54,15 @@ module.exports = {
 	},
 
 	TEMPLATES: {
+		PREVIEW_ELEMS_LENGTH: {
+			1: 2,
+			2: 4,
+			3: 6,
+			4: 2,
+			5: 4,
+			6: 6
+		},
+
 		ICONS: {
 			ADD_BUTTON: "add_box"
 		},

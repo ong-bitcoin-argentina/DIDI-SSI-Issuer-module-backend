@@ -37,7 +37,6 @@
 	display: flex;
 }
 
-
 #Types {
 	margin-top: 20px;
 	margin-bottom: 20px;
@@ -87,5 +86,27 @@
 }
 
 .TemplateSectionContent {
+	margin-bottom: 20px;
+}
+
+.PreviewFieldsSelect {
+	background-color: $TableBackground;
+	width: 505px;
+}
+
+.PreviewFieldItem {
+	width: 30%;
+	box-sizing: border-box;
+}
+
+.PreviewFieldTypeImage {
+	margin-right: 10px;
+	width: 200px;
+}
+
+.PreviewFieldTypePicker {
+	width: 750px;
+	display: flex;
+	flex-direction: row !important;
 	margin-bottom: 20px;
 }
