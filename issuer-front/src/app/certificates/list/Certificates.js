@@ -33,6 +33,7 @@ class Certificates extends Component {
 		};
 	}
 
+	// mapear certificados al formato requerido por "ReactTable"
 	getCertificatesData = (self, cert) => {
 		const emmited = cert.emmitedOn;
 
@@ -79,6 +80,7 @@ class Certificates extends Component {
 		};
 	};
 
+	// cargar certificados
 	componentDidMount() {
 		const token = Cookie.get("token");
 		const self = this;
@@ -99,6 +101,7 @@ class Certificates extends Component {
 		);
 	}
 
+	// borrar certificados
 	onCertificateDelete = id => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -118,6 +121,7 @@ class Certificates extends Component {
 		);
 	};
 
+	// emitir certificados
 	onCertificateEmmit = id => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -136,24 +140,31 @@ class Certificates extends Component {
 		);
 	};
 
+	// a pantalla de edicion
 	onCertificateEdit = id => {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
 
+	// a pantalla de edicion
 	onCertificateCreate = () => {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT);
 	};
 
+	// a pantalla de templates
 	moveToTemplates = () => {
 		this.props.history.push(Constants.ROUTES.TEMPLATES);
 	};
 
+	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	// abrir dialogo de creacion de certificados
 	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
+
+	// cerrar dialogo de creacion de certificados
 	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
 
 	render() {

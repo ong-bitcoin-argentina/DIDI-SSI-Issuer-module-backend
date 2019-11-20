@@ -22,7 +22,6 @@ router.get(
 		try {
 			const certs = await CertService.getAll();
 			const result = certs.map(cert => {
-				console.log(cert);
 				return {
 					_id: cert._id,
 					name: cert.data.cert[0].value,
@@ -91,18 +90,22 @@ router.post(
 
 			let credentials = [];
 			partData.forEach(async element => {
-				const data = {
-					certificateData: cert.data.cert.map(data => {
-						return { value: data.value, name: data.name };
-					}),
-					participant: element,
-					otherData: cert.data.others.map(data => {
-						return { value: data.value, name: data.name };
-					}),
-					emmitedOn: cert.emmitedOn
+				const allData = cert.data.cert.concat(element).concat(cert.data.others);
+				const data = {};
+				data[cert.data.cert[0].value] = {
+					data: {}
 				};
 
-				const credential = await MouroService.createCertificate(data, data.participant[0].value);
+				let did;
+				allData.forEach(dataElem => {
+					if (dataElem.name === "DID") {
+						did = dataElem.value;
+					} else {
+						if (dataElem.value) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
+					}
+				});
+
+				const credential = await MouroService.createCertificate(data, did);
 				await MouroService.saveCertificate(credential);
 				credentials.push(credential);
 			});

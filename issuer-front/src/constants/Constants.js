@@ -91,6 +91,9 @@ module.exports = {
 	},
 
 	CERTIFICATES: {
+		ERR: {
+			INVALID_DID: "Invalid DID"
+		},
 		MANDATORY_DATA: {
 			DID: "DID",
 			FIRST_NAME: "NOMBRE",

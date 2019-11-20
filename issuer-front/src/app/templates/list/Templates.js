@@ -31,6 +31,7 @@ class Templates extends Component {
 		};
 	}
 
+	// mapear certificados al formato requerido por "ReactTable"
 	getTemplateData = (self, template) => {
 		return {
 			_id: template._id,
@@ -58,6 +59,7 @@ class Templates extends Component {
 		};
 	};
 
+	// cargar certificados
 	componentDidMount() {
 		const token = Cookie.get("token");
 		const self = this;
@@ -78,6 +80,7 @@ class Templates extends Component {
 		);
 	}
 
+	// crear templates
 	onTemplateCreate = () => {
 		const token = Cookie.get("token");
 		const name = this.state.name;
@@ -98,6 +101,7 @@ class Templates extends Component {
 		);
 	};
 
+	// borrar templates
 	onTemplateDelete = id => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -116,21 +120,28 @@ class Templates extends Component {
 		);
 	};
 
+	// a pantalla de edicion
 	onTemplateEdit = id => {
 		this.props.history.push(Constants.ROUTES.EDIT_TEMPLATE + id);
 	};
 
+	// abrir dialogo de creacion de templates
 	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
+
+	// cerrar dialogo de creacion de templates
 	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
 
+	// actualizar nombre del template a crear
 	updateName = event => {
 		this.setState({ name: event.target.value, error: "" });
 	};
 
+	// a pantalla de certificados
 	moveToCertificates = () => {
 		this.props.history.push(Constants.ROUTES.CERTIFICATES);
 	};
 
+	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);

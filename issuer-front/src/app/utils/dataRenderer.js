@@ -15,6 +15,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default class DataRenderer {
+
+	// mostrar / editar campos genericos
 	static renderData = (dataElem, type, allowEdit, onChange) => {
 		const value = dataElem.value ? dataElem.value : dataElem.defaultValue;
 
@@ -98,7 +100,7 @@ export default class DataRenderer {
 				);
 			case Constants.TEMPLATES.TYPES.TEXT:
 			default:
-			const val = value ? value: "";
+				const val = value ? value : "";
 				return (
 					<input
 						type="text"
@@ -113,8 +115,11 @@ export default class DataRenderer {
 		}
 	};
 
+	// mostrar boton de requerido	
 	static renderRequired = (dataElem, type, onChange) => {
-		const icon = dataElem.required ? Constants.TEMPLATES.EDIT.ICONS.REQUIRED : Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
+		const icon = dataElem.required
+			? Constants.TEMPLATES.EDIT.ICONS.REQUIRED
+			: Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
 		return (
 			<div
 				className="DataRequired"
@@ -128,6 +133,7 @@ export default class DataRenderer {
 		);
 	};
 
+	// mostrar boton de borrado
 	static renderDelete = (dataElem, type, onClick) => {
 		if (dataElem.mandatory) return <div></div>;
 

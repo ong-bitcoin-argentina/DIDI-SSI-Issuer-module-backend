@@ -18,7 +18,6 @@ module.exports.login = async function(name, password) {
 
 	try {
 		const isMatch = await user.comparePassword(password);
-		console.log(isMatch);
 		if (!isMatch) return Promise.reject(Messages.USER.ERR.INVALID_USER);
 		return Promise.resolve({ token: TokenService.generateToken(user._id) });
 	} catch (err) {

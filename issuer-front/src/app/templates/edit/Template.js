@@ -35,6 +35,7 @@ class Template extends Component {
 		};
 	}
 
+	// cargar template
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
@@ -55,15 +56,18 @@ class Template extends Component {
 		);
 	}
 
+	// volver a listado de certificados
 	onBack = () => {
 		this.props.history.push(Constants.ROUTES.TEMPLATES);
 	};
-
+	
+	// volver a login
 	onLogout = () => {
 		Cookie.set("token", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	// agregar campo al template con la info proveniente del dialogo
 	createField = () => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -92,6 +96,7 @@ class Template extends Component {
 		);
 	};
 
+	// marcar campo como requerido / no requerido
 	toggleRequired = (data, type) => {
 		const id = this.state.id;
 		const token = Cookie.get("token");
@@ -113,6 +118,8 @@ class Template extends Component {
 		);
 	};
 
+	// arrancar un timer y cambiar valor por defecto del campo cuando se cumpla el mismo
+	// (dar tiempo a que el usuario cambie su input)
 	defaultValueChanged = (data, defaultValue, type) => {
 		const self = this;
 		if (self.state.typingTimeout) {
@@ -129,6 +136,7 @@ class Template extends Component {
 		});
 	};
 
+	// cambiar valor por defecto del campo
 	setDefaultValue = (data, defaultValue, type) => {
 		const id = this.state.id;
 		const token = Cookie.get("token");
@@ -150,6 +158,7 @@ class Template extends Component {
 		);
 	};
 
+	// borrar campo
 	deleteField = (data, type) => {
 		const id = this.state.id;
 		const token = Cookie.get("token");
@@ -171,6 +180,7 @@ class Template extends Component {
 		);
 	};
 
+	// abrir dialogo para insercion de campo en el template
 	onDialogOpen = type =>
 		this.setState({
 			isDialogOpen: true,
@@ -180,6 +190,8 @@ class Template extends Component {
 			options: [],
 			required: false
 		});
+
+	// cerrar dialogo para insercion de campo en el template
 	onDialogClose = () => this.setState({ isDialogOpen: false });
 
 	render() {

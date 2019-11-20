@@ -26,6 +26,7 @@ class Certificate extends Component {
 		};
 	}
 
+	// cargar templates, certificado, etc
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
@@ -33,15 +34,17 @@ class Certificate extends Component {
 
 		const self = this;
 		self.setState({ loading: true });
+		// cargar templates
 		TemplateService.getAll(
 			token,
 			function(templates) {
 				if (id) {
+					// cargar cert
 					CertificateService.get(
 						token,
 						id,
 						function(cert) {
-							console.log(cert);
+							// si el cert fue emitido, no puedo editarlo
 							const action = cert.emmitedOn ? "viewing" : "editing";
 							const selectedTemplate = templates.find(template => template._id === cert.templateId);
 							TemplateService.get(
@@ -79,6 +82,7 @@ class Certificate extends Component {
 		);
 	}
 
+	// generar certificado a partir del template seleccionado en el combo
 	certFromTemplate = template => {
 		const data = {
 			cert: this.certDataFromTemplate(template, "cert"),
@@ -105,12 +109,15 @@ class Certificate extends Component {
 		});
 	};
 
+	// agregar info de participante con los datos por defecto del template
 	addParticipant = () => {
 		const participant = this.state.cert.data.participant;
 		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
 		this.setState({ cert: this.state.cert });
 	};
 
+	// agregar info de participante con los datos provenientes de un csv
+	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadParticipantsFromCsv = files => {
 		const self = this;
 		var reader = new FileReader();
@@ -133,16 +140,19 @@ class Certificate extends Component {
 		reader.readAsText(files[0]);
 	};
 
+	// eliminar participante
 	removeParticipant = key => {
 		this.state.cert.data.participant.splice(key);
 		this.setState({ cert: this.state.cert });
 	};
 
+	// borrar data local y generar nuevo cert a partir del template
 	templateSelected = selectedTemplate => {
 		const token = Cookie.get("token");
 
 		const self = this;
 		self.setState({ loading: true });
+		// obtener template
 		TemplateService.get(
 			token,
 			selectedTemplate._id,
@@ -162,6 +172,7 @@ class Certificate extends Component {
 		);
 	};
 
+	// guardar cert y volver a listado de certificados
 	onSave = () => {
 		const token = Cookie.get("token");
 		const cert = this.state.cert;
@@ -182,17 +193,30 @@ class Certificate extends Component {
 		);
 	};
 
+	// volver a listado de certificados
 	onBack = () => {
 		this.props.history.push(Constants.ROUTES.CERTIFICATES);
 	};
 
+	// volver a login
 	onLogout = () => {
 		Cookie.set("token", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
-	missingRequiredField = () => {
+	// si el boton de guardar esta deshabilitado 
+	// (algun campo obligatorio sin llenar o el did tiene un formato incorrecto)
+	saveDisabled = () => {
 		if (!this.state.cert) return true;
+
+		const did = this.state.cert.data.participant[0][0].value;
+		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
+		if (!did.match(regex)) {
+			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+			return true;
+		} else {
+			if (this.state.error) this.setState({ error: undefined });
+		}
 
 		const cert = this.state.cert.data.cert;
 		const participant = this.state.cert.data.participant.flat();
@@ -339,7 +363,7 @@ class Certificate extends Component {
 				<button
 					hidden={this.state.action === "viewing"}
 					className="SaveButton"
-					disabled={this.missingRequiredField()}
+					disabled={this.saveDisabled()}
 					onClick={this.onSave}
 				>
 					{Messages.EDIT.BUTTONS.SAVE}
