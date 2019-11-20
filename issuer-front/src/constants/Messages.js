@@ -22,6 +22,7 @@ module.exports = {
 		},
 		BUTTONS: {
 			REMOVE_PARTICIPANTS: "X",
+			ADD_PARTICIPANTS_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
 			CREATE: "NUEVO CAMPO",
 			SAVE: "Guardar",

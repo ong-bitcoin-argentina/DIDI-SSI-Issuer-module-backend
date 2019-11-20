@@ -9,6 +9,21 @@
 	margin-right: 10px;
 }
 
+.AddParticipant {
+	margin-right: 10px;
+}
+
+.AddParticipantCSV {
+	position: relative;
+	top: -13px;
+}
+
+.AddParticipantButtons {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
 .RemoveParticipantButton {
 	float: right;
 	width: 30px;

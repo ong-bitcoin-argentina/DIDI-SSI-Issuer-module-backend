@@ -5,6 +5,7 @@ import "./Certificate.scss";
 import CertificateService from "../../../services/CertificateService";
 import TemplateService from "../../../services/TemplateService";
 
+import ReactFileReader from "react-file-reader";
 import DataRenderer from "../../utils/DataRenderer";
 
 import Cookie from "js-cookie";
@@ -108,6 +109,28 @@ class Certificate extends Component {
 		const participant = this.state.cert.data.participant;
 		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
 		this.setState({ cert: this.state.cert });
+	};
+
+	loadParticipantsFromCsv = files => {
+		const self = this;
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			const participant = self.state.cert.data.participant;
+			const data = reader.result.split(",");
+			let index = 0;
+			do {
+				const participantData = self.certDataFromTemplate(self.state.template, "participant");
+				for (let dataElem of participantData) {
+					if (data.length > index) {
+						dataElem.value = data[index];
+						index++;
+					}
+				}
+				participant.push(participantData);
+			} while (data.length > index);
+			self.setState({ cert: self.state.cert });
+		};
+		reader.readAsText(files[0]);
 	};
 
 	removeParticipant = key => {
@@ -229,13 +252,24 @@ class Certificate extends Component {
 					);
 				})}
 
-				<button
-					className="AddParticipantButton"
-					hidden={this.state.action === "viewing" || this.state.action === "editing"}
-					onClick={this.addParticipant}
-				>
-					{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
-				</button>
+				<div className="AddParticipantButtons">
+					<button
+						className="AddParticipant"
+						hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						onClick={this.addParticipant}
+					>
+						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
+					</button>
+
+					<ReactFileReader handleFiles={this.loadParticipantsFromCsv} fileTypes={".csv"}>
+						<button
+							className="AddParticipantCSV"
+							hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						>
+							{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS_FROM_CSV}
+						</button>
+					</ReactFileReader>
+				</div>
 			</div>
 		);
 	};
