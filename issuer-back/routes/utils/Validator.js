@@ -82,29 +82,40 @@ let _doValidate = function(param, isHead) {
 
 	let validateTemplateData = function(validation, param) {
 		return validation.custom(data => {
-			if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
-			const dataJson = JSON.parse(data);
+			try {
+				if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
+				const dataJson = JSON.parse(data);
 
-			for (let dataElement of dataJson) {
-				const missingField = !dataElement || !dataElement.name || !dataElement.type;
-				if (missingField) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_DATA(param.name));
+				for (let dataElement of dataJson) {
+					const missingField = !dataElement || !dataElement.name || !dataElement.type;
+					if (missingField) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_DATA(param.name));
 
-				const invalidType = !Constants.CERT_FIELD_TYPES[dataElement.type];
-				if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+					const invalidType = !Constants.CERT_FIELD_TYPES[dataElement.type];
+					if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 
-				const checkboxMissingOptions = !dataElement.options && dataElement.type == Constants.CERT_FIELD_TYPES.Checkbox;
-				if (checkboxMissingOptions)
-					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
+					const checkboxMissingOptions =
+						!dataElement.options && dataElement.type == Constants.CERT_FIELD_TYPES.Checkbox;
+					if (checkboxMissingOptions)
+						return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
+				}
+				return Promise.resolve(data);
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(err);
 			}
-			return Promise.resolve(data);
 		});
 	};
 
 	let validateTemplateDataType = function(validation) {
 		return validation.custom(data => {
-			if (Object.values(Constants.DATA_TYPES).indexOf(data) < 0)
-				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_TYPE(data));
-			return Promise.resolve(data);
+			try {
+				if (Object.values(Constants.DATA_TYPES).indexOf(data) < 0)
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA_TYPE.INVALID_DATA_TYPE(data));
+				return Promise.resolve(data);
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(err);
+			}
 		});
 	};
 
@@ -132,19 +143,25 @@ let _doValidate = function(param, isHead) {
 
 	let validateValueTypes = function(validation, param) {
 		return validation.custom((value, { req }) => {
-			const data = JSON.parse(req.body.data);
-			const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
-
-			if (!data[0] || !data[0]["type"]) return Promise.reject(err);
-
-			let type = data[0]["type"];
-			for (let dataElement of data) {
-				if (!dataElement["type"] || type != dataElement["type"]) return Promise.reject(err);
-				if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value)) return Promise.reject(err);
+			try {
+				const data = JSON.parse(req.body.data);
+				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
+	
+				if (!data[0] || !data[0]["type"]) return Promise.reject(err);
+	
+				let type = data[0]["type"];
+				for (let dataElement of data) {
+					if (!dataElement["type"] || type != dataElement["type"]) return Promise.reject(err);
+					if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value))
+						return Promise.reject(err);
+				}
+	
+				validateValueMatchesType(type, value, err);
+				return Promise.resolve(value);
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(err);
 			}
-
-			validateValueMatchesType(type, value, err);
-			return Promise.resolve(value);
 		});
 	};
 
@@ -167,33 +184,62 @@ let _doValidate = function(param, isHead) {
 		};
 
 		return validation.custom(async function(value, { req }) {
-			const templateId = req.body.templateId;
-			let template;
 
 			try {
-				template = await TemplateService.getById(templateId);
-				if (!template) return Promise.reject(Messages.VALIDATION.CERT_DATA(param.name));
+				const templateId = req.body.templateId;
+				let template = await TemplateService.getById(templateId);
+	
+				const data = JSON.parse(req.body.data);
+				const templateData = template.data;
+	
+				for (let key of Object.values(Constants.DATA_TYPES)) {
+					if (key === Constants.DATA_TYPES.PARTICIPANT) {
+						const templateDataSection = templateData[key];
+						const dataSection = data[key];
+						dataSection.forEach(section => {
+							_doValidateValueInTemplate(section, templateDataSection);
+						});
+					} else {
+						const dataSection = data[key];
+						const templateDataSection = templateData[key];
+						_doValidateValueInTemplate(dataSection, templateDataSection);
+					}
+				}
+				return Promise.resolve(value);
 			} catch (err) {
 				console.log(err);
 				return Promise.reject(err);
 			}
+		});
+	};
 
-			const data = JSON.parse(req.body.data);
-			const templateData = template.data;
-
-			for (let key of Object.values(Constants.DATA_TYPES)) {
-				if (key === Constants.DATA_TYPES.PARTICIPANT) {
-					const templateDataSection = templateData[key];
-					const dataSection = data[key];
-					dataSection.forEach(section => {
-						_doValidateValueInTemplate(section, templateDataSection);
-					});
-				} else {
-					const dataSection = data[key];
-					const templateDataSection = templateData[key];
-					_doValidateValueInTemplate(dataSection, templateDataSection);
-				}
+	let validateTemplatePreviewData = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			const templateId = req.params.id;
+			let template;
+			try {
+				template = await TemplateService.getById(templateId);
+				if (!template) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_ID);
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(err);
 			}
+			const preview = req.body.preview;
+			if (Constants.PREVIEW_ELEMS_LENGTH.indexOf(preview.length) < 0) {
+				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);
+			}
+
+			const templateData = template.data.cert
+				.concat(template.data.participant)
+				.concat(template.data.others)
+				.filter(elem => elem.required)
+				.map(elem => elem.name);
+
+			for (let fieldName of preview) {
+				if (templateData.indexOf(fieldName) < 0)
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_DATA);
+			}
+
 			return Promise.resolve(value);
 		});
 	};
@@ -226,6 +272,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_CERT_DATA:
 					validation = validateValueInTemplate(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA:
+					validation = validateTemplatePreviewData(validation, param);
 					break;
 			}
 		});

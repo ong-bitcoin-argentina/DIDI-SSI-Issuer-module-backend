@@ -58,6 +58,15 @@ module.exports = {
 			}
 		},
 		TEMPLATE_DATA: {
+			INVALID_TEMPLATE_PREVIEW_TYPE: {
+				code: "INVALID_TEMPLATE_PREVIEW_TYPE",
+				message: "se permiten actalmetne solo 2, 4 o 6 campos para previsualizar"
+			},
+			INVALID_TEMPLATE_ID: { code: "INVALID_TEMPLATE_ID", message: "no existe modelo de certificado con ese id" },
+			INVALID_TEMPLATE_PREVIEW_DATA: {
+				code: "INVALID_TEMPLATE_PREVIEW_DATA",
+				message: "el modelo de certificado no contiene los tipos requeridos"
+			},
 			NO_DATA: function(type) {
 				return { code: "NO_DATA", message: "el campo " + type + " no contiene data" };
 			},

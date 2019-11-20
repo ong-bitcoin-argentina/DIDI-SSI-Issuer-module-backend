@@ -166,6 +166,33 @@ router.put(
 );
 
 router.put(
+	"/:id/preview",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
+		{
+			name: "preview",
+			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		const preview = req.body.preview;
+
+		try {
+			template = await CertTemplateService.setPreviewData(id, preview);
+			return ResponseHandler.sendRes(res, template);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.put(
 	"/:id/required",
 	Validator.validate([
 		{

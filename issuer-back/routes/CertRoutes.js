@@ -81,6 +81,7 @@ router.post(
 		const id = req.params.id;
 		try {
 			const cert = await CertService.emmit(id);
+			let template = await CertTemplateService.getById(cert.templateId);
 
 			const partData = cert.data.participant.map(array => {
 				return array.map(data => {
@@ -93,6 +94,10 @@ router.post(
 				const allData = cert.data.cert.concat(element).concat(cert.data.others);
 				const data = {};
 				data[cert.data.cert[0].value] = {
+					preview: {
+						type: template.previewData.length/2,
+						fields: template.previewData
+					},
 					data: {}
 				};
 

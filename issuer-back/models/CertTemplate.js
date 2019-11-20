@@ -36,6 +36,7 @@ const CertTemplateSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
+	previewData: [{ type: String }],
 	data: {
 		cert: [dataElement],
 		participant: [dataElement],
@@ -82,8 +83,7 @@ CertTemplateSchema.methods._doToggleRequired = async function(data, field) {
 	const names = data.map(newDataElement => newDataElement.name);
 
 	this.data[field] = this.data[field].map(dataElem => {
-		if (!dataElem.mandatory && names.includes(dataElem.name))
-			dataElem.required = !dataElem.required;
+		if (!dataElem.mandatory && names.includes(dataElem.name)) dataElem.required = !dataElem.required;
 		return dataElem;
 	});
 
@@ -192,6 +192,21 @@ CertTemplateSchema.methods.delete = async function() {
 	}
 };
 
+CertTemplateSchema.methods.setPreviewData = async function(previewData) {
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: { previewData: previewData }
+	};
+
+	try {
+		await CertTemplate.findOneAndUpdate(updateQuery, updateAction);
+		this.previewData = previewData;
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
 const CertTemplate = mongoose.model("CertTemplate", CertTemplateSchema);
 module.exports = CertTemplate;
 
@@ -207,6 +222,7 @@ CertTemplate.generate = async function(name) {
 
 	let template = new CertTemplate();
 	template.name = name;
+	template.previewData = [Constants.CERT_FIELD_MANDATORY.FIRST_NAME, Constants.CERT_FIELD_MANDATORY.LAST_NAME];
 	template.data = {
 		cert: [
 			{

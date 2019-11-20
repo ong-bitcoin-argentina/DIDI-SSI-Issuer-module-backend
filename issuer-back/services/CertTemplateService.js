@@ -47,6 +47,18 @@ module.exports.create = async function(name) {
 	}
 };
 
+module.exports.setPreviewData = async function(id, previewData) {
+	try {
+		let template = await getById(id);
+		template = await template.setPreviewData(previewData);
+		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+		return Promise.resolve(template);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+	}
+};
+
 module.exports.addCertData = async function(id, certData) {
 	return await _getAndEdit(id, certData, "addCertData");
 };

@@ -40,7 +40,8 @@ module.exports = {
 		IS_CERT_DATA: "isCertData",
 		IS_TEMPLATE_DATA: "isTemplateData",
 		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
-		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue"
+		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue",
+		IS_TEMPLATE_PREVIEW_DATA: "isTemplatePreviewData"
 	},
 
 	DATA_TYPES: {
@@ -52,6 +53,8 @@ module.exports = {
 	COMMON_PASSWORDS: ["123456", "contraseña", "password"],
 	PASSWORD_MIN_LENGTH: 6,
 	SALT_WORK_FACTOR: 16,
+
+	PREVIEW_ELEMS_LENGTH: [2,4,6],
 
 	USER_TYPES: USER_TYPES,
 	CERT_FIELD_TYPES: CERT_FIELD_TYPES,
