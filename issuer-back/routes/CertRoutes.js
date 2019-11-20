@@ -22,12 +22,13 @@ router.get(
 		try {
 			const certs = await CertService.getAll();
 			const result = certs.map(cert => {
+				console.log(cert);
 				return {
 					_id: cert._id,
 					name: cert.data.cert[0].value,
 					emmitedOn: cert.emmitedOn,
-					firstName: cert.data.cert[1].value,
-					lastName: cert.data.cert[2].value
+					firstName: cert.data.participant[0][1].value,
+					lastName: cert.data.participant[0][2].value
 				};
 			});
 			return ResponseHandler.sendRes(res, result);
@@ -133,8 +134,20 @@ router.post(
 		const templateId = req.body.templateId;
 
 		try {
-			const cert = await CertService.create(data, templateId);
-			return ResponseHandler.sendRes(res, cert);
+			const result = [];
+
+			for (let participantData of data.participant) {
+				const certData = {
+					cert: data.cert,
+					participant: [participantData],
+					others: data.others
+				};
+
+				const cert = await CertService.create(certData, templateId);
+				result.push(cert);
+			}
+
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

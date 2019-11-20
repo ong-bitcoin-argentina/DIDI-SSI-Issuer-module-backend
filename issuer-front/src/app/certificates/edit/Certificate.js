@@ -21,7 +21,7 @@ class Certificate extends Component {
 
 		this.state = {
 			loading: false,
-			editing: true
+			action: "viewing"
 		};
 	}
 
@@ -41,7 +41,7 @@ class Certificate extends Component {
 						id,
 						function(cert) {
 							console.log(cert);
-							const editing = !cert.emmitedOn;
+							const action = cert.emmitedOn ? "viewing" : "editing";
 							const selectedTemplate = templates.find(template => template._id === cert.templateId);
 							TemplateService.get(
 								token,
@@ -53,7 +53,7 @@ class Certificate extends Component {
 										template: template,
 										templates: templates,
 										loading: false,
-										editing: editing
+										action: action
 									});
 								},
 								function(err) {
@@ -129,7 +129,7 @@ class Certificate extends Component {
 					template: template,
 					cert: self.certFromTemplate(template),
 					loading: false,
-					editing: true
+					action: "creating"
 				});
 			},
 			function(err) {
@@ -217,7 +217,11 @@ class Certificate extends Component {
 				{partData.map((data, key) => {
 					return (
 						<div className="ParticipantContent" key={"part-" + key}>
-							<button className="RemoveParticipantButton" hidden={!this.state.editing} onClick={() => this.removeParticipant(key)}>
+							<button
+								className="RemoveParticipantButton"
+								hidden={!this.state.editing}
+								onClick={() => this.removeParticipant(key)}
+							>
 								{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
 							</button>
 							{this.renderSection(cert, data, "hola")}
@@ -225,7 +229,11 @@ class Certificate extends Component {
 					);
 				})}
 
-				<button className="AddParticipantButton" hidden={!this.state.editing} onClick={this.addParticipant}>
+				<button
+					className="AddParticipantButton"
+					hidden={this.state.action === "viewing" || this.state.action === "editing"}
+					onClick={this.addParticipant}
+				>
 					{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
 				</button>
 			</div>
@@ -238,16 +246,22 @@ class Certificate extends Component {
 		return (
 			<div className="CertSectionContent">
 				{data.map((dataElem, index) => {
-					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME) return <div key={"template-elem-" + index}></div>;
+					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
+						return <div key={"template-elem-" + index}></div>;
 
 					return (
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
 							<div className="DataElem">
-								{DataRenderer.renderData(dataElem, type, this.state.editing, (data, value, type) => {
-									dataElem.value = value;
-									self.setState({ cert: cert });
-								})}
+								{DataRenderer.renderData(
+									dataElem,
+									type,
+									this.state.action === "creating" || this.state.action === "editing",
+									(data, value, type) => {
+										dataElem.value = value;
+										self.setState({ cert: cert });
+									}
+								)}
 							</div>
 						</div>
 					);
@@ -289,7 +303,7 @@ class Certificate extends Component {
 		return (
 			<div className="CertificateButtons">
 				<button
-					hidden={!this.state.editing}
+					hidden={this.state.action === "viewing"}
 					className="SaveButton"
 					disabled={this.missingRequiredField()}
 					onClick={this.onSave}

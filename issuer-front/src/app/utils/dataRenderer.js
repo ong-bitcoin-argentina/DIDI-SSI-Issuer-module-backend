@@ -98,12 +98,13 @@ export default class DataRenderer {
 				);
 			case Constants.TEMPLATES.TYPES.TEXT:
 			default:
+			const val = value ? value: "";
 				return (
 					<input
 						type="text"
 						className="DataInput"
 						disabled={!allowEdit}
-						value={value.trim()}
+						value={val.trim()}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
 						}}

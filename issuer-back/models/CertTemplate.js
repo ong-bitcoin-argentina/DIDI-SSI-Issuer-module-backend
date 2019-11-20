@@ -215,6 +215,15 @@ CertTemplate.generate = async function(name) {
 				type: Constants.CERT_FIELD_TYPES.Text,
 				required: true,
 				mandatory: true
+			}
+		],
+		participant: [
+			{
+				name: Constants.CERT_FIELD_MANDATORY.DID,
+				defaultValue: "",
+				type: Constants.CERT_FIELD_TYPES.Text,
+				required: true,
+				mandatory: true
 			},
 			{
 				name: Constants.CERT_FIELD_MANDATORY.FIRST_NAME,
@@ -225,15 +234,6 @@ CertTemplate.generate = async function(name) {
 			},
 			{
 				name: Constants.CERT_FIELD_MANDATORY.LAST_NAME,
-				defaultValue: "",
-				type: Constants.CERT_FIELD_TYPES.Text,
-				required: true,
-				mandatory: true
-			}
-		],
-		participant: [
-			{
-				name: Constants.CERT_FIELD_MANDATORY.DID,
 				defaultValue: "",
 				type: Constants.CERT_FIELD_TYPES.Text,
 				required: true,
