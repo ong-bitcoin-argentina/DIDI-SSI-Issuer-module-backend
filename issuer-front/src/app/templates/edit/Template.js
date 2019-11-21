@@ -123,7 +123,7 @@ class Template extends Component {
 			data,
 			type,
 			async function(template) {
-				self.setState({ template: template, loading: false });
+				self.setState({ template: template, loading: false, error: undefined });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -163,7 +163,7 @@ class Template extends Component {
 			defaultValue,
 			type,
 			async function(template) {
-				self.setState({ template: template, isDialogOpen: false });
+				self.setState({ template: template, isDialogOpen: false, error: undefined });
 			},
 			function(err) {
 				self.setState({ error: err });

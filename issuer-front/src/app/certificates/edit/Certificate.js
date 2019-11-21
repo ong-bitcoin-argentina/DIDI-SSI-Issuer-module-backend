@@ -122,7 +122,7 @@ class Certificate extends Component {
 		const self = this;
 		var reader = new FileReader();
 		reader.onload = function(e) {
-			const participant = self.state.cert.data.participant;
+			const participant = [];
 			const data = reader.result.split(",");
 			let index = 0;
 			do {
@@ -135,6 +135,7 @@ class Certificate extends Component {
 				}
 				participant.push(participantData);
 			} while (data.length > index);
+			self.state.cert.data.participant = participant;
 			self.setState({ cert: self.state.cert });
 		};
 		reader.readAsText(files[0]);
