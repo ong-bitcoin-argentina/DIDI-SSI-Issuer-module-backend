@@ -98,7 +98,7 @@ module.exports = {
 			PARTICIPANT: "participant"
 		},
 		MANDATORY_DATA: {
-			NAME: "NOMBRE DEL CURSO"
+			NAME: "NOMBRE DEL CERTIFICADO O CURSO"
 		}
 	},
 
@@ -112,7 +112,7 @@ module.exports = {
 			LAST_NAME: "APELLIDO"
 		},
 		EDIT: {
-			TEMPLATE_SELECT: "NOMBRE DEL CURSO"
+			TEMPLATE_SELECT: "NOMBRE DEL CERTIFICADO O CURSO"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,

@@ -204,7 +204,7 @@ class Certificate extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
-	// si el boton de guardar esta deshabilitado 
+	// si el boton de guardar esta deshabilitado
 	// (algun campo obligatorio sin llenar o el did tiene un formato incorrecto)
 	saveDisabled = () => {
 		if (!this.state.cert) return true;
