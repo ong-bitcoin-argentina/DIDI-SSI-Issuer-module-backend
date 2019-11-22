@@ -2,12 +2,15 @@ const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
 const EthrDID = require("ethr-did");
-const { createVerifiableCredential } = require("did-jwt-vc");
+const { createVerifiableCredential, verifyCredential } = require("did-jwt-vc");
 
 const { InMemoryCache } = require("apollo-cache-inmemory");
 const ApolloClient = require("apollo-boost").default;
 const gql = require("graphql-tag");
 const fetch = require("node-fetch");
+
+const { Resolver } = require("did-resolver");
+const { getResolver } = require("ethr-did-resolver");
 
 // cliente para envio de certificados a mouro
 const client = new ApolloClient({
@@ -38,7 +41,7 @@ module.exports.saveCertificate = async function(cert) {
 				cert: cert
 			}
 		});
-		console.log(Messages.CERTIFICATE.CERTIFICATE_SAVED);
+		console.log(Messages.CERTIFICATE.SAVED);
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);
@@ -66,6 +69,20 @@ module.exports.createCertificate = async function(subject, did) {
 	try {
 		let result = await createVerifiableCredential(vcPayload, vcissuer);
 		if (Constants.DEBUGG) console.log(result);
+		console.log(Messages.CERTIFICATE.CREATED);
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+module.exports.verifyCertificate = async function(jwt) {
+	const resolver = new Resolver(getResolver());
+
+	try {
+		let result = await verifyCredential(jwt, resolver);
+		console.log(Messages.CERTIFICATE.VERIFIED);
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);

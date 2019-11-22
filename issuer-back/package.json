@@ -21,6 +21,7 @@
 		"cors": "^2.8.5",
 		"did-jwt-vc": "^0.1.2",
 		"ethr-did": "^1.1.0",
+		"ethr-did-resolver": "^1.0.3",
 		"express": "^4.17.1",
 		"express-validator": "^6.2.0",
 		"graphql": "^14.5.8",

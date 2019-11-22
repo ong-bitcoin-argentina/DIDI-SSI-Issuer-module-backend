@@ -95,7 +95,7 @@ router.post(
 				const data = {};
 				data[cert.data.cert[0].value] = {
 					preview: {
-						type: template.previewData.length/2,
+						type: template.previewData.length / 2,
 						fields: template.previewData
 					},
 					data: {}
@@ -111,6 +111,7 @@ router.post(
 				});
 
 				const credential = await MouroService.createCertificate(data, did);
+				await MouroService.verifyCertificate(credential);
 				await MouroService.saveCertificate(credential);
 				credentials.push(credential);
 			});
@@ -155,6 +156,29 @@ router.post(
 				result.push(cert);
 			}
 
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.post(
+	"/verify",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
+		{ name: "cert", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const cert = req.body.cert;
+
+		try {
+			const result = await MouroService.verifyCertificate(cert);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
