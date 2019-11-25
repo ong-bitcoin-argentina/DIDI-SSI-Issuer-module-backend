@@ -421,21 +421,6 @@ class Template extends Component {
 						<FormControlLabel value="3" checked={radioValue === "3"} control={<Radio />} />
 						<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 3" />
 					</div>
-
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="4" checked={radioValue === "4"} control={<Radio />} />
-						<img src={require("./Preview/1.png")} className="PreviewFieldTypeImage" alt="type 4" />
-					</div>
-
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="5" checked={radioValue === "5"} control={<Radio />} />
-						<img src={require("./Preview/2.png")} className="PreviewFieldTypeImage" alt="type 5" />
-					</div>
-
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="6" checked={radioValue === "6"} control={<Radio />} />
-						<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 6" />
-					</div>
 				</RadioGroup>
 
 				<Select

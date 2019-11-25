@@ -57,10 +57,7 @@ module.exports = {
 	PREVIEW_ELEMS_LENGTH: {
 		1: 2,
 		2: 4,
-		3: 6,
-		4: 2,
-		5: 4,
-		6: 6
+		3: 6
 	},
 
 	USER_TYPES: USER_TYPES,
