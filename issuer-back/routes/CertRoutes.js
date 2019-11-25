@@ -80,7 +80,7 @@ router.post(
 	async function(req, res) {
 		const id = req.params.id;
 		try {
-			const cert = await CertService.emmit(id);
+			const cert = await CertService.getById(id);
 			let template = await CertTemplateService.getById(cert.templateId);
 
 			const partData = cert.data.participant.map(array => {
@@ -90,38 +90,47 @@ router.post(
 			});
 
 			let credentials = [];
-			partData.forEach(async element => {
-				const allData = cert.data.cert.concat(element).concat(cert.data.others);
-				const data = {};
-				data[cert.data.cert[0].value] = {
-					preview: {
-						type: template.previewData.length / 2,
-						fields: template.previewData
-					},
-					data: {}
-				};
-
-				let did;
-				allData.forEach(dataElem => {
-					if (dataElem.name === "DID") {
-						did = dataElem.value;
-					} else {
-						if (dataElem.value) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
-					}
-				});
-
-				const credential = await MouroService.createCertificate(data, did);
-				await MouroService.verifyCertificate(credential);
-				await MouroService.saveCertificate(credential);
+			for (let element of partData) {
+				const credential = await generateCertificate(template, cert, element);
+				MouroService.saveCertificate(credential);
 				credentials.push(credential);
-			});
+			}
 
-			return ResponseHandler.sendRes(res, cert);
+			const result = await CertService.emmit(cert);
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
 	}
 );
+
+const generateCertificate = async function(template, cert, element) {
+	try {
+		const allData = cert.data.cert.concat(element).concat(cert.data.others);
+		const data = {};
+		data[cert.data.cert[0].value] = {
+			preview: {
+				type: template.previewData.length / 2,
+				fields: template.previewData
+			},
+			data: {}
+		};
+
+		let did;
+		allData.forEach(dataElem => {
+			if (dataElem.name === "DID") {
+				did = dataElem.value;
+			} else {
+				if (dataElem.value) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
+			}
+		});
+
+		const credential = await MouroService.createCertificate(data, did);
+		return Promise.resolve(credential);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
 
 router.post(
 	"/",

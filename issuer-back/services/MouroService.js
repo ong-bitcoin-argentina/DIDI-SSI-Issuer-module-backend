@@ -22,6 +22,8 @@ const client = new ApolloClient({
 // recibe el caertificado y lo envia a mouro para ser guardado
 module.exports.saveCertificate = async function(cert) {
 	try {
+		await module.exports.verifyCertificate(cert);
+		
 		let result = await client.mutate({
 			mutation: gql`
 				mutation($cert: String!) {
