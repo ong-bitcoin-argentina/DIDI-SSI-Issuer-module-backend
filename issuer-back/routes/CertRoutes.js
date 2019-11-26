@@ -172,29 +172,6 @@ router.post(
 	}
 );
 
-router.post(
-	"/verify",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
-			isHead: true
-		},
-		{ name: "cert", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const cert = req.body.cert;
-
-		try {
-			const result = await MouroService.verifyCertificate(cert);
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
 router.put(
 	"/:id",
 	Validator.validate([
