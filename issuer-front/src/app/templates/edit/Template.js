@@ -36,7 +36,6 @@ class Template extends Component {
 			typing: false,
 			isDialogOpen: false,
 			radioValue: 1,
-			previewFields: [],
 			options: [],
 			dataType: Constants.TEMPLATES.TYPES.TEXT
 		};
@@ -59,7 +58,6 @@ class Template extends Component {
 					isDialogOpen: false,
 					template: template,
 					radioValue: template.previewType,
-					previewFields: template.previewData,
 					loading: false
 				});
 			},
@@ -83,145 +81,58 @@ class Template extends Component {
 
 	// agregar campo al template con la info proveniente del dialogo
 	createField = () => {
-		const token = Cookie.get("token");
-		const self = this;
-		const id = this.state.id;
 		const type = this.state.type;
 		const data = {
 			name: this.state.name,
 			type: this.state.dataType,
+			mandatory: false,
 			required: this.state.required,
 			options: this.state.options.length ? this.state.options : []
 		};
 
-		this.setState({ loading: true });
-		TemplateService.createField(
-			token,
-			id,
-			data,
-			type,
-			async function(template) {
-				self.setState({ template: template, loading: false, isDialogOpen: false });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
+		this.state.template.data[type].push(data);
+		this.setState({ template: this.state.template, isDialogOpen: false });
 	};
 
 	// marcar campo como requerido / no requerido
 	toggleRequired = (data, type) => {
-		const id = this.state.id;
-		const token = Cookie.get("token");
-		const self = this;
-
-		this.setState({ loading: true });
-		TemplateService.toggleRequired(
-			token,
-			id,
-			data,
-			type,
-			async function(template) {
-				self.setState({ template: template, loading: false, error: undefined });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	};
-
-	// arrancar un timer y cambiar valor por defecto del campo cuando se cumpla el mismo
-	// (dar tiempo a que el usuario cambie su input)
-	defaultValueChanged = (data, defaultValue, type) => {
-		const self = this;
-		if (self.state.typingTimeout) {
-			clearTimeout(self.state.typingTimeout);
-		}
-
-		data.defaultValue = defaultValue;
-
-		self.setState({
-			typing: false,
-			typingTimeout: setTimeout(function() {
-				self.setDefaultValue(data, defaultValue, type);
-			}, Constants.TEMPLATES.EDIT.TYPING_TIMEOUT)
+		const dataElem = this.state.template.data[type].find(dataElem => {
+			return dataElem.name === data.name;
 		});
+
+		if (dataElem && !dataElem.mandatory) {
+			dataElem.required = !dataElem.required;
+			this.setState({ template: this.state.template });
+		}
 	};
 
 	// cambiar valor por defecto del campo
 	setDefaultValue = (data, defaultValue, type) => {
-		const id = this.state.id;
-		const token = Cookie.get("token");
-		const self = this;
+		const dataElem = this.state.template.data[type].find(dataElem => {
+			return dataElem.name === data.name;
+		});
 
-		TemplateService.setDefaultField(
-			token,
-			id,
-			data,
-			defaultValue,
-			type,
-			async function(template) {
-				self.setState({ template: template, isDialogOpen: false, error: undefined });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
+		if (dataElem) {
+			dataElem.defaultValue = defaultValue;
+			this.setState({ template: this.state.template });
+		}
 	};
 
 	// seleccionar los campos a mostrarse por defecto en el certificado
-	setPreviewFields = (previewElems, type) => {
-		const id = this.state.id;
-		const token = Cookie.get("token");
-		const self = this;
-
-		TemplateService.setPreviewFields(
-			token,
-			id,
-			previewElems,
-			type,
-			async function(template) {
-				self.setState({ template: template });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	};
-
 	onPreviewFieldsSelected = event => {
-		const previewElems = event.target.value;
-
-		if (previewElems.length === Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[this.state.radioValue])
-			this.setPreviewFields(previewElems, this.state.radioValue);
-
-		this.setState({ previewFields: previewElems });
+		const template = this.state.template;
+		template.previewData = event.target.value;
+		template.previewType = this.state.radioValue;
+		this.setState({ template: template });
 	};
 
 	// borrar campo
 	deleteField = (data, type) => {
-		const id = this.state.id;
-		const token = Cookie.get("token");
-		const self = this;
-
-		this.setState({ loading: true });
-		TemplateService.deleteField(
-			token,
-			id,
-			data,
-			type,
-			async function(template) {
-				self.setState({ template: template, loading: false });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
+		const template = this.state.template;
+		template.data[type] = template.data[type].filter(dataElem => {
+			return dataElem.name !== data.name;
+		});
+		this.setState({ template: template });
 	};
 
 	// abrir dialogo para insercion de campo en el template
@@ -237,6 +148,27 @@ class Template extends Component {
 
 	// cerrar dialogo para insercion de campo en el template
 	onDialogClose = () => this.setState({ isDialogOpen: false });
+
+	// guardar template y volver a listado de templates
+	onSave = () => {
+		const token = Cookie.get("token");
+		const template = this.state.template;
+		const self = this;
+
+		self.setState({ loading: true });
+		TemplateService.save(
+			token,
+			template,
+			async function(_) {
+				self.setState({ loading: false });
+				self.props.history.push(Constants.ROUTES.TEMPLATES);
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
 
 	render() {
 		if (!Cookie.get("token")) {
@@ -391,7 +323,8 @@ class Template extends Component {
 			.filter(elemData => elemData.required)
 			.map(elementData => elementData.name);
 
-		const missing = Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[this.state.radioValue] - this.state.previewFields.length;
+		const missing =
+			Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[this.state.radioValue] - this.state.template.previewData.length;
 		const radioValue = this.state.radioValue;
 
 		return (
@@ -427,14 +360,14 @@ class Template extends Component {
 					className="PreviewFieldsSelect"
 					multiple
 					displayEmpty
-					value={this.state.previewFields}
+					value={this.state.template.previewData}
 					onChange={this.onPreviewFieldsSelected}
 					renderValue={selected => selected.join(", ")}
 				>
 					{templateElements.map((elem, key) => {
 						return (
 							<MenuItem key={"PreviewFields-" + key} value={elem}>
-								<Checkbox checked={this.state.previewFields.indexOf(elem) > -1} />
+								<Checkbox checked={this.state.template.previewData.indexOf(elem) > -1} />
 								<ListItemText primary={elem} />
 							</MenuItem>
 						);
@@ -471,9 +404,9 @@ class Template extends Component {
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
 							<div className="DataElem">
-								{DataRenderer.renderData(dataElem, type, true, this.defaultValueChanged)}
-								{DataRenderer.renderRequired(dataElem, type, this.toggleRequired)}
-								{DataRenderer.renderDelete(dataElem, type, this.deleteField)}
+								{DataRenderer.renderData(dataElem, type, true, this.setDefaultValue, true)}
+								{DataRenderer.renderRequired(dataElem, type, this.toggleRequired, true)}
+								{DataRenderer.renderDelete(dataElem, type, this.deleteField, true)}
 							</div>
 						</div>
 					);
@@ -502,6 +435,9 @@ class Template extends Component {
 	renderButtons = () => {
 		return (
 			<div className="TemplateButtons">
+				<button className="SaveButton" onClick={this.onSave}>
+					{Messages.EDIT.BUTTONS.SAVE}
+				</button>
 				<button className="BackButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
 				</button>

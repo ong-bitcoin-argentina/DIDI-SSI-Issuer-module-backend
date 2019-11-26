@@ -8,7 +8,7 @@ const Constants = require("./constants/Constants");
 const Messages = require("./constants/Messages");
 
 const UserRoutes = require("./routes/UserRoutes");
-const CertTemplateRoutes = require("./routes/CertTemplateRoutes");
+const TemplateRoutes = require("./routes/TemplateRoutes");
 const CertRoutes = require("./routes/CertRoutes");
 
 const app = express();
@@ -59,7 +59,7 @@ const route = "/api/" + Constants.API_VERSION + "/didi_issuer";
 if (Constants.DEBUGG) console.log("route: " + route);
 
 app.use(route + "/user", UserRoutes);
-app.use(route + "/template", CertTemplateRoutes);
+app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
 
 app.listen(Constants.PORT, function() {

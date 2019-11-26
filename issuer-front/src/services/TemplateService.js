@@ -27,6 +27,66 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
+	static save(token, template, cb, errCb) {
+		const templateData = {
+			cert: template.data.cert.map(data => {
+				return {
+					name: data.name,
+					type: data.type,
+					mandatory: data.mandatory,
+					defaultValue: data.defaultValue,
+					required: data.required,
+					options: data.options
+				};
+			}),
+			participant: template.data.participant.map(data => {
+				return {
+					name: data.name,
+					type: data.type,
+					mandatory: data.mandatory,
+					defaultValue: data.defaultValue,
+					required: data.required,
+					options: data.options
+				};
+			}),
+			others: template.data.others.map(data => {
+				return {
+					name: data.name,
+					type: data.type,
+					mandatory: data.mandatory,
+					defaultValue: data.defaultValue,
+					required: data.required,
+					options: data.options
+				};
+			})
+		};
+		const url = Constants.API_ROUTES.TEMPLATES.EDIT(template._id);
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				data: JSON.stringify(templateData),
+				preview: template.previewData,
+				type: template.previewType
+			})
+		};
+		fetch(url, data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
 	static getAll(token, cb, errCb) {
 		const data = {
 			method: "GET",
@@ -73,115 +133,6 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static toggleRequired(token, id, dataElem, type, cb, errCb) {
-		const data = {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				data: JSON.stringify([dataElem]),
-				type: type
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.TOGGLE_REQUIRED(id), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
-	}
-
-	static createField(token, id, dataElem, type, cb, errCb) {
-		const data = {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				data: JSON.stringify([dataElem]),
-				type: type
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.CREATE_FIELD(id), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
-	}
-
-	static setPreviewFields(token, id, preview, type, cb, errCb) {
-		const data = {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				preview: preview,
-				type: type
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.SET_PREVIEW_FIELD(id), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
-	}
-
-	static setDefaultField(token, id, dataElem, defaultValue, type, cb, errCb) {
-		const data = {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				data: JSON.stringify([dataElem]),
-				type: type,
-				defaultValue: defaultValue
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.SET_DEFAULT_FIELD(id), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
-	}
-
 	static delete(token, id, cb, errCb) {
 		const data = {
 			method: "DELETE",
@@ -192,33 +143,6 @@ export default class TemplateService {
 		};
 
 		fetch(Constants.API_ROUTES.TEMPLATES.DELETE(id), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
-	}
-
-	static deleteField(token, id, dataElem, type, cb, errCb) {
-		const data = {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				data: JSON.stringify([dataElem]),
-				type: type
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.DELETE_FIELD(id), data)
 			.then(data => {
 				return data.json();
 			})

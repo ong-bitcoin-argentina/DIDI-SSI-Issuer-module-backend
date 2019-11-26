@@ -3,7 +3,7 @@ const Constants = require("../../constants/Constants");
 const ResponseHandler = require("./ResponseHandler");
 const { header, body, validationResult } = require("express-validator");
 
-const TemplateService = require("../../services/CertTemplateService");
+const TemplateService = require("../../services/TemplateService");
 const TokenService = require("../../services/TokenService");
 const UserService = require("../../services/UserService");
 
@@ -86,18 +86,21 @@ let _doValidate = function(param, isHead) {
 				if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
 				const dataJson = JSON.parse(data);
 
-				for (let dataElement of dataJson) {
-					const missingField = !dataElement || !dataElement.name || !dataElement.type;
-					if (missingField) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_DATA(param.name));
+				for (let type of Object.values(Constants.DATA_TYPES)) {
+					for (let dataElement of dataJson[type]) {
+						const missingField = !dataElement || !dataElement.name || !dataElement.type;
+						if (missingField) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_DATA(param.name));
 
-					const invalidType = !Constants.CERT_FIELD_TYPES[dataElement.type];
-					if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+						const invalidType = !Constants.CERT_FIELD_TYPES[dataElement.type];
+						if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 
-					const checkboxMissingOptions =
-						!dataElement.options && dataElement.type == Constants.CERT_FIELD_TYPES.Checkbox;
-					if (checkboxMissingOptions)
-						return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
+						const checkboxMissingOptions =
+							!dataElement.options && dataElement.type == Constants.CERT_FIELD_TYPES.Checkbox;
+						if (checkboxMissingOptions)
+							return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
+					}
 				}
+
 				return Promise.resolve(data);
 			} catch (err) {
 				console.log(err);
@@ -236,8 +239,11 @@ let _doValidate = function(param, isHead) {
 				.map(elem => elem.name);
 
 			for (let fieldName of preview) {
-				if (templateData.indexOf(fieldName) < 0)
+				if (templateData.indexOf(fieldName) < 0) {
+					console.log(templateData);
+					console.log(fieldName);
 					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_DATA);
+				}
 			}
 
 			return Promise.resolve(value);

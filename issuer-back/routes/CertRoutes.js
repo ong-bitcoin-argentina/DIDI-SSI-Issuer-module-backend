@@ -5,7 +5,7 @@ const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 
 const CertService = require("../services/CertService");
-const CertTemplateService = require("../services/CertTemplateService");
+const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 
 router.get(
@@ -58,7 +58,7 @@ router.get(
 
 		let template;
 		try {
-			template = await CertTemplateService.getById(cert.templateId);
+			template = await TemplateService.getById(cert.templateId);
 			const result = CertService.addTemplateDataToCert(cert, template);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -81,7 +81,7 @@ router.post(
 		const id = req.params.id;
 		try {
 			const cert = await CertService.getById(id);
-			let template = await CertTemplateService.getById(cert.templateId);
+			let template = await TemplateService.getById(cert.templateId);
 
 			const partData = cert.data.participant.map(array => {
 				return array.map(data => {

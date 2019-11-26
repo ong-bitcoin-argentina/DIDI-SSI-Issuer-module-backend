@@ -16,11 +16,15 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export default class DataRenderer {
 	// mostrar / editar campos genericos
-	static renderData = (dataElem, type, allowEdit, onChange) => {
+	static renderData = (dataElem, type, allowEdit, onChange, blockMandatory) => {
 		const value = dataElem.value ? dataElem.value : dataElem.defaultValue;
 
-		if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
+		if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME) {
 			return <div className="DataInput Mandatory">{value}</div>;
+		} else {
+			if (blockMandatory && Object.values(Constants.TEMPLATES.MANDATORY_DATA).indexOf(dataElem.name) >= 0)
+				return <div className="DataInput Mandatory">{value}</div>;
+		}
 
 		switch (dataElem.type) {
 			case Constants.TEMPLATES.TYPES.BOOLEAN:
@@ -116,9 +120,6 @@ export default class DataRenderer {
 
 	// mostrar boton de requerido
 	static renderRequired = (dataElem, type, onChange) => {
-		const icon = dataElem.required
-			? Constants.TEMPLATES.EDIT.ICONS.REQUIRED
-			: Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED;
 		return (
 			<div
 				className="DataRequired"
@@ -126,7 +127,12 @@ export default class DataRenderer {
 					onChange(dataElem, type);
 				}}
 			>
-				<MaterialIcon icon={icon} color="#bdbfbe" />
+				{(dataElem.required || dataElem.mandatory) && (
+					<MaterialIcon icon={Constants.TEMPLATES.EDIT.ICONS.REQUIRED} color="#bdbfbe" />
+				)}
+				{!dataElem.required && !dataElem.mandatory && (
+					<MaterialIcon icon={Constants.TEMPLATES.EDIT.ICONS.NOT_REQUIRED} color="#bdbfbe" />
+				)}
 				<div>{Messages.EDIT.BUTTONS.REQUIRED}</div>
 			</div>
 		);

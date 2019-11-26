@@ -9,23 +9,11 @@ module.exports = {
 				return API + "/template/" + id;
 			},
 			CREATE: API + "/template/",
-			CREATE_FIELD: id => {
-				return API + "/template/" + id + "/data";
-			},
-			TOGGLE_REQUIRED: id => {
-				return API + "/template/" + id + "/required";
-			},
-			SET_PREVIEW_FIELD: id => {
-				return API + "/template/" + id + "/preview";
-			},
-			SET_DEFAULT_FIELD: id => {
-				return API + "/template/" + id + "/default";
+			EDIT: id => {
+				return API + "/template/" + id;
 			},
 			DELETE: id => {
 				return API + "/template/" + id;
-			},
-			DELETE_FIELD: id => {
-				return API + "/template/" + id + "/data";
 			}
 		},
 		CERTIFICATES: {
@@ -95,6 +83,9 @@ module.exports = {
 			PARTICIPANT: "participant"
 		},
 		MANDATORY_DATA: {
+			DID: "DID",
+			PARTICIPANT_FIRST_NAME: "NOMBRE",
+			PARTICIPANT_LAST_NAME: "APELLIDO",
 			NAME: "NOMBRE DEL CERTIFICADO O CURSO"
 		}
 	},
