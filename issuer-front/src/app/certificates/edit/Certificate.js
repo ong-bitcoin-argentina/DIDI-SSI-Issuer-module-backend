@@ -143,9 +143,9 @@ class Certificate extends Component {
 
 	// eliminar participante
 	removeParticipant = key => {
-		if (this.state.cert.data.participant.length == 1) {
-			for (let key of Object.keys(this.state.cert.data.participant[0]))
-				this.state.cert.data.participant[0][key].value = "";
+		if (this.state.cert.data.participant.length === 1) {
+			const partData = this.state.cert.data.participant[0];
+			for (let key of Object.keys(partData)) partData[key].value = "";
 		} else {
 			this.state.cert.data.participant.splice(key);
 		}
