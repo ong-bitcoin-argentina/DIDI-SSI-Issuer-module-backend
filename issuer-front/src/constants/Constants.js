@@ -92,7 +92,10 @@ module.exports = {
 
 	CERTIFICATES: {
 		ERR: {
-			INVALID_DID: "Invalid DID"
+			INVALID_DID: "Invalid DID",
+			CSV_REQUIRED_VALUE_MISSING: function(field) {
+				return { err: "CSV_REQUIRED_VALUE_MISSING", message: "CSV invàlido, el campo " + field + " es obligatorio" };
+			}
 		},
 		MANDATORY_DATA: {
 			DID: "DID",

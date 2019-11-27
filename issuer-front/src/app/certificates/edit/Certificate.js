@@ -116,26 +116,119 @@ class Certificate extends Component {
 		this.setState({ cert: this.state.cert });
 	};
 
+	createSampleCsv = () => {
+		const getSample = function(dataElem) {
+			switch (dataElem.type) {
+				case Constants.TEMPLATES.TYPES.BOOLEAN:
+					return "true/false";
+				case Constants.TEMPLATES.TYPES.CHECKBOX:
+					let result = "";
+					dataElem.options.forEach(elem => (result += elem + "/"));
+					result = result.substring(0, result.length - 1);
+					return result;
+				case Constants.TEMPLATES.TYPES.DATE:
+					return "ej: '2019-11-13'";
+				case Constants.TEMPLATES.TYPES.NUMBER:
+					return "un número";
+				case Constants.TEMPLATES.TYPES.TEXT:
+					return "un texto";
+				case Constants.TEMPLATES.TYPES.PARAGRAPH:
+					return "un parrafo";
+				default:
+					return "";
+			}
+		};
+
+		let csv = "";
+
+		const certData = this.state.cert.data.cert;
+		for (let key of Object.keys(certData)) {
+			if (!certData[key].mandatory) {
+				csv += certData[key].name + "(" + getSample(certData[key]) + "),";
+			}
+		}
+
+		const othersData = this.state.cert.data.others;
+		if (othersData) {
+			for (let key of Object.keys(othersData)) {
+				if (!othersData[key].mandatory) {
+					csv += othersData[key].name + "(" + getSample(othersData[key]) + "),";
+				}
+			}
+		}
+
+		const partData = this.state.cert.data.participant[0];
+		for (let i = 0; i < 3; i++) {
+			for (let key of Object.keys(partData)) {
+				csv += partData[key].name + i + "(" + getSample(partData[key]) + "),";
+			}
+		}
+
+		csv = csv.substring(0, csv.length - 1);
+		console.log(csv);
+
+		const element = document.createElement("a");
+		const file = new Blob([csv], { type: "text/plain" });
+		element.href = URL.createObjectURL(file);
+		element.download = "sample.csv";
+		document.body.appendChild(element);
+		element.click();
+	};
+
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
-	loadParticipantsFromCsv = files => {
+	loadCertFromCsv = files => {
+		this.createSampleCsv();
+
+		var assignElement = function(dataElem, data) {
+			if (data === "") {
+				if (dataElem.required)
+					return self.setState({ error: Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name) });
+			} else {
+				console.log(dataElem.name);
+				console.log(data);
+				dataElem.value = data;
+			}
+		};
+
 		const self = this;
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			const participant = [];
 			const data = reader.result.split(",");
 			let index = 0;
+
+			const certData = JSON.parse(JSON.stringify(self.state.cert.data.cert));
+			for (let key of Object.keys(certData)) {
+				if (!certData[key].mandatory) {
+					assignElement(certData[key], data[index]);
+					index++;
+				}
+			}
+
+			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
+			for (let key of Object.keys(othersData)) {
+				if (!othersData[key].mandatory) {
+					assignElement(othersData[key], data[index]);
+					index++;
+				}
+			}
+
 			do {
 				const participantData = self.certDataFromTemplate(self.state.template, "participant");
 				for (let dataElem of participantData) {
 					if (data.length > index) {
-						dataElem.value = data[index];
+						assignElement(dataElem, data[index]);
 						index++;
 					}
 				}
 				participant.push(participantData);
 			} while (data.length > index);
+
+			self.state.cert.data.cert = certData;
 			self.state.cert.data.participant = participant;
+			self.state.cert.data.others = othersData;
+
 			self.setState({ cert: self.state.cert });
 		};
 		reader.readAsText(files[0]);
@@ -291,12 +384,20 @@ class Certificate extends Component {
 						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
 					</button>
 
-					<ReactFileReader handleFiles={this.loadParticipantsFromCsv} fileTypes={".csv"}>
+					<button
+						className="SampleCsv"
+						hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						onClick={this.createSampleCsv}
+					>
+						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
+					</button>
+
+					<ReactFileReader handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
 						<button
-							className="AddParticipantCSV"
+							className="LoadCertFromCsv"
 							hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						>
-							{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS_FROM_CSV}
+							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
 						</button>
 					</ReactFileReader>
 				</div>
