@@ -38,7 +38,7 @@ module.exports = {
 		VERIFIED: "Certificado verificado",
 		SAVED: "Certificado guardado",
 		CERT_FIELDS: {
-			NAME: "NOMBRE DEL CERTIFICADO O CURSO",
+			NAME: "CERTIFICADO O CURSO",
 			PARTICIPANT_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO"
 		}
