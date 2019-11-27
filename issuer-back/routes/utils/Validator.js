@@ -84,7 +84,13 @@ let _doValidate = function(param, isHead) {
 		return validation.custom(data => {
 			try {
 				if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
-				const dataJson = JSON.parse(data);
+
+				let dataJson;
+				try {
+					dataJson = JSON.parse(data);
+				} catch (err) {
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
 
 				for (let type of Object.values(Constants.DATA_TYPES)) {
 					for (let dataElement of dataJson[type]) {
@@ -147,7 +153,14 @@ let _doValidate = function(param, isHead) {
 	let validateValueTypes = function(validation, param) {
 		return validation.custom((value, { req }) => {
 			try {
-				const data = JSON.parse(req.body.data);
+				let data;
+
+				try {
+					data = JSON.parse(req.body.data);
+				} catch (err) {
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
+
 				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
 
 				if (!data[0] || !data[0]["type"]) return Promise.reject(err);
@@ -191,7 +204,13 @@ let _doValidate = function(param, isHead) {
 				const templateId = req.body.templateId;
 				let template = await TemplateService.getById(templateId);
 
-				const data = JSON.parse(req.body.data);
+				let data;
+				try {
+					data = JSON.parse(req.body.data);
+				} catch (err) {
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
+
 				const templateData = template.data;
 
 				for (let key of Object.values(Constants.DATA_TYPES)) {
@@ -217,26 +236,28 @@ let _doValidate = function(param, isHead) {
 
 	let validateTemplatePreviewData = function(validation, param) {
 		return validation.custom(async function(value, { req }) {
-			const templateId = req.params.id;
-			let template;
-			try {
-				template = await TemplateService.getById(templateId);
-				if (!template) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_ID);
-			} catch (err) {
-				console.log(err);
-				return Promise.reject(err);
-			}
 			const preview = req.body.preview;
 			const type = req.body.type;
+
+			let data;
+
+			try {
+				data = JSON.parse(req.body.data);
+			} catch (err) {
+				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+			}
 
 			if (Constants.PREVIEW_ELEMS_LENGTH[type] !== preview.length)
 				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);
 
-			const templateData = template.data.cert
-				.concat(template.data.participant)
-				.concat(template.data.others)
-				.filter(elem => elem.required)
+			const templateData = data.cert
+				.concat(data.participant)
+				.concat(data.others)
+				.filter(elem => elem.required || elem.mandatory)
 				.map(elem => elem.name);
+
+			console.log("template.data:");
+			console.log(data);
 
 			for (let fieldName of preview) {
 				if (templateData.indexOf(fieldName) < 0) {
