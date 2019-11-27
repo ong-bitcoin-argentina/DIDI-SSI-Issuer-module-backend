@@ -267,7 +267,7 @@ class Certificate extends Component {
 						<div className="ParticipantContent" key={"part-" + key}>
 							<button
 								className="RemoveParticipantButton"
-								hidden={!this.state.editing}
+								hidden={this.state.viewing}
 								onClick={() => this.removeParticipant(key)}
 							>
 								{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
