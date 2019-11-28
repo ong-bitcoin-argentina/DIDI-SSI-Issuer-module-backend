@@ -27,6 +27,7 @@ services:
       DEBUGG_MODE: ${DEBUGG}
       MONGO_PORT: ${MONGO_PORT}
       PORT: ${PORT_BACK}
+      DIDI_API: ${DIDI_API}
     ports:
       - "${PORT_BACK}:${PORT_BACK}"
     links:

@@ -5,7 +5,7 @@ import "./Template.scss";
 import Cookie from "js-cookie";
 import MaterialIcon from "material-icons-react";
 
-import DataRenderer from "../../utils/DataRenderer";
+import DataRenderer from "../../utils/dataRenderer";
 
 import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
