@@ -178,15 +178,11 @@ class Certificate extends Component {
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadCertFromCsv = files => {
-		this.createSampleCsv();
-
 		var assignElement = function(dataElem, data) {
 			if (data === "") {
 				if (dataElem.required)
 					return self.setState({ error: Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name) });
 			} else {
-				console.log(dataElem.name);
-				console.log(data);
 				dataElem.value = data;
 			}
 		};
