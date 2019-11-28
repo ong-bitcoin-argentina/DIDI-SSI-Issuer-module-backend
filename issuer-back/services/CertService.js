@@ -93,9 +93,9 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 	};
 };
 
-module.exports.emmit = async function(cert) {
+module.exports.emmit = async function(cert, credentials) {
 	try {
-		await cert.emmit();
+		await cert.emmit(credentials);
 		return Promise.resolve(cert);
 	} catch (err) {
 		console.log(err);

@@ -92,11 +92,11 @@ router.post(
 			let credentials = [];
 			for (let element of partData) {
 				const credential = await generateCertificate(template, cert, element);
-				MouroService.saveCertificate(credential);
+				await MouroService.saveCertificate(credential);
 				credentials.push(credential);
 			}
 
-			const result = await CertService.emmit(cert);
+			const result = await CertService.emmit(cert, credentials);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

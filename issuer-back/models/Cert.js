@@ -29,6 +29,11 @@ const CertSchema = mongoose.Schema({
 	emmitedOn: {
 		type: Date
 	},
+	jwts: [
+		{
+			type: String
+		}
+	],
 	createdOn: {
 		type: Date,
 		default: Date.now()
@@ -52,12 +57,12 @@ CertSchema.methods.delete = async function() {
 	}
 };
 
-CertSchema.methods.emmit = async function() {
+CertSchema.methods.emmit = async function(credentials) {
 	const now = new Date();
 
 	const updateQuery = { _id: this._id };
 	const updateAction = {
-		$set: { emmitedOn: now }
+		$set: { emmitedOn: now, jwts: credentials }
 	};
 
 	try {

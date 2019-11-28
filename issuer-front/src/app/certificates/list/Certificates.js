@@ -126,7 +126,22 @@ class Certificates extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
-		self.setState({ loading: true });
+		// cambiar localmente certificado
+		const cert = self.state.certificates.find(cert => cert._id === id);
+		cert.emmitedOn = new Date();
+		cert.createdOn = new Date().toISOString().split("T")[0];
+		cert.actions = (
+			<div
+				className="EditAction"
+				onClick={() => {
+					self.onCertificateEdit(cert._id);
+				}}
+			>
+				{Messages.LIST.BUTTONS.VIEW}
+			</div>
+		);
+		self.setState({ certificates: self.state.certificates });
+
 		CertificateService.emmit(
 			token,
 			id,
