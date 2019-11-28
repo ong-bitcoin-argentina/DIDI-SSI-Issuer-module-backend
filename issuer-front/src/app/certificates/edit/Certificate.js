@@ -6,7 +6,7 @@ import CertificateService from "../../../services/CertificateService";
 import TemplateService from "../../../services/TemplateService";
 
 import ReactFileReader from "react-file-reader";
-import DataRenderer from "../../utils/dataRenderer";
+import DataRenderer from "../../utils/DataRenderer";
 
 import Cookie from "js-cookie";
 
