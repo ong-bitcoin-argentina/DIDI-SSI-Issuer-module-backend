@@ -36,18 +36,18 @@ module.exports.createCertificate = async function(subject, did) {
 
 // recibe el caertificado y lo envia a didi-server para ser guardado
 module.exports.saveCertificate = async function(cert) {
-	fetch(Constants.DIDI_API + "/issuer/issueCertificate", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({
-			did: "did:ethr:" + Constants.SERVER_DID,
-			jwt: cert
-		})
-	})
-		.then(response => {
-			return response.json();
-		})
-		.catch(err => {
-			console.log(err);
+	try {
+		var response = await fetch(Constants.DIDI_API + "/issuer/issueCertificate", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				did: "did:ethr:" + Constants.SERVER_DID,
+				jwt: cert
+			})
 		});
+		return Promise.resolve(response.json());
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
 };

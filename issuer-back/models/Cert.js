@@ -77,6 +77,7 @@ CertSchema.methods.emmit = async function(credentials) {
 var copyData = function(data) {
 	return {
 		cert: data.cert.map(data => {
+			if (data.name === "DID") data.name = data.name.trim();
 			return {
 				name: data.name,
 				value: data.value ? data.value : ""

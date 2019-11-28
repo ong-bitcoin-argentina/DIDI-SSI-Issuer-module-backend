@@ -16,8 +16,6 @@ const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
 console.log(MONGO_URL);
 
-const MOURO_URL = process.env.MOURO_URL || "http://192.168.2.137:3001/graphql";
-
 const USER_TYPES = { Admin: "Admin" };
 const CERT_FIELD_TYPES = {
 	Text: "Text",
@@ -84,7 +82,6 @@ module.exports = {
 	SERVER_DID: SERVER_DID,
 	SERVER_PRIVATE_KEY: SERVER_PRIVATE_KEY,
 	MONGO_URL: MONGO_URL,
-	MOURO_URL: MOURO_URL,
 	SERVER_DID: SERVER_DID,
 	PORT: PORT
 };
