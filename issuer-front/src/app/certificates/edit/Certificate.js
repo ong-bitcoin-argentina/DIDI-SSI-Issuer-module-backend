@@ -165,7 +165,6 @@ class Certificate extends Component {
 		}
 
 		csv = csv.substring(0, csv.length - 1);
-		console.log(csv);
 
 		const element = document.createElement("a");
 		const file = new Blob([csv], { type: "text/plain" });
@@ -261,12 +260,12 @@ class Certificate extends Component {
 	};
 
 	// eliminar participante
-	removeParticipant = key => {
+	removeParticipant = index => {
 		if (this.state.cert.data.participant.length === 1) {
 			const partData = this.state.cert.data.participant[0];
 			for (let key of Object.keys(partData)) partData[key].value = "";
 		} else {
-			this.state.cert.data.participant.splice(key);
+			this.state.cert.data.participant.splice(index, 1);
 		}
 		this.setState({ cert: this.state.cert });
 	};
