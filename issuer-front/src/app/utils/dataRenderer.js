@@ -109,7 +109,7 @@ export default class DataRenderer {
 						type="text"
 						className="DataInput"
 						disabled={!allowEdit}
-						value={val.trim()}
+						value={val}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
 						}}
