@@ -28,7 +28,7 @@ const CERT_FIELD_TYPES = {
 	Checkbox: "Checkbox"
 };
 
-const DIDI_API = process.env.API_URL || "http://localhost:3000/api/1.0/didi";
+const DIDI_API = process.env.DIDI_API || "http://localhost:3000/api/1.0/didi";
 
 module.exports = {
 	API_VERSION: "1.0",
