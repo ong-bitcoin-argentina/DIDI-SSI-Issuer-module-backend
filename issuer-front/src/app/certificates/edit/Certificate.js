@@ -178,11 +178,36 @@ class Certificate extends Component {
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadCertFromCsv = files => {
-		var assignElement = function(dataElem, data) {
+		let validateValueMatchesType = function(dataElem, value) {
+			switch (dataElem.type) {
+				case Constants.TEMPLATES.TYPES.BOOLEAN:
+					if ("" + value !== "true" && "" + value !== "false") return false;
+					return true;
+				case Constants.TEMPLATES.TYPES.CHECKBOX:
+					return dataElem.options.find(elem => elem === value + "");
+				case Constants.TEMPLATES.TYPES.DATE:
+					const regex = /^'(19|20|21)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])'$/;
+					return value.match(regex) != null;
+				case Constants.TEMPLATES.TYPES.NUMBER:
+					if (isNaN(value)) return false;
+					return true;
+				case Constants.TEMPLATES.TYPES.PARAGRAPH:
+					if (!value) return false;
+					return true;
+				case Constants.TEMPLATES.TYPES.TEXT:
+					if (!value) return false;
+					return true;
+				default:
+					return false;
+			}
+		};
+
+		let assignElement = function(dataElem, data) {
 			if (data === "") {
-				if (dataElem.required)
-					return self.setState({ error: Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name) });
+				if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
 			} else {
+				if (!validateValueMatchesType(dataElem, data))
+					return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_INVALID(dataElem.name);
 				dataElem.value = data;
 			}
 		};
@@ -196,16 +221,20 @@ class Certificate extends Component {
 
 			const certData = JSON.parse(JSON.stringify(self.state.cert.data.cert));
 			for (let key of Object.keys(certData)) {
-				if (!certData[key].mandatory) {
-					assignElement(certData[key], data[index]);
+				const dataElem = certData[key];
+				if (!dataElem.mandatory) {
+					const err = assignElement(dataElem, data[index]);
+					if (err) return self.setState({ error: err });
 					index++;
 				}
 			}
 
 			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
 			for (let key of Object.keys(othersData)) {
-				if (!othersData[key].mandatory) {
-					assignElement(othersData[key], data[index]);
+				const dataElem = othersData[key];
+				if (!dataElem.mandatory) {
+					const err = assignElement(dataElem, data[index]);
+					if (err) return self.setState({ error: err });
 					index++;
 				}
 			}
@@ -214,7 +243,8 @@ class Certificate extends Component {
 				const participantData = self.certDataFromTemplate(self.state.template, "participant");
 				for (let dataElem of participantData) {
 					if (data.length > index) {
-						assignElement(dataElem, data[index]);
+						const err = assignElement(dataElem, data[index]);
+						if (err) return self.setState({ error: err });
 						index++;
 					}
 				}
