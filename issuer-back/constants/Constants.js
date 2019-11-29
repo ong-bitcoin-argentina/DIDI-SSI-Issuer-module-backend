@@ -69,8 +69,7 @@ module.exports = {
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"
 	},
-
-	NOT_BACK_FROM: 1562950282,
+	
 	CREDENTIALS: {
 		TYPES: {
 			VERIFIABLE: "VerifiableCredential"

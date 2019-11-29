@@ -13,10 +13,11 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 		privateKey: Constants.SERVER_PRIVATE_KEY
 	});
 
+	const date = (new Date(expDate).getTime() / 1000) | 0;
+
 	const vcPayload = {
 		sub: did,
-		nbf: Constants.NOT_BACK_FROM,
-		expirationDate: expDate,
+		exp: date,
 		vc: {
 			"@context": [Constants.CREDENTIALS.CONTEXT],
 			type: [Constants.CREDENTIALS.TYPES.VERIFIABLE],
@@ -46,7 +47,11 @@ module.exports.saveCertificate = async function(cert) {
 				jwt: cert
 			})
 		});
-		return Promise.resolve(response.json());
+
+		const jsonResp = await response.json();
+		console.log(jsonResp);
+		console.log(jsonResp.status === "error");
+		return jsonResp.status === "error" ? Promise.reject(jsonResp) : Promise.resolve(jsonResp);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
@@ -70,4 +75,3 @@ module.exports.revokeCertificate = async function(cert) {
 		return Promise.reject(err);
 	}
 };
-
