@@ -17,7 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 export default class DataRenderer {
 	// mostrar / editar campos genericos
 	static renderData = (dataElem, type, allowEdit, onChange, blockMandatory) => {
-		const value = dataElem.value ? dataElem.value : dataElem.defaultValue;
+		const value = dataElem.value !== undefined ? dataElem.value : dataElem.defaultValue;
 
 		if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME) {
 			return <div className="DataInput Mandatory">{value}</div>;
