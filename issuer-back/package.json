@@ -1,0 +1,35 @@
+{
+	"name": "api",
+	"version": "2.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon server.js"
+	},
+	"keywords": [
+		"API",
+		"resful",
+		"json",
+		"node",
+		"mongodb",
+		"express"
+	],
+	"dependencies": {
+		"apollo-boost": "^0.4.4",
+		"apollo-cache-inmemory": "^1.6.3",
+		"body-parser": "^1.19.0",
+		"cors": "^2.8.5",
+		"did-jwt-vc": "^0.1.2",
+		"ethr-did": "^1.1.0",
+		"ethr-did-resolver": "^1.0.3",
+		"express": "^4.17.1",
+		"express-validator": "^6.2.0",
+		"graphql": "^14.5.8",
+		"graphql-tag": "^2.10.1",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^5.6.4",
+		"node-fetch": "^2.6.0",
+		"node-pre-gyp": "^0.13.0",
+		"nodemon": "^1.19.4"
+	}
+}

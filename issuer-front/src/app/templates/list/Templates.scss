@@ -1,0 +1,63 @@
+@import "../../../styles/Colors.scss";
+
+.Templates {
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+}
+
+.HeadButtons {
+	display: flex;
+	flex-direction: row;
+}
+
+.SectionButtons {
+	flex: 1;
+	height: 50px;
+	margin-bottom: 10px;
+	align-self: flex-start;
+	display: flex;
+	flex-direction: row;
+}
+
+.MoveButton {
+	width: 200px;
+	height: 50px;
+	font-size: 20px;
+}
+
+.CreateButton {
+	align-self: flex-end;
+	width: 150px;
+	margin-bottom: 10px;
+	display: flex;
+	flex-direction: row;
+}
+
+.CreateButtonText {
+	padding-top: 0px;
+}
+
+.LogoutButton {
+	align-self: center;
+}
+
+.TemplateTable {
+	background-color: $TableBackground;
+	color: $TableText;
+	margin-bottom: 10px;
+}
+
+.Actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.DeleteAction {
+	margin-left: 10px;
+}
+
+.EditAction {
+	margin-left: 10px;
+}

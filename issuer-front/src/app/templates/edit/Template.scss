@@ -1,0 +1,111 @@
+@import "../../../styles/Colors.scss";
+
+.Template {
+	display: flex;
+	flex-direction: column;
+}
+
+.AddButton {
+	padding-top: 1px;
+	display: flex;
+	flex-direction: row;
+	width: 150px;
+	float: center;
+}
+
+.AddButtonText {
+	padding-top: 4px;
+}
+
+.LogoutButton {
+	margin-left: 10px;
+}
+
+#AddOptionIcon {
+	margin-top: 25px;
+}
+
+#Options {
+	display: flex;
+	flex-direction: row;
+	margin-top: 2px;
+	margin-bottom: 20px;
+}
+
+#Required {
+	display: flex;
+}
+
+#Types {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.Data {
+	display: flex;
+	flex-direction: column;
+}
+
+.DataTitle {
+	color: $BackgroundText;
+}
+
+.DataName {
+	color: $BackgroundText;
+	align-self: flex-start;
+}
+
+.DataElem {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 10px;
+}
+
+.DataRequired {
+	color: $BackgroundText;
+	display: flex;
+	flex-direction: row;
+	font-size: 18px;
+}
+
+.DataDelete {
+	display: flex;
+	flex-direction: row;
+	font-size: 18px;
+	color: $Delete;
+}
+
+.material-icons {
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+.DialogTypeDropdown {
+	width: 165px;
+}
+
+.TemplateSectionContent {
+	margin-bottom: 20px;
+}
+
+.PreviewFieldsSelect {
+	background-color: $TableBackground;
+	width: 505px;
+}
+
+.PreviewFieldItem {
+	width: 30%;
+	box-sizing: border-box;
+}
+
+.PreviewFieldTypeImage {
+	margin-right: 10px;
+	width: 200px;
+}
+
+.PreviewFieldTypePicker {
+	width: 750px;
+	display: flex;
+	flex-direction: row !important;
+	margin-bottom: 20px;
+}

@@ -1,0 +1,38 @@
+@import "../../styles/Colors.scss";
+
+.DataInput {
+	font-size: 18px !important;
+
+	background-color: $InputBackground;
+	color: $InputText;
+
+	padding-left: 5px;
+
+	width: 500px;
+	height: 40px;
+
+	text-align: left;
+}
+
+.Mandatory {
+	padding-top: 10px;
+	height: 30px;
+}
+
+.Number {
+	width: 510px;
+}
+
+.Paragraph {
+	height: 100px;
+}
+
+.Boolean {
+	width: 510px;
+	height: 45px;
+}
+
+.Checkbox {
+	width: 510px;
+	height: 45px;
+}
