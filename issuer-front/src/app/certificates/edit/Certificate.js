@@ -127,7 +127,7 @@ class Certificate extends Component {
 					result = result.substring(0, result.length - 1);
 					return result;
 				case Constants.TEMPLATES.TYPES.DATE:
-					return "ej: '2019-11-13'";
+					return "ej: 05 October 2011 14:48 UTC";
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					return "un número";
 				case Constants.TEMPLATES.TYPES.TEXT:
@@ -185,8 +185,13 @@ class Certificate extends Component {
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
 					return dataElem.options.find(elem => elem === value + "");
 				case Constants.TEMPLATES.TYPES.DATE:
-					const regex = /^'(19|20|21)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])'$/;
-					return value.match(regex) != null;
+					try {
+						const date = new Date(value);
+						if (!date) return false;
+						return true;
+					} catch (err) {
+						return false;
+					}
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					if (isNaN(value)) return false;
 					return true;
@@ -417,11 +422,8 @@ class Certificate extends Component {
 						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
 					</button>
 
-					<ReactFileReader handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
-						<button
-							className="LoadCertFromCsv"
-							hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						>
+					<ReactFileReader className="LoadCertFromCsv" handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
+						<button hidden={this.state.action === "viewing" || this.state.action === "editing"}>
 							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
 						</button>
 					</ReactFileReader>

@@ -11,21 +11,21 @@
 
 .AddParticipant {
 	margin-right: 10px;
+	padding: 0px;
 }
 
 .SampleCsv {
 	margin-right: 10px;
 }
 
-.LoadCertFromCsv {
-	position: relative;
-	top: -13px;
-}
-
 .AddParticipantButtons {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+}
+
+.react-file-reader-button {
+	display: flex;
 }
 
 .RemoveParticipantButton {
