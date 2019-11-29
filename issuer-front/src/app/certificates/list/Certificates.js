@@ -106,13 +106,16 @@ class Certificates extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
-		self.setState({ loading: true });
+		const cert = self.state.certificates.find(t => t._id === id);
+		cert.actions = <div></div>;
+
+		self.setState({ cert: self.state.certificates });
 		CertificateService.delete(
 			token,
 			id,
 			async function(cert) {
 				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
-				self.setState({ certificates: certificates, loading: false });
+				self.setState({ certificates: certificates });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -126,10 +129,10 @@ class Certificates extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
-		const cert = self.state.certificates.find(cert => cert._id === id);
-		cert.modifyingCert = true;
+		const cert = self.state.certificates.find(t => t._id === id);
+		cert.actions = <div></div>;
 
-		self.setState({ loading: true });
+		self.setState({ cert: self.state.certificates });
 		CertificateService.emmit(
 			token,
 			id,
