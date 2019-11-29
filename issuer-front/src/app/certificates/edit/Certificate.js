@@ -131,6 +131,7 @@ class Certificate extends Component {
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					return "un número";
 				case Constants.TEMPLATES.TYPES.TEXT:
+					if (dataElem.name === "DID") return "ej: did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
 					return "un texto";
 				case Constants.TEMPLATES.TYPES.PARAGRAPH:
 					return "un parrafo";
