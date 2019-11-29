@@ -7,7 +7,7 @@ const { createVerifiableCredential } = require("did-jwt-vc");
 const fetch = require("node-fetch");
 
 // genera un certificado asociando la informaciòn recibida en "subject" con el did
-module.exports.createCertificate = async function(subject, did) {
+module.exports.createCertificate = async function(subject, expDate, did) {
 	const vcissuer = new EthrDID({
 		address: Constants.SERVER_DID,
 		privateKey: Constants.SERVER_PRIVATE_KEY
@@ -16,6 +16,7 @@ module.exports.createCertificate = async function(subject, did) {
 	const vcPayload = {
 		sub: did,
 		nbf: Constants.NOT_BACK_FROM,
+		expirationDate: expDate,
 		vc: {
 			"@context": [Constants.CREDENTIALS.CONTEXT],
 			type: [Constants.CREDENTIALS.TYPES.VERIFIABLE],

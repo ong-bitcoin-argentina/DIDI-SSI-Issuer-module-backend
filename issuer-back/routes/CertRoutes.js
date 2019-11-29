@@ -116,16 +116,22 @@ const generateCertificate = async function(template, cert, element) {
 			data: {}
 		};
 
-		let did;
+		let did, expDate;
 		allData.forEach(dataElem => {
-			if (dataElem.name === "DID") {
-				did = dataElem.value;
-			} else {
-				if (dataElem.value) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
+			switch (dataElem.name) {
+				case Constants.CERT_FIELD_MANDATORY.DID:
+					did = dataElem.value;
+					break;
+				case Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE:
+					expDate = dataElem.value;
+					break;
+				default:
+					if (dataElem.value !== undefined) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
+					break;
 			}
 		});
 
-		const credential = await MouroService.createCertificate(data, did);
+		const credential = await MouroService.createCertificate(data, expDate, did);
 		return Promise.resolve(credential);
 	} catch (err) {
 		return Promise.reject(err);

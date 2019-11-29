@@ -137,6 +137,13 @@ Template.generate = async function(name) {
 				type: Constants.CERT_FIELD_TYPES.Text,
 				required: true,
 				mandatory: true
+			},
+			{
+				name: Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE,
+				defaultValue: "",
+				type: Constants.CERT_FIELD_TYPES.Date,
+				required: false,
+				mandatory: false
 			}
 		],
 		others: []
