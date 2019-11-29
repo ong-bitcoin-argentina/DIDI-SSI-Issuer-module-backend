@@ -65,7 +65,7 @@ class Certificates extends Component {
 							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
 						</div>
 					}
-					{!emmited && (
+					{
 						<div
 							className="DeleteAction"
 							onClick={() => {
@@ -74,7 +74,7 @@ class Certificates extends Component {
 						>
 							{Messages.LIST.BUTTONS.DELETE}
 						</div>
-					)}
+					}
 				</div>
 			)
 		};
@@ -126,6 +126,10 @@ class Certificates extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
+		const cert = self.state.certificates.find(cert => cert._id === id);
+		cert.modifyingCert = true;
+
+		self.setState({ loading: true });
 		CertificateService.emmit(
 			token,
 			id,
@@ -134,7 +138,6 @@ class Certificates extends Component {
 			},
 			function(err) {
 				self.setState({ error: err });
-				self.componentDidMount();
 				console.log(err);
 			}
 		);

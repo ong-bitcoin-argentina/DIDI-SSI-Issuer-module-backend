@@ -52,3 +52,22 @@ module.exports.saveCertificate = async function(cert) {
 		return Promise.reject(err);
 	}
 };
+
+// recibe el caertificado y lo envia a didi-server para ser borrado
+module.exports.revokeCertificate = async function(cert) {
+	try {
+		var response = await fetch(Constants.DIDI_API + "/issuer/revokeCertificate", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				did: "did:ethr:" + Constants.SERVER_DID,
+				jwt: cert
+			})
+		});
+		return Promise.resolve(response.json());
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
