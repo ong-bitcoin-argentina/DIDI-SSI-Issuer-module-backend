@@ -32,7 +32,12 @@ const CertSchema = mongoose.Schema({
 	},
 	jwts: [
 		{
-			type: String
+			data: {
+				type: String
+			},
+			hash: {
+				type: String
+			}
 		}
 	],
 	createdOn: {
@@ -58,12 +63,12 @@ CertSchema.methods.delete = async function() {
 	}
 };
 
-CertSchema.methods.emmit = async function(credentials) {
+CertSchema.methods.emmit = async function(creds) {
 	const now = new Date();
 
 	const updateQuery = { _id: this._id };
 	const updateAction = {
-		$set: { emmitedOn: now, jwts: credentials }
+		$set: { emmitedOn: now, jwts: creds }
 	};
 
 	try {
@@ -111,13 +116,14 @@ const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
 Cert.generate = async function(data, templateId) {
-	let cert = new Cert();
-	cert.data = copyData(data);
-	cert.templateId = templateId;
-	cert.createdOn = new Date();
-	cert.deleted = false;
-
 	try {
+		let cert = new Cert();
+		cert.data = copyData(data);
+		cert.templateId = templateId;
+		cert.jwts = [];
+		cert.createdOn = new Date();
+		cert.deleted = false;
+
 		cert = await cert.save();
 		return Promise.resolve(cert);
 	} catch (err) {

@@ -93,7 +93,7 @@ router.post(
 			for (let element of partData) {
 				const credential = await generateCertificate(template, cert, element);
 				const res = await MouroService.saveCertificate(credential);
-				credentials.push(credential);
+				credentials.push(res);
 			}
 
 			let result = cert;
@@ -159,24 +159,24 @@ router.post(
 		const data = JSON.parse(req.body.data);
 		const templateId = req.body.templateId;
 
-		try {
-			const result = [];
+		const result = [];
+		for (let participantData of data.participant) {
+			const certData = {
+				cert: data.cert,
+				participant: [participantData],
+				others: data.others
+			};
 
-			for (let participantData of data.participant) {
-				const certData = {
-					cert: data.cert,
-					participant: [participantData],
-					others: data.others
-				};
-
-				const cert = await CertService.create(certData, templateId);
-				result.push(cert);
+			let cert;
+			try {
+				cert = await CertService.create(certData, templateId);
+			} catch (err) {
+				console.log(err);
+				return ResponseHandler.sendErr(res, err);
 			}
-
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
+			result.push(cert);
 		}
+		return ResponseHandler.sendRes(res, result);
 	}
 );
 
@@ -223,7 +223,7 @@ router.delete(
 
 		try {
 			const cert = await CertService.delete(id);
-			for (let jwt of cert.jwts) await MouroService.revokeCertificate(jwt);
+			for (let jwt of cert.jwts) await MouroService.revokeCertificate(jwt.data);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

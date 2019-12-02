@@ -49,9 +49,7 @@ module.exports.saveCertificate = async function(cert) {
 		});
 
 		const jsonResp = await response.json();
-		console.log(jsonResp);
-		console.log(jsonResp.status === "error");
-		return jsonResp.status === "error" ? Promise.reject(jsonResp) : Promise.resolve(jsonResp);
+		return jsonResp.status === "error" ? Promise.reject(jsonResp) : Promise.resolve(jsonResp.data);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
