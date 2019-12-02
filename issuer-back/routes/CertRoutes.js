@@ -223,7 +223,7 @@ router.delete(
 
 		try {
 			const cert = await CertService.delete(id);
-			for (let jwt of cert.jwts) await MouroService.revokeCertificate(jwt.data);
+			for (let jwt of cert.jwts) await MouroService.revokeCertificate(jwt.hash);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
