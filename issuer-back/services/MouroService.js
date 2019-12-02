@@ -9,8 +9,8 @@ const fetch = require("node-fetch");
 // genera un certificado asociando la informaciòn recibida en "subject" con el did
 module.exports.createCertificate = async function(subject, expDate, did) {
 	const vcissuer = new EthrDID({
-		address: Constants.SERVER_DID,
-		privateKey: Constants.SERVER_PRIVATE_KEY
+		address: Constants.ISSUER_SERVER_DID,
+		privateKey: Constants.ISSUER_SERVER_PRIVATE_KEY
 	});
 
 	const date = expDate ? (new Date(expDate).getTime() / 1000) | 0 : undefined;
@@ -43,7 +43,7 @@ module.exports.saveCertificate = async function(cert) {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				did: "did:ethr:" + Constants.SERVER_DID,
+				did: "did:ethr:" + Constants.ISSUER_SERVER_DID,
 				jwt: cert
 			})
 		});
@@ -63,7 +63,7 @@ module.exports.revokeCertificate = async function(hash) {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				did: "did:ethr:" + Constants.SERVER_DID,
+				did: "did:ethr:" + Constants.ISSUER_SERVER_DID,
 				hash: hash
 			})
 		});
