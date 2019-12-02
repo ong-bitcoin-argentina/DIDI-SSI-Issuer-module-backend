@@ -128,9 +128,14 @@ class Template extends Component {
 
 	// borrar campo
 	deleteField = (data, type) => {
+		console.log(this.state.template);
+
 		const template = this.state.template;
 		template.data[type] = template.data[type].filter(dataElem => {
 			return dataElem.name !== data.name;
+		});
+		template.previewData = template.previewData.filter(prevData => {
+			return prevData !== data.name;
 		});
 		this.setState({ template: template });
 	};
