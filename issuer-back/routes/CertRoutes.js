@@ -90,11 +90,7 @@ router.post(
 			});
 
 			let credentials = [];
-			for (let element of partData) {
-				const credential = await generateCertificate(template, cert, element);
-				const res = await MouroService.saveCertificate(credential);
-				credentials.push(res);
-			}
+			for (let part of partData) await generateCertificate(credentials, template, cert, part);
 
 			let result = cert;
 			if (credentials.length) result = await CertService.emmit(cert, credentials);
@@ -106,17 +102,34 @@ router.post(
 	}
 );
 
-const generateCertificate = async function(template, cert, element) {
+const generateCertificate = async function(credentials, template, cert, part) {
+	const generatePartialCertificate = async function(name, certData, expDate, did) {
+		try {
+			const data = {};
+			data[name] = {
+				data: {}
+			};
+
+			certData.forEach(dataElem => {
+				if (
+					dataElem.value !== undefined &&
+					dataElem.name != Constants.CERT_FIELD_MANDATORY.DID &&
+					dataElem.name != Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE
+				)
+					data[name]["data"][dataElem.name] = dataElem.value;
+			});
+
+			const credential = await MouroService.createCertificate(data, expDate, did);
+			return Promise.resolve(credential);
+		} catch (err) {
+			return Promise.reject(err);
+		}
+	};
+
 	try {
-		const allData = cert.data.cert.concat(element).concat(cert.data.others);
+		const allData = cert.data.cert.concat(part).concat(cert.data.others);
+		const name = cert.data.cert[0].value;
 		const data = {};
-		data[cert.data.cert[0].value] = {
-			preview: {
-				type: template.previewData.length / 2,
-				fields: template.previewData
-			},
-			data: {}
-		};
 
 		let did, expDate;
 		allData.forEach(dataElem => {
@@ -127,14 +140,46 @@ const generateCertificate = async function(template, cert, element) {
 				case Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE:
 					expDate = dataElem.value;
 					break;
-				default:
-					if (dataElem.value !== undefined) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
-					break;
 			}
 		});
 
-		const credential = await MouroService.createCertificate(data, expDate, did);
-		return Promise.resolve(credential);
+		const generateCert = generatePartialCertificate("certificateData", cert.data.cert, expDate, did);
+		const generatePart = generatePartialCertificate("participantData", part, expDate, did);
+		const generateOther = generatePartialCertificate("othersData", cert.data.others, expDate, did);
+
+		const [resCred, partRes, othersRes] = await Promise.all([generateCert, generatePart, generateOther]);
+		const saveCred = MouroService.saveCertificate(resCred);
+		const saveRPart = MouroService.saveCertificate(partRes);
+		const saveOthers = MouroService.saveCertificate(othersRes);
+
+		data[name] = {
+			preview: {
+				type: template.previewData.length / 2,
+				fields: template.previewData
+			},
+			data: {},
+			wrapped: {
+				certificateData: resCred,
+				participantData: partRes,
+				othersData: othersRes
+			}
+		};
+
+		const generateFull = MouroService.createCertificate(data, expDate, did);
+		const [savedCred, savedRPart, savedOthers, resFull] = await Promise.all([
+			saveCred,
+			saveRPart,
+			saveOthers,
+			generateFull
+		]);
+		savedFull = await MouroService.saveCertificate(resFull);
+
+		credentials.push(savedCred);
+		credentials.push(savedRPart);
+		credentials.push(savedOthers);
+		credentials.push(savedFull);
+
+		return Promise.resolve(credentials);
 	} catch (err) {
 		return Promise.reject(err);
 	}

@@ -7,7 +7,17 @@ module.exports = {
 			CONNECTING: "conectandose a: ",
 			CONNECTED: "Base de datos conectada.",
 			HELLO_WORLD: "Hola DIDI!",
-			RUNNING_ON: "Ejecutandose en puerto "
+			RUNNING_ON: "Ejecutandose en puerto ",
+			STARTING_WORKER: "Arrancando nuevo worker",
+			STARTING_WORKERS: num => {
+				return "Inicializando " + num + " workers";
+			},
+			STARTED_WORKER: pid => {
+				return "Worker " + pid + " inicializado";
+			},
+			ENDED_WORKER: (pid, code, signal) => {
+				return "Worker " + pid + " termino con codigo: " + code + ", y señal: " + signal;
+			}
 		}
 	},
 	USER: {
