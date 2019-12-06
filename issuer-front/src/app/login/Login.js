@@ -44,7 +44,8 @@ class Login extends Component {
 
 	render() {
 		if (Cookie.get("token")) {
-			return <Redirect to={Constants.ROUTES.TEMPLATES} />;
+			return <Redirect to={Constants.ROUTES.LIST} />;
+			// return <Redirect to={Constants.ROUTES.TEMPLATES} />;
 		}
 
 		return (

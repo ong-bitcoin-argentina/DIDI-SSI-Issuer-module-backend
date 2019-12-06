@@ -1,13 +1,10 @@
 import React, { Component } from "react";
-import { withRouter, Redirect } from "react-router";
+import { withRouter } from "react-router";
 import "./Templates.scss";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-import Cookie from "js-cookie";
-
-import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
@@ -31,100 +28,6 @@ class Templates extends Component {
 		};
 	}
 
-	// mapear certificados al formato requerido por "ReactTable"
-	getTemplateData = (self, template) => {
-		return {
-			_id: template._id,
-			name: template.name,
-			actions: (
-				<div className="Actions">
-					<div
-						className="EditAction"
-						onClick={() => {
-							self.onTemplateEdit(template._id);
-						}}
-					>
-						{Messages.LIST.BUTTONS.EDIT}
-					</div>
-					<div
-						className="DeleteAction"
-						onClick={() => {
-							self.onTemplateDelete(template._id);
-						}}
-					>
-						{Messages.LIST.BUTTONS.DELETE}
-					</div>
-				</div>
-			)
-		};
-	};
-
-	// cargar certificados
-	componentDidMount() {
-		const token = Cookie.get("token");
-		const self = this;
-
-		self.setState({ loading: true });
-		TemplateService.getAll(
-			token,
-			async function(templates) {
-				templates = templates.map(template => {
-					return self.getTemplateData(self, template);
-				});
-				self.setState({ templates: templates, loading: false });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	}
-
-	// crear templates
-	onTemplateCreate = () => {
-		const token = Cookie.get("token");
-		const name = this.state.name;
-		const self = this;
-		self.setState({ loading: true });
-		TemplateService.create(
-			token,
-			name,
-			async function(template) {
-				const templates = self.state.templates;
-				templates.push(self.getTemplateData(self, template));
-				self.setState({ isDialogOpen: false, templates: templates, loading: false });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	};
-
-	// borrar templates
-	onTemplateDelete = id => {
-		const token = Cookie.get("token");
-		const self = this;
-		self.setState({ loading: true });
-		TemplateService.delete(
-			token,
-			id,
-			async function(template) {
-				const templates = self.state.templates.filter(t => t._id !== template._id);
-				self.setState({ templates: templates, loading: false });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	};
-
-	// a pantalla de edicion
-	onTemplateEdit = id => {
-		this.props.history.push(Constants.ROUTES.EDIT_TEMPLATE + id);
-	};
-
 	// abrir dialogo de creacion de templates
 	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
 
@@ -136,23 +39,8 @@ class Templates extends Component {
 		this.setState({ name: event.target.value, error: "" });
 	};
 
-	// a pantalla de certificados
-	moveToCertificates = () => {
-		this.props.history.push(Constants.ROUTES.CERTIFICATES);
-	};
-
-	// a pantalla de login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	render() {
-		if (!Cookie.get("token")) {
-			return <Redirect to={Constants.ROUTES.LOGIN} />;
-		}
-
-		const loading = this.state.loading;
+		const loading = this.props.loading;
 		const isDialogOpen = this.state.isDialogOpen;
 		return (
 			<div className="Templates">
@@ -160,7 +48,7 @@ class Templates extends Component {
 				{isDialogOpen && this.renderDialog()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+				<div className="errMsg">{this.props.error && this.props.message}</div>
 			</div>
 		);
 	}
@@ -168,14 +56,6 @@ class Templates extends Component {
 	renderSectionButtons = () => {
 		return (
 			<div className="HeadButtons">
-				<div className="SectionButtons">
-					<button className="MoveButton" onClick={this.moveToCertificates}>
-						{Messages.LIST.BUTTONS.TO_CERTIFICATES}
-					</button>
-					<button className="MoveButton" disabled>
-						{Messages.LIST.BUTTONS.TO_TEMPLATES}
-					</button>
-				</div>
 				<button className="CreateButton" onClick={this.onDialogOpen}>
 					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
 					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
@@ -200,7 +80,14 @@ class Templates extends Component {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.onTemplateCreate} disabled={!this.state.name} color="primary">
+					<Button
+						onClick={() => {
+							this.onDialogClose();
+							this.props.onTemplateCreate(this.state.name);
+						}}
+						disabled={!this.state.name}
+						color="primary"
+					>
 						{Messages.LIST.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
@@ -212,12 +99,8 @@ class Templates extends Component {
 	};
 
 	renderTable = () => {
-		const templates = this.state.templates;
+		const templates = this.props.templates;
 		const columns = [
-			/*{
-				Header: "Id",
-				accessor: "_id"
-			},*/
 			{
 				Header: Messages.LIST.TABLE.TEMPLATE,
 				accessor: "name"

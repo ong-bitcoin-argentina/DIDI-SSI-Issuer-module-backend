@@ -166,7 +166,8 @@ class Template extends Component {
 			template,
 			async function(_) {
 				self.setState({ loading: false });
-				self.props.history.push(Constants.ROUTES.TEMPLATES);
+				self.props.history.push(Constants.ROUTES.LIST);
+				// self.props.history.push(Constants.ROUTES.TEMPLATES);
 			},
 			function(err) {
 				self.setState({ error: err });

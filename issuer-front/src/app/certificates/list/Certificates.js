@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-import { withRouter, Redirect } from "react-router";
+import { withRouter } from "react-router";
 import "./Certificates.scss";
-
-import CertificateService from "../../../services/CertificateService";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
 import MaterialIcon from "material-icons-react";
-
-import Cookie from "js-cookie";
 
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
@@ -27,124 +23,10 @@ class Certificates extends Component {
 
 		this.state = {
 			loading: false,
-			certificates: [],
 			isDialogOpen: false,
 			name: ""
 		};
 	}
-
-	// mapear certificados al formato requerido por "ReactTable"
-	getCertificatesData = (self, cert) => {
-		const emmited = cert.emmitedOn;
-
-		return {
-			_id: cert._id,
-			certName: cert.name,
-			createdOn: emmited ? cert.emmitedOn.split("T")[0] : "-",
-			firstName: cert.firstName,
-			lastName: cert.lastName,
-			actions: (
-				<div className="Actions">
-					{!emmited && (
-						<div
-							className="EmmitAction"
-							onClick={() => {
-								self.onCertificateEmmit(cert._id);
-							}}
-						>
-							{Messages.LIST.BUTTONS.EMMIT}
-						</div>
-					)}
-					{
-						<div
-							className="EditAction"
-							onClick={() => {
-								self.onCertificateEdit(cert._id);
-							}}
-						>
-							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
-						</div>
-					}
-					{
-						<div
-							className="DeleteAction"
-							onClick={() => {
-								self.onCertificateDelete(cert._id);
-							}}
-						>
-							{Messages.LIST.BUTTONS.DELETE}
-						</div>
-					}
-				</div>
-			)
-		};
-	};
-
-	// cargar certificados
-	componentDidMount() {
-		const token = Cookie.get("token");
-		const self = this;
-
-		self.setState({ loading: true });
-		CertificateService.getAll(
-			token,
-			async function(certificates) {
-				certificates = certificates.map(certificate => {
-					return self.getCertificatesData(self, certificate);
-				});
-				self.setState({ certificates: certificates, loading: false });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	}
-
-	// borrar certificados
-	onCertificateDelete = id => {
-		const token = Cookie.get("token");
-		const self = this;
-
-		const cert = self.state.certificates.find(t => t._id === id);
-		cert.actions = <div></div>;
-
-		self.setState({ cert: self.state.certificates });
-		CertificateService.delete(
-			token,
-			id,
-			async function(cert) {
-				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
-				self.setState({ certificates: certificates });
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	};
-
-	// emitir certificados
-	onCertificateEmmit = id => {
-		const token = Cookie.get("token");
-		const self = this;
-
-		const cert = self.state.certificates.find(t => t._id === id);
-		cert.actions = <div></div>;
-
-		self.setState({ cert: self.state.certificates });
-		CertificateService.emmit(
-			token,
-			id,
-			async function(_) {
-				self.componentDidMount();
-			},
-			function(err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-	};
 
 	// a pantalla de edicion
 	onCertificateEdit = id => {
@@ -156,17 +38,6 @@ class Certificates extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT);
 	};
 
-	// a pantalla de templates
-	moveToTemplates = () => {
-		this.props.history.push(Constants.ROUTES.TEMPLATES);
-	};
-
-	// a pantalla de login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	// abrir dialogo de creacion de certificados
 	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
 
@@ -174,10 +45,9 @@ class Certificates extends Component {
 	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
 
 	render() {
-		if (!Cookie.get("token")) {
-			return <Redirect to={Constants.ROUTES.LOGIN} />;
-		}
-		const loading = this.state.loading;
+		console.log(this.props);
+
+		const loading = this.props.loading;
 		const isDialogOpen = this.state.isDialogOpen;
 		return (
 			<div className="Certificates">
@@ -185,7 +55,7 @@ class Certificates extends Component {
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+				<div className="errMsg">{this.props.error && this.state.props.message}</div>
 			</div>
 		);
 	}
@@ -201,7 +71,7 @@ class Certificates extends Component {
 						id="name"
 						label={Messages.LIST.DIALOG.NAME}
 						type="text"
-						onChange={this.updateName}
+						onChange={this.props.updateName}
 						fullWidth
 					/>
 				</DialogContent>
@@ -220,14 +90,6 @@ class Certificates extends Component {
 	renderSectionButtons = () => {
 		return (
 			<div className="HeadButtons">
-				<div className="SectionButtons">
-					<button className="MoveButton" disabled>
-						{Messages.LIST.BUTTONS.TO_CERTIFICATES}
-					</button>
-					<button className="MoveButton" onClick={this.moveToTemplates}>
-						{Messages.LIST.BUTTONS.TO_TEMPLATES}
-					</button>
-				</div>
 				<button className="CreateButton" onClick={this.onCertificateCreate}>
 					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
 					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
@@ -237,7 +99,7 @@ class Certificates extends Component {
 	};
 
 	renderTable = () => {
-		const certificates = this.state.certificates;
+		const certificates = this.props.certificates;
 		const columns = [
 			/*{
 				Header: "Id",
@@ -281,7 +143,7 @@ class Certificates extends Component {
 
 	renderButtons = () => {
 		return (
-			<button className="LogoutButton" onClick={this.onLogout}>
+			<button className="LogoutButton" onClick={this.props.onLogout}>
 				{Messages.LIST.BUTTONS.EXIT}
 			</button>
 		);

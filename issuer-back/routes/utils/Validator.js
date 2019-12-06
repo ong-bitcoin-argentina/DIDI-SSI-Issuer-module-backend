@@ -75,9 +75,10 @@ let _doValidate = function(param, isHead) {
 
 	let validateIsBoolean = function(validation, param) {
 		return validation.custom(async function(value) {
-			if (value == "true" || value == "false") {
+			if (value === "true" || value === true || value === "false" || value === false) {
 				return Promise.resolve(value);
 			} else {
+				console.log("shit: " + value);
 				return Promise.reject(Messages.VALIDATION.BOOLEAN_FORMAT_INVALID(param.name));
 			}
 		});

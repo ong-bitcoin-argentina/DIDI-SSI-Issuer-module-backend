@@ -35,6 +35,7 @@ module.exports = {
 	},
 	ROUTES: {
 		LOGIN: "/login",
+		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
 		CERTIFICATES: "/certificates",

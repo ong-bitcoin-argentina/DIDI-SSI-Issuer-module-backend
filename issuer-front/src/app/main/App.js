@@ -4,9 +4,8 @@ import "./App.scss";
 
 import Constants from "../../constants/Constants";
 import Login from "../login/Login";
-import Templates from "../templates/list/Templates";
+import Lists from "./Lists";
 import Template from "../templates/edit/Template";
-import Certificates from "../certificates/list/Certificates";
 import Certificate from "../certificates/edit/Certificate";
 
 class App extends Component {
@@ -17,9 +16,10 @@ class App extends Component {
 					<Switch>
 						<Route exact path="/" component={Login} />
 						<Route exact path={Constants.ROUTES.LOGIN} component={Login} />
-						<Route exact path={Constants.ROUTES.TEMPLATES} component={Templates} />
+						<Route exact path={Constants.ROUTES.LIST} component={Lists} />
+						<Route exact path={Constants.ROUTES.TEMPLATES} component={Lists} />
+						<Route exact path={Constants.ROUTES.CERTIFICATES} component={Lists} />
 						<Route path={Constants.ROUTES.EDIT_TEMPLATE} component={Template} />
-						<Route exact path={Constants.ROUTES.CERTIFICATES} component={Certificates} />
 						<Route path={Constants.ROUTES.EDIT_CERT} component={Certificate} />
 					</Switch>
 				</Router>
