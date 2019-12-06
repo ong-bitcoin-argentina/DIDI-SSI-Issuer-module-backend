@@ -1,9 +1,15 @@
+@import "../../styles/Colors.scss";
+
 .react-tabs {
 	width: 80%;
 }
 
 .react-tabs__tab-list {
-	border-bottom: none !important;
-	margin: 0px;
-	padding: 0px;
+	margin: 0px !important;
+	width: max-content;
+	float: right;
+}
+
+.react-tabs__tab--selected {
+	background: $TableBackground !important;
 }
