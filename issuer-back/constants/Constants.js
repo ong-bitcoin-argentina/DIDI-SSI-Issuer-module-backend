@@ -36,6 +36,7 @@ module.exports = {
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",
+		IS_BOOLEAN: "isBoolean",
 		IS_PASSWORD: "isPassword",
 		IS_CERT_DATA: "isCertData",
 		IS_TEMPLATE_DATA: "isTemplateData",

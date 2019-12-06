@@ -23,6 +23,10 @@ const CertSchema = mongoose.Schema({
 		type: ObjectId,
 		required: true
 	},
+	split: {
+		type: Boolean,
+		default: false
+	},
 	deleted: {
 		type: Boolean,
 		default: false
@@ -100,8 +104,9 @@ var copyData = function(data) {
 	};
 };
 
-CertSchema.methods.edit = async function(data) {
+CertSchema.methods.edit = async function(data, split) {
 	this.data = copyData(data);
+	this.split = split;
 
 	try {
 		await this.save();
@@ -115,9 +120,10 @@ CertSchema.methods.edit = async function(data) {
 const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
-Cert.generate = async function(data, templateId) {
+Cert.generate = async function(data, templateId, split) {
 	try {
 		let cert = new Cert();
+		cert.split = split;
 		cert.data = copyData(data);
 		cert.templateId = templateId;
 		cert.jwts = [];

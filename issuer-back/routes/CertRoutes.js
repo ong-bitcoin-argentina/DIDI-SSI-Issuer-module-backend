@@ -24,6 +24,7 @@ router.get(
 			const result = certs.map(cert => {
 				return {
 					_id: cert._id,
+					split: cert.split,
 					name: cert.data.cert[0].value,
 					emmitedOn: cert.emmitedOn,
 					firstName: cert.data.participant[0][1].value,
@@ -90,7 +91,11 @@ router.post(
 			});
 
 			let credentials = [];
-			for (let part of partData) await generateCertificate(credentials, template, cert, part);
+			for (let part of partData) {
+				cert.split
+					? await generateCertificate(credentials, template, cert, part)
+					: await generateFullCertificate(credentials, template, cert, part);
+			}
 
 			let result = cert;
 			if (credentials.length) result = await CertService.emmit(cert, credentials);
@@ -101,6 +106,44 @@ router.post(
 		}
 	}
 );
+
+const generateFullCertificate = async function(credentials, template, cert, part) {
+	try {
+		const allData = cert.data.cert.concat(part).concat(cert.data.others);
+		const name = cert.data.cert[0].value;
+		const data = {};
+		data[name] = {
+			preview: {
+				type: template.previewData.length / 2,
+				fields: template.previewData
+			},
+			data: {}
+		};
+
+		let did, expDate;
+		allData.forEach(dataElem => {
+			switch (dataElem.name) {
+				case Constants.CERT_FIELD_MANDATORY.DID:
+					did = dataElem.value;
+					break;
+				case Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE:
+					expDate = dataElem.value;
+					break;
+				default:
+					data[name]["data"][dataElem.name] = dataElem.value;
+					break;
+			}
+		});
+
+		const resFull = await MouroService.createCertificate(data, expDate, did);
+		const savedFull = await MouroService.saveCertificate(resFull);
+		credentials.push(savedFull);
+
+		return Promise.resolve(credentials);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
 
 const generateCertificate = async function(credentials, template, cert, part) {
 	const generatePartialCertificate = async function(name, certData, expDate, did) {
@@ -197,12 +240,17 @@ router.post(
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
+		},
+		{
+			name: "split",
+			validate: [Constants.VALIDATION_TYPES.IS_BOOLEAN]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const data = JSON.parse(req.body.data);
 		const templateId = req.body.templateId;
+		const split = req.body.split;
 
 		const result = [];
 		for (let participantData of data.participant) {
@@ -214,7 +262,7 @@ router.post(
 
 			let cert;
 			try {
-				cert = await CertService.create(certData, templateId);
+				cert = await CertService.create(certData, templateId, split);
 			} catch (err) {
 				console.log(err);
 				return ResponseHandler.sendErr(res, err);
@@ -237,15 +285,21 @@ router.put(
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
+		},
+		{
+			name: "split",
+			validate: [Constants.VALIDATION_TYPES.IS_BOOLEAN]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
+
 		const id = req.params.id;
 		const data = JSON.parse(req.body.data);
+		const split = req.body.split;
 
 		try {
-			const cert = await CertService.edit(id, data);
+			const cert = await CertService.edit(id, data, split);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

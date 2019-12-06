@@ -44,6 +44,8 @@ class Certificate extends Component {
 						token,
 						id,
 						function(cert) {
+							console.log(cert);
+
 							// si el cert fue emitido, no puedo editarlo
 							const action = cert.emmitedOn ? "viewing" : "editing";
 							const selectedTemplate = templates.find(template => template._id === cert.templateId);
@@ -92,6 +94,7 @@ class Certificate extends Component {
 
 		return {
 			templateId: template._id,
+			split: false,
 			data: data
 		};
 	};
@@ -131,7 +134,8 @@ class Certificate extends Component {
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					return "un número";
 				case Constants.TEMPLATES.TYPES.TEXT:
-					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.DID) return "ej: did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
+					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.DID)
+						return "ej: did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
 					return "un texto";
 				case Constants.TEMPLATES.TYPES.PARAGRAPH:
 					return "un parrafo";
@@ -323,6 +327,12 @@ class Certificate extends Component {
 		);
 	};
 
+	splitChanged = value => {
+		const cert = this.state.cert;
+		cert.split = value;
+		this.setState({ cert: cert });
+	};
+
 	// volver a listado de certificados
 	onBack = () => {
 		this.props.history.push(Constants.ROUTES.CERTIFICATES);
@@ -387,7 +397,28 @@ class Certificate extends Component {
 		const partData = cert.data.participant;
 
 		return (
-			<div className="CertificateContent">
+			<div className="CertSectionContent">
+				<div className="Data">
+					<div className="DataName">{Constants.CERTIFICATES.EDIT.SPLIT}</div>
+					<div className="DataElem">
+						<Select
+							className="DataInput Boolean"
+							autoFocus
+							value={cert.split ? cert.split : false}
+							onChange={event => {
+								this.splitChanged(event.target.value);
+							}}
+						>
+							<MenuItem className="DataInput" value={"true"}>
+								{Constants.TEMPLATES.EDIT.BOOLEAN.TRUE}
+							</MenuItem>
+							<MenuItem className="DataInput" value={"false"}>
+								{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
+							</MenuItem>
+						</Select>
+					</div>
+				</div>
+
 				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
 				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
 
@@ -405,30 +436,6 @@ class Certificate extends Component {
 						</div>
 					);
 				})}
-
-				<div className="AddParticipantButtons">
-					<button
-						className="AddParticipant"
-						hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						onClick={this.addParticipant}
-					>
-						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
-					</button>
-
-					<button
-						className="SampleCsv"
-						hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						onClick={this.createSampleCsv}
-					>
-						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
-					</button>
-
-					<ReactFileReader className="LoadCertFromCsv" handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
-						<button hidden={this.state.action === "viewing" || this.state.action === "editing"}>
-							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
-						</button>
-					</ReactFileReader>
-				</div>
 			</div>
 		);
 	};
@@ -494,21 +501,47 @@ class Certificate extends Component {
 
 	renderButtons = () => {
 		return (
-			<div className="CertificateButtons">
-				<button
-					hidden={this.state.action === "viewing"}
-					className="SaveButton"
-					disabled={this.saveDisabled()}
-					onClick={this.onSave}
-				>
-					{Messages.EDIT.BUTTONS.SAVE}
-				</button>
-				<button className="BackButton" onClick={this.onBack}>
-					{Messages.EDIT.BUTTONS.BACK}
-				</button>
-				<button className="LogoutButton" onClick={this.onLogout}>
-					{Messages.EDIT.BUTTONS.EXIT}
-				</button>
+			<div>
+				<div className="AddParticipantButtons">
+					<button
+						className="AddParticipant"
+						hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						onClick={this.addParticipant}
+					>
+						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
+					</button>
+
+					<button
+						className="SampleCsv"
+						hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						onClick={this.createSampleCsv}
+					>
+						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
+					</button>
+
+					<ReactFileReader className="LoadCertFromCsv" handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
+						<button hidden={this.state.action === "viewing" || this.state.action === "editing"}>
+							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
+						</button>
+					</ReactFileReader>
+				</div>
+
+				<div className="CertificateButtons">
+					<button
+						hidden={this.state.action === "viewing"}
+						className="SaveButton"
+						disabled={this.saveDisabled()}
+						onClick={this.onSave}
+					>
+						{Messages.EDIT.BUTTONS.SAVE}
+					</button>
+					<button className="BackButton" onClick={this.onBack}>
+						{Messages.EDIT.BUTTONS.BACK}
+					</button>
+					<button className="LogoutButton" onClick={this.onLogout}>
+						{Messages.EDIT.BUTTONS.EXIT}
+					</button>
+				</div>
 			</div>
 		);
 	};

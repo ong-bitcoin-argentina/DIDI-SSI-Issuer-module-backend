@@ -24,9 +24,9 @@ module.exports.getAll = async function() {
 	}
 };
 
-module.exports.create = async function(data, templateId) {
+module.exports.create = async function(data, templateId, split) {
 	try {
-		const cert = await Cert.generate(data, templateId);
+		const cert = await Cert.generate(data, templateId, split);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
@@ -35,10 +35,10 @@ module.exports.create = async function(data, templateId) {
 	}
 };
 
-module.exports.edit = async function(id, data) {
+module.exports.edit = async function(id, data, split) {
 	try {
 		let cert = await getById(id);
-		cert = await cert.edit(data);
+		cert = await cert.edit(data, split);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
@@ -87,6 +87,7 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 	};
 	return {
 		_id: cert._id,
+		split: cert.split,
 		templateId: cert.templateId,
 		emmitedOn: cert.emmitedOn,
 		data: data

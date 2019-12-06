@@ -73,6 +73,16 @@ let _doValidate = function(param, isHead) {
 		return validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
 	};
 
+	let validateIsBoolean = function(validation, param) {
+		return validation.custom(async function(value) {
+			if (value == "true" || value == "false") {
+				return Promise.resolve(value);
+			} else {
+				return Promise.reject(Messages.VALIDATION.BOOLEAN_FORMAT_INVALID(param.name));
+			}
+		});
+	};
+
 	let validatePasswordIsNotCommon = function(validation) {
 		return validation
 			.not()
@@ -256,9 +266,6 @@ let _doValidate = function(param, isHead) {
 				.filter(elem => elem.required || elem.mandatory)
 				.map(elem => elem.name);
 
-			console.log("template.data:");
-			console.log(data);
-
 			for (let fieldName of preview) {
 				if (templateData.indexOf(fieldName) < 0) {
 					console.log(templateData);
@@ -287,6 +294,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_STRING:
 					validation = validateIsString(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_BOOLEAN:
+					validation = validateIsBoolean(validation, param);
 					break;
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA:
 					validation = validateTemplateData(validation, param);
