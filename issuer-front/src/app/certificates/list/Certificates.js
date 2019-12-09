@@ -45,8 +45,6 @@ class Certificates extends Component {
 	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
 
 	render() {
-		console.log(this.props);
-
 		const loading = this.props.loading;
 		const isDialogOpen = this.state.isDialogOpen;
 		return (
