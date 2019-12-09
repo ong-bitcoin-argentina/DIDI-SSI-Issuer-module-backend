@@ -21,6 +21,8 @@ module.exports = {
 			CLOSE: "Cerrar"
 		},
 		BUTTONS: {
+			ADD_MICRO_CRED: "+",
+			REMOVE_MICRO_CRED: "-",
 			REMOVE_PARTICIPANTS: "X",
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",

@@ -25,20 +25,22 @@ export default class CertificateService {
 			})
 		};
 
-		const microCredsData = [
-			{
-				title: "certificate data",
-				names: cert.data.cert.map(data => data.name)
-			},
-			{
-				title: "participant data",
-				names: cert.data.participant[0].map(data => data.name)
-			},
-			{
-				title: "others data",
-				names: cert.data.others.map(data => data.name)
-			}
-		];
+		const microCredsData = cert.microCredentials
+			? cert.microCredentials
+			: [
+					{
+						title: "certificate data",
+						names: cert.data.cert.map(data => data.name)
+					},
+					{
+						title: "participant data",
+						names: cert.data.participant[0].map(data => data.name)
+					},
+					{
+						title: "others data",
+						names: cert.data.others.map(data => data.name)
+					}
+			  ];
 
 		const method = cert._id ? "PUT" : "POST";
 		const url = cert._id ? Constants.API_ROUTES.CERTIFICATES.EDIT(cert._id) : Constants.API_ROUTES.CERTIFICATES.CREATE;

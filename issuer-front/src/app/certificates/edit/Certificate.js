@@ -15,6 +15,8 @@ import Messages from "../../../constants/Messages";
 
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
+import ListItemText from "@material-ui/core/ListItemText";
 
 class Certificate extends Component {
 	constructor(props) {
@@ -93,6 +95,7 @@ class Certificate extends Component {
 		return {
 			templateId: template._id,
 			split: false,
+			microCredentials: [],
 			data: data
 		};
 	};
@@ -342,9 +345,38 @@ class Certificate extends Component {
 		);
 	};
 
+	addMicroCredential = () => {
+		const cert = this.state.cert;
+		cert.microCredentials.push({ title: "", names: [] });
+		this.setState({ cert: cert });
+	};
+
+	removeMicroCredential = key => {
+		const cert = this.state.cert;
+		if (cert.microCredentials.length > 1) {
+			cert.microCredentials.splice(key, 1);
+			this.setState({ cert: cert });
+		}
+	};
+
+	// actualizar campos seleccionados de la microcredencial
+	microcredFieldsSelected = (key, event) => {
+		const cert = this.state.cert;
+		cert.microCredentials[key].names = event.target.value;
+		this.setState({ cert: cert });
+	};
+
+	// actualizar nombre de la microcredencial
+	microcredNameChanged = (key, event) => {
+		const cert = this.state.cert;
+		cert.microCredentials[key].title = event.target.value;
+		this.setState({ cert: cert });
+	};
+
 	splitChanged = value => {
 		const cert = this.state.cert;
 		cert.split = value;
+		if (value) cert.microCredentials = [{ title: "", names: [] }];
 		this.setState({ cert: cert });
 	};
 
@@ -406,22 +438,26 @@ class Certificate extends Component {
 		const othersData = cert.data.others;
 		const partData = cert.data.participant;
 
+		const viewing = this.state.action === "viewing";
+
 		return (
 			<div className="CertSectionContent">
-				{this.renderSplit(cert)}
+				{!viewing && this.renderSplit(cert)}
 				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
 				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
 
 				{partData.map((data, key) => {
 					return (
 						<div className="ParticipantContent" key={"part-" + key}>
-							<button
-								className="RemoveParticipantButton"
-								hidden={this.state.viewing}
-								onClick={() => this.removeParticipant(key)}
-							>
-								{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
-							</button>
+							<div hidden={key === 0}>
+								<button
+									className="RemoveParticipantButton"
+									hidden={this.state.viewing}
+									onClick={() => this.removeParticipant(key)}
+								>
+									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
+								</button>
+							</div>
 							{this.renderSection(cert, data, "hola")}
 						</div>
 					);
@@ -431,6 +467,11 @@ class Certificate extends Component {
 	};
 
 	renderSplit = cert => {
+		const allData = cert.data.cert
+			.concat(cert.data.participant[0])
+			.concat(cert.data.others)
+			.map(dataElem => dataElem.name);
+
 		return (
 			<div className="Data">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.SPLIT}</div>
@@ -450,28 +491,61 @@ class Certificate extends Component {
 							{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
 						</MenuItem>
 					</Select>
-
-					{/* TODO seleccionar campos para microcredenciales
-					 cert.split && (
-						<Select
-							className="MicroCredFieldsSelect"
-							multiple
-							displayEmpty
-							value={this.state.cert.microCredentials[0].names}
-							onChange={this.microcredFieldsSelected}
-							renderValue={selected => selected.join(", ")}
-						>
-							{templateElements.map((elem, key) => {
-								return (
-									<MenuItem key={"PreviewFields-" + key} value={elem}>
-										<Checkbox checked={this.state.template.previewData.indexOf(elem) > -1} />
-										<ListItemText primary={elem} />
-									</MenuItem>
-								);
-							})}
-						</Select>
-						) */}
 				</div>
+
+				{cert.split &&
+					cert.microCredentials &&
+					cert.microCredentials.map((microCred, key) => {
+						let picked = [];
+						for (let i = 0; i < cert.microCredentials.length; i++) {
+							if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
+						}
+						const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
+						return (
+							<div className="DataElem" key={"Microcred-" + key}>
+								<input
+									type="text"
+									className="DataInput MicroCredFieldName"
+									value={microCred.title}
+									onChange={event => {
+										this.microcredNameChanged(key, event);
+									}}
+								/>
+								<Select
+									className="MicroCredFieldsSelect"
+									multiple
+									displayEmpty
+									value={microCred.names}
+									onChange={event => {
+										this.microcredFieldsSelected(key, event);
+									}}
+									renderValue={selected => selected.join(", ")}
+								>
+									{data.map((elem, key2) => {
+										return (
+											<MenuItem key={"MicroCred-" + key + "-Fields-" + key2} value={elem}>
+												<Checkbox checked={microCred.names.indexOf(elem) > -1} />
+												<ListItemText primary={elem} />
+											</MenuItem>
+										);
+									})}
+								</Select>
+
+								<button className="AddMicroCredential" onClick={this.addMicroCredential}>
+									{Messages.EDIT.BUTTONS.ADD_MICRO_CRED}
+								</button>
+								<button
+									hidden={key === 0}
+									className="RemoveMicroCredential"
+									onClick={() => {
+										this.removeMicroCredential(key);
+									}}
+								>
+									{Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED}
+								</button>
+							</div>
+						);
+					})}
 			</div>
 		);
 	};

@@ -24,7 +24,6 @@ router.get(
 			const result = certs.map(cert => {
 				return {
 					_id: cert._id,
-					split: cert.split,
 					name: cert.data.cert[0].value,
 					emmitedOn: cert.emmitedOn,
 					firstName: cert.data.participant[0][1].value,
@@ -263,7 +262,8 @@ router.post(
 		},
 		{
 			name: "microCredentials",
-			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA]
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA],
+			optional: true
 		}
 	]),
 	Validator.checkValidationResult,
@@ -271,7 +271,7 @@ router.post(
 		const data = JSON.parse(req.body.data);
 		const templateId = req.body.templateId;
 		const split = req.body.split;
-		const microCredentials = req.body.microCredentials;
+		const microCredentials = req.body.microCredentials ? req.body.microCredentials : [];
 
 		const result = [];
 		for (let participantData of data.participant) {
