@@ -398,27 +398,7 @@ class Certificate extends Component {
 
 		return (
 			<div className="CertSectionContent">
-				<div className="Data">
-					<div className="DataName">{Constants.CERTIFICATES.EDIT.SPLIT}</div>
-					<div className="DataElem">
-						<Select
-							className="DataInput Boolean"
-							autoFocus
-							value={cert.split ? cert.split : false}
-							onChange={event => {
-								this.splitChanged(event.target.value);
-							}}
-						>
-							<MenuItem className="DataInput" value={"true"}>
-								{Constants.TEMPLATES.EDIT.BOOLEAN.TRUE}
-							</MenuItem>
-							<MenuItem className="DataInput" value={"false"}>
-								{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
-							</MenuItem>
-						</Select>
-					</div>
-				</div>
-
+				{this.renderSplit(cert)}
 				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
 				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
 
@@ -440,6 +420,52 @@ class Certificate extends Component {
 		);
 	};
 
+	renderSplit = cert => {
+		return (
+			<div className="Data">
+				<div className="DataName">{Constants.CERTIFICATES.EDIT.SPLIT}</div>
+				<div className="DataElem">
+					<Select
+						className="DataInput Boolean"
+						autoFocus
+						value={cert.split ? cert.split : false}
+						onChange={event => {
+							this.splitChanged(event.target.value);
+						}}
+					>
+						<MenuItem className="DataInput" value={"true"}>
+							{Constants.TEMPLATES.EDIT.BOOLEAN.TRUE}
+						</MenuItem>
+						<MenuItem className="DataInput" value={"false"}>
+							{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
+						</MenuItem>
+					</Select>
+
+					{/* TODO seleccionar campos para microcredenciales
+					 cert.split && (
+						<Select
+							className="MicroCredFieldsSelect"
+							multiple
+							displayEmpty
+							value={this.state.cert.microCredentials[0].names}
+							onChange={this.microcredFieldsSelected}
+							renderValue={selected => selected.join(", ")}
+						>
+							{templateElements.map((elem, key) => {
+								return (
+									<MenuItem key={"PreviewFields-" + key} value={elem}>
+										<Checkbox checked={this.state.template.previewData.indexOf(elem) > -1} />
+										<ListItemText primary={elem} />
+									</MenuItem>
+								);
+							})}
+						</Select>
+						) */}
+				</div>
+			</div>
+		);
+	};
+
 	renderSection = (cert, data, type) => {
 		const self = this;
 
@@ -457,7 +483,7 @@ class Certificate extends Component {
 									dataElem,
 									type,
 									this.state.action === "creating" || this.state.action === "editing",
-									(data, value, type) => {
+									(_, value) => {
 										dataElem.value = value;
 										self.setState({ cert: cert });
 									}

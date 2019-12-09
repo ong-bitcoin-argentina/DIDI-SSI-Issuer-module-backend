@@ -96,6 +96,9 @@ module.exports = {
 			}
 		},
 		CERT_DATA: {
+			INVALID_MICROCRED_DATA: function(name) {
+				return { code: "INVALID_MICROCRED_DATA", message: "el campo " + name + " no puede ser parte de una microcredencial, no se encuentra en el certificado." };
+			},
 			INVALID_TEMPLATE_ID: function(type) {
 				return { code: "INVALID_TEMPLATE_ID", message: "el campo " + type + " es invalido" };
 			},

@@ -269,12 +269,38 @@ let _doValidate = function(param, isHead) {
 
 			for (let fieldName of preview) {
 				if (templateData.indexOf(fieldName) < 0) {
-					console.log(templateData);
-					console.log(fieldName);
 					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_DATA);
 				}
 			}
 
+			return Promise.resolve(value);
+		});
+	};
+
+	let validateTemplateMicroCredData = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			let data;
+
+			if (!req.body.split) return Promise.resolve(value);
+
+			try {
+				data = JSON.parse(req.body.data);
+			} catch (err) {
+				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+			}
+
+			const certData = data.cert
+				.concat(data.participant[0])
+				.concat(data.others)
+				.map(elem => elem.name);
+
+			for (let microcredData of value) {
+				for (let elem of microcredData.names) {
+					if (certData.indexOf(elem) < 0) {
+						return Promise.reject(Messages.VALIDATION.CERT_DATA.INVALID_MICROCRED_DATA(elem));
+					}
+				}
+			}
 			return Promise.resolve(value);
 		});
 	};
@@ -313,6 +339,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA:
 					validation = validateTemplatePreviewData(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA:
+					validation = validateTemplateMicroCredData(validation, param);
 					break;
 			}
 		});

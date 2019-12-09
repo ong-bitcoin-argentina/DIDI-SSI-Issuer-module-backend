@@ -42,7 +42,8 @@ module.exports = {
 		IS_TEMPLATE_DATA: "isTemplateData",
 		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
 		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue",
-		IS_TEMPLATE_PREVIEW_DATA: "isTemplatePreviewData"
+		IS_TEMPLATE_PREVIEW_DATA: "isTemplatePreviewData",
+		IS_CERT_MICRO_CRED_DATA: "isCertMicroCredData"
 	},
 
 	DATA_TYPES: {

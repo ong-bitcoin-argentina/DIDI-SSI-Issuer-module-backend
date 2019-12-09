@@ -35,10 +35,10 @@ module.exports.create = async function(data, templateId, split) {
 	}
 };
 
-module.exports.edit = async function(id, data, split) {
+module.exports.edit = async function(id, data, split, microCredentials) {
 	try {
 		let cert = await getById(id);
-		cert = await cert.edit(data, split);
+		cert = await cert.edit(data, split, microCredentials);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
