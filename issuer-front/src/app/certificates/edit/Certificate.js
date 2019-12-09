@@ -44,8 +44,6 @@ class Certificate extends Component {
 						token,
 						id,
 						function(cert) {
-							console.log(cert);
-
 							// si el cert fue emitido, no puedo editarlo
 							const action = cert.emmitedOn ? "viewing" : "editing";
 							const selectedTemplate = templates.find(template => template._id === cert.templateId);
@@ -116,7 +114,7 @@ class Certificate extends Component {
 	addParticipant = () => {
 		const participant = this.state.cert.data.participant;
 		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
-		this.setState({ cert: this.state.cert });
+		this.setState({ cert: this.state.cert, error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
 	};
 
 	createSampleCsv = () => {
@@ -177,6 +175,16 @@ class Certificate extends Component {
 		element.download = "sample.csv";
 		document.body.appendChild(element);
 		element.click();
+	};
+
+	// validar que el valor sea un did
+	validateDID = function(value) {
+		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
+		if (!value.match(regex)) {
+			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+		} else {
+			if (this.state.error) this.setState({ error: undefined });
+		}
 	};
 
 	// agregar info de participante con los datos provenientes de un csv
@@ -254,6 +262,7 @@ class Certificate extends Component {
 					if (data.length > index) {
 						const err = assignElement(dataElem, data[index]);
 						if (err) return self.setState({ error: err });
+						if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(dataElem.value);
 						index++;
 					}
 				}
@@ -277,6 +286,11 @@ class Certificate extends Component {
 		} else {
 			this.state.cert.data.participant.splice(index, 1);
 		}
+
+		for (let partData of this.state.cert.data.participant) {
+			this.validateDID(partData[0].value);
+			if (this.state.error) break;
+		}
 		this.setState({ cert: this.state.cert });
 	};
 
@@ -295,6 +309,7 @@ class Certificate extends Component {
 					selectedTemplate: selectedTemplate,
 					template: template,
 					cert: self.certFromTemplate(template),
+					error: { message: Constants.CERTIFICATES.ERR.INVALID_DID },
 					loading: false,
 					action: "creating"
 				});
@@ -351,12 +366,7 @@ class Certificate extends Component {
 
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		if (!did.match(regex)) {
-			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
-			return true;
-		} else {
-			if (this.state.error) this.setState({ error: undefined });
-		}
+		if (!did.match(regex)) return true;
 
 		const cert = this.state.cert.data.cert;
 		const participant = this.state.cert.data.participant.flat();
@@ -483,7 +493,9 @@ class Certificate extends Component {
 									dataElem,
 									type,
 									this.state.action === "creating" || this.state.action === "editing",
-									(_, value) => {
+									(dataElem, value) => {
+										if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(value);
+
 										dataElem.value = value;
 										self.setState({ cert: cert });
 									}
