@@ -193,7 +193,7 @@ class Lists extends Component {
 	};
 
 	// crear templates
-	onTemplateCreate = (name) => {
+	onTemplateCreate = name => {
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
@@ -261,6 +261,7 @@ class Lists extends Component {
 						error={this.state.error}
 						onTemplateCreate={this.onTemplateCreate}
 						message={this.state.message}
+						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 				<TabPanel>
@@ -272,6 +273,7 @@ class Lists extends Component {
 						onCertificateCreate={this.onCertificateCreate}
 						error={this.state.error}
 						message={this.state.message}
+						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 			</Tabs>

@@ -127,7 +127,7 @@ class Templates extends Component {
 
 	renderButtons = () => {
 		return (
-			<button className="LogoutButton" onClick={this.onLogout}>
+			<button className="LogoutButton" onClick={this.props.onLogout}>
 				{Messages.LIST.BUTTONS.EXIT}
 			</button>
 		);
