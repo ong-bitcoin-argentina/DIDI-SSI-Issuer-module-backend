@@ -21,8 +21,8 @@ router.post(
 		const name = req.body.name;
 		const password = req.body.password;
 		try {
-			const user = await UserService.create(name, password);
-			return ResponseHandler.sendRes(res, user);
+			await UserService.create(name, password);
+			return ResponseHandler.sendRes(res, {});
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

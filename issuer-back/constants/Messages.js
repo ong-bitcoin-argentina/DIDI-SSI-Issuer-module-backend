@@ -22,25 +22,25 @@ module.exports = {
 	},
 	USER: {
 		ERR: {
-			INVALID_USER: { code: "INVALID_USER", message: "El usuario y contraseña no coinciden" },
-			CREATE: { code: "USER_CREATE", message: "El usuario no pudo ser creado" },
-			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido" }
+			INVALID_USER: { code: "INVALID_USER", message: "El usuario y contraseña no coinciden." },
+			CREATE: { code: "USER_CREATE", message: "El usuario no pudo ser creado." },
+			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido." }
 		}
 	},
 	CERT: {
 		ERR: {
-			CREATE: { code: "CERT_CREATE", message: "El certificado no pudo ser creado" },
-			GET: { code: "CERT_GET", message: "El certificado no pudo ser obtenido" },
-			EDIT: { code: "CERT_EDIT", message: "El certificado no pudo ser modificado" },
-			DELETE: { code: "CERT_DELETE", message: "El certificado no pudo ser borrado" }
+			CREATE: { code: "CERT_CREATE", message: "El certificado no pudo ser creado." },
+			GET: { code: "CERT_GET", message: "El certificado no pudo ser obtenido." },
+			EDIT: { code: "CERT_EDIT", message: "El certificado no pudo ser modificado." },
+			DELETE: { code: "CERT_DELETE", message: "El certificado no pudo ser borrado." }
 		}
 	},
 	TEMPLATE: {
 		ERR: {
-			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado" },
-			GET: { code: "TEMPLATE_GET", message: "El modelo de certificado no pudo ser obtenido" },
-			EDIT: { code: "TEMPLATE_EDIT", message: "El modelo de certificado no pudo ser modificado" },
-			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado" }
+			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado." },
+			GET: { code: "TEMPLATE_GET", message: "El modelo de certificado no pudo ser obtenido." },
+			EDIT: { code: "TEMPLATE_EDIT", message: "El modelo de certificado no pudo ser modificado." },
+			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado." }
 		}
 	},
 	CERTIFICATE: {
@@ -54,104 +54,104 @@ module.exports = {
 		}
 	},
 	VALIDATION: {
-		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido" },
-		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador" },
+		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido." },
+		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
 		TEMPLATE_DATA_TYPE: {
 			INVALID_DATA_TYPE: function(data) {
-				return { code: "INVALID_DATA_TYPE", message: data + " no es una secion valida del certificado" };
+				return { code: "INVALID_DATA_TYPE", message: data + " no es una secion valida del certificado." };
 			}
 		},
 		TEMPLATE_DATA_VALUE: {
 			INVALID_DATA_VALUE: function(type) {
 				return {
 					code: "INVALID_DATA_VALUE",
-					message: "el campo " + type + " no es un valor por defecto valido para ese campo"
+					message: "el campo " + type + " no es un valor por defecto valido para ese campo."
 				};
 			}
 		},
 		TEMPLATE_DATA: {
 			INVALID_TEMPLATE_PREVIEW_TYPE: {
 				code: "INVALID_TEMPLATE_PREVIEW_TYPE",
-				message: "se permiten actalmetne solo 2, 4 o 6 campos para previsualizar"
+				message: "Se permiten actalmetne solo 2, 4 o 6 campos para previsualizar."
 			},
-			INVALID_TEMPLATE_ID: { code: "INVALID_TEMPLATE_ID", message: "no existe modelo de certificado con ese id" },
+			INVALID_TEMPLATE_ID: { code: "INVALID_TEMPLATE_ID", message: "No existe modelo de certificado con ese id." },
 			INVALID_TEMPLATE_PREVIEW_DATA: {
 				code: "INVALID_TEMPLATE_PREVIEW_DATA",
-				message: "el modelo de certificado no contiene los tipos requeridos"
+				message: "El modelo de certificado no contiene los tipos requeridos."
 			},
 			NO_DATA: function(type) {
-				return { code: "NO_DATA", message: "el campo " + type + " no contiene data" };
+				return { code: "NO_DATA", message: "El campo " + type + " no contiene datos." };
 			},
 			INVALID_DATA: function(type) {
-				return { code: "INVALID_DATA", message: "el campo " + type + " tiene un formato invalido" };
+				return { code: "INVALID_DATA", message: "El campo " + type + " tiene un formato invalido." };
 			},
 			INVALID_TYPE: function(type) {
-				return { code: "INVALID_TYPE", message: "el campo " + type + " tiene un tipo de dato invalido" };
+				return { code: "INVALID_TYPE", message: "El campo " + type + " tiene un tipo de dato invalido." };
 			},
 			MISSING_CHECKBOX_OPTIONS: function(type) {
 				return {
 					code: "MISSING_CHECKBOX_OPTIONS",
-					message: "el campo " + type + " es de tipo 'checkbox' pero le falta el campo 'options'"
+					message: "El campo " + type + " es de tipo 'checkbox' pero falta el campo 'options'."
 				};
 			}
 		},
 		CERT_DATA: {
 			INVALID_MICROCRED_DATA: function(name) {
-				return { code: "INVALID_MICROCRED_DATA", message: "el campo " + name + " no puede ser parte de una microcredencial, no se encuentra en el certificado." };
+				return { code: "INVALID_MICROCRED_DATA", message: "El campo " + name + " no puede ser parte de una microcredencial, no se encuentra en el certificado." };
 			},
 			INVALID_TEMPLATE_ID: function(type) {
-				return { code: "INVALID_TEMPLATE_ID", message: "el campo " + type + " es invalido" };
+				return { code: "INVALID_TEMPLATE_ID", message: "El campo " + type + " es invalido." };
 			},
 			EXTRA_ELEMENT: function(name) {
-				return { code: "EXTRA_ELEMENT", message: "el campo " + name + " no se encuentra en el modelo de certificado" };
+				return { code: "EXTRA_ELEMENT", message: "El campo " + name + " no se encuentra en el modelo de certificado." };
 			},
 			MISSING_ELEMENT: function(name) {
-				return { code: "MISSING_ELEMENT", message: "el campo " + name + " esta faltando en el certificado" };
+				return { code: "MISSING_ELEMENT", message: "El campo " + name + " está faltando en el certificado." };
 			}
 		},
 		REQUESTER_IS: user => {
-			return "The token corresponds to: " + user.name;
+			return "El token le pertenece a: " + user.name;
 		},
 		COMMON_PASSWORD: {
-			code: "PARAMETER_TYPE_ERROR",
+			code: "COMMON_PASSWORD",
 			message: "La contraseña ingresada es de uso común, por favor ingrese una mas segura."
 		},
 		DOES_NOT_EXIST: function(type) {
-			return { code: "PARAMETER_MISSING", message: "falta el campo: " + type };
+			return { code: "PARAMETER_MISSING", message: "Falta el campo: " + type };
 		},
 		STRING_FORMAT_INVALID: function(field) {
 			return {
 				code: "PARAMETER_TYPE_ERROR",
-				message: "el campo " + field + " es incorrecto, se esperaba un texto"
+				message: "El campo " + field + " es incorrecto, se esperaba un texto."
 			};
 		},
 		LENGTH_INVALID: function(field, min, max) {
 			const code = "PARAMETER_TYPE_ERROR";
-			const msgStart = "el campo " + field + " tendria que tener";
+			const msgStart = "El campo " + field + " tendria que tener.";
 
 			if (min && !max) {
 				return {
 					code: code,
-					message: msgStart + " mas que " + min + " caracteres"
+					message: msgStart + " mas que " + min + " caracteres."
 				};
 			}
 
 			if (!min && max) {
 				return {
 					code: code,
-					message: msgStart + " menos que " + max + " caracteres"
+					message: msgStart + " menos que " + max + " caracteres."
 				};
 			}
 
 			if (min == max) {
 				return {
 					code: code,
-					message: msgStart + " exactamete " + max + " caracteres"
+					message: msgStart + " exactamete " + max + " caracteres."
 				};
 			} else {
 				return {
 					code: code,
-					message: msgStart + " entre " + min + " y " + max + " caracteres"
+					message: msgStart + " entre " + min + " y " + max + " caracteres."
 				};
 			}
 		}
