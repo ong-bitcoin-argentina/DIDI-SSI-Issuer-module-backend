@@ -27,10 +27,12 @@ const CertSchema = mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
-	microCredentials: [{
-		title: { type: String },
-		names: [{ type: String }]
-	}],
+	microCredentials: [
+		{
+			title: { type: String },
+			names: [{ type: String }]
+		}
+	],
 	deleted: {
 		type: Boolean,
 		default: false

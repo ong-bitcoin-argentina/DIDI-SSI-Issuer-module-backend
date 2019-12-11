@@ -347,10 +347,11 @@ router.delete(
 
 		try {
 			const cert = await CertService.delete(id);
+			const did = cert.data.participant[0][0].value;
 
 			const calls = [];
 			for (let jwt of cert.jwts) {
-				calls.push(MouroService.revokeCertificate(jwt.hash));
+				calls.push(MouroService.revokeCertificate(jwt.hash, did));
 			}
 
 			await Promise.all(calls);

@@ -24,9 +24,9 @@ module.exports.getAll = async function() {
 	}
 };
 
-module.exports.create = async function(data, templateId, split) {
+module.exports.create = async function(data, templateId, split, microCredentials) {
 	try {
-		const cert = await Cert.generate(data, templateId, split);
+		const cert = await Cert.generate(data, templateId, split, microCredentials);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
 		return Promise.resolve(cert);
 	} catch (err) {
