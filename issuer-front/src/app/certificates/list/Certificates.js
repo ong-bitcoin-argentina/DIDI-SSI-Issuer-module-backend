@@ -53,7 +53,7 @@ class Certificates extends Component {
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.props.error && this.state.props.error.message}</div>
+				<div className="errMsg">{this.props.error && this.props.error.message}</div>
 			</div>
 		);
 	}
