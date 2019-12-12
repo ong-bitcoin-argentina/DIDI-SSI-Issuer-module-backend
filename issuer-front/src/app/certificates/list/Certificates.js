@@ -53,7 +53,7 @@ class Certificates extends Component {
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.props.error && this.state.props.message}</div>
+				<div className="errMsg">{this.props.error && this.state.props.error.message}</div>
 			</div>
 		);
 	}
@@ -86,12 +86,15 @@ class Certificates extends Component {
 	};
 
 	renderSectionButtons = () => {
+		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
-				<button className="CreateButton" onClick={this.onCertificateCreate}>
-					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
-				</button>
+				{selected && (
+					<button className="CreateButton" onClick={this.onCertificateCreate}>
+						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
+					</button>
+				)}
 			</div>
 		);
 	};

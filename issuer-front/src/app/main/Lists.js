@@ -181,8 +181,8 @@ class Lists extends Component {
 				self.componentDidMount();
 			},
 			function(err) {
-				self.setState({ error: err });
 				console.log(err);
+				self.setState({ error: err });
 			}
 		);
 	};
@@ -256,23 +256,23 @@ class Lists extends Component {
 
 				<TabPanel>
 					<Templates
+						selected={this.state.tabIndex}
 						templates={this.state.templates}
 						loading={this.state.loading}
 						error={this.state.error}
 						onTemplateCreate={this.onTemplateCreate}
-						message={this.state.message}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 				<TabPanel>
 					<Certificates
+						selected={this.state.tabIndex}
 						certificates={this.state.certificates}
 						loading={this.state.loading}
 						onCertificateDelete={this.onCertificateDelete}
 						onCertificateEmmit={this.onCertificateEmmit}
 						onCertificateCreate={this.onCertificateCreate}
 						error={this.state.error}
-						message={this.state.message}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>

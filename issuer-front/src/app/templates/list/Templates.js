@@ -48,18 +48,21 @@ class Templates extends Component {
 				{isDialogOpen && this.renderDialog()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.props.error && this.props.message}</div>
+				<div className="errMsg">{this.props.error && this.props.error.message}</div>
 			</div>
 		);
 	}
 
 	renderSectionButtons = () => {
+		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
-				<button className="CreateButton" onClick={this.onDialogOpen}>
-					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
-				</button>
+				{selected && (
+					<button className="CreateButton" onClick={this.onDialogOpen}>
+						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
+					</button>
+				)}
 			</div>
 		);
 	};
