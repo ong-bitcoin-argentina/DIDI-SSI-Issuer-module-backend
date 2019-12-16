@@ -39,11 +39,11 @@ module.exports.edit = async function(id, data, split, microCredentials) {
 	try {
 		let cert = await getById(id);
 		cert = await cert.edit(data, split, microCredentials);
-		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
+		if (!cert) return Promise.reject(Messages.CERT.ERR.EDIT);
 		return Promise.resolve(cert);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.CERT.ERR.CREATE);
+		return Promise.reject(Messages.CERT.ERR.EDIT);
 	}
 };
 
@@ -101,7 +101,7 @@ module.exports.emmit = async function(cert, creds) {
 		return Promise.resolve(cert);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.CERT.ERR.CREATE);
+		return Promise.reject(Messages.CERT.ERR.EMMIT);
 	}
 };
 

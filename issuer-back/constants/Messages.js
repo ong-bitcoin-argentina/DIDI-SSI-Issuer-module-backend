@@ -29,6 +29,7 @@ module.exports = {
 	},
 	CERT: {
 		ERR: {
+			EMMIT: { code: "CERT_EMMIT", message: "El certificado no pudo ser emitido." },
 			CREATE: { code: "CERT_CREATE", message: "El certificado no pudo ser creado." },
 			GET: { code: "CERT_GET", message: "El certificado no pudo ser obtenido." },
 			EDIT: { code: "CERT_EDIT", message: "El certificado no pudo ser modificado." },
