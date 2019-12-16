@@ -256,7 +256,7 @@ class Lists extends Component {
 
 				<TabPanel>
 					<Templates
-						selected={this.state.tabIndex}
+						selected={this.state.tabIndex === 0}
 						templates={this.state.templates}
 						loading={this.state.loading}
 						error={this.state.error}
@@ -266,7 +266,7 @@ class Lists extends Component {
 				</TabPanel>
 				<TabPanel>
 					<Certificates
-						selected={this.state.tabIndex}
+						selected={this.state.tabIndex === 1}
 						certificates={this.state.certificates}
 						loading={this.state.loading}
 						onCertificateDelete={this.onCertificateDelete}
