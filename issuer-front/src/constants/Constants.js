@@ -43,6 +43,7 @@ module.exports = {
 	},
 	ROUTES: {
 		LOGIN: "/login",
+		QR_REQUEST: "/qr_request",
 		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
