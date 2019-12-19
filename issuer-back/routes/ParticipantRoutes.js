@@ -29,9 +29,8 @@ router.get("/:id", async function(req, res) {
 });
 
 router.post(
-	"/",
+	"/:templateId",
 	Validator.validate([
-		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "data",
@@ -40,7 +39,7 @@ router.post(
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const templateId = req.body.templateId;
+		const templateId = req.params.templateId;
 		const name = req.body.name;
 		const data = JSON.parse(req.body.data);
 

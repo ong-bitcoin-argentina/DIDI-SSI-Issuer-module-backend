@@ -10,12 +10,15 @@ import Constants from "../../constants/Constants";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 
+var QRCode = require("qrcode");
+
 class QrRequest extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: false
+			loading: false,
+			qrSet: false
 		};
 	}
 
@@ -47,15 +50,17 @@ class QrRequest extends Component {
 		const token = Cookie.get("token");
 
 		const self = this;
-		self.setState({ loading: true });
+		self.setState({ loading: true, selectedTemplate: selectedTemplate, qr: undefined });
 
 		// obtener template
-		TemplateService.get(
+		TemplateService.getQrPetition(
 			token,
 			selectedTemplate._id,
-			function(template) {
+			function(qr) {
 				self.setState({
-					selectedTemplate: selectedTemplate,
+					qr: qr,
+					loading: false,
+					qrSet: false
 				});
 			},
 			function(err) {
@@ -79,8 +84,8 @@ class QrRequest extends Component {
 		const loading = this.state.loading;
 		return (
 			<div className="QrReq">
-				{ !loading && this.renderTemplateSelector() }
-				{ !loading && this.renderQrPetition(selectedTemplate) }
+				{!loading && this.renderTemplateSelector()}
+				{!loading && this.renderQrPetition()}
 			</div>
 		);
 	}
@@ -109,15 +114,30 @@ class QrRequest extends Component {
 	};
 
 	renderQrPetition() {
-		const selectedTemplate = this.state.selectedTemplate;
+		const qr = this.state.qr;
+		if (!qr) {
+			return <div></div>;
+		}
+
+		const self = this;
+		if (!self.state.qrSet) {
+			setTimeout(function() {
+				const canvas = document.getElementById("canvas");
+				if (canvas) {
+					QRCode.toCanvas(canvas, qr, function(error) {
+						if (error) console.error(error);
+					});
+					self.setState({ qrSet: true });
+				}
+			}, 100);
+		}
 
 		return (
 			<div className="QrPetition">
-
+				<canvas id="canvas"></canvas>
 			</div>
 		);
 	}
-
-};
+}
 
 export default withRouter(QrRequest);

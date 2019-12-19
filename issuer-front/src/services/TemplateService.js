@@ -133,6 +133,29 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
+	static getQrPetition(token, id, cb, errCb) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		fetch(Constants.API_ROUTES.TEMPLATES.GET_QR(id), data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
 	static delete(token, id, cb, errCb) {
 		const data = {
 			method: "DELETE",

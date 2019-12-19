@@ -3,8 +3,28 @@ const Messages = require("../constants/Messages");
 
 const EthrDID = require("ethr-did");
 const { createVerifiableCredential } = require("did-jwt-vc");
-
+const didJWT = require("did-jwt");
 const fetch = require("node-fetch");
+
+module.exports.createShareRequest = async function(iss, callback, requested) {
+	const signer = didJWT.SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
+
+	const reqPayload = {
+		type: "shareReq",
+		iss: iss,
+		callback: callback,
+		requested: requested
+	};
+
+	try {
+		let result = await didJWT.createJWT(reqPayload, { issuer: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
+		if (Constants.DEBUGG) console.log(result);
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
 
 // genera un certificado asociando la informaciòn recibida en "subject" con el did
 module.exports.createCertificate = async function(subject, expDate, did) {

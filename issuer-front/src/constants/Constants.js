@@ -5,6 +5,9 @@ module.exports = {
 		LOGIN: API + "/user/login",
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
+			GET_QR: id => {
+				return API + "/template/" + id + "/qr/"
+			},
 			GET: id => {
 				return API + "/template/" + id;
 			},
