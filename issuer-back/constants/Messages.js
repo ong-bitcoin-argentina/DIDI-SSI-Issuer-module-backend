@@ -36,6 +36,14 @@ module.exports = {
 			DELETE: { code: "CERT_DELETE", message: "El certificado no pudo ser borrado." }
 		}
 	},
+	PARTICIPANT: {
+		ERR: {
+			CREATE: { code: "PARTICIPANT_CREATE", message: "El modelo de participante no pudo ser creado." },
+			GET: { code: "PARTICIPANT_GET", message: "El modelo de participante no pudo ser obtenido." },
+			EDIT: { code: "PARTICIPANT_EDIT", message: "El modelo de participante no pudo ser modificado." },
+			DELETE: { code: "PARTICIPANT_DELETE", message: "El modelo de participante no pudo ser borrado." }
+		}
+	},
 	TEMPLATE: {
 		ERR: {
 			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado." },

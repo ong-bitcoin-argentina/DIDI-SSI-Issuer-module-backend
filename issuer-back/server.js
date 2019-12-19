@@ -10,6 +10,7 @@ const Messages = require("./constants/Messages");
 const UserRoutes = require("./routes/UserRoutes");
 const TemplateRoutes = require("./routes/TemplateRoutes");
 const CertRoutes = require("./routes/CertRoutes");
+const ParticipantRoutes = require("./routes/ParticipantRoutes");
 
 // set up node module clusters - one worker per CPU available
 var cluster = require("cluster");
@@ -65,6 +66,7 @@ const route = "/api/" + Constants.API_VERSION + "/didi_issuer";
 if (Constants.DEBUGG) console.log("route: " + route);
 
 app.use(route + "/user", UserRoutes);
+app.use(route + "/participant", ParticipantRoutes);
 app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
 

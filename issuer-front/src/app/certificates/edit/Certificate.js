@@ -4,6 +4,7 @@ import "./Certificate.scss";
 
 import CertificateService from "../../../services/CertificateService";
 import TemplateService from "../../../services/TemplateService";
+import ParticipantService from "../../../services/ParticipantService";
 
 import ReactFileReader from "react-file-reader";
 import DataRenderer from "../../utils/DataRenderer";
@@ -14,6 +15,8 @@ import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
 import Select from "@material-ui/core/Select";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -53,14 +56,24 @@ class Certificate extends Component {
 								token,
 								selectedTemplate._id,
 								function(template) {
-									self.setState({
-										selectedTemplate: selectedTemplate,
-										cert: cert,
-										template: template,
-										templates: templates,
-										loading: false,
-										action: action
-									});
+									ParticipantService.getAll(
+										template._id,
+										function(participants) {
+											self.setState({
+												selectedTemplate: selectedTemplate,
+												cert: cert,
+												template: template,
+												templates: templates,
+												participants: participants,
+												loading: false,
+												action: action
+											});
+										},
+										function(err) {
+											self.setState({ error: err });
+											console.log(err);
+										}
+									);
 								},
 								function(err) {
 									self.setState({ error: err });
@@ -196,7 +209,6 @@ class Certificate extends Component {
 		let validateValueMatchesType = function(dataElem, value) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
-					if ("" + value !== "true" && "" + value !== "false") return false;
 					return true;
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
 					return dataElem.options.find(elem => elem === value + "");
@@ -308,14 +320,24 @@ class Certificate extends Component {
 			token,
 			selectedTemplate._id,
 			function(template) {
-				self.setState({
-					selectedTemplate: selectedTemplate,
-					template: template,
-					cert: self.certFromTemplate(template),
-					error: { message: Constants.CERTIFICATES.ERR.INVALID_DID },
-					loading: false,
-					action: "creating"
-				});
+				ParticipantService.getAll(
+					template._id,
+					function(participants) {
+						self.setState({
+							selectedTemplate: selectedTemplate,
+							participants: participants,
+							template: template,
+							cert: self.certFromTemplate(template),
+							error: { message: Constants.CERTIFICATES.ERR.INVALID_DID },
+							loading: false,
+							action: "creating"
+						});
+					},
+					function(err) {
+						self.setState({ error: err });
+						console.log(err);
+					}
+				);
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -323,6 +345,33 @@ class Certificate extends Component {
 			}
 		);
 	};
+
+	participantSelected(id, position) {
+		const self = this;
+		self.setState({ loading: true });
+
+		ParticipantService.get(
+			id,
+			function(participant) {
+				const partToUpdate = self.state.cert.data.participant[position];
+
+				participant.data.forEach(dataElem => {
+					const dataToUpdate = partToUpdate.find(data => data.name === dataElem.name);
+					dataToUpdate.value = dataElem.value;
+				});
+
+				self.setState({
+					participants: self.state.participants,
+					action: self.state.action,
+					loading: false
+				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	}
 
 	// guardar cert y volver a listado de certificados
 	onSave = () => {
@@ -458,7 +507,8 @@ class Certificate extends Component {
 									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
 								</button>
 							</div>
-							{this.renderSection(cert, data, "hola")}
+							{!viewing && this.renderParticipantSelector(key)}
+							{this.renderSection(cert, data)}
 						</div>
 					);
 				})}
@@ -591,22 +641,36 @@ class Certificate extends Component {
 		return (
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT}</div>
-				<Select
-					className="DataInput"
-					autoFocus
-					value={this.state.selectedTemplate ? this.state.selectedTemplate : this.state.templates[0]}
+
+				<Autocomplete
+					options={templates}
+					getOptionLabel={option => (option ? option.name : "")}
+					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
+					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
 					onChange={event => {
-						this.templateSelected(event.target.value);
+						this.templateSelected(this.state.templates[event.target.value]);
 					}}
-				>
-					{templates.map((opt, key) => {
-						return (
-							<MenuItem value={opt} key={"option-" + key} className="DataInput">
-								{opt.name}
-							</MenuItem>
-						);
-					})}
-				</Select>
+				/>
+			</div>
+		);
+	};
+
+	renderParticipantSelector = key => {
+		const participants = this.state.participants;
+		if (!participants) {
+			return <div></div>;
+		}
+
+		return (
+			<div className="ParticipantsSelector">
+				<Autocomplete
+					options={participants}
+					getOptionLabel={option => (option ? option.name : "")}
+					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
+					onChange={event => {
+						this.participantSelected(participants[event.target.value]._id, key);
+					}}
+				/>
 			</div>
 		);
 	};

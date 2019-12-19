@@ -16,6 +16,14 @@ module.exports = {
 				return API + "/template/" + id;
 			}
 		},
+		PARTICIPANTS: {
+			GET_ALL: id => {
+				return API + "/participant/all/" + id;
+			},
+			GET: id => {
+				return API + "/participant/" + id;
+			}
+		},
 		CERTIFICATES: {
 			CREATE: API + "/cert",
 			EDIT: id => {
@@ -110,6 +118,7 @@ module.exports = {
 			LAST_NAME: "APELLIDO"
 		},
 		EDIT: {
+			PARTICIPANT_SELECT: "SELECCIONAR PARTICIPANTE",
 			SPLIT: "GENERAR MICROCREDENCIALES",
 			TEMPLATE_SELECT: "CERTIFICADO O CURSO"
 		},

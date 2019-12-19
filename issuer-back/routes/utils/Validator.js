@@ -192,24 +192,47 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
+	let _doValidateValueInTemplate = function(dataSection, templateDataSection) {
+		dataSection.forEach(elem => {
+			const template = templateDataSection.find(template => template.name === elem.name);
+
+			if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+
+			const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
+			validateValueMatchesType(template.type, elem.value, err);
+		});
+
+		const allNames = dataSection.map(elem => elem.name);
+		templateDataSection.forEach(elem => {
+			if (elem.required && allNames.indexOf(elem.name) < 0)
+				return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
+		});
+	};
+
+	let validatePartValueInTemplate = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			try {
+				const templateId = req.body.templateId;
+				let template = await TemplateService.getById(templateId);
+
+				let data;
+				try {
+					data = JSON.parse(req.body.data);
+				} catch (err) {
+					console.log(err);
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
+
+				_doValidateValueInTemplate(data, template.data.participant);
+				return Promise.resolve(value);
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(err);
+			}
+		});
+	};
+
 	let validateValueInTemplate = function(validation, param) {
-		let _doValidateValueInTemplate = function(dataSection, templateDataSection) {
-			dataSection.forEach(elem => {
-				const template = templateDataSection.find(template => template.name === elem.name);
-
-				if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
-
-				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
-				validateValueMatchesType(template.type, elem.value, err);
-			});
-
-			const allNames = dataSection.map(elem => elem.name);
-			templateDataSection.forEach(elem => {
-				if (elem.required && allNames.indexOf(elem.name) < 0)
-					return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
-			});
-		};
-
 		return validation.custom(async function(value, { req }) {
 			try {
 				const templateId = req.body.templateId;
@@ -336,6 +359,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_CERT_DATA:
 					validation = validateValueInTemplate(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_PART_DATA:
+					validation = validatePartValueInTemplate(validation, param);
 					break;
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA:
 					validation = validateTemplatePreviewData(validation, param);

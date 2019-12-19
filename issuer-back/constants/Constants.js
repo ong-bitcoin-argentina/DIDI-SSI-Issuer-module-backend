@@ -39,6 +39,7 @@ module.exports = {
 		IS_BOOLEAN: "isBoolean",
 		IS_PASSWORD: "isPassword",
 		IS_CERT_DATA: "isCertData",
+		IS_PART_DATA: "isPartData",
 		IS_TEMPLATE_DATA: "isTemplateData",
 		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
 		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue",
