@@ -667,8 +667,9 @@ class Certificate extends Component {
 					options={participants}
 					getOptionLabel={option => (option ? option.name : "")}
 					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={event => {
-						this.participantSelected(participants[event.target.value]._id, key);
+					onChange={(_, value) => {
+						console.log(value);
+						this.participantSelected(value._id, key);
 					}}
 				/>
 			</div>

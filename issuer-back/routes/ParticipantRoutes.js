@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const ParticipantService = require("../services/ParticipantService");
+const MouroService = require("../services/MouroService");
 const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
@@ -38,18 +39,23 @@ router.post(
 		const jwt = req.body.access_token;
 
 		try {
-			const data = await MouroService.verifyCertificate(jwt, did, Messages.CERTIFICATE.ERR.VERIFY);
+			const data = await MouroService.verifyCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
+
+			console.log("<<<<<data>>>>>>");
+			console.log(data);
 
 			let name;
 			const dataElems = [{ name: "DID", value: data.payload.iss }];
 
-			data.payload.own.array.forEach(element => {
-				if (dataElem.name === "FULL NAME") {
-					name = dataElem.value;
+			const own = data.payload.own;
+			for (let key of Object.keys(own)) {
+				const val = own[key];
+				if (key === "FULL NAME") {
+					name = val;
 				} else {
-					dataElems.push(element);
+					dataElems.push({ name: key, value: val });
 				}
-			});
+			}
 
 			const participant = await ParticipantService.create(name, dataElems, templateId);
 			return ResponseHandler.sendRes(res, participant);

@@ -47,7 +47,7 @@ router.get(
 				.map(dataElem => dataElem.name)
 				.filter(req => req != "DID" && req != "EXPIRATION DATE");
 			requested.push("FULL NAME");
-			const cb = Constants.DIDI_API + "/participant/" + template._id;
+			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + template._id;
 
 			const cert = await MouroService.createShareRequest(cb, requested);
 
