@@ -42,6 +42,18 @@ let _doValidate = function(param, isHead) {
 		}
 	};
 
+	let validateTokenAdmin = function(validation) {
+		return validation.custom(async function(token, { req }) {
+			try {
+				const user = await _getUserFromToken(token);
+				if (user.type !== Constants.USER_TYPES.Admin) return Promise.reject(Messages.VALIDATION.INVALID_TOKEN);
+				return Promise.resolve(user);
+			} catch (err) {
+				return Promise.reject(err);
+			}
+		});
+	};
+
 	let validateToken = function(validation) {
 		return validation.custom(async function(token, { req }) {
 			try {
@@ -71,6 +83,17 @@ let _doValidate = function(param, isHead) {
 
 	let validateIsString = function(validation, param) {
 		return validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
+	};
+
+	let validateIsBoolean = function(validation, param) {
+		return validation.custom(async function(value) {
+			if (value === "true" || value === true || value === "false" || value === false) {
+				return Promise.resolve(value);
+			} else {
+				console.log("shit: " + value);
+				return Promise.reject(Messages.VALIDATION.BOOLEAN_FORMAT_INVALID(param.name));
+			}
+		});
 	};
 
 	let validatePasswordIsNotCommon = function(validation) {
@@ -181,24 +204,47 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
+	let _doValidateValueInTemplate = function(dataSection, templateDataSection) {
+		dataSection.forEach(elem => {
+			const template = templateDataSection.find(template => template.name === elem.name);
+
+			if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+
+			const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
+			validateValueMatchesType(template.type, elem.value, err);
+		});
+
+		const allNames = dataSection.map(elem => elem.name);
+		templateDataSection.forEach(elem => {
+			if (elem.required && allNames.indexOf(elem.name) < 0)
+				return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
+		});
+	};
+
+	let validatePartValueInTemplate = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			try {
+				const templateId = req.body.templateId;
+				let template = await TemplateService.getById(templateId);
+
+				let data;
+				try {
+					data = JSON.parse(req.body.data);
+				} catch (err) {
+					console.log(err);
+					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
+
+				_doValidateValueInTemplate(data, template.data.participant);
+				return Promise.resolve(value);
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(err);
+			}
+		});
+	};
+
 	let validateValueInTemplate = function(validation, param) {
-		let _doValidateValueInTemplate = function(dataSection, templateDataSection) {
-			dataSection.forEach(elem => {
-				const template = templateDataSection.find(template => template.name === elem.name);
-
-				if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
-
-				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
-				validateValueMatchesType(template.type, elem.value, err);
-			});
-
-			const allNames = dataSection.map(elem => elem.name);
-			templateDataSection.forEach(elem => {
-				if (elem.required && allNames.indexOf(elem.name) < 0)
-					return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
-			});
-		};
-
 		return validation.custom(async function(value, { req }) {
 			try {
 				const templateId = req.body.templateId;
@@ -256,17 +302,40 @@ let _doValidate = function(param, isHead) {
 				.filter(elem => elem.required || elem.mandatory)
 				.map(elem => elem.name);
 
-			console.log("template.data:");
-			console.log(data);
-
 			for (let fieldName of preview) {
 				if (templateData.indexOf(fieldName) < 0) {
-					console.log(templateData);
-					console.log(fieldName);
 					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_DATA);
 				}
 			}
 
+			return Promise.resolve(value);
+		});
+	};
+
+	let validateTemplateMicroCredData = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			let data;
+
+			if (!req.body.split) return Promise.resolve(value);
+
+			try {
+				data = JSON.parse(req.body.data);
+			} catch (err) {
+				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+			}
+
+			const certData = data.cert
+				.concat(data.participant[0])
+				.concat(data.others)
+				.map(elem => elem.name);
+
+			for (let microcredData of value) {
+				for (let elem of microcredData.names) {
+					if (certData.indexOf(elem) < 0) {
+						return Promise.reject(Messages.VALIDATION.CERT_DATA.INVALID_MICROCRED_DATA(elem));
+					}
+				}
+			}
 			return Promise.resolve(value);
 		});
 	};
@@ -276,6 +345,9 @@ let _doValidate = function(param, isHead) {
 	if (param.validate && param.validate.length) {
 		param.validate.forEach(validationType => {
 			switch (validationType) {
+				case Constants.IS_VALID_TOKEN_ADMIN:
+					validation = validateTokenAdmin(validation);
+					break;
 				case Constants.TOKEN_MATCHES_USER_ID:
 					validation = validateToken(validation);
 					break;
@@ -287,6 +359,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_STRING:
 					validation = validateIsString(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_BOOLEAN:
+					validation = validateIsBoolean(validation, param);
 					break;
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA:
 					validation = validateTemplateData(validation, param);
@@ -300,8 +375,14 @@ let _doValidate = function(param, isHead) {
 				case Constants.VALIDATION_TYPES.IS_CERT_DATA:
 					validation = validateValueInTemplate(validation, param);
 					break;
+				case Constants.VALIDATION_TYPES.IS_PART_DATA:
+					validation = validatePartValueInTemplate(validation, param);
+					break;
 				case Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA:
 					validation = validateTemplatePreviewData(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA:
+					validation = validateTemplateMicroCredData(validation, param);
 					break;
 			}
 		});

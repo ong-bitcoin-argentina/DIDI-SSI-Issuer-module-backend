@@ -1,10 +1,13 @@
-const API = process.env.API_URL || "http://localhost:3500/api/1.0/didi_issuer";
+const API = process.env.REACT_APP_API_URL || "http://localhost:3500/api/1.0/didi_issuer";
 
 module.exports = {
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
+			GET_QR: id => {
+				return API + "/template/" + id + "/qr/"
+			},
 			GET: id => {
 				return API + "/template/" + id;
 			},
@@ -14,6 +17,14 @@ module.exports = {
 			},
 			DELETE: id => {
 				return API + "/template/" + id;
+			}
+		},
+		PARTICIPANTS: {
+			GET_ALL: id => {
+				return API + "/participant/all/" + id;
+			},
+			GET: id => {
+				return API + "/participant/" + id;
 			}
 		},
 		CERTIFICATES: {
@@ -35,6 +46,8 @@ module.exports = {
 	},
 	ROUTES: {
 		LOGIN: "/login",
+		QR_REQUEST: "/qr_request",
+		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
 		CERTIFICATES: "/certificates",
@@ -84,6 +97,7 @@ module.exports = {
 		},
 		MANDATORY_DATA: {
 			DID: "DID",
+			FULL_NAME: "NOMBRE COMPLETO",
 			PARTICIPANT_FIRST_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO",
 			NAME: "CERTIFICADO O CURSO"
@@ -109,6 +123,8 @@ module.exports = {
 			LAST_NAME: "APELLIDO"
 		},
 		EDIT: {
+			PARTICIPANT_SELECT: "SELECCIONAR PARTICIPANTE",
+			SPLIT: "GENERAR MICROCREDENCIALES",
 			TEMPLATE_SELECT: "CERTIFICADO O CURSO"
 		},
 		TABLE: {

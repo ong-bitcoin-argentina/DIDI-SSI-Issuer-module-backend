@@ -39,11 +39,46 @@
 	flex-direction: column;
 }
 
+.ParticipantsSelector {
+	margin-top: 5px;
+}
+
 .ParticipantContent {
+	width: 510px;
+
 	border-style: solid;
 	padding: 5px;
 	border-width: 2px;
 
 	margin-top: 0px;
 	margin-bottom: 10px;
+}
+
+.MicroCredFieldsSelect {
+	background-color: $TableBackground;
+	width: 260px;
+	height: 45px;
+}
+
+.MicroCredFieldName {
+	background-color: $TableBackground;
+	width: 230px;
+	height: 40px;
+	margin-right: 10px;
+}
+
+.AddMicroCredential {
+	position: relative;
+	margin-top: 5px;
+	margin-left: 10px;
+	width: 30px;
+	height: 30px;
+}
+
+.RemoveMicroCredential {
+	position: relative;
+	margin-top: 5px;
+	margin-left: 10px;
+	width: 30px;
+	height: 30px;
 }

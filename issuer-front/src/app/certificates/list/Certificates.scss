@@ -3,7 +3,7 @@
 .Certificates {
 	display: flex;
 	flex-direction: column;
-	width: 80%;
+	width: 100%;
 }
 
 .HeadButtons {
@@ -27,7 +27,7 @@
 
 .CreateButton {
 	width: 150px;
-	margin-bottom: 10px;
+	margin-bottom: 0px;
 	align-self: flex-end;
 	display: flex;
 	flex-direction: row;

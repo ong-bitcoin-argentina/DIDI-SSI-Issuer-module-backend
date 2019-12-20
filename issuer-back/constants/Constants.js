@@ -5,9 +5,9 @@ const MONGO_USER = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 const MONGO_DB = process.env.MONGO_DB || "didi_issuer";
 
-const SERVER_DID = process.env.SERVER_DID || "***REMOVED***";
-const SERVER_PRIVATE_KEY =
-	process.env.SERVER_PRIVATE_KEY || "***REMOVED***";
+const ISSUER_SERVER_DID = process.env.ISSUER_SERVER_DID || "***REMOVED***";
+const ISSUER_SERVER_PRIVATE_KEY =
+	process.env.ISSUER_SERVER_PRIVATE_KEY || "***REMOVED***";
 
 const PORT = process.env.PORT || 3500;
 
@@ -33,15 +33,19 @@ module.exports = {
 	DEBUGG: DEBUGG,
 
 	VALIDATION_TYPES: {
+		IS_VALID_TOKEN_ADMIN: "isValidTokenAdmin",
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",
+		IS_BOOLEAN: "isBoolean",
 		IS_PASSWORD: "isPassword",
 		IS_CERT_DATA: "isCertData",
+		IS_PART_DATA: "isPartData",
 		IS_TEMPLATE_DATA: "isTemplateData",
 		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
 		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue",
-		IS_TEMPLATE_PREVIEW_DATA: "isTemplatePreviewData"
+		IS_TEMPLATE_PREVIEW_DATA: "isTemplatePreviewData",
+		IS_CERT_MICRO_CRED_DATA: "isCertMicroCredData"
 	},
 
 	DATA_TYPES: {
@@ -79,9 +83,8 @@ module.exports = {
 
 	DIDI_API: DIDI_API,
 
-	SERVER_DID: SERVER_DID,
-	SERVER_PRIVATE_KEY: SERVER_PRIVATE_KEY,
+	ISSUER_SERVER_DID: ISSUER_SERVER_DID,
+	ISSUER_SERVER_PRIVATE_KEY: ISSUER_SERVER_PRIVATE_KEY,
 	MONGO_URL: MONGO_URL,
-	SERVER_DID: SERVER_DID,
 	PORT: PORT
 };

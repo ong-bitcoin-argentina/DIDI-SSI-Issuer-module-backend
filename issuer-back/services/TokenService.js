@@ -7,12 +7,12 @@ var now = function() {
 };
 
 module.exports.generateToken = function(userId) {
-	var token = jwt.sign({ userId: userId, exp: now() + 60 * 60 * 60 }, Constants.SERVER_PRIVATE_KEY);
+	var token = jwt.sign({ userId: userId, exp: now() + 60 * 60 * 60 }, Constants.ISSUER_SERVER_PRIVATE_KEY);
 	return token;
 };
 
 module.exports.getTokenData = function(token) {
-	var decoded = jwt.verify(token, Constants.SERVER_PRIVATE_KEY);
+	var decoded = jwt.verify(token, Constants.ISSUER_SERVER_PRIVATE_KEY);
 	if (decoded.exp && decoded.exp > now()) {
 		return { userId: decoded.userId };
 	} else {

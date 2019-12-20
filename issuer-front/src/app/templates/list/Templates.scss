@@ -3,12 +3,14 @@
 .Templates {
 	display: flex;
 	flex-direction: column;
-	width: 80%;
+	width: 100%;
 }
 
 .HeadButtons {
-	display: flex;
-	flex-direction: row;
+	position: relative;
+	height: 0px;
+	top: 0px;
+	left: 0px;
 }
 
 .SectionButtons {
@@ -29,7 +31,7 @@
 .CreateButton {
 	align-self: flex-end;
 	width: 150px;
-	margin-bottom: 10px;
+	margin-bottom: 0px;
 	display: flex;
 	flex-direction: row;
 }

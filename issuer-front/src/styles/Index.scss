@@ -34,6 +34,39 @@ input.input-box {
 	width: 470px;
 }
 
+// Multi select
+
 .MuiRadio-root {
 	color: $InputBackground !important;
+}
+
+// Autocomplete
+
+.MuiAutocomplete-inputRoot .MuiAutocomplete-input {
+	margin-left: 5px;
+	color: $InputText;
+}
+
+.MuiFormControl-fullWidth {
+	width: 100%;
+	background-color: aliceblue;
+	margin-top: 10px;
+}
+
+.MuiAutocomplete-root {
+	width: 510px;
+	height: 45px;
+}
+
+.MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd {
+	width: 510px;
+	height: 45px;
+}
+
+button.MuiButtonBase-root.MuiIconButton-root.MuiAutocomplete-clearIndicator.MuiAutocomplete-clearIndicatorDirty {
+	display: none;
+}
+
+button.MuiButtonBase-root.MuiIconButton-root.MuiAutocomplete-popupIndicator {
+	width: 30px;
 }

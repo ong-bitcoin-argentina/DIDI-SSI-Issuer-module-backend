@@ -4,6 +4,7 @@ import "./Certificate.scss";
 
 import CertificateService from "../../../services/CertificateService";
 import TemplateService from "../../../services/TemplateService";
+import ParticipantService from "../../../services/ParticipantService";
 
 import ReactFileReader from "react-file-reader";
 import DataRenderer from "../../utils/DataRenderer";
@@ -14,7 +15,11 @@ import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
 import Select from "@material-ui/core/Select";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
+import Checkbox from "@material-ui/core/Checkbox";
+import ListItemText from "@material-ui/core/ListItemText";
 
 class Certificate extends Component {
 	constructor(props) {
@@ -51,14 +56,24 @@ class Certificate extends Component {
 								token,
 								selectedTemplate._id,
 								function(template) {
-									self.setState({
-										selectedTemplate: selectedTemplate,
-										cert: cert,
-										template: template,
-										templates: templates,
-										loading: false,
-										action: action
-									});
+									ParticipantService.getAll(
+										template._id,
+										function(participants) {
+											self.setState({
+												selectedTemplate: selectedTemplate,
+												cert: cert,
+												template: template,
+												templates: templates,
+												participants: participants,
+												loading: false,
+												action: action
+											});
+										},
+										function(err) {
+											self.setState({ error: err });
+											console.log(err);
+										}
+									);
 								},
 								function(err) {
 									self.setState({ error: err });
@@ -92,6 +107,8 @@ class Certificate extends Component {
 
 		return {
 			templateId: template._id,
+			split: false,
+			microCredentials: [],
 			data: data
 		};
 	};
@@ -113,7 +130,7 @@ class Certificate extends Component {
 	addParticipant = () => {
 		const participant = this.state.cert.data.participant;
 		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
-		this.setState({ cert: this.state.cert });
+		this.setState({ cert: this.state.cert, error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
 	};
 
 	createSampleCsv = () => {
@@ -131,7 +148,8 @@ class Certificate extends Component {
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					return "un número";
 				case Constants.TEMPLATES.TYPES.TEXT:
-					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.DID) return "ej: did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
+					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.DID)
+						return "ej: did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
 					return "un texto";
 				case Constants.TEMPLATES.TYPES.PARAGRAPH:
 					return "un parrafo";
@@ -175,13 +193,22 @@ class Certificate extends Component {
 		element.click();
 	};
 
+	// validar que el valor sea un did
+	validateDID = function(value) {
+		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
+		if (!value.match(regex)) {
+			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+		} else {
+			if (this.state.error) this.setState({ error: undefined });
+		}
+	};
+
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadCertFromCsv = files => {
 		let validateValueMatchesType = function(dataElem, value) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
-					if ("" + value !== "true" && "" + value !== "false") return false;
 					return true;
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
 					return dataElem.options.find(elem => elem === value + "");
@@ -250,6 +277,7 @@ class Certificate extends Component {
 					if (data.length > index) {
 						const err = assignElement(dataElem, data[index]);
 						if (err) return self.setState({ error: err });
+						if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(dataElem.value);
 						index++;
 					}
 				}
@@ -273,6 +301,11 @@ class Certificate extends Component {
 		} else {
 			this.state.cert.data.participant.splice(index, 1);
 		}
+
+		for (let partData of this.state.cert.data.participant) {
+			this.validateDID(partData[0].value);
+			if (this.state.error) break;
+		}
 		this.setState({ cert: this.state.cert });
 	};
 
@@ -287,13 +320,24 @@ class Certificate extends Component {
 			token,
 			selectedTemplate._id,
 			function(template) {
-				self.setState({
-					selectedTemplate: selectedTemplate,
-					template: template,
-					cert: self.certFromTemplate(template),
-					loading: false,
-					action: "creating"
-				});
+				ParticipantService.getAll(
+					template._id,
+					function(participants) {
+						self.setState({
+							selectedTemplate: selectedTemplate,
+							participants: participants,
+							template: template,
+							cert: self.certFromTemplate(template),
+							error: { message: Constants.CERTIFICATES.ERR.INVALID_DID },
+							loading: false,
+							action: "creating"
+						});
+					},
+					function(err) {
+						self.setState({ error: err });
+						console.log(err);
+					}
+				);
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -301,6 +345,33 @@ class Certificate extends Component {
 			}
 		);
 	};
+
+	participantSelected(id, position) {
+		const self = this;
+		self.setState({ loading: true });
+
+		ParticipantService.get(
+			id,
+			function(participant) {
+				const partToUpdate = self.state.cert.data.participant[position];
+
+				participant.data.forEach(dataElem => {
+					const dataToUpdate = partToUpdate.find(data => data.name === dataElem.name);
+					dataToUpdate.value = dataElem.value;
+				});
+
+				self.setState({
+					participants: self.state.participants,
+					action: self.state.action,
+					loading: false
+				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	}
 
 	// guardar cert y volver a listado de certificados
 	onSave = () => {
@@ -323,6 +394,41 @@ class Certificate extends Component {
 		);
 	};
 
+	addMicroCredential = () => {
+		const cert = this.state.cert;
+		cert.microCredentials.push({ title: "", names: [] });
+		this.setState({ cert: cert });
+	};
+
+	removeMicroCredential = key => {
+		const cert = this.state.cert;
+		if (cert.microCredentials.length > 1) {
+			cert.microCredentials.splice(key, 1);
+			this.setState({ cert: cert });
+		}
+	};
+
+	// actualizar campos seleccionados de la microcredencial
+	microcredFieldsSelected = (key, event) => {
+		const cert = this.state.cert;
+		cert.microCredentials[key].names = event.target.value;
+		this.setState({ cert: cert });
+	};
+
+	// actualizar nombre de la microcredencial
+	microcredNameChanged = (key, event) => {
+		const cert = this.state.cert;
+		cert.microCredentials[key].title = event.target.value;
+		this.setState({ cert: cert });
+	};
+
+	splitChanged = value => {
+		const cert = this.state.cert;
+		cert.split = value;
+		if (value) cert.microCredentials = [{ title: "", names: [] }];
+		this.setState({ cert: cert });
+	};
+
 	// volver a listado de certificados
 	onBack = () => {
 		this.props.history.push(Constants.ROUTES.CERTIFICATES);
@@ -341,12 +447,7 @@ class Certificate extends Component {
 
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		if (!did.match(regex)) {
-			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
-			return true;
-		} else {
-			if (this.state.error) this.setState({ error: undefined });
-		}
+		if (!did.match(regex)) return true;
 
 		const cert = this.state.cert.data.cert;
 		const participant = this.state.cert.data.participant.flat();
@@ -386,26 +487,197 @@ class Certificate extends Component {
 		const othersData = cert.data.others;
 		const partData = cert.data.participant;
 
+		const viewing = this.state.action === "viewing";
+
 		return (
-			<div className="CertificateContent">
+			<div className="CertSectionContent">
+				{!viewing && this.renderSplit(cert)}
 				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
 				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
 
 				{partData.map((data, key) => {
 					return (
 						<div className="ParticipantContent" key={"part-" + key}>
-							<button
-								className="RemoveParticipantButton"
-								hidden={this.state.viewing}
-								onClick={() => this.removeParticipant(key)}
-							>
-								{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
-							</button>
-							{this.renderSection(cert, data, "hola")}
+							<div hidden={key === 0}>
+								<button
+									className="RemoveParticipantButton"
+									hidden={this.state.viewing}
+									onClick={() => this.removeParticipant(key)}
+								>
+									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
+								</button>
+							</div>
+							{!viewing && this.renderParticipantSelector(key)}
+							{this.renderSection(cert, data)}
 						</div>
 					);
 				})}
+			</div>
+		);
+	};
 
+	renderSplit = cert => {
+		const allData = cert.data.cert
+			.concat(cert.data.participant[0])
+			.concat(cert.data.others)
+			.map(dataElem => dataElem.name);
+
+		return (
+			<div className="Data">
+				<div className="DataName">{Constants.CERTIFICATES.EDIT.SPLIT}</div>
+				<div className="DataElem">
+					<Select
+						className="DataInput Boolean"
+						autoFocus
+						value={cert.split ? cert.split : false}
+						onChange={event => {
+							this.splitChanged(event.target.value);
+						}}
+					>
+						<MenuItem className="DataInput" value={"true"}>
+							{Constants.TEMPLATES.EDIT.BOOLEAN.TRUE}
+						</MenuItem>
+						<MenuItem className="DataInput" value={"false"}>
+							{Constants.TEMPLATES.EDIT.BOOLEAN.FALSE}
+						</MenuItem>
+					</Select>
+				</div>
+
+				{cert.split &&
+					cert.microCredentials &&
+					cert.microCredentials.map((microCred, key) => {
+						let picked = [];
+						for (let i = 0; i < cert.microCredentials.length; i++) {
+							if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
+						}
+						const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
+						return (
+							<div className="DataElem" key={"Microcred-" + key}>
+								<input
+									type="text"
+									className="DataInput MicroCredFieldName"
+									value={microCred.title}
+									onChange={event => {
+										this.microcredNameChanged(key, event);
+									}}
+								/>
+								<Select
+									className="MicroCredFieldsSelect"
+									multiple
+									displayEmpty
+									value={microCred.names}
+									onChange={event => {
+										this.microcredFieldsSelected(key, event);
+									}}
+									renderValue={selected => selected.join(", ")}
+								>
+									{data.map((elem, key2) => {
+										return (
+											<MenuItem key={"MicroCred-" + key + "-Fields-" + key2} value={elem}>
+												<Checkbox checked={microCred.names.indexOf(elem) > -1} />
+												<ListItemText primary={elem} />
+											</MenuItem>
+										);
+									})}
+								</Select>
+
+								<button className="AddMicroCredential" onClick={this.addMicroCredential}>
+									{Messages.EDIT.BUTTONS.ADD_MICRO_CRED}
+								</button>
+								<button
+									hidden={key === 0}
+									className="RemoveMicroCredential"
+									onClick={() => {
+										this.removeMicroCredential(key);
+									}}
+								>
+									{Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED}
+								</button>
+							</div>
+						);
+					})}
+			</div>
+		);
+	};
+
+	renderSection = (cert, data, type) => {
+		const self = this;
+
+		return (
+			<div className="CertSectionContent">
+				{data.map((dataElem, index) => {
+					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
+						return <div key={"template-elem-" + index}></div>;
+
+					return (
+						<div className="Data" key={"template-elem-" + index}>
+							<div className="DataName">{dataElem.name}</div>
+							<div className="DataElem">
+								{DataRenderer.renderData(
+									dataElem,
+									type,
+									this.state.action === "creating" || this.state.action === "editing",
+									(dataElem, value) => {
+										if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(value);
+
+										dataElem.value = value;
+										self.setState({ cert: cert });
+									}
+								)}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		);
+	};
+
+	renderTemplateSelector = () => {
+		const templates = this.state.templates;
+		if (!templates) {
+			return <div></div>;
+		}
+
+		return (
+			<div className="TemplateSelector">
+				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT}</div>
+
+				<Autocomplete
+					options={templates}
+					getOptionLabel={option => (option ? option.name : "")}
+					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
+					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
+					onChange={event => {
+						this.templateSelected(this.state.templates[event.target.value]);
+					}}
+				/>
+			</div>
+		);
+	};
+
+	renderParticipantSelector = key => {
+		const participants = this.state.participants;
+		if (!participants) {
+			return <div></div>;
+		}
+
+		return (
+			<div className="ParticipantsSelector">
+				<Autocomplete
+					options={participants}
+					getOptionLabel={option => (option ? option.name : "")}
+					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
+					onChange={event => {
+						this.participantSelected(participants[event.target.value]._id, key);
+					}}
+				/>
+			</div>
+		);
+	};
+
+	renderButtons = () => {
+		return (
+			<div>
 				<div className="AddParticipantButtons">
 					<button
 						className="AddParticipant"
@@ -429,86 +701,23 @@ class Certificate extends Component {
 						</button>
 					</ReactFileReader>
 				</div>
-			</div>
-		);
-	};
 
-	renderSection = (cert, data, type) => {
-		const self = this;
-
-		return (
-			<div className="CertSectionContent">
-				{data.map((dataElem, index) => {
-					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.NAME)
-						return <div key={"template-elem-" + index}></div>;
-
-					return (
-						<div className="Data" key={"template-elem-" + index}>
-							<div className="DataName">{dataElem.name}</div>
-							<div className="DataElem">
-								{DataRenderer.renderData(
-									dataElem,
-									type,
-									this.state.action === "creating" || this.state.action === "editing",
-									(data, value, type) => {
-										dataElem.value = value;
-										self.setState({ cert: cert });
-									}
-								)}
-							</div>
-						</div>
-					);
-				})}
-			</div>
-		);
-	};
-
-	renderTemplateSelector = () => {
-		const templates = this.state.templates;
-		if (!templates) {
-			return <div></div>;
-		}
-
-		return (
-			<div className="TemplateSelector">
-				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT}</div>
-				<Select
-					className="DataInput"
-					autoFocus
-					value={this.state.selectedTemplate ? this.state.selectedTemplate : this.state.templates[0]}
-					onChange={event => {
-						this.templateSelected(event.target.value);
-					}}
-				>
-					{templates.map((opt, key) => {
-						return (
-							<MenuItem value={opt} key={"option-" + key} className="DataInput">
-								{opt.name}
-							</MenuItem>
-						);
-					})}
-				</Select>
-			</div>
-		);
-	};
-
-	renderButtons = () => {
-		return (
-			<div className="CertificateButtons">
-				<button
-					hidden={this.state.action === "viewing"}
-					className="SaveButton"
-					disabled={this.saveDisabled()}
-					onClick={this.onSave}
-				>
-					{Messages.EDIT.BUTTONS.SAVE}
-				</button>
-				<button className="BackButton" onClick={this.onBack}>
-					{Messages.EDIT.BUTTONS.BACK}
-				</button>
-				<button className="LogoutButton" onClick={this.onLogout}>
-					{Messages.EDIT.BUTTONS.EXIT}
-				</button>
+				<div className="CertificateButtons">
+					<button
+						hidden={this.state.action === "viewing"}
+						className="SaveButton"
+						disabled={this.saveDisabled()}
+						onClick={this.onSave}
+					>
+						{Messages.EDIT.BUTTONS.SAVE}
+					</button>
+					<button className="BackButton" onClick={this.onBack}>
+						{Messages.EDIT.BUTTONS.BACK}
+					</button>
+					<button className="LogoutButton" onClick={this.onLogout}>
+						{Messages.EDIT.BUTTONS.EXIT}
+					</button>
+				</div>
 			</div>
 		);
 	};

@@ -18,7 +18,9 @@ class Login extends Component {
 		};
 	}
 
-	onLogin = () => {
+	onLogin = event => {
+		event.preventDefault();
+
 		let self = this;
 		UserService.login(
 			this.state.name,
@@ -44,18 +46,20 @@ class Login extends Component {
 
 	render() {
 		if (Cookie.get("token")) {
-			return <Redirect to={Constants.ROUTES.TEMPLATES} />;
+			return <Redirect to={Constants.ROUTES.LIST} />;
+			// return <Redirect to={Constants.ROUTES.TEMPLATES} />;
 		}
 
 		return (
 			<div className="Login">
 				<h1 className="BackgroundText">{Messages.LOGIN.WELCOME}</h1>
-				<input className="LoginInput" type="text" onChange={this.updateName}></input>
-				<input className="LoginInput" type="password" onChange={this.updatePass}></input>
-				<button className="LoginButton" onClick={this.onLogin}>
-					{Messages.LOGIN.BUTTONS.ENTER}
-				</button>
-
+				<form onSubmit={this.onLogin}>
+					<input className="LoginInput" type="text" onChange={this.updateName}></input>
+					<input className="LoginInput" type="password" onChange={this.updatePass} autoComplete="on"></input>
+					<button className="LoginButton" type="submit" value="Submit">
+						{Messages.LOGIN.BUTTONS.ENTER}
+					</button>
+				</form>
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
 				{/*this.state.token*/}
 			</div>

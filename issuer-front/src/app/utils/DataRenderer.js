@@ -33,7 +33,7 @@ export default class DataRenderer {
 						className="DataInput Boolean"
 						disabled={!allowEdit}
 						autoFocus
-						value={value ? value : dataElem.options[0]}
+						value={value ? value : ""}
 						onChange={event => {
 							onChange(dataElem, event.target.value, type);
 						}}

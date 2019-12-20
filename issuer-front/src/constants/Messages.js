@@ -21,6 +21,8 @@ module.exports = {
 			CLOSE: "Cerrar"
 		},
 		BUTTONS: {
+			ADD_MICRO_CRED: "+",
+			REMOVE_MICRO_CRED: "-",
 			REMOVE_PARTICIPANTS: "X",
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
@@ -50,6 +52,7 @@ module.exports = {
 			EMISSION_DATE: "FECHA DE EMISSION"
 		},
 		BUTTONS: {
+			TO_QR: "REGISTRAR PARTICIPANTE",
 			TO_CERTIFICATES: "CERTIFICADOS EMITIDOS",
 			TO_TEMPLATES: "TEMPLATES",
 			CREATE_TEMPLATE: "CREAR CERTIFICADO",
@@ -59,6 +62,13 @@ module.exports = {
 			EDIT: "Editar",
 			DELETE: "Borrar",
 			EXIT: "Salir"
+		}
+	},
+	QR: {
+		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
+		FULL_NAME: "NOMBRE COMPLETO",
+		BUTTONS: {
+			GENERATE: "Generar Qr"
 		}
 	}
 };

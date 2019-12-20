@@ -23,6 +23,16 @@ const CertSchema = mongoose.Schema({
 		type: ObjectId,
 		required: true
 	},
+	split: {
+		type: Boolean,
+		default: false
+	},
+	microCredentials: [
+		{
+			title: { type: String },
+			names: [{ type: String }]
+		}
+	],
 	deleted: {
 		type: Boolean,
 		default: false
@@ -32,7 +42,12 @@ const CertSchema = mongoose.Schema({
 	},
 	jwts: [
 		{
-			type: String
+			data: {
+				type: String
+			},
+			hash: {
+				type: String
+			}
 		}
 	],
 	createdOn: {
@@ -58,12 +73,12 @@ CertSchema.methods.delete = async function() {
 	}
 };
 
-CertSchema.methods.emmit = async function(credentials) {
+CertSchema.methods.emmit = async function(creds) {
 	const now = new Date();
 
 	const updateQuery = { _id: this._id };
 	const updateAction = {
-		$set: { emmitedOn: now, jwts: credentials }
+		$set: { emmitedOn: now, jwts: creds }
 	};
 
 	try {
@@ -95,8 +110,10 @@ var copyData = function(data) {
 	};
 };
 
-CertSchema.methods.edit = async function(data) {
+CertSchema.methods.edit = async function(data, split, microCredentials) {
 	this.data = copyData(data);
+	this.split = split;
+	this.microCredentials = microCredentials;
 
 	try {
 		await this.save();
@@ -110,14 +127,17 @@ CertSchema.methods.edit = async function(data) {
 const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
-Cert.generate = async function(data, templateId) {
-	let cert = new Cert();
-	cert.data = copyData(data);
-	cert.templateId = templateId;
-	cert.createdOn = new Date();
-	cert.deleted = false;
-
+Cert.generate = async function(data, templateId, split, microCredentials) {
 	try {
+		let cert = new Cert();
+		cert.split = split;
+		cert.microCredentials = microCredentials;
+		cert.data = copyData(data);
+		cert.templateId = templateId;
+		cert.jwts = [];
+		cert.createdOn = new Date();
+		cert.deleted = false;
+
 		cert = await cert.save();
 		return Promise.resolve(cert);
 	} catch (err) {

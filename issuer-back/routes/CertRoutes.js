@@ -90,10 +90,10 @@ router.post(
 			});
 
 			let credentials = [];
-			for (let element of partData) {
-				const credential = await generateCertificate(template, cert, element);
-				const res = await MouroService.saveCertificate(credential);
-				credentials.push(credential);
+			for (let part of partData) {
+				cert.split
+					? await generateCertificate(credentials, template, cert, part)
+					: await generateFullCertificate(credentials, template, cert, part);
 			}
 
 			let result = cert;
@@ -106,11 +106,12 @@ router.post(
 	}
 );
 
-const generateCertificate = async function(template, cert, element) {
+const generateFullCertificate = async function(credentials, template, cert, part) {
 	try {
-		const allData = cert.data.cert.concat(element).concat(cert.data.others);
+		const allData = cert.data.cert.concat(part).concat(cert.data.others);
+		const name = cert.data.cert[0].value;
 		const data = {};
-		data[cert.data.cert[0].value] = {
+		data[name] = {
 			preview: {
 				type: template.previewData.length / 2,
 				fields: template.previewData
@@ -128,13 +129,115 @@ const generateCertificate = async function(template, cert, element) {
 					expDate = dataElem.value;
 					break;
 				default:
-					if (dataElem.value !== undefined) data[cert.data.cert[0].value]["data"][dataElem.name] = dataElem.value;
+					data[name]["data"][dataElem.name] = dataElem.value;
 					break;
 			}
 		});
 
-		const credential = await MouroService.createCertificate(data, expDate, did);
-		return Promise.resolve(credential);
+		const resFull = await MouroService.createCertificate(data, expDate, did);
+		const savedFull = await MouroService.saveCertificate(resFull);
+		credentials.push(savedFull);
+
+		return Promise.resolve(credentials);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
+const generateCertificate = async function(credentials, template, cert, part) {
+	const generatePartialCertificate = async function(name, certData, expDate, did) {
+		try {
+			const data = {};
+			data[name] = {
+				data: {}
+			};
+
+			certData.forEach(dataElem => {
+				if (
+					dataElem.value !== undefined &&
+					dataElem.name != Constants.CERT_FIELD_MANDATORY.DID &&
+					dataElem.name != Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE
+				)
+					data[name]["data"][dataElem.name] = dataElem.value;
+			});
+
+			const credential = await MouroService.createCertificate(data, expDate, did);
+			return Promise.resolve(credential);
+		} catch (err) {
+			return Promise.reject(err);
+		}
+	};
+
+	try {
+		const allData = cert.data.cert.concat(part).concat(cert.data.others);
+		const name = cert.data.cert[0].value;
+		const data = {};
+		const microCreds = {};
+
+		let did, expDate;
+		allData.forEach(dataElem => {
+			switch (dataElem.name) {
+				case Constants.CERT_FIELD_MANDATORY.DID:
+					did = dataElem.value;
+					break;
+				case Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE:
+					expDate = dataElem.value;
+					break;
+			}
+
+			for (let microCredData of cert.microCredentials) {
+				const names = microCredData.names;
+				if (names.indexOf(dataElem.name) >= 0) {
+					if (microCreds[microCredData.title]) {
+						microCreds[microCredData.title].push(dataElem);
+					} else {
+						microCreds[microCredData.title] = [dataElem];
+					}
+				}
+			}
+		});
+
+		const generateCertPromises = [];
+		const generateCertNames = Object.keys(microCreds);
+		for (let microCredsName of generateCertNames) {
+			const cert = generatePartialCertificate(microCredsName, microCreds[microCredsName], expDate, did);
+			generateCertPromises.push(cert);
+		}
+
+		const microCredentials = await Promise.all(generateCertPromises);
+
+		data[name] = {
+			preview: {
+				type: template.previewData.length / 2,
+				fields: template.previewData
+			},
+			data: {},
+			wrapped: {}
+		};
+
+		const saveCertPromises = [];
+		for (let i = 0; i < microCredentials.length; i++) {
+			const microCred = microCredentials[i];
+			const saveCred = MouroService.saveCertificate(microCred);
+			saveCertPromises.push(saveCred);
+
+			data[name].wrapped[generateCertNames[i]] = microCred;
+		}
+		const generateFull = MouroService.createCertificate(data, expDate, did);
+		saveCertPromises.push(generateFull);
+
+		const res = await Promise.all(saveCertPromises);
+
+		for (let i = 0; i < res.length; i++) {
+			if (i != res.length - 1) {
+				credentials.push(res[i]);
+			} else {
+				const savedFull = await MouroService.saveCertificate(res[i]);
+				credentials.push(savedFull);
+			}
+		}
+
+		return Promise.resolve(credentials);
 	} catch (err) {
 		return Promise.reject(err);
 	}
@@ -152,31 +255,42 @@ router.post(
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
+		},
+		{
+			name: "split",
+			validate: [Constants.VALIDATION_TYPES.IS_BOOLEAN]
+		},
+		{
+			name: "microCredentials",
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA],
+			optional: true
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const data = JSON.parse(req.body.data);
 		const templateId = req.body.templateId;
+		const split = req.body.split;
+		const microCredentials = req.body.microCredentials ? req.body.microCredentials : [];
 
-		try {
-			const result = [];
+		const result = [];
+		for (let participantData of data.participant) {
+			const certData = {
+				cert: data.cert,
+				participant: [participantData],
+				others: data.others
+			};
 
-			for (let participantData of data.participant) {
-				const certData = {
-					cert: data.cert,
-					participant: [participantData],
-					others: data.others
-				};
-
-				const cert = await CertService.create(certData, templateId);
-				result.push(cert);
+			let cert;
+			try {
+				cert = await CertService.create(certData, templateId, split, microCredentials);
+			} catch (err) {
+				console.log(err);
+				return ResponseHandler.sendErr(res, err);
 			}
-
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
+			result.push(cert);
 		}
+		return ResponseHandler.sendRes(res, result);
 	}
 );
 
@@ -192,15 +306,25 @@ router.put(
 		{
 			name: "data",
 			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
+		},
+		{
+			name: "split",
+			validate: [Constants.VALIDATION_TYPES.IS_BOOLEAN]
+		},
+		{
+			name: "microCredentials",
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
 		const data = JSON.parse(req.body.data);
+		const split = req.body.split;
+		const microCredentials = req.body.microCredentials;
 
 		try {
-			const cert = await CertService.edit(id, data);
+			const cert = await CertService.edit(id, data, split, microCredentials);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -223,7 +347,14 @@ router.delete(
 
 		try {
 			const cert = await CertService.delete(id);
-			for (let jwt of cert.jwts) await MouroService.revokeCertificate(jwt);
+			const did = cert.data.participant[0][0].value;
+
+			const calls = [];
+			for (let jwt of cert.jwts) {
+				calls.push(MouroService.revokeCertificate(jwt.hash, did));
+			}
+
+			await Promise.all(calls);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

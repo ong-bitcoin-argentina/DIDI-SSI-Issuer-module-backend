@@ -1,0 +1,22 @@
+@import "../../styles/Colors.scss";
+
+.QrReq {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.QrPetition {
+	width: 350px;
+	height: 350px;
+	margin: 0 0 20px 0;
+	padding: 10px;
+	align-self: center;
+	overflow-wrap: break-word;
+}
+
+.QrTemplateSelector {
+	align-self: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}

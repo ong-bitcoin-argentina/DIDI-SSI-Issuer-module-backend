@@ -22,8 +22,8 @@ services:
       MONGO_PASSWORD: ${MONGO_PASSWORD}
       MONGO_DB: ${MONGO_DB}
       MONGO_DIR: ${MONGO_DIR}
-      SERVER_DID: ${SERVER_DID}
-      SERVER_PRIVATE_KEY: ${SERVER_PRIVATE_KEY}
+      ISSUER_SERVER_DID: ${ISSUER_SERVER_DID}
+      ISSUER_SERVER_PRIVATE_KEY: ${ISSUER_SERVER_PRIVATE_KEY}
       DEBUGG_MODE: ${DEBUGG}
       MONGO_PORT: ${MONGO_PORT}
       PORT: ${PORT_BACK}
@@ -39,8 +39,6 @@ services:
     command: mongod --port ${MONGO_PORT}
     environment:
       MONGO_INITDB_DATABASE: ${MONGO_DB}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./data:/data/db

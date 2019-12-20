@@ -44,7 +44,7 @@ module.exports.edit = async function(id, data, previewData, previewType) {
 		return Promise.resolve(template);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
+		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
 	}
 };
 
