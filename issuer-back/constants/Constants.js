@@ -9,6 +9,7 @@ const ISSUER_SERVER_DID = process.env.ISSUER_SERVER_DID || "***REMOVED***";
 const ISSUER_SERVER_PRIVATE_KEY =
 	process.env.ISSUER_SERVER_PRIVATE_KEY || "***REMOVED***";
 
+const ADDRESS = process.env.ADDRESS || "http://192.168.2.113";
 const PORT = process.env.PORT || 3500;
 
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
@@ -26,7 +27,7 @@ const CERT_FIELD_TYPES = {
 	Checkbox: "Checkbox"
 };
 
-const DIDI_API = process.env.DIDI_API || "http://localhost:3000/api/1.0/didi";
+const DIDI_API = process.env.DIDI_API || "http://192.168.2.113:3000/api/1.0/didi";
 
 module.exports = {
 	API_VERSION: "1.0",
@@ -73,7 +74,7 @@ module.exports = {
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"
 	},
-	
+
 	CREDENTIALS: {
 		TYPES: {
 			VERIFIABLE: "VerifiableCredential"
@@ -86,5 +87,6 @@ module.exports = {
 	ISSUER_SERVER_DID: ISSUER_SERVER_DID,
 	ISSUER_SERVER_PRIVATE_KEY: ISSUER_SERVER_PRIVATE_KEY,
 	MONGO_URL: MONGO_URL,
-	PORT: PORT
+	PORT: PORT,
+	ADDRESS: ADDRESS
 };

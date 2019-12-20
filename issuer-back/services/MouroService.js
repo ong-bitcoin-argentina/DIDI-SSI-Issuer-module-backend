@@ -3,7 +3,7 @@ const Messages = require("../constants/Messages");
 
 const EthrDID = require("ethr-did");
 const { createVerifiableCredential } = require("did-jwt-vc");
-const didJWT = require("did-jwt");
+const { verifyJWT, SimpleSigner } = require("did-jwt");
 const fetch = require("node-fetch");
 
 const { Credentials } = require("uport-credentials");
@@ -12,18 +12,9 @@ const { Resolver } = require("did-resolver");
 const { getResolver } = require("ethr-did-resolver");
 const resolver = new Resolver(getResolver());
 
-module.exports.verifyCertificate = async function(jwt, issuerDid, errMsg) {
+module.exports.verifyCertificate = async function(jwt, errMsg) {
 	try {
-		let result = await verifyCredential(jwt, resolver);
-
-		console.log("cred: ");
-		console.log(result);
-
-		if (result.payload.iss === issuerDid) {
-			console.log(Messages.CERTIFICATE.VERIFIED);
-			return Promise.resolve(result);
-		}
-
+		let result = await verifyJWT(jwt, { resolver: resolver, audience: "did:ethr:" + Constants.ISSUER_SERVER_DID });
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);
@@ -32,7 +23,7 @@ module.exports.verifyCertificate = async function(jwt, issuerDid, errMsg) {
 };
 
 module.exports.createShareRequest = async function(callback, requested) {
-	const signer = didJWT.SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
+	const signer = SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
 	const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
 
 	try {
