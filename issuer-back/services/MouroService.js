@@ -6,18 +6,37 @@ const { createVerifiableCredential } = require("did-jwt-vc");
 const didJWT = require("did-jwt");
 const fetch = require("node-fetch");
 
-module.exports.createShareRequest = async function(iss, callback, requested) {
-	const signer = didJWT.SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
+const { Credentials } = require("uport-credentials");
 
-	const reqPayload = {
-		type: "shareReq",
-		iss: iss,
-		callback: callback,
-		requested: requested
-	};
+const { Resolver } = require("did-resolver");
+const { getResolver } = require("ethr-did-resolver");
+const resolver = new Resolver(getResolver());
+
+module.exports.verifyCertificate = async function(jwt, issuerDid, errMsg) {
+	try {
+		let result = await verifyCredential(jwt, resolver);
+
+		console.log("cred: ");
+		console.log(result);
+
+		if (result.payload.iss === issuerDid) {
+			console.log(Messages.CERTIFICATE.VERIFIED);
+			return Promise.resolve(result);
+		}
+
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(errMsg);
+	}
+};
+
+module.exports.createShareRequest = async function(callback, requested) {
+	const signer = didJWT.SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
+	const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
 
 	try {
-		let result = await didJWT.createJWT(reqPayload, { issuer: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
+		let result = await credentials.createDisclosureRequest({ callbackUrl: callback, requested: requested });
 		if (Constants.DEBUGG) console.log(result);
 		return Promise.resolve(result);
 	} catch (err) {

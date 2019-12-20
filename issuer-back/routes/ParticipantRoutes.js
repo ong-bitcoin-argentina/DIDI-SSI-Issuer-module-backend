@@ -4,6 +4,7 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
+const Messages = require("../constants/Messages");
 
 router.get("/all/:templateId", async function(req, res) {
 	const templateId = req.params.templateId;
@@ -30,21 +31,27 @@ router.get("/:id", async function(req, res) {
 
 router.post(
 	"/:templateId",
-	Validator.validate([
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{
-			name: "data",
-			validate: [Constants.VALIDATION_TYPES.IS_PART_DATA]
-		}
-	]),
+	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const templateId = req.params.templateId;
-		const name = req.body.name;
-		const data = JSON.parse(req.body.data);
+		const jwt = req.body.access_token;
 
 		try {
-			const participant = await ParticipantService.create(name, data, templateId);
+			const data = await MouroService.verifyCertificate(jwt, did, Messages.CERTIFICATE.ERR.VERIFY);
+
+			let name;
+			const dataElems = [{ name: "DID", value: data.payload.iss }];
+
+			data.payload.own.array.forEach(element => {
+				if (dataElem.name === "FULL NAME") {
+					name = dataElem.value;
+				} else {
+					dataElems.push(element);
+				}
+			});
+
+			const participant = await ParticipantService.create(name, dataElems, templateId);
 			return ResponseHandler.sendRes(res, participant);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

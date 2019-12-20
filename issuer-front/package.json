@@ -8,6 +8,8 @@
 		"@material/react-tab-bar": "^0.15.0",
 		"dateformat": "^3.0.3",
 		"did-jwt": "^3.0.0",
+		"did-resolver": "^1.1.0",
+		"ethr-did-resolver": "^1.0.3",
 		"js-cookie": "^2.2.1",
 		"material-icons-react": "^1.0.4",
 		"node-sass": "^4.13.0",

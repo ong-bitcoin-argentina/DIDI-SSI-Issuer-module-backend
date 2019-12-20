@@ -42,14 +42,14 @@ router.get(
 	async function(req, res) {
 		const id = req.params.id;
 		try {
-			console.log(id);
 			const template = await TemplateService.getById(id);
 			const requested = template.data.participant
 				.map(dataElem => dataElem.name)
 				.filter(req => req != "DID" && req != "EXPIRATION DATE");
+			requested.push("FULL NAME");
 			const cb = Constants.DIDI_API + "/participant/" + template._id;
 
-			const cert = await MouroService.createShareRequest(Constants.ISSUER_SERVER_DID, cb, requested);
+			const cert = await MouroService.createShareRequest(cb, requested);
 
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {

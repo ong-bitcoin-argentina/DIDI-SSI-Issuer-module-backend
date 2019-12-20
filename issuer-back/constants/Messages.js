@@ -56,6 +56,9 @@ module.exports = {
 		CREATED: "Certificado creado",
 		VERIFIED: "Certificado verificado",
 		SAVED: "Certificado guardado",
+		ERR: {
+			VERIFY: { code: "CERT_VERIFY_ERROR", message: "Error al validar la creadencial." }
+		},
 		CERT_FIELDS: {
 			NAME: "CERTIFICADO O CURSO",
 			PARTICIPANT_NAME: "NOMBRE",
@@ -106,7 +109,10 @@ module.exports = {
 		},
 		CERT_DATA: {
 			INVALID_MICROCRED_DATA: function(name) {
-				return { code: "INVALID_MICROCRED_DATA", message: "El campo " + name + " no puede ser parte de una microcredencial, no se encuentra en el certificado." };
+				return {
+					code: "INVALID_MICROCRED_DATA",
+					message: "El campo " + name + " no puede ser parte de una microcredencial, no se encuentra en el certificado."
+				};
 			},
 			INVALID_TEMPLATE_ID: function(type) {
 				return { code: "INVALID_TEMPLATE_ID", message: "El campo " + type + " es invalido." };

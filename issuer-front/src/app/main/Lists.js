@@ -12,6 +12,7 @@ import "react-tabs/style/react-tabs.css";
 
 import Templates from "../templates/list/Templates";
 import Certificates from "../certificates/list/Certificates";
+import QrRequest from "../qrRequest/QrRequest";
 
 import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
@@ -252,6 +253,7 @@ class Lists extends Component {
 				<TabList>
 					<Tab>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
 					<Tab>{Messages.LIST.BUTTONS.TO_CERTIFICATES}</Tab>
+					<Tab>{Messages.LIST.BUTTONS.TO_QR}</Tab>
 				</TabList>
 
 				<TabPanel>
@@ -272,6 +274,15 @@ class Lists extends Component {
 						onCertificateDelete={this.onCertificateDelete}
 						onCertificateEmmit={this.onCertificateEmmit}
 						onCertificateCreate={this.onCertificateCreate}
+						error={this.state.error}
+						onLogout={this.onLogout}
+					/>
+				</TabPanel>
+				<TabPanel>
+					<QrRequest
+						selected={this.state.tabIndex === 2}
+						loading={this.state.loading}
+						templates={this.state.templates}
 						error={this.state.error}
 						onLogout={this.onLogout}
 					/>
