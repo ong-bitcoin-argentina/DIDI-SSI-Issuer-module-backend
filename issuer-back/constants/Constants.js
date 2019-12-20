@@ -33,6 +33,7 @@ module.exports = {
 	DEBUGG: DEBUGG,
 
 	VALIDATION_TYPES: {
+		IS_VALID_TOKEN_ADMIN: "isValidTokenAdmin",
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",

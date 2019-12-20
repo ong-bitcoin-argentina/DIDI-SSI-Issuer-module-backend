@@ -30,6 +30,35 @@ router.get(
 );
 
 router.get(
+	"/:id/qr",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		try {
+			console.log(id);
+			const template = await TemplateService.getById(id);
+			const requested = template.data.participant
+				.map(dataElem => dataElem.name)
+				.filter(req => req != "DID" && req != "EXPIRATION DATE");
+			const cb = Constants.DIDI_API + "/participant/" + template._id;
+
+			const cert = await MouroService.createShareRequest(Constants.ISSUER_SERVER_DID, cb, requested);
+
+			return ResponseHandler.sendRes(res, cert);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.get(
 	"/:id",
 	Validator.validate([
 		{
@@ -46,39 +75,6 @@ router.get(
 			delete template.deleted;
 			delete template.createdOn;
 			return ResponseHandler.sendRes(res, template);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-router.get(
-	"/:id/qr",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const id = req.params.id;
-		try {
-			const template = await TemplateService.getById(id);
-			const requested = template.data.participant
-				.map(dataElem => dataElem.name)
-				.filter(req => req != "DID" && req != "EXPIRATION DATE");
-			const cb = Constants.DIDI_API + "/participant/" + template._id;
-
-			const cert = await MouroService.createShareRequest(
-				Constants.ISSUER_SERVER_DID,
-				cb,
-				requested
-			);
-			console.log(cert);
-
-			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

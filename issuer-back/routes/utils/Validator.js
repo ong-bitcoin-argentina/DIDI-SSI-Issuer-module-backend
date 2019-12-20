@@ -42,6 +42,18 @@ let _doValidate = function(param, isHead) {
 		}
 	};
 
+	let validateTokenAdmin = function(validation) {
+		return validation.custom(async function(token, { req }) {
+			try {
+				const user = await _getUserFromToken(token);
+				if (user.type !== Constants.USER_TYPES.Admin) return Promise.reject(Messages.VALIDATION.INVALID_TOKEN);
+				return Promise.resolve(user);
+			} catch (err) {
+				return Promise.reject(err);
+			}
+		});
+	};
+
 	let validateToken = function(validation) {
 		return validation.custom(async function(token, { req }) {
 			try {
@@ -333,6 +345,9 @@ let _doValidate = function(param, isHead) {
 	if (param.validate && param.validate.length) {
 		param.validate.forEach(validationType => {
 			switch (validationType) {
+				case Constants.IS_VALID_TOKEN_ADMIN:
+					validation = validateTokenAdmin(validation);
+					break;
 				case Constants.TOKEN_MATCHES_USER_ID:
 					validation = validateToken(validation);
 					break;
