@@ -12,6 +12,11 @@ const TemplateRoutes = require("./routes/TemplateRoutes");
 const CertRoutes = require("./routes/CertRoutes");
 const ParticipantRoutes = require("./routes/ParticipantRoutes");
 
+const log = console.log;
+console.log = function(data) {
+	log(new Date().toISOString() + ": " + data);
+};
+
 // set up node module clusters - one worker per CPU available
 var cluster = require("cluster");
 var numCPUs = require("os").cpus().length;
