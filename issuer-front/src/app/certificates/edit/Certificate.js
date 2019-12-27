@@ -657,7 +657,7 @@ class Certificate extends Component {
 
 	renderParticipantSelector = key => {
 		const participants = this.state.participants;
-		if (!participants) {
+		if (!participants || participants.length === 0) {
 			return <div></div>;
 		}
 
