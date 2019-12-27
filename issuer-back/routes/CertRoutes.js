@@ -32,6 +32,7 @@ router.get(
 			});
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
+			console.log(err);
 			return ResponseHandler.sendErr(res, err);
 		}
 	}
@@ -280,29 +281,29 @@ router.post(
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const data = JSON.parse(req.body.data);
-		const templateId = req.body.templateId;
-		const split = req.body.split;
-		const microCredentials = req.body.microCredentials ? req.body.microCredentials : [];
+		try {
+			const data = JSON.parse(req.body.data);
+			const templateId = req.body.templateId;
+			const split = req.body.split;
+			const microCredentials = req.body.microCredentials ? req.body.microCredentials : [];
 
-		const result = [];
-		for (let participantData of data.participant) {
-			const certData = {
-				cert: data.cert,
-				participant: [participantData],
-				others: data.others
-			};
+			const result = [];
+			for (let participantData of data.participant) {
+				let cert;
+				const certData = {
+					cert: data.cert,
+					participant: [participantData],
+					others: data.others
+				};
 
-			let cert;
-			try {
 				cert = await CertService.create(certData, templateId, split, microCredentials);
-			} catch (err) {
-				console.log(err);
-				return ResponseHandler.sendErr(res, err);
+				if (cert) result.push(cert);
 			}
-			result.push(cert);
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			console.log(err);
+			return ResponseHandler.sendErr(res, err);
 		}
-		return ResponseHandler.sendRes(res, result);
 	}
 );
 

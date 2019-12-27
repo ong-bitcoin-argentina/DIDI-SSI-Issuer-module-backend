@@ -1,16 +1,15 @@
-const DEBUGG = process.env.DEBUGG_MODE || true;
-const MONGO_DIR = process.env.MONGO_DIR || "127.0.0.1";
-const MONGO_PORT = process.env.MONGO_PORT || "27017";
+const DEBUGG = process.env.DEBUGG_MODE;
+const MONGO_DIR = process.env.MONGO_DIR;
+const MONGO_PORT = process.env.MONGO_PORT;
 const MONGO_USER = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
-const MONGO_DB = process.env.MONGO_DB || "didi_issuer";
+const MONGO_DB = process.env.MONGO_DB;
 
-const ISSUER_SERVER_DID = process.env.ISSUER_SERVER_DID || "***REMOVED***";
-const ISSUER_SERVER_PRIVATE_KEY =
-	process.env.ISSUER_SERVER_PRIVATE_KEY || "***REMOVED***";
+const ISSUER_SERVER_DID = process.env.ISSUER_SERVER_DID;
+const ISSUER_SERVER_PRIVATE_KEY = process.env.ISSUER_SERVER_PRIVATE_KEY;
 
-const ADDRESS = process.env.ADDRESS || "http://192.168.2.113";
-const PORT = process.env.PORT || 3500;
+const ADDRESS = process.env.ADDRESS;
+const PORT = process.env.PORT;
 
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
 const MONGO_URL =
@@ -27,7 +26,7 @@ const CERT_FIELD_TYPES = {
 	Checkbox: "Checkbox"
 };
 
-const DIDI_API = process.env.DIDI_API || "http://192.168.2.113:3000/api/1.0/didi";
+const DIDI_API = process.env.DIDI_API;
 
 module.exports = {
 	API_VERSION: "1.0",

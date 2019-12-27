@@ -90,7 +90,6 @@ let _doValidate = function(param, isHead) {
 			if (value === "true" || value === true || value === "false" || value === false) {
 				return Promise.resolve(value);
 			} else {
-				console.log("shit: " + value);
 				return Promise.reject(Messages.VALIDATION.BOOLEAN_FORMAT_INVALID(param.name));
 			}
 		});
@@ -151,14 +150,15 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
-	let validateValueMatchesType = function(type, value, err) {
+	let validateValueMatchesType = async function(type, value, err) {
 		switch (type) {
 			case Constants.CERT_FIELD_TYPES.Boolean:
-				if (value !== "true" && value !== "fakse") return Promise.reject(err);
+				if (value !== "true" && value !== "false") return Promise.reject(err);
 				break;
 			case Constants.CERT_FIELD_TYPES.Date:
-				const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9]Z)/;
-				if (!value.match(regex)) return Promise.reject(err);
+				const date = new Date(value);
+				const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
+				if (!date.toISOString().match(regex)) return Promise.reject(err);
 				break;
 			case Constants.CERT_FIELD_TYPES.Number:
 				if (isNaN(value)) return Promise.reject(err);
@@ -174,7 +174,7 @@ let _doValidate = function(param, isHead) {
 	};
 
 	let validateValueTypes = function(validation, param) {
-		return validation.custom((value, { req }) => {
+		return validation.custom(async (value, { req }) => {
 			try {
 				let data;
 
@@ -184,18 +184,17 @@ let _doValidate = function(param, isHead) {
 					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 				}
 
-				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
-
 				if (!data[0] || !data[0]["type"]) return Promise.reject(err);
 
 				let type = data[0]["type"];
 				for (let dataElement of data) {
+					const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(elem.name);
 					if (!dataElement["type"] || type != dataElement["type"]) return Promise.reject(err);
 					if (type == Constants.CERT_FIELD_TYPES.Checkbox && !dataElement.options.includes(value))
 						return Promise.reject(err);
 				}
 
-				validateValueMatchesType(type, value, err);
+				await validateValueMatchesType(type, value, err);
 				return Promise.resolve(value);
 			} catch (err) {
 				console.log(err);
@@ -204,21 +203,30 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
-	let _doValidateValueInTemplate = function(dataSection, templateDataSection) {
-		dataSection.forEach(elem => {
-			const template = templateDataSection.find(template => template.name === elem.name);
+	let _doValidateValueInTemplate = async function(dataSection, templateDataSection) {
+		try {
+			for (let elem of dataSection) {
+				const template = templateDataSection.find(template => template.name === elem.name);
+				if (!template) {
+					return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+				}
+				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(elem.name);
+				await validateValueMatchesType(template.type, elem.value, err);
+			}
 
-			if (!template) return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+			const allNames = dataSection.map(elem => elem.name);
 
-			const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(param.name);
-			validateValueMatchesType(template.type, elem.value, err);
-		});
+			for (let elem of templateDataSection) {
+				if (elem.required && allNames.indexOf(elem.name) < 0) {
+					return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
+				}
+			}
 
-		const allNames = dataSection.map(elem => elem.name);
-		templateDataSection.forEach(elem => {
-			if (elem.required && allNames.indexOf(elem.name) < 0)
-				return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
-		});
+			return Promise.resolve();
+		} catch (err) {
+			console.log(err);
+			return Promise.reject(err);
+		}
 	};
 
 	let validatePartValueInTemplate = function(validation, param) {
@@ -235,7 +243,7 @@ let _doValidate = function(param, isHead) {
 					return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 				}
 
-				_doValidateValueInTemplate(data, template.data.participant);
+				await _doValidateValueInTemplate(data, template.data.participant);
 				return Promise.resolve(value);
 			} catch (err) {
 				console.log(err);
@@ -258,18 +266,18 @@ let _doValidate = function(param, isHead) {
 				}
 
 				const templateData = template.data;
-
 				for (let key of Object.values(Constants.DATA_TYPES)) {
 					if (key === Constants.DATA_TYPES.PARTICIPANT) {
 						const templateDataSection = templateData[key];
 						const dataSection = data[key];
-						dataSection.forEach(section => {
-							_doValidateValueInTemplate(section, templateDataSection);
-						});
+
+						for (let section of dataSection) {
+							await _doValidateValueInTemplate(section, templateDataSection);
+						}
 					} else {
 						const dataSection = data[key];
 						const templateDataSection = templateData[key];
-						_doValidateValueInTemplate(dataSection, templateDataSection);
+						await _doValidateValueInTemplate(dataSection, templateDataSection);
 					}
 				}
 				return Promise.resolve(value);
