@@ -19,6 +19,7 @@
 		"apollo-cache-inmemory": "^1.6.3",
 		"body-parser": "^1.19.0",
 		"cors": "^2.8.5",
+		"did-jwt": "^3.0.0",
 		"did-jwt-vc": "^0.1.2",
 		"ethr-did": "^1.1.0",
 		"ethr-did-resolver": "^1.0.3",

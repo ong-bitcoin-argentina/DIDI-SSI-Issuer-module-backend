@@ -59,6 +59,7 @@ router.get(
 		let template;
 		try {
 			template = await TemplateService.getById(cert.templateId);
+			// agregar data del template al certificado (tipos, valores por defecto, etc)
 			const result = CertService.addTemplateDataToCert(cert, template);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -90,6 +91,7 @@ router.post(
 			});
 
 			let credentials = [];
+			// para cada participante, generar un cert, sus micro y guardarlos en mouro
 			for (let part of partData) {
 				cert.split
 					? await generateCertificate(credentials, template, cert, part)
@@ -97,6 +99,7 @@ router.post(
 			}
 
 			let result = cert;
+			// actualizar estado en la bd local
 			if (credentials.length) result = await CertService.emmit(cert, credentials);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -106,6 +109,7 @@ router.post(
 	}
 );
 
+// crea certificado completo (sin microcredenciales)
 const generateFullCertificate = async function(credentials, template, cert, part) {
 	try {
 		const allData = cert.data.cert.concat(part).concat(cert.data.others);
@@ -144,7 +148,9 @@ const generateFullCertificate = async function(credentials, template, cert, part
 	}
 };
 
+// crea certificado y sus microcredenciales
 const generateCertificate = async function(credentials, template, cert, part) {
+	// generar microcredencial
 	const generatePartialCertificate = async function(name, certData, expDate, did) {
 		try {
 			const data = {};
@@ -175,6 +181,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		const microCreds = {};
 
 		let did, expDate;
+		// recorrer el certificado y obtener la info para cada microcredencial
 		allData.forEach(dataElem => {
 			switch (dataElem.name) {
 				case Constants.CERT_FIELD_MANDATORY.DID:
@@ -204,6 +211,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 			generateCertPromises.push(cert);
 		}
 
+		// crear las microcredenciales
 		const microCredentials = await Promise.all(generateCertPromises);
 
 		data[name] = {
@@ -223,20 +231,24 @@ const generateCertificate = async function(credentials, template, cert, part) {
 
 			data[name].wrapped[generateCertNames[i]] = microCred;
 		}
+
 		const generateFull = MouroService.createCertificate(data, expDate, did);
 		saveCertPromises.push(generateFull);
 
+		// guardar microcredenciales y generar la macrocredencial
 		const res = await Promise.all(saveCertPromises);
 
 		for (let i = 0; i < res.length; i++) {
 			if (i != res.length - 1) {
 				credentials.push(res[i]);
 			} else {
+				// guardar macrocredencial
 				const savedFull = await MouroService.saveCertificate(res[i]);
 				credentials.push(savedFull);
 			}
 		}
 
+		// retornal array con todas las credenciales generadas
 		return Promise.resolve(credentials);
 	} catch (err) {
 		return Promise.reject(err);
