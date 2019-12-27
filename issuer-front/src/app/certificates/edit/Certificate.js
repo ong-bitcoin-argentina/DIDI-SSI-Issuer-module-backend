@@ -647,8 +647,8 @@ class Certificate extends Component {
 					getOptionLabel={option => (option ? option.name : "")}
 					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
 					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={event => {
-						this.templateSelected(this.state.templates[event.target.value]);
+					onChange={(_, value) => {
+						this.templateSelected(value);
 					}}
 				/>
 			</div>
