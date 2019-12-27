@@ -100,8 +100,8 @@ class QrRequest extends Component {
 					getOptionLabel={option => (option ? option.name : "")}
 					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
 					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={event => {
-						this.setState({ selectedTemplate: this.props.templates[event.target.value] });
+					onChange={(_, value) => {
+						this.setState({ selectedTemplate: value });
 					}}
 				/>
 			</div>
@@ -135,7 +135,7 @@ class QrRequest extends Component {
 	}
 
 	renderGenerateButton = () => {
-		const disabled = !(this.state.selectedTemplate);
+		const disabled = !this.state.selectedTemplate;
 
 		return (
 			<div className="QrButtons">
