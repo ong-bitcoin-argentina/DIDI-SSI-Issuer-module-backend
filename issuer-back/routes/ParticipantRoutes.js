@@ -39,7 +39,8 @@ router.post(
 		const jwt = req.body.access_token;
 
 		try {
-			const data = await MouroService.verifyCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
+			// const data = await MouroService.verifyCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
+			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
 
 			let name;
 			const dataElems = [{ name: "DID", value: data.payload.iss }];
