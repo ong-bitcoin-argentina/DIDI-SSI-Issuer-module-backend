@@ -528,7 +528,6 @@ class Certificate extends Component {
 		} else {
 			cert.microCredentials = [];
 		}
-		console.log(cert);
 		this.setState({ cert: cert });
 	};
 
@@ -679,59 +678,70 @@ class Certificate extends Component {
 					</Select>
 				</div>
 
-				{cert.split &&
-					cert.microCredentials &&
-					cert.microCredentials.map((microCred, key) => {
-						let picked = [];
-						for (let i = 0; i < cert.microCredentials.length; i++) {
-							if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
-						}
-						const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
-						return (
-							<div className="DataElem" key={"Microcred-" + key}>
-								<input
-									type="text"
-									className="DataInput MicroCredFieldName"
-									value={microCred.title}
-									onChange={event => {
-										this.microcredNameChanged(key, event);
-									}}
-								/>
-								<Select
-									className="MicroCredFieldsSelect"
-									multiple
-									displayEmpty
-									value={microCred.names}
-									onChange={event => {
-										this.microcredFieldsSelected(key, event);
-									}}
-									renderValue={selected => selected.join(", ")}
-								>
-									{data.map((elem, key2) => {
-										return (
-											<MenuItem key={"MicroCred-" + key + "-Fields-" + key2} value={elem}>
-												<Checkbox checked={microCred.names.indexOf(elem) > -1} />
-												<ListItemText primary={elem} />
-											</MenuItem>
-										);
-									})}
-								</Select>
+				{cert.split && cert.microCredentials && cert.microCredentials.length > 0 && (
+					<div className="MicroCreds">
+						<div className="MicroCredsHeader">
+							<div className="DataName MicroCredsNameLabel">{Messages.EDIT.DATA.MICRO_CRED_NAME}</div>
+							<div className="DataName MicroCredsFieldsLabel">{Messages.EDIT.DATA.MICRO_CRED_FIELDS}</div>
+						</div>
+						{cert.microCredentials.map((microCred, key) => {
+							let picked = [];
+							for (let i = 0; i < cert.microCredentials.length; i++) {
+								if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
+							}
+							const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
+							return (
+								<div className="DataElem" key={"Microcred-" + key}>
+									<input
+										type="text"
+										className="DataInput MicroCredFieldName"
+										value={microCred.title}
+										onChange={event => {
+											this.microcredNameChanged(key, event);
+										}}
+									/>
+									<Select
+										className="MicroCredFieldsSelect"
+										multiple
+										displayEmpty
+										value={microCred.names}
+										onChange={event => {
+											this.microcredFieldsSelected(key, event);
+										}}
+										renderValue={selected => selected.join(", ")}
+									>
+										{data.map((elem, key2) => {
+											return (
+												<MenuItem key={"MicroCred-" + key + "-Fields-" + key2} value={elem}>
+													<Checkbox checked={microCred.names.indexOf(elem) > -1} />
+													<ListItemText primary={elem} />
+												</MenuItem>
+											);
+										})}
+									</Select>
 
-								<button className="AddMicroCredential" onClick={this.addMicroCredential}>
-									{Messages.EDIT.BUTTONS.ADD_MICRO_CRED}
-								</button>
-								<button
-									hidden={key === 0}
-									className="RemoveMicroCredential"
-									onClick={() => {
-										this.removeMicroCredential(key);
-									}}
-								>
-									{Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED}
-								</button>
-							</div>
-						);
-					})}
+									<button
+										title={Messages.EDIT.BUTTONS.ADD_MICRO_CRED_LABEL}
+										className="AddMicroCredential"
+										onClick={this.addMicroCredential}
+									>
+										{Messages.EDIT.BUTTONS.ADD_MICRO_CRED}
+									</button>
+									<button
+										title={Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED_LABEL}
+										hidden={key === 0}
+										className="RemoveMicroCredential"
+										onClick={() => {
+											this.removeMicroCredential(key);
+										}}
+									>
+										{Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED}
+									</button>
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		);
 	};
