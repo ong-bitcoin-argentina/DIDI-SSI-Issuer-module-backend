@@ -17,6 +17,8 @@ import QrRequest from "../qrRequest/QrRequest";
 import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
 
+import Checkbox from "@material-ui/core/Checkbox";
+
 class Lists extends Component {
 	constructor(props) {
 		super(props);
@@ -24,6 +26,7 @@ class Lists extends Component {
 		this.state = {
 			loading: false,
 			tabIndex: 0,
+			selectedElems: {},
 			certificates: [],
 			templates: []
 		};
@@ -69,6 +72,20 @@ class Lists extends Component {
 			createdOn: emmited ? cert.emmitedOn.split("T")[0] : "-",
 			firstName: cert.firstName,
 			lastName: cert.lastName,
+			select: (
+				<div className="Actions">
+					{!emmited && (
+						<Checkbox
+							checked={this.state.selectedElems[cert._id]}
+							onChange={(_, value) => {
+								const stateElem = this.state.selectedElems;
+								stateElem[cert._id] = value;
+								this.setState({ selectedElems: this.state.selectedElems });
+							}}
+						/>
+					)}
+				</div>
+			),
 			actions: (
 				<div className="Actions">
 					{!emmited && (
@@ -188,6 +205,46 @@ class Lists extends Component {
 		);
 	};
 
+	onCertificateMultiEmmit = () => {
+		const keys = Object.keys(this.state.selectedElems);
+		const toEmmit = keys.filter(key => this.state.selectedElems[key]);
+
+		if (toEmmit.length === 0) return;
+
+		const certs = this.state.certificates.filter(t => toEmmit.indexOf(t._id) > -1);
+		certs.forEach(cert => {
+			cert.actions = <div></div>;
+		});
+
+		this.setState({ cert: this.state.certificates });
+
+		const token = Cookie.get("token");
+		const self = this;
+		const promises = toEmmit.map(elem => {
+			return new Promise(function(resolve, reject) {
+				CertificateService.emmit(
+					token,
+					elem,
+					async function(_) {
+						resolve();
+					},
+					function(err) {
+						reject(err);
+					}
+				);
+			});
+		});
+
+		Promise.all(promises)
+			.then(function() {
+				self.componentDidMount();
+			})
+			.catch(function(err) {
+				console.log(err);
+				self.setState({ error: err });
+			});
+	};
+
 	// a pantalla de edicion
 	onCertificateEdit = id => {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
@@ -273,6 +330,7 @@ class Lists extends Component {
 						loading={this.state.loading}
 						onCertificateDelete={this.onCertificateDelete}
 						onCertificateEmmit={this.onCertificateEmmit}
+						onCertificateMultiEmmit={this.onCertificateMultiEmmit}
 						onCertificateCreate={this.onCertificateCreate}
 						error={this.state.error}
 						onLogout={this.onLogout}

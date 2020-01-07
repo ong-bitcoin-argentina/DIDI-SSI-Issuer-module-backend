@@ -19,6 +19,15 @@
 	flex-direction: row;
 }
 
+.CertButtons {
+	display: flex;
+	align-self: center;
+}
+
+.EmmitSelectedButton {
+	width: 100px;
+}
+
 .MoveButton {
 	width: 200px;
 	height: 50px;

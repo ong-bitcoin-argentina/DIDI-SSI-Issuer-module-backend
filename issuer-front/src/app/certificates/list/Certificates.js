@@ -123,14 +123,19 @@ class Certificates extends Component {
 				accessor: "createdOn"
 			},
 			{
-				Header: "",
+				Header: Messages.LIST.TABLE.ACTIONS,
 				accessor: "actions"
+			},
+			{
+				Header: Messages.LIST.TABLE.SELECT,
+				accessor: "select"
 			}
 		];
 
 		return (
 			<div className="CertificateTable">
 				<ReactTable
+					defaultCanFilter={true}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={certificates}
@@ -144,9 +149,14 @@ class Certificates extends Component {
 
 	renderButtons = () => {
 		return (
-			<button className="LogoutButton" onClick={this.props.onLogout}>
-				{Messages.LIST.BUTTONS.EXIT}
-			</button>
+			<div className="CertButtons">
+				<button className="EmmitSelectedButton" onClick={this.props.onCertificateMultiEmmit}>
+					{Messages.LIST.BUTTONS.EMMIT_SELECTED}
+				</button>
+				<button className="LogoutButton" onClick={this.props.onLogout}>
+					{Messages.LIST.BUTTONS.EXIT}
+				</button>
+			</div>
 		);
 	};
 }

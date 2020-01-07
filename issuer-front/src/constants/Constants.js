@@ -6,7 +6,7 @@ module.exports = {
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
 			GET_QR: id => {
-				return API + "/template/" + id + "/qr/"
+				return API + "/template/" + id + "/qr/";
 			},
 			GET: id => {
 				return API + "/template/" + id;
@@ -22,6 +22,9 @@ module.exports = {
 		PARTICIPANTS: {
 			GET_ALL: id => {
 				return API + "/participant/all/" + id;
+			},
+			GET_NEW: id => {
+				return API + "/participant/new/" + id;
 			},
 			GET: id => {
 				return API + "/participant/" + id;

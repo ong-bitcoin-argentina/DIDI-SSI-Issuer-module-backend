@@ -3,6 +3,7 @@ import { withRouter, Redirect } from "react-router";
 import "./QrRequest.scss";
 
 import TemplateService from "../../services/TemplateService";
+import ParticipantService from "../../services/ParticipantService";
 import Cookie from "js-cookie";
 
 import Constants from "../../constants/Constants";
@@ -23,6 +24,31 @@ class QrRequest extends Component {
 		};
 	}
 
+	componentDidMount() {
+		const self = this;
+		setInterval(function() {
+			if (self.state.qr && self.state.selectedTemplate) {
+				ParticipantService.getNew(
+					self.state.selectedTemplate._id,
+					function(participant) {
+						if (participant) {
+							self.setState({ participant: participant, waitingQr: false, qr: undefined });
+							self.onQrAnswerDetected(participant);
+						}
+					},
+					function(err) {
+						self.setState({ error: err });
+						console.log(err);
+					}
+				);
+			}
+		}, 10000);
+	}
+
+	onQrAnswerDetected = participant => {
+		console.log(participant);
+	};
+
 	generateQrCode = () => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -35,6 +61,7 @@ class QrRequest extends Component {
 			function(qr) {
 				self.setState({
 					qr: qr,
+					participant: undefined,
 					loading: false,
 					qrSet: false
 				});
@@ -52,18 +79,33 @@ class QrRequest extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	// volver a listado de certificados
+	onBack = () => {
+		this.props.history.push(Constants.ROUTES.CERTIFICATES);
+	};
+
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
 		const loading = this.state.loading;
+		const part = this.state.participant;
+		if (part) {
+			return (
+				<div className="ParticipantLoaded">
+					{!loading && part && this.renderParticipant(part)}
+					{!loading && this.renderParticipantButtons()}
+				</div>
+			);
+		}
+
 		return (
 			<div className="QrReq">
 				{/* !loading && this.renderNameInput() */}
 				{!loading && this.renderTemplateSelector()}
 				{!loading && this.renderQrPetition()}
-				{!loading && this.renderGenerateButton()}
+				{!loading && this.renderQrButtons()}
 			</div>
 		);
 	}
@@ -134,13 +176,44 @@ class QrRequest extends Component {
 		);
 	}
 
-	renderGenerateButton = () => {
+	renderParticipant = part => {
+		return (
+			<div className="Participant">
+				<div>{Messages.QR.LOAD_SUCCESS(part.name)}</div>
+				{/*part.data.map(data => {
+					return (
+						<div>
+							{data.name} : {data.value}
+						</div>
+					);
+				})*/}
+			</div>
+		);
+	};
+
+	renderQrButtons = () => {
 		const disabled = !this.state.selectedTemplate;
 
 		return (
 			<div className="QrButtons">
 				<button disabled={disabled} onClick={this.generateQrCode}>
 					{Messages.QR.BUTTONS.GENERATE}
+				</button>
+				<button className="LogoutButton" onClick={this.onLogout}>
+					{Messages.EDIT.BUTTONS.EXIT}
+				</button>
+			</div>
+		);
+	};
+
+	renderParticipantButtons = () => {
+		return (
+			<div className="CertificateButtons">
+				<button className="BackButton" onClick={this.onBack}>
+					{Messages.EDIT.BUTTONS.BACK}
+				</button>
+				<button className="LogoutButton" onClick={this.onLogout}>
+					{Messages.EDIT.BUTTONS.EXIT}
 				</button>
 			</div>
 		);

@@ -20,6 +20,14 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
+import Button from "@material-ui/core/Button";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
+var QRCode = require("qrcode");
 
 class Certificate extends Component {
 	constructor(props) {
@@ -27,10 +35,12 @@ class Certificate extends Component {
 
 		this.state = {
 			loading: false,
+			isDialogOpen: false,
+			waitingQr: false,
+			parts: [],
 			action: "viewing"
 		};
 	}
-
 	// cargar templates, certificado, etc
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
@@ -38,64 +48,122 @@ class Certificate extends Component {
 		const token = Cookie.get("token");
 
 		const self = this;
-		self.setState({ loading: true });
-		// cargar templates
-		TemplateService.getAll(
-			token,
-			function(templates) {
-				if (id) {
-					// cargar cert
-					CertificateService.get(
-						token,
-						id,
-						function(cert) {
-							// si el cert fue emitido, no puedo editarlo
-							const action = cert.emmitedOn ? "viewing" : "editing";
-							const selectedTemplate = templates.find(template => template._id === cert.templateId);
-							TemplateService.get(
-								token,
-								selectedTemplate._id,
-								function(template) {
-									ParticipantService.getAll(
-										template._id,
-										function(participants) {
-											self.setState({
-												selectedTemplate: selectedTemplate,
-												cert: cert,
-												template: template,
-												templates: templates,
-												participants: participants,
-												loading: false,
-												action: action
-											});
-										},
-										function(err) {
-											self.setState({ error: err });
-											console.log(err);
-										}
-									);
-								},
-								function(err) {
-									self.setState({ error: err });
-									console.log(err);
-								}
-							);
-						},
-						function(err) {
-							self.setState({ error: err });
-							console.log(err);
+		setInterval(function() {
+			if (self.state.waitingQr && self.state.template) {
+				ParticipantService.getNew(
+					self.state.template._id,
+					function(participant) {
+						if (participant) {
+							self.setState({ parts: [participant], waitingQr: false });
+							self.onParticipantsAdd();
 						}
-					);
-				} else {
-					self.setState({ templates: templates, loading: false });
+					},
+					function(err) {
+						self.setState({ error: err });
+						console.log(err);
+					}
+				);
+			}
+		}, 10000);
+
+		(async () => {
+			this.setState({ loading: true });
+
+			try {
+				await this.getTemplates(token);
+				if (id) {
+					await this.getCert(token, id);
+					await this.getTemplate(token);
+					await this.getParticipants();
 				}
-			},
-			function(err) {
+			} catch (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
-		);
+
+			this.setState({ loading: false });
+		})();
 	}
+
+	getTemplates = function(token) {
+		const self = this;
+		return new Promise(function(resolve, reject) {
+			TemplateService.getAll(
+				token,
+				function(templates) {
+					self.setState({ templates: templates });
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
+
+	getCert = function(token, id) {
+		const self = this;
+		return new Promise(function(resolve, reject) {
+			CertificateService.get(
+				token,
+				id,
+				function(cert) {
+					self.setState({
+						cert: cert
+					});
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
+
+	getTemplate = function(token) {
+		const self = this;
+
+		// si el cert fue emitido, no puedo editarlo
+		const action = this.state.cert.emmitedOn ? "viewing" : "editing";
+		const selectedTemplate = this.state.templates.find(template => template._id === this.state.cert.templateId);
+
+		return new Promise(function(resolve, reject) {
+			TemplateService.get(
+				token,
+				selectedTemplate._id,
+				function(template) {
+					self.setState({
+						action: action,
+						selectedTemplate: selectedTemplate,
+						template: template
+					});
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
+
+	getParticipants = function() {
+		const self = this;
+
+		return Promise(function(resolve, reject) {
+			ParticipantService.getAll(
+				this.state.template._id,
+				function(participants) {
+					self.setState({
+						participants: participants
+					});
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
 
 	// generar certificado a partir del template seleccionado en el combo
 	certFromTemplate = template => {
@@ -163,7 +231,7 @@ class Certificate extends Component {
 		const certData = this.state.cert.data.cert;
 		for (let key of Object.keys(certData)) {
 			if (!certData[key].mandatory) {
-				csv += certData[key].name + "(" + getSample(certData[key]) + "),";
+				csv += certData[key].name + " (" + getSample(certData[key]) + "),";
 			}
 		}
 
@@ -171,17 +239,17 @@ class Certificate extends Component {
 		if (othersData) {
 			for (let key of Object.keys(othersData)) {
 				if (!othersData[key].mandatory) {
-					csv += othersData[key].name + "(" + getSample(othersData[key]) + "),";
+					csv += othersData[key].name + " (" + getSample(othersData[key]) + "),";
 				}
 			}
 		}
 
 		const partData = this.state.cert.data.participant[0];
-		for (let i = 0; i < 3; i++) {
-			for (let key of Object.keys(partData)) {
-				csv += partData[key].name + i + "(" + getSample(partData[key]) + "),";
-			}
+		// for (let i = 0; i < 3; i++) {
+		for (let key of Object.keys(partData)) {
+			csv += partData[key].name + " (" + getSample(partData[key]) + "),";
 		}
+		//}
 
 		csv = csv.substring(0, csv.length - 1);
 
@@ -248,11 +316,22 @@ class Certificate extends Component {
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			const participant = [];
-			const data = reader.result.split(",");
-			let index = 0;
+			const data = reader.result.split(/[\r\n,]+/);
 
 			const certData = JSON.parse(JSON.stringify(self.state.cert.data.cert));
-			for (let key of Object.keys(certData)) {
+			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
+			const partData = self.certDataFromTemplate(self.state.template, "participant");
+
+			const certDataKeys = Object.keys(certData);
+			const otherDataKeys = Object.keys(othersData);
+
+			const certDataCount = certDataKeys.length;
+			const otherDataCount = otherDataKeys.length;
+			const partDataCount = partData.length;
+
+			let index = certDataCount + otherDataCount + partDataCount - 1;
+
+			for (let key of certDataKeys) {
 				const dataElem = certData[key];
 				if (!dataElem.mandatory) {
 					const err = assignElement(dataElem, data[index]);
@@ -261,8 +340,7 @@ class Certificate extends Component {
 				}
 			}
 
-			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
-			for (let key of Object.keys(othersData)) {
+			for (let key of otherDataKeys) {
 				const dataElem = othersData[key];
 				if (!dataElem.mandatory) {
 					const err = assignElement(dataElem, data[index]);
@@ -281,6 +359,7 @@ class Certificate extends Component {
 						index++;
 					}
 				}
+				index += certDataCount + otherDataCount - 1;
 				participant.push(participantData);
 			} while (data.length > index);
 
@@ -373,6 +452,25 @@ class Certificate extends Component {
 		);
 	}
 
+	onParticipantsAdd = () => {
+		const len = this.state.cert.data.participant.length;
+		let pos = 0;
+
+		this.setState({ isDialogOpen: false });
+		if (this.state.parts.length === 0) return;
+
+		for (let newPart of this.state.parts) {
+			if (pos >= len) this.addParticipant();
+			this.participantSelected(newPart._id, pos);
+			pos++;
+		}
+
+		this.setState({ parts: [] });
+		if (len >= pos) {
+			this.state.cert.data.participant.splice(pos, len - pos);
+		}
+	};
+
 	// guardar cert y volver a listado de certificados
 	onSave = () => {
 		const token = Cookie.get("token");
@@ -425,7 +523,11 @@ class Certificate extends Component {
 	splitChanged = value => {
 		const cert = this.state.cert;
 		cert.split = value;
-		if (value) cert.microCredentials = [{ title: "", names: [] }];
+		if (value === "true") {
+			cert.microCredentials = [{ title: "", names: [] }];
+		} else {
+			cert.microCredentials = [];
+		}
 		this.setState({ cert: cert });
 	};
 
@@ -463,6 +565,39 @@ class Certificate extends Component {
 		return false;
 	};
 
+	// abrir dialogo de creacion de participantes
+	onDialogOpen = () => {
+		this.generateQrCode();
+		this.setState({ isDialogOpen: true, parts: [], waitingQr: true });
+	};
+
+	// cerrar dialogo de creacion de participantes
+	onDialogClose = () => this.setState({ isDialogOpen: false, parts: [], waitingQr: false });
+
+	// obtener codigo qr a mostrar
+	generateQrCode = () => {
+		const token = Cookie.get("token");
+		const self = this;
+		self.setState({ loading: true, qr: undefined });
+
+		// obtener template
+		TemplateService.getQrPetition(
+			token,
+			self.state.template._id,
+			function(qr) {
+				self.setState({
+					qr: qr,
+					loading: false,
+					qrSet: false
+				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -473,6 +608,7 @@ class Certificate extends Component {
 			<div className="Certificate">
 				{!loading && this.renderTemplateSelector()}
 				{!loading && this.renderCert()}
+				{this.renderParticipantDialog()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
 			</div>
@@ -507,7 +643,6 @@ class Certificate extends Component {
 									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
 								</button>
 							</div>
-							{!viewing && this.renderParticipantSelector(key)}
 							{this.renderSection(cert, data)}
 						</div>
 					);
@@ -543,59 +678,70 @@ class Certificate extends Component {
 					</Select>
 				</div>
 
-				{cert.split &&
-					cert.microCredentials &&
-					cert.microCredentials.map((microCred, key) => {
-						let picked = [];
-						for (let i = 0; i < cert.microCredentials.length; i++) {
-							if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
-						}
-						const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
-						return (
-							<div className="DataElem" key={"Microcred-" + key}>
-								<input
-									type="text"
-									className="DataInput MicroCredFieldName"
-									value={microCred.title}
-									onChange={event => {
-										this.microcredNameChanged(key, event);
-									}}
-								/>
-								<Select
-									className="MicroCredFieldsSelect"
-									multiple
-									displayEmpty
-									value={microCred.names}
-									onChange={event => {
-										this.microcredFieldsSelected(key, event);
-									}}
-									renderValue={selected => selected.join(", ")}
-								>
-									{data.map((elem, key2) => {
-										return (
-											<MenuItem key={"MicroCred-" + key + "-Fields-" + key2} value={elem}>
-												<Checkbox checked={microCred.names.indexOf(elem) > -1} />
-												<ListItemText primary={elem} />
-											</MenuItem>
-										);
-									})}
-								</Select>
+				{cert.split && cert.microCredentials && cert.microCredentials.length > 0 && (
+					<div className="MicroCreds">
+						<div className="MicroCredsHeader">
+							<div className="DataName MicroCredsNameLabel">{Messages.EDIT.DATA.MICRO_CRED_NAME}</div>
+							<div className="DataName MicroCredsFieldsLabel">{Messages.EDIT.DATA.MICRO_CRED_FIELDS}</div>
+						</div>
+						{cert.microCredentials.map((microCred, key) => {
+							let picked = [];
+							for (let i = 0; i < cert.microCredentials.length; i++) {
+								if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
+							}
+							const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
+							return (
+								<div className="DataElem" key={"Microcred-" + key}>
+									<input
+										type="text"
+										className="DataInput MicroCredFieldName"
+										value={microCred.title}
+										onChange={event => {
+											this.microcredNameChanged(key, event);
+										}}
+									/>
+									<Select
+										className="MicroCredFieldsSelect"
+										multiple
+										displayEmpty
+										value={microCred.names}
+										onChange={event => {
+											this.microcredFieldsSelected(key, event);
+										}}
+										renderValue={selected => selected.join(", ")}
+									>
+										{data.map((elem, key2) => {
+											return (
+												<MenuItem key={"MicroCred-" + key + "-Fields-" + key2} value={elem}>
+													<Checkbox checked={microCred.names.indexOf(elem) > -1} />
+													<ListItemText primary={elem} />
+												</MenuItem>
+											);
+										})}
+									</Select>
 
-								<button className="AddMicroCredential" onClick={this.addMicroCredential}>
-									{Messages.EDIT.BUTTONS.ADD_MICRO_CRED}
-								</button>
-								<button
-									hidden={key === 0}
-									className="RemoveMicroCredential"
-									onClick={() => {
-										this.removeMicroCredential(key);
-									}}
-								>
-									{Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED}
-								</button>
-							</div>
-						);
-					})}
+									<button
+										title={Messages.EDIT.BUTTONS.ADD_MICRO_CRED_LABEL}
+										className="AddMicroCredential"
+										onClick={this.addMicroCredential}
+									>
+										{Messages.EDIT.BUTTONS.ADD_MICRO_CRED}
+									</button>
+									<button
+										title={Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED_LABEL}
+										hidden={key === 0}
+										className="RemoveMicroCredential"
+										onClick={() => {
+											this.removeMicroCredential(key);
+										}}
+									>
+										{Messages.EDIT.BUTTONS.REMOVE_MICRO_CRED}
+									</button>
+								</div>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -619,7 +765,6 @@ class Certificate extends Component {
 									this.state.action === "creating" || this.state.action === "editing",
 									(dataElem, value) => {
 										if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(value);
-
 										dataElem.value = value;
 										self.setState({ cert: cert });
 									}
@@ -655,26 +800,76 @@ class Certificate extends Component {
 		);
 	};
 
-	renderParticipantSelector = key => {
+	renderParticipantDialog = () => {
 		const participants = this.state.participants;
-		if (!participants || participants.length === 0) {
+
+		return (
+			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
+				<DialogContent>
+					{participants && participants.length > 0 && (
+						<Select
+							className="ParticipantsSelector"
+							multiple
+							displayEmpty
+							value={this.state.parts}
+							onChange={event => {
+								this.setState({ parts: event.target.value });
+							}}
+							renderValue={selected => selected.map(sel => sel.name).join(", ")}
+						>
+							{participants.map((elem, key) => {
+								return (
+									<MenuItem key={"ParticipantsSelector-" + key} value={elem}>
+										<Checkbox checked={this.state.parts.indexOf(elem) > -1} />
+										<ListItemText primary={elem.name} />
+									</MenuItem>
+								);
+							})}
+						</Select>
+					)}
+
+					{this.renderQrPetition()}
+				</DialogContent>
+				<DialogActions>
+					{participants && participants.length > 0 && (
+						<Button onClick={this.onParticipantsAdd} color="primary">
+							{Messages.EDIT.DIALOG.PARTICIPANT.CREATE}
+						</Button>
+					)}
+					<Button onClick={this.onDialogClose} color="primary">
+						{Messages.EDIT.DIALOG.PARTICIPANT.CLOSE}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
+
+	renderQrPetition() {
+		const qr = this.state.qr;
+		if (!qr) {
 			return <div></div>;
 		}
 
+		const self = this;
+		if (!self.state.qrSet) {
+			setTimeout(function() {
+				const canvas = document.getElementById("canvas");
+				if (canvas) {
+					QRCode.toCanvas(canvas, qr, function(error) {
+						if (error) console.error(error);
+					});
+					self.setState({ qrSet: true });
+				}
+			}, 100);
+		}
+
 		return (
-			<div className="ParticipantsSelector">
-				<Autocomplete
-					options={participants}
-					getOptionLabel={option => (option ? option.name : "")}
-					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={(_, value) => {
-						console.log(value);
-						this.participantSelected(value._id, key);
-					}}
-				/>
+			<div className="QrPetition">
+				<canvas id="canvas"></canvas>
 			</div>
 		);
-	};
+	}
 
 	renderButtons = () => {
 		return (
@@ -686,6 +881,14 @@ class Certificate extends Component {
 						onClick={this.addParticipant}
 					>
 						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
+					</button>
+
+					<button
+						className="AddParticipant"
+						hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						onClick={this.onDialogOpen}
+					>
+						{Messages.EDIT.BUTTONS.LOAD_PARTICIPANTS}
 					</button>
 
 					<button

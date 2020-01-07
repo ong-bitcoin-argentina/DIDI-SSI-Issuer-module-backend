@@ -7,26 +7,41 @@ module.exports = {
 	},
 	EDIT: {
 		DATA: {
+			PREVIEW: "CAMPOS A PREVISUALIZAR",
 			CERT: "DATOS DEL CERTIFICADO",
 			PART: "DATOS DEL PARTICIPANTE",
-			OTHER: "OTROS DATOS"
+			OTHER: "OTROS DATOS",
+
+			MICRO_CRED_NAME: "NOMBRE DE LA MICRO",
+			MICRO_CRED_FIELDS: "CAMPOS DE LA MICRO"
 		},
 		DIALOG: {
-			TITLE: "Agregar Campo",
-			OPTION: "Opcion",
-			REQUIRED: "Requerido",
-			TYPES: "Tipo",
-			NAME: "Nombre",
-			CREATE: "Crear",
-			CLOSE: "Cerrar"
+			PARTICIPANT: {
+				TITLE: "Agregar Participante",
+				NAME: "Participante",
+				CREATE: "Agregar",
+				CLOSE: "Cerrar"
+			},
+			FIELD: {
+				TITLE: "Agregar Campo",
+				OPTION: "Opcion",
+				REQUIRED: "Requerido",
+				TYPES: "Tipo",
+				NAME: "Nombre",
+				CREATE: "Crear",
+				CLOSE: "Cerrar"
+			}
 		},
 		BUTTONS: {
+			ADD_MICRO_CRED_LABEL: "Agregar Micro",
+			REMOVE_MICRO_CRED_LABEL: "Quitar Micro",
 			ADD_MICRO_CRED: "+",
 			REMOVE_MICRO_CRED: "-",
 			REMOVE_PARTICIPANTS: "X",
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
+			LOAD_PARTICIPANTS: "Cargar Participantes",
 			CREATE: "NUEVO CAMPO",
 			SAVE: "Guardar",
 			BACK: "Volver",
@@ -49,14 +64,17 @@ module.exports = {
 			NAME: "NOMBRE",
 			PREV: "ANTERIOR",
 			NEXT: "SIGUIENTE",
-			EMISSION_DATE: "FECHA DE EMISSION"
+			EMISSION_DATE: "FECHA DE EMISSION",
+			SELECT: "SELECCIONAR",
+			ACTIONS: "ACCIONES"
 		},
 		BUTTONS: {
 			TO_QR: "REGISTRAR PARTICIPANTE",
-			TO_CERTIFICATES: "CERTIFICADOS EMITIDOS",
+			TO_CERTIFICATES: "CERTIFICADOS",
 			TO_TEMPLATES: "TEMPLATES",
 			CREATE_TEMPLATE: "CREAR CERTIFICADO",
 			CREATE_CERT: "EMITIR CERTIFICADO",
+			EMMIT_SELECTED: "Emitir Seleccionados",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
 			EDIT: "Editar",
@@ -65,6 +83,9 @@ module.exports = {
 		}
 	},
 	QR: {
+		LOAD_SUCCESS: name => {
+			return "USUARIO '" + name + "' CARGADO CON ÉXITO";
+		},
 		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {

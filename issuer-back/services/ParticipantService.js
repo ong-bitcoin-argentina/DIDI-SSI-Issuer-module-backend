@@ -23,6 +23,16 @@ module.exports.getAllByTemplateId = async function(templateId) {
 	}
 };
 
+module.exports.getNewByTemplateId = async function(templateId) {
+	try {
+		let participant = await Participant.getNewByTemplateId(templateId);
+		return Promise.resolve(participant);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.PARTICIPANT.ERR.GET);
+	}
+};
+
 module.exports.create = async function(name, data, templateId) {
 	try {
 		const participant = await Participant.generate(name, data, templateId);

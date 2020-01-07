@@ -20,6 +20,16 @@ router.get("/all/:templateId", async function(req, res) {
 	}
 });
 
+router.get("/new/:templateId", async function(req, res) {
+	const templateId = req.params.templateId;
+	try {
+		const participant = await ParticipantService.getNewByTemplateId(templateId);
+		return ResponseHandler.sendRes(res, participant);
+	} catch (err) {
+		return ResponseHandler.sendErr(res, err);
+	}
+});
+
 router.get("/:id", async function(req, res) {
 	const id = req.params.id;
 	try {

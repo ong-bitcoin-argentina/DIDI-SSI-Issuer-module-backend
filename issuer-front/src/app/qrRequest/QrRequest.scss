@@ -16,6 +16,13 @@
 	overflow-wrap: break-word;
 }
 
+.ParticipantLoaded {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	min-height: 337px;
+}
+
 .QrTemplateSelector {
 	align-self: center;
 	margin-top: 20px;

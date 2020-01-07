@@ -60,6 +60,18 @@
 	height: 45px;
 }
 
+.MicroCredsHeader {
+	display: flex;
+}
+
+.MicroCredsNameLabel {
+	width: 250px;
+}
+
+.MicroCredsFieldsLabel {
+	width: 250px;
+}
+
 .MicroCredFieldName {
 	background-color: $TableBackground;
 	width: 230px;
@@ -81,4 +93,8 @@
 	margin-left: 10px;
 	width: 30px;
 	height: 30px;
+}
+
+.ParticipantsSelector {
+	width: 100%;
 }
