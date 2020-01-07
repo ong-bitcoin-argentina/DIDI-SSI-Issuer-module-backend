@@ -248,7 +248,7 @@ class Certificate extends Component {
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			const participant = [];
-			const data = reader.result.split(",");
+			const data = reader.result.split(/[\r\n,]+/);
 
 			const certData = JSON.parse(JSON.stringify(self.state.cert.data.cert));
 			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
@@ -262,7 +262,6 @@ class Certificate extends Component {
 			const partDataCount = partData.length;
 
 			let index = certDataCount + otherDataCount + partDataCount - 1;
-			data[index] = data[index].substr(1);
 
 			for (let key of certDataKeys) {
 				const dataElem = certData[key];
