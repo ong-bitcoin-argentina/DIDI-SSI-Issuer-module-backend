@@ -25,7 +25,7 @@ class Lists extends Component {
 
 		this.state = {
 			loading: false,
-			tabIndex: 1,
+			tabIndex: 0,
 			selectedElems: {},
 			certificates: [],
 			templates: []

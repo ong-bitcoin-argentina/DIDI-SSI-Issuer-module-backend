@@ -19,6 +19,10 @@ const ParticipantSchema = mongoose.Schema({
 	},
 	data: [dataElement],
 	templateId: String,
+	new: {
+		type: Boolean,
+		default: true
+	},
 	deleted: {
 		type: Boolean,
 		default: false
@@ -69,8 +73,12 @@ module.exports = Participant;
 Participant.generate = async function(name, data, templateId) {
 	try {
 		const query = { name: name, templateId: templateId, deleted: false };
-		const participant = await Participant.findOne(query);
-		if (participant) return null;
+		const action = {
+			$set: { new: true }
+		};
+		const participant = await Participant.findOneAndUpdate(query, action);
+		console.log(participant);
+		if (participant) return Promise.resolve(participant);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
@@ -86,6 +94,26 @@ Participant.generate = async function(name, data, templateId) {
 	try {
 		participant = await participant.save();
 		return Promise.resolve(participant);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+Participant.getNewByTemplateId = async function(templateId) {
+	try {
+		const query = { templateId: ObjectId(templateId), new: true, deleted: false };
+		const participant = await Participant.find(query);
+		if (participant.length) {
+			const updateQuery = { _id: participant[0]._id };
+			const updateAction = {
+				$set: { new: false }
+			};
+			await Participant.findOneAndUpdate(updateQuery, updateAction);
+			return Promise.resolve(participant[0]);
+		} else {
+			return Promise.resolve(undefined);
+		}
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

@@ -135,6 +135,7 @@ class Certificates extends Component {
 		return (
 			<div className="CertificateTable">
 				<ReactTable
+					defaultCanFilter={true}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={certificates}

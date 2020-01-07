@@ -27,6 +27,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+var QRCode = require("qrcode");
+
 class Certificate extends Component {
 	constructor(props) {
 		super(props);
@@ -34,11 +36,11 @@ class Certificate extends Component {
 		this.state = {
 			loading: false,
 			isDialogOpen: false,
+			waitingQr: false,
 			parts: [],
 			action: "viewing"
 		};
 	}
-
 	// cargar templates, certificado, etc
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
@@ -46,64 +48,122 @@ class Certificate extends Component {
 		const token = Cookie.get("token");
 
 		const self = this;
-		self.setState({ loading: true });
-		// cargar templates
-		TemplateService.getAll(
-			token,
-			function(templates) {
-				if (id) {
-					// cargar cert
-					CertificateService.get(
-						token,
-						id,
-						function(cert) {
-							// si el cert fue emitido, no puedo editarlo
-							const action = cert.emmitedOn ? "viewing" : "editing";
-							const selectedTemplate = templates.find(template => template._id === cert.templateId);
-							TemplateService.get(
-								token,
-								selectedTemplate._id,
-								function(template) {
-									ParticipantService.getAll(
-										template._id,
-										function(participants) {
-											self.setState({
-												selectedTemplate: selectedTemplate,
-												cert: cert,
-												template: template,
-												templates: templates,
-												participants: participants,
-												loading: false,
-												action: action
-											});
-										},
-										function(err) {
-											self.setState({ error: err });
-											console.log(err);
-										}
-									);
-								},
-								function(err) {
-									self.setState({ error: err });
-									console.log(err);
-								}
-							);
-						},
-						function(err) {
-							self.setState({ error: err });
-							console.log(err);
+		setInterval(function() {
+			if (self.state.waitingQr && self.state.template) {
+				ParticipantService.getNew(
+					self.state.template._id,
+					function(participant) {
+						if (participant) {
+							self.setState({ parts: [participant], waitingQr: false });
+							self.onParticipantsAdd();
 						}
-					);
-				} else {
-					self.setState({ templates: templates, loading: false });
+					},
+					function(err) {
+						self.setState({ error: err });
+						console.log(err);
+					}
+				);
+			}
+		}, 10000);
+
+		(async () => {
+			this.setState({ loading: true });
+
+			try {
+				await this.getTemplates(token);
+				if (id) {
+					await this.getCert(token, id);
+					await this.getTemplate(token);
+					await this.getParticipants();
 				}
-			},
-			function(err) {
+			} catch (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
-		);
+
+			this.setState({ loading: false });
+		})();
 	}
+
+	getTemplates = function(token) {
+		const self = this;
+		return new Promise(function(resolve, reject) {
+			TemplateService.getAll(
+				token,
+				function(templates) {
+					self.setState({ templates: templates });
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
+
+	getCert = function(token, id) {
+		const self = this;
+		return new Promise(function(resolve, reject) {
+			CertificateService.get(
+				token,
+				id,
+				function(cert) {
+					self.setState({
+						cert: cert
+					});
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
+
+	getTemplate = function(token) {
+		const self = this;
+
+		// si el cert fue emitido, no puedo editarlo
+		const action = this.state.cert.emmitedOn ? "viewing" : "editing";
+		const selectedTemplate = this.state.templates.find(template => template._id === this.state.cert.templateId);
+
+		return new Promise(function(resolve, reject) {
+			TemplateService.get(
+				token,
+				selectedTemplate._id,
+				function(template) {
+					self.setState({
+						action: action,
+						selectedTemplate: selectedTemplate,
+						template: template
+					});
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
+
+	getParticipants = function() {
+		const self = this;
+
+		return Promise(function(resolve, reject) {
+			ParticipantService.getAll(
+				this.state.template._id,
+				function(participants) {
+					self.setState({
+						participants: participants
+					});
+					resolve();
+				},
+				function(err) {
+					reject(err);
+				}
+			);
+		});
+	};
 
 	// generar certificado a partir del template seleccionado en el combo
 	certFromTemplate = template => {
@@ -463,7 +523,12 @@ class Certificate extends Component {
 	splitChanged = value => {
 		const cert = this.state.cert;
 		cert.split = value;
-		if (value) cert.microCredentials = [{ title: "", names: [] }];
+		if (value === "true") {
+			cert.microCredentials = [{ title: "", names: [] }];
+		} else {
+			cert.microCredentials = [];
+		}
+		console.log(cert);
 		this.setState({ cert: cert });
 	};
 
@@ -502,10 +567,37 @@ class Certificate extends Component {
 	};
 
 	// abrir dialogo de creacion de participantes
-	onDialogOpen = () => this.setState({ isDialogOpen: true, parts: [] });
+	onDialogOpen = () => {
+		this.generateQrCode();
+		this.setState({ isDialogOpen: true, parts: [], waitingQr: true });
+	};
 
 	// cerrar dialogo de creacion de participantes
-	onDialogClose = () => this.setState({ isDialogOpen: false, parts: [] });
+	onDialogClose = () => this.setState({ isDialogOpen: false, parts: [], waitingQr: false });
+
+	// obtener codigo qr a mostrar
+	generateQrCode = () => {
+		const token = Cookie.get("token");
+		const self = this;
+		self.setState({ loading: true, qr: undefined });
+
+		// obtener template
+		TemplateService.getQrPetition(
+			token,
+			self.state.template._id,
+			function(qr) {
+				self.setState({
+					qr: qr,
+					loading: false,
+					qrSet: false
+				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
 
 	render() {
 		if (!Cookie.get("token")) {
@@ -705,18 +797,18 @@ class Certificate extends Component {
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
 				<DialogContent>
-					<Select
-						className="ParticipantsSelector"
-						multiple
-						displayEmpty
-						value={this.state.parts}
-						onChange={event => {
-							this.setState({ parts: event.target.value });
-						}}
-						renderValue={selected => selected.map(sel => sel.name).join(", ")}
-					>
-						{participants &&
-							participants.map((elem, key) => {
+					{participants && participants.length > 0 && (
+						<Select
+							className="ParticipantsSelector"
+							multiple
+							displayEmpty
+							value={this.state.parts}
+							onChange={event => {
+								this.setState({ parts: event.target.value });
+							}}
+							renderValue={selected => selected.map(sel => sel.name).join(", ")}
+						>
+							{participants.map((elem, key) => {
 								return (
 									<MenuItem key={"ParticipantsSelector-" + key} value={elem}>
 										<Checkbox checked={this.state.parts.indexOf(elem) > -1} />
@@ -724,12 +816,17 @@ class Certificate extends Component {
 									</MenuItem>
 								);
 							})}
-					</Select>
+						</Select>
+					)}
+
+					{this.renderQrPetition()}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.onParticipantsAdd} color="primary">
-						{Messages.EDIT.DIALOG.PARTICIPANT.CREATE}
-					</Button>
+					{participants && participants.length > 0 && (
+						<Button onClick={this.onParticipantsAdd} color="primary">
+							{Messages.EDIT.DIALOG.PARTICIPANT.CREATE}
+						</Button>
+					)}
 					<Button onClick={this.onDialogClose} color="primary">
 						{Messages.EDIT.DIALOG.PARTICIPANT.CLOSE}
 					</Button>
@@ -737,6 +834,32 @@ class Certificate extends Component {
 			</Dialog>
 		);
 	};
+
+	renderQrPetition() {
+		const qr = this.state.qr;
+		if (!qr) {
+			return <div></div>;
+		}
+
+		const self = this;
+		if (!self.state.qrSet) {
+			setTimeout(function() {
+				const canvas = document.getElementById("canvas");
+				if (canvas) {
+					QRCode.toCanvas(canvas, qr, function(error) {
+						if (error) console.error(error);
+					});
+					self.setState({ qrSet: true });
+				}
+			}, 100);
+		}
+
+		return (
+			<div className="QrPetition">
+				<canvas id="canvas"></canvas>
+			</div>
+		);
+	}
 
 	renderButtons = () => {
 		return (

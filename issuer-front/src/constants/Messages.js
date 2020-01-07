@@ -78,6 +78,9 @@ module.exports = {
 		}
 	},
 	QR: {
+		LOAD_SUCCESS: name => {
+			return "USUARIO '" + name + "' CARGADO CON ÉXITO";
+		},
 		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
