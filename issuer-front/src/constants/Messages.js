@@ -7,18 +7,27 @@ module.exports = {
 	},
 	EDIT: {
 		DATA: {
+			PREVIEW: "CAMPOS A PREVISUALIZAR",
 			CERT: "DATOS DEL CERTIFICADO",
 			PART: "DATOS DEL PARTICIPANTE",
 			OTHER: "OTROS DATOS"
 		},
 		DIALOG: {
-			TITLE: "Agregar Campo",
-			OPTION: "Opcion",
-			REQUIRED: "Requerido",
-			TYPES: "Tipo",
-			NAME: "Nombre",
-			CREATE: "Crear",
-			CLOSE: "Cerrar"
+			PARTICIPANT: {
+				TITLE: "Agregar Participante",
+				NAME: "Participante",
+				CREATE: "Agregar",
+				CLOSE: "Cerrar"
+			},
+			FIELD: {
+				TITLE: "Agregar Campo",
+				OPTION: "Opcion",
+				REQUIRED: "Requerido",
+				TYPES: "Tipo",
+				NAME: "Nombre",
+				CREATE: "Crear",
+				CLOSE: "Cerrar"
+			}
 		},
 		BUTTONS: {
 			ADD_MICRO_CRED: "+",
@@ -27,6 +36,7 @@ module.exports = {
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
+			LOAD_PARTICIPANTS: "Cargar Participantes",
 			CREATE: "NUEVO CAMPO",
 			SAVE: "Guardar",
 			BACK: "Volver",
@@ -53,7 +63,7 @@ module.exports = {
 		},
 		BUTTONS: {
 			TO_QR: "REGISTRAR PARTICIPANTE",
-			TO_CERTIFICATES: "CERTIFICADOS EMITIDOS",
+			TO_CERTIFICATES: "CERTIFICADOS",
 			TO_TEMPLATES: "TEMPLATES",
 			CREATE_TEMPLATE: "CREAR CERTIFICADO",
 			CREATE_CERT: "EMITIR CERTIFICADO",

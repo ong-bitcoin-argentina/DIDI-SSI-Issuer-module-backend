@@ -20,6 +20,12 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
+import Button from "@material-ui/core/Button";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 class Certificate extends Component {
 	constructor(props) {
@@ -27,6 +33,8 @@ class Certificate extends Component {
 
 		this.state = {
 			loading: false,
+			isDialogOpen: false,
+			parts: [],
 			action: "viewing"
 		};
 	}
@@ -285,8 +293,6 @@ class Certificate extends Component {
 				const participantData = self.certDataFromTemplate(self.state.template, "participant");
 				for (let dataElem of participantData) {
 					if (data.length > index) {
-						console.log(data[index]);
-
 						const err = assignElement(dataElem, data[index]);
 						if (err) return self.setState({ error: err });
 						if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(dataElem.value);
@@ -386,6 +392,25 @@ class Certificate extends Component {
 		);
 	}
 
+	onParticipantsAdd = () => {
+		const len = this.state.cert.data.participant.length;
+		let pos = 0;
+
+		this.setState({ isDialogOpen: false });
+		if (this.state.parts.length === 0) return;
+
+		for (let newPart of this.state.parts) {
+			if (pos >= len) this.addParticipant();
+			this.participantSelected(newPart._id, pos);
+			pos++;
+		}
+
+		this.setState({ parts: [] });
+		if (len >= pos) {
+			this.state.cert.data.participant.splice(pos, len - pos);
+		}
+	};
+
 	// guardar cert y volver a listado de certificados
 	onSave = () => {
 		const token = Cookie.get("token");
@@ -476,6 +501,12 @@ class Certificate extends Component {
 		return false;
 	};
 
+	// abrir dialogo de creacion de participantes
+	onDialogOpen = () => this.setState({ isDialogOpen: true, parts: [] });
+
+	// cerrar dialogo de creacion de participantes
+	onDialogClose = () => this.setState({ isDialogOpen: false, parts: [] });
+
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -486,6 +517,7 @@ class Certificate extends Component {
 			<div className="Certificate">
 				{!loading && this.renderTemplateSelector()}
 				{!loading && this.renderCert()}
+				{this.renderParticipantDialog()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
 			</div>
@@ -520,7 +552,6 @@ class Certificate extends Component {
 									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
 								</button>
 							</div>
-							{!viewing && this.renderParticipantSelector(key)}
 							{this.renderSection(cert, data)}
 						</div>
 					);
@@ -632,7 +663,6 @@ class Certificate extends Component {
 									this.state.action === "creating" || this.state.action === "editing",
 									(dataElem, value) => {
 										if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(value);
-
 										dataElem.value = value;
 										self.setState({ cert: cert });
 									}
@@ -668,24 +698,43 @@ class Certificate extends Component {
 		);
 	};
 
-	renderParticipantSelector = key => {
+	renderParticipantDialog = () => {
 		const participants = this.state.participants;
-		if (!participants || participants.length === 0) {
-			return <div></div>;
-		}
 
 		return (
-			<div className="ParticipantsSelector">
-				<Autocomplete
-					options={participants}
-					getOptionLabel={option => (option ? option.name : "")}
-					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={(_, value) => {
-						console.log(value);
-						this.participantSelected(value._id, key);
-					}}
-				/>
-			</div>
+			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
+				<DialogContent>
+					<Select
+						className="ParticipantsSelector"
+						multiple
+						displayEmpty
+						value={this.state.parts}
+						onChange={event => {
+							this.setState({ parts: event.target.value });
+						}}
+						renderValue={selected => selected.map(sel => sel.name).join(", ")}
+					>
+						{participants &&
+							participants.map((elem, key) => {
+								return (
+									<MenuItem key={"ParticipantsSelector-" + key} value={elem}>
+										<Checkbox checked={this.state.parts.indexOf(elem) > -1} />
+										<ListItemText primary={elem.name} />
+									</MenuItem>
+								);
+							})}
+					</Select>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={this.onParticipantsAdd} color="primary">
+						{Messages.EDIT.DIALOG.PARTICIPANT.CREATE}
+					</Button>
+					<Button onClick={this.onDialogClose} color="primary">
+						{Messages.EDIT.DIALOG.PARTICIPANT.CLOSE}
+					</Button>
+				</DialogActions>
+			</Dialog>
 		);
 	};
 
@@ -699,6 +748,14 @@ class Certificate extends Component {
 						onClick={this.addParticipant}
 					>
 						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
+					</button>
+
+					<button
+						className="AddParticipant"
+						hidden={this.state.action === "viewing" || this.state.action === "editing"}
+						onClick={this.onDialogOpen}
+					>
+						{Messages.EDIT.BUTTONS.LOAD_PARTICIPANTS}
 					</button>
 
 					<button

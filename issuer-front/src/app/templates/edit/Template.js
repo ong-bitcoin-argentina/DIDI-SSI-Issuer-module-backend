@@ -194,7 +194,7 @@ class Template extends Component {
 		const isCheckbox = this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX;
 		return (
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle className="DialogTitle">{Messages.EDIT.DIALOG.TITLE}</DialogTitle>
+				<DialogTitle className="DialogTitle">{Messages.EDIT.DIALOG.FIELD.TITLE}</DialogTitle>
 				<DialogContent>
 					{this.renderDialogName()}
 					{isCheckbox && this.renderDialogCheckbox()}
@@ -210,10 +210,10 @@ class Template extends Component {
 						}
 						color="primary"
 					>
-						{Messages.EDIT.DIALOG.CREATE}
+						{Messages.EDIT.DIALOG.FIELD.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.EDIT.DIALOG.CLOSE}
+						{Messages.EDIT.DIALOG.FIELD.CLOSE}
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -226,7 +226,7 @@ class Template extends Component {
 				autoFocus
 				margin="dense"
 				id="name"
-				label={Messages.EDIT.DIALOG.NAME}
+				label={Messages.EDIT.DIALOG.FIELD.NAME}
 				type="text"
 				onChange={event => this.setState({ name: event.target.value })}
 				fullWidth
@@ -244,7 +244,7 @@ class Template extends Component {
 						this.setState({ required: event.target.checked });
 					}}
 				></input>
-				<div className="RequiredText">{Messages.EDIT.DIALOG.REQUIRED}</div>
+				<div className="RequiredText">{Messages.EDIT.DIALOG.FIELD.REQUIRED}</div>
 			</div>
 		);
 	};
@@ -252,7 +252,7 @@ class Template extends Component {
 	renderDialogTypes = () => {
 		return (
 			<div id="Types">
-				<InputLabel>{Messages.EDIT.DIALOG.TYPES}</InputLabel>
+				<InputLabel>{Messages.EDIT.DIALOG.FIELD.TYPES}</InputLabel>
 				<Select
 					className={"DialogTypeDropdown"}
 					autoFocus
@@ -281,7 +281,7 @@ class Template extends Component {
 						autoFocus
 						margin="dense"
 						id="option"
-						label={Messages.EDIT.DIALOG.OPTION}
+						label={Messages.EDIT.DIALOG.FIELD.OPTION}
 						type="text"
 						onChange={event => this.setState({ option: event.target.value })}
 						fullWidth
@@ -333,7 +333,7 @@ class Template extends Component {
 
 		return (
 			<div className="Template-Type">
-				<h2 className="DataTitle">{"CAMPOS A PREVISUALIZAR"}</h2>
+				<h2 className="DataTitle">{Messages.EDIT.DATA.PREVIEW}</h2>
 
 				<RadioGroup
 					className="PreviewFieldTypePicker"
