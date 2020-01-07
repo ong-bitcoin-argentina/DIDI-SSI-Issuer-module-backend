@@ -163,7 +163,7 @@ class Certificate extends Component {
 		const certData = this.state.cert.data.cert;
 		for (let key of Object.keys(certData)) {
 			if (!certData[key].mandatory) {
-				csv += certData[key].name + "(" + getSample(certData[key]) + "),";
+				csv += certData[key].name + " (" + getSample(certData[key]) + "),";
 			}
 		}
 
@@ -171,17 +171,17 @@ class Certificate extends Component {
 		if (othersData) {
 			for (let key of Object.keys(othersData)) {
 				if (!othersData[key].mandatory) {
-					csv += othersData[key].name + "(" + getSample(othersData[key]) + "),";
+					csv += othersData[key].name + " (" + getSample(othersData[key]) + "),";
 				}
 			}
 		}
 
 		const partData = this.state.cert.data.participant[0];
-		for (let i = 0; i < 3; i++) {
-			for (let key of Object.keys(partData)) {
-				csv += partData[key].name + i + "(" + getSample(partData[key]) + "),";
-			}
+		// for (let i = 0; i < 3; i++) {
+		for (let key of Object.keys(partData)) {
+			csv += partData[key].name + " (" + getSample(partData[key]) + "),";
 		}
+		//}
 
 		csv = csv.substring(0, csv.length - 1);
 
@@ -249,10 +249,22 @@ class Certificate extends Component {
 		reader.onload = function(e) {
 			const participant = [];
 			const data = reader.result.split(",");
-			let index = 0;
 
 			const certData = JSON.parse(JSON.stringify(self.state.cert.data.cert));
-			for (let key of Object.keys(certData)) {
+			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
+			const partData = self.certDataFromTemplate(self.state.template, "participant");
+
+			const certDataKeys = Object.keys(certData);
+			const otherDataKeys = Object.keys(othersData);
+
+			const certDataCount = certDataKeys.length;
+			const otherDataCount = otherDataKeys.length;
+			const partDataCount = partData.length;
+
+			let index = certDataCount + otherDataCount + partDataCount - 1;
+			data[index] = data[index].substr(1);
+
+			for (let key of certDataKeys) {
 				const dataElem = certData[key];
 				if (!dataElem.mandatory) {
 					const err = assignElement(dataElem, data[index]);
@@ -261,8 +273,7 @@ class Certificate extends Component {
 				}
 			}
 
-			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
-			for (let key of Object.keys(othersData)) {
+			for (let key of otherDataKeys) {
 				const dataElem = othersData[key];
 				if (!dataElem.mandatory) {
 					const err = assignElement(dataElem, data[index]);
@@ -275,12 +286,15 @@ class Certificate extends Component {
 				const participantData = self.certDataFromTemplate(self.state.template, "participant");
 				for (let dataElem of participantData) {
 					if (data.length > index) {
+						console.log(data[index]);
+
 						const err = assignElement(dataElem, data[index]);
 						if (err) return self.setState({ error: err });
 						if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(dataElem.value);
 						index++;
 					}
 				}
+				index += certDataCount + otherDataCount - 1;
 				participant.push(participantData);
 			} while (data.length > index);
 
