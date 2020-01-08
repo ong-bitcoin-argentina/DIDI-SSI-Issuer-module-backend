@@ -81,7 +81,7 @@ class QrRequest extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
-		this.props.history.push(Constants.ROUTES.CERTIFICATES);
+		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
 	render() {
