@@ -101,41 +101,11 @@ class Certificates extends Component {
 
 	renderTable = () => {
 		const certificates = this.props.certificates;
-		const columns = [
-			/*{
-				Header: "Id",
-				accessor: "_id"
-			},*/
-			{
-				Header: Messages.LIST.TABLE.LAST_NAME,
-				accessor: "lastName"
-			},
-			{
-				Header: Messages.LIST.TABLE.NAME,
-				accessor: "firstName"
-			},
-			{
-				Header: Messages.LIST.TABLE.CERT,
-				accessor: "certName"
-			},
-			{
-				Header: Messages.LIST.TABLE.EMISSION_DATE,
-				accessor: "createdOn"
-			},
-			{
-				Header: Messages.LIST.TABLE.ACTIONS,
-				accessor: "actions"
-			},
-			{
-				Header: Messages.LIST.TABLE.SELECT,
-				accessor: "select"
-			}
-		];
+		const columns = this.props.columns ? this.props.columns : [];
 
 		return (
 			<div className="CertificateTable">
 				<ReactTable
-					defaultCanFilter={true}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={certificates}
