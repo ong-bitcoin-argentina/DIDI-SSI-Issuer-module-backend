@@ -151,7 +151,7 @@ class Lists extends Component {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.LAST_NAME}</div>
-						<input type="text" onChange={this.onLastNameFilterChange} />
+						<input type="text" class="TableInputFilter" onChange={this.onLastNameFilterChange} />
 					</div>
 				),
 				accessor: "lastName"
@@ -160,7 +160,7 @@ class Lists extends Component {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.NAME}</div>
-						<input type="text" onChange={this.onFirstNameFilterChange} />
+						<input type="text" class="TableInputFilter" onChange={this.onFirstNameFilterChange} />
 					</div>
 				),
 				accessor: "firstName"
@@ -169,7 +169,7 @@ class Lists extends Component {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.CERT}</div>
-						<Select className="DataInput Checkbox" onChange={this.onTemplateFilterChange}>
+						<Select className="TableInputFilter Checkbox" onChange={this.onTemplateFilterChange}>
 							<MenuItem value={undefined} className="DataInput">
 								{""}
 							</MenuItem>
@@ -193,7 +193,7 @@ class Lists extends Component {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.ACTIONS}</div>
-						<Select className="DataInput Checkbox" onChange={this.onEmmitedFilterChange}>
+						<Select className="TableInputFilter Checkbox" onChange={this.onEmmitedFilterChange}>
 							<MenuItem value={undefined} className="DataInput">
 								{""}
 							</MenuItem>
