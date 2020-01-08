@@ -18,6 +18,8 @@ import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
 
 import Checkbox from "@material-ui/core/Checkbox";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
 class Lists extends Component {
 	constructor(props) {
@@ -25,9 +27,10 @@ class Lists extends Component {
 
 		this.state = {
 			loading: false,
-			tabIndex: 0,
+			tabIndex: 1,
 			selectedElems: {},
 			certificates: [],
+			filteredCertificates: [],
 			templates: []
 		};
 	}
@@ -59,6 +62,19 @@ class Lists extends Component {
 				</div>
 			)
 		};
+	};
+
+	getTemplateColumns = templates => {
+		return [
+			{
+				Header: Messages.LIST.TABLE.TEMPLATE,
+				accessor: "name"
+			},
+			{
+				Header: "",
+				accessor: "actions"
+			}
+		];
 	};
 
 	// mapear certificados al formato requerido por "ReactTable"
@@ -123,6 +139,82 @@ class Lists extends Component {
 		};
 	};
 
+	getCertColumns = certificates => {
+		const certNames = [...new Set(certificates.map(cert => cert.certName))];
+
+		return [
+			/*{
+				Header: "Id",
+				accessor: "_id"
+			},*/
+			{
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.LAST_NAME}</div>
+						<input type="text" onChange={this.onLastNameFilterChange} />
+					</div>
+				),
+				accessor: "lastName"
+			},
+			{
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.NAME}</div>
+						<input type="text" onChange={this.onFirstNameFilterChange} />
+					</div>
+				),
+				accessor: "firstName"
+			},
+			{
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.CERT}</div>
+						<Select className="DataInput Checkbox" onChange={this.onTemplateFilterChange}>
+							<MenuItem value={undefined} className="DataInput">
+								{""}
+							</MenuItem>
+							{certNames.map((certName, key) => {
+								return (
+									<MenuItem value={certName} key={"cert-option-" + key} className="DataInput">
+										{certName}
+									</MenuItem>
+								);
+							})}
+						</Select>
+					</div>
+				),
+				accessor: "certName"
+			},
+			{
+				Header: Messages.LIST.TABLE.EMISSION_DATE,
+				accessor: "createdOn"
+			},
+			{
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.ACTIONS}</div>
+						<Select className="DataInput Checkbox" onChange={this.onEmmitedFilterChange}>
+							<MenuItem value={undefined} className="DataInput">
+								{""}
+							</MenuItem>
+							<MenuItem value={"EMITIDOS"} className="DataInput">
+								{"EMITIDOS"}
+							</MenuItem>
+							<MenuItem value={"NO EMITIDOS"} className="DataInput">
+								{"NO EMITIDOS"}
+							</MenuItem>
+						</Select>
+					</div>
+				),
+				accessor: "actions"
+			},
+			{
+				Header: Messages.LIST.TABLE.SELECT,
+				accessor: "select"
+			}
+		];
+	};
+
 	// cargar certificados
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
@@ -139,13 +231,23 @@ class Lists extends Component {
 				templates = templates.map(template => {
 					return self.getTemplateData(template);
 				});
+				const templateColumns = self.getTemplateColumns(templates);
 				CertificateService.getAll(
 					token,
 					async function(certificates) {
 						certificates = certificates.map(certificate => {
 							return self.getCertificatesData(certificate);
 						});
-						self.setState({ templates: templates, certificates: certificates, loading: false });
+						const certColumns = self.getCertColumns(certificates);
+
+						self.setState({
+							templates: templates,
+							templateColumns: templateColumns,
+							certificates: certificates,
+							certColumns: certColumns,
+							filteredCertificates: certificates,
+							loading: false
+						});
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -289,6 +391,87 @@ class Lists extends Component {
 		);
 	};
 
+	// filtros de tabla de certificados
+	onFirstNameFilterChange = event => {
+		const filter = event.target.value;
+		this.updateFiltererCertificates(
+			filter,
+			this.state.lastNameFilter,
+			this.state.templateFilter,
+			this.state.emmitedFilter
+		);
+		this.setState({ firstNameFilter: filter });
+	};
+	onLastNameFilterChange = event => {
+		const filter = event.target.value;
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			filter,
+			this.state.templateFilter,
+			this.state.emmitedFilter
+		);
+		this.setState({ lastNameFilter: filter });
+	};
+
+	onTemplateFilterChange = event => {
+		const filter = event.target.value;
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			this.state.lastNameFilter,
+			filter,
+			this.state.emmitedFilter
+		);
+		this.setState({ templateFilter: filter });
+	};
+
+	onEmmitedFilterChange = event => {
+		const filter = event.target.value;
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			this.state.lastNameFilter,
+			this.state.templateFilter,
+			filter
+		);
+		this.setState({ emmitedFilter: filter });
+	};
+
+	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter, emmitedFilter) => {
+		let cert = this.state.certificates;
+
+		if (firstNameFilter && firstNameFilter !== "") {
+			cert = cert.filter(certData => {
+				return certData.firstName.toLowerCase().includes(firstNameFilter.toLowerCase());
+			});
+		}
+
+		if (lastNameFilter && firstNameFilter !== "") {
+			cert = cert.filter(certData => {
+				return certData.lastName.toLowerCase().includes(lastNameFilter.toLowerCase());
+			});
+		}
+
+		if (templateFilter) {
+			cert = cert.filter(certData => {
+				return certData.certName.toLowerCase().includes(templateFilter.toLowerCase());
+			});
+		}
+
+		if (emmitedFilter) {
+			if (emmitedFilter === "EMITIDOS") {
+				cert = cert.filter(certData => {
+					console.log(certData);
+					return certData.createdOn !== "-";
+				});
+			} else {
+				cert = cert.filter(certData => {
+					return certData.createdOn === "-";
+				});
+			}
+		}
+
+		this.setState({ filteredCertificates: cert });
+	};
+
 	// a pantalla de edicion
 	onTemplateEdit = id => {
 		this.props.history.push(Constants.ROUTES.EDIT_TEMPLATE + id);
@@ -317,6 +500,7 @@ class Lists extends Component {
 					<Templates
 						selected={this.state.tabIndex === 0}
 						templates={this.state.templates}
+						columns={this.state.templateColumns}
 						loading={this.state.loading}
 						error={this.state.error}
 						onTemplateCreate={this.onTemplateCreate}
@@ -326,7 +510,8 @@ class Lists extends Component {
 				<TabPanel>
 					<Certificates
 						selected={this.state.tabIndex === 1}
-						certificates={this.state.certificates}
+						certificates={this.state.filteredCertificates}
+						columns={this.state.certColumns}
 						loading={this.state.loading}
 						onCertificateDelete={this.onCertificateDelete}
 						onCertificateEmmit={this.onCertificateEmmit}

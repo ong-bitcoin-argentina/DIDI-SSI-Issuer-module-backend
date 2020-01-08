@@ -103,16 +103,7 @@ class Templates extends Component {
 
 	renderTable = () => {
 		const templates = this.props.templates;
-		const columns = [
-			{
-				Header: Messages.LIST.TABLE.TEMPLATE,
-				accessor: "name"
-			},
-			{
-				Header: "",
-				accessor: "actions"
-			}
-		];
+		const columns = this.props.columns ? this.props.columns : [];
 
 		return (
 			<div className="TemplateTable">
