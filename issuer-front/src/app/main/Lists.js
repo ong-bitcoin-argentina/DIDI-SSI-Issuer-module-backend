@@ -270,13 +270,13 @@ class Lists extends Component {
 		const cert = self.state.certificates.find(t => t._id === id);
 		cert.actions = <div></div>;
 
-		self.setState({ cert: self.state.certificates });
+		self.setState({ cert: self.state.certificates, loading: true });
 		CertificateService.delete(
 			token,
 			id,
 			async function(cert) {
 				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
-				self.setState({ certificates: certificates });
+				self.setState({ certificates: certificates, loading: false });
 			},
 			function(err) {
 				self.setState({ error: err });
