@@ -149,9 +149,9 @@ class Certificate extends Component {
 	getParticipants = function() {
 		const self = this;
 
-		return Promise(function(resolve, reject) {
+		return new Promise(function(resolve, reject) {
 			ParticipantService.getAll(
-				this.state.template._id,
+				self.state.template._id,
 				function(participants) {
 					self.setState({
 						participants: participants
