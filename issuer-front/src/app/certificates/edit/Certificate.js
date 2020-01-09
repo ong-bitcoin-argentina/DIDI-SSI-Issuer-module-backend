@@ -212,7 +212,7 @@ class Certificate extends Component {
 					result = result.substring(0, result.length - 1);
 					return result;
 				case Constants.TEMPLATES.TYPES.DATE:
-					return "ej: 05 October 2011 14:48 UTC";
+					return "ej: 10/12/2020";
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					return "un número";
 				case Constants.TEMPLATES.TYPES.TEXT:
@@ -277,25 +277,36 @@ class Certificate extends Component {
 		let validateValueMatchesType = function(dataElem, value) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
+					dataElem.value = value;
 					return true;
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
-					return dataElem.options.find(elem => elem === value + "");
+					const res = dataElem.options.find(elem => elem === value + "");
+					if (res) {
+						dataElem.value = value;
+						return true;
+					}
+					return false;
 				case Constants.TEMPLATES.TYPES.DATE:
 					try {
-						const date = new Date(value);
+						const dateParts = value.split("/");
+						const date = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
 						if (!date) return false;
+						dataElem.value = date;
 						return true;
 					} catch (err) {
 						return false;
 					}
 				case Constants.TEMPLATES.TYPES.NUMBER:
 					if (isNaN(value)) return false;
+					dataElem.value = value;
 					return true;
 				case Constants.TEMPLATES.TYPES.PARAGRAPH:
 					if (!value) return false;
+					dataElem.value = value;
 					return true;
 				case Constants.TEMPLATES.TYPES.TEXT:
 					if (!value) return false;
+					dataElem.value = value;
 					return true;
 				default:
 					return false;
@@ -308,7 +319,6 @@ class Certificate extends Component {
 			} else {
 				if (!validateValueMatchesType(dataElem, data))
 					return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_INVALID(dataElem.name);
-				dataElem.value = data;
 			}
 		};
 
