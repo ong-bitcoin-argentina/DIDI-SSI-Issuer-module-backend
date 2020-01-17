@@ -326,7 +326,8 @@ router.put(
 		},
 		{
 			name: "microCredentials",
-			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA]
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA],
+			optional: true
 		}
 	]),
 	Validator.checkValidationResult,
