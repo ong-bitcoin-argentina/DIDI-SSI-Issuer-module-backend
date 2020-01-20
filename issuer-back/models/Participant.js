@@ -33,7 +33,7 @@ const ParticipantSchema = mongoose.Schema({
 	}
 });
 
-ParticipantSchema.index({ name: 1, templateId: 1 });
+ParticipantSchema.index({ name: 1, templateId: 1, deleted: 1 });
 
 ParticipantSchema.methods.edit = async function(name, data) {
 	const updateQuery = { _id: this._id };
@@ -71,25 +71,25 @@ const Participant = mongoose.model("Participant", ParticipantSchema);
 module.exports = Participant;
 
 Participant.generate = async function(name, data, templateId) {
+	let participant;
 	try {
 		const query = { name: name, templateId: templateId, deleted: false };
-		const action = {
-			$set: { new: true }
-		};
-		const participant = await Participant.findOneAndUpdate(query, action);
-		console.log(participant);
-		if (participant) return Promise.resolve(participant);
+		participant = await Participant.findOne(query, action);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
 	}
 
-	let participant = new Participant();
-	participant.name = name;
-	participant.templateId = templateId;
-	participant.data = data;
-	participant.createdOn = new Date();
-	participant.deleted = false;
+	if (!participant) {
+		participant = new Participant();
+		participant.name = name;
+		participant.templateId = templateId;
+		participant.data = data;
+		participant.createdOn = new Date();
+		participant.deleted = false;
+	} else {
+		participant.data = { ...participant.data, ...data };
+	}
 
 	try {
 		participant = await participant.save();

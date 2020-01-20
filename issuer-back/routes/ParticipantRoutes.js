@@ -8,8 +8,9 @@ const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
 router.get("/all/:templateId", async function(req, res) {
-	const templateId = req.params.templateId;
+	const templateId = req.body.templateId;
 	try {
+		console.log(templateId);
 		const participants = await ParticipantService.getAllByTemplateId(templateId);
 		const result = participants.map(partData => {
 			return { _id: partData._id, name: partData.name };

@@ -30,6 +30,47 @@ router.get(
 );
 
 router.get(
+	"/qr",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
+			isHead: true
+		},
+		{
+			name: "did",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+		},
+		{
+			name: "cert",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const did = req.body.did;
+		const cert = req.body.cert;
+
+		//TODO
+
+		try {
+			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/";
+			const data = {
+				callbackUrl: cb,
+				claims: {
+					verifiable: {}
+				}
+			};
+			data["claims"]["verifiable"][cert] = null;
+			const cert = await MouroService.createShareRequest(data);
+			return ResponseHandler.sendRes(res, cert);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.get(
 	"/:id/qr",
 	Validator.validate([
 		{
@@ -43,14 +84,21 @@ router.get(
 		const id = req.params.id;
 		try {
 			const template = await TemplateService.getById(id);
-			const requested = template.data.participant
-				.map(dataElem => dataElem.name)
-				.filter(req => req != "DID" && req != "EXPIRATION DATE");
-			requested.push("FULL NAME");
 			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + template._id;
+			const data = {
+				callbackUrl: cb,
+				claims: {
+					user_info: { "FULL NAME": { essential: true, reason: "" } }
+				}
+			};
+			template.data.participant.forEach(element => {
+				const name = element.name;
+				if (req != "DID" && req != "EXPIRATION DATE")
+					data["claims"]["user_info"][name] = { essential: false, reason: "" };
+			});
 
-			const cert = await MouroService.createShareRequest(cb, requested);
-
+			console.log(data);
+			const cert = await MouroService.createShareRequest(data);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
