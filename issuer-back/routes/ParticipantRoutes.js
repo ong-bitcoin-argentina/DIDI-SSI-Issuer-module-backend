@@ -8,9 +8,8 @@ const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
 router.get("/all/:templateId", async function(req, res) {
-	const templateId = req.body.templateId;
+	const templateId = req.params.templateId;
 	try {
-		console.log(templateId);
 		const participants = await ParticipantService.getAllByTemplateId(templateId);
 		const result = participants.map(partData => {
 			return { _id: partData._id, name: partData.name };
@@ -52,7 +51,7 @@ router.post(
 		try {
 			// const data = await MouroService.verifyCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
 			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
-
+ 
 			let name;
 			const dataElems = [{ name: "DID", value: data.payload.iss }];
 

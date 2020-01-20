@@ -74,7 +74,7 @@ Participant.generate = async function(name, data, templateId) {
 	let participant;
 	try {
 		const query = { name: name, templateId: templateId, deleted: false };
-		participant = await Participant.findOne(query, action);
+		participant = await Participant.findOne(query);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
@@ -82,13 +82,17 @@ Participant.generate = async function(name, data, templateId) {
 
 	if (!participant) {
 		participant = new Participant();
+		participant.new = true;
 		participant.name = name;
 		participant.templateId = templateId;
 		participant.data = data;
 		participant.createdOn = new Date();
 		participant.deleted = false;
 	} else {
-		participant.data = { ...participant.data, ...data };
+		for (let key of Object.keys(data)) {
+			participant.data[key] = data[key];
+		}
+		participant.new = true;
 	}
 
 	try {

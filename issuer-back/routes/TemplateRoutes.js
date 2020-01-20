@@ -48,22 +48,20 @@ router.get(
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const did = req.body.did;
 		const cert = req.body.cert;
-
-		//TODO
 
 		try {
 			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/";
 			const data = {
 				callbackUrl: cb,
 				claims: {
-					verifiable: {}
+					verifiable: {
+						[cert]: null
+					}
 				}
 			};
-			data["claims"]["verifiable"][cert] = null;
-			const cert = await MouroService.createShareRequest(data);
-			return ResponseHandler.sendRes(res, cert);
+			const result = await MouroService.createShareRequest(data);
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
@@ -88,13 +86,13 @@ router.get(
 			const data = {
 				callbackUrl: cb,
 				claims: {
-					user_info: { "FULL NAME": { essential: true, reason: "" } }
+					user_info: { "FULL NAME": { essential: true } }
 				}
 			};
 			template.data.participant.forEach(element => {
 				const name = element.name;
 				if (req != "DID" && req != "EXPIRATION DATE")
-					data["claims"]["user_info"][name] = { essential: false, reason: "" };
+					data["claims"]["user_info"][name] = null;
 			});
 
 			console.log(data);
