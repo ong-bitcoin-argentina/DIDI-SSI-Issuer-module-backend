@@ -80,6 +80,7 @@ Participant.generate = async function(name, data, templateId) {
 		return Promise.reject(err);
 	}
 
+	console.log(participant);
 	if (!participant) {
 		participant = new Participant();
 		participant.new = true;
@@ -89,9 +90,20 @@ Participant.generate = async function(name, data, templateId) {
 		participant.createdOn = new Date();
 		participant.deleted = false;
 	} else {
-		for (let key of Object.keys(data)) {
-			participant.data[key] = data[key];
+		const acum = {};
+		participant.data.forEach(elem => {
+			acum[elem.name] = elem.value;
+		});
+		data.forEach(elem => {
+			acum[elem.name] = elem.value;
+		});
+
+		const result = [];
+		for (let key of Object.keys(acum)) {
+			result.push({ name: key, value: acum[key] });
 		}
+
+		participant.data = result;
 		participant.new = true;
 	}
 

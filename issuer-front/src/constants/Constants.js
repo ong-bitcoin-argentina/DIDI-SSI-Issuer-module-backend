@@ -8,6 +8,7 @@ module.exports = {
 			GET_QR: id => {
 				return API + "/template/" + id + "/qr/";
 			},
+			QR_PETITION: API + "/template/qr/",
 			GET: id => {
 				return API + "/template/" + id;
 			},
@@ -133,6 +134,7 @@ module.exports = {
 		TABLE: {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
-		}
+		},
+		REQUEST_TYPES: ["Email", "Phone", "Datos Personales", "Domicilio Legal"]
 	}
 };

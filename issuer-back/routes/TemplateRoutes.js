@@ -29,26 +29,22 @@ router.get(
 	}
 );
 
-router.get(
+router.post(
 	"/qr",
 	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN],
-			isHead: true
-		},
 		{
 			name: "did",
 			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
 		},
 		{
-			name: "cert",
+			name: "certName",
 			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const cert = req.body.cert;
+		const did = req.body.did;
+		const certName = req.body.certName;
 
 		try {
 			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/";
@@ -56,11 +52,13 @@ router.get(
 				callbackUrl: cb,
 				claims: {
 					verifiable: {
-						[cert]: null
-					}
+						[certName]: null
+					},
+					user_info: { "FULL NAME": { essential: true } }
 				}
 			};
 			const result = await MouroService.createShareRequest(data);
+			await MouroService.sendShareRequest(did, result);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -91,8 +89,7 @@ router.get(
 			};
 			template.data.participant.forEach(element => {
 				const name = element.name;
-				if (req != "DID" && req != "EXPIRATION DATE")
-					data["claims"]["user_info"][name] = null;
+				if (req != "DID" && req != "EXPIRATION DATE") data["claims"]["user_info"][name] = null;
 			});
 
 			console.log(data);

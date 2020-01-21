@@ -156,6 +156,33 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
+	static sendRequest(token, did, cert, cb, errCb) {
+		const data = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				did: did,
+				certName: cert
+			})
+		};
+
+		fetch(Constants.API_ROUTES.TEMPLATES.QR_PETITION, data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
 	static delete(token, id, cb, errCb) {
 		const data = {
 			method: "DELETE",

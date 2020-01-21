@@ -16,6 +16,9 @@ module.exports = {
 			MICRO_CRED_FIELDS: "CAMPOS DE LA MICRO"
 		},
 		DIALOG: {
+			QR: {
+				TITLE: "Cargar Participante"
+			},
 			PARTICIPANT: {
 				TITLE: "Agregar Participante",
 				NAME: "Participante",
@@ -43,7 +46,9 @@ module.exports = {
 			ADD_PARTICIPANTS: "Nuevo Participante",
 			LOAD_PARTICIPANTS: "Cargar Participantes",
 			CREATE: "NUEVO CAMPO",
+			SEND: "Enviar",
 			SAVE: "Guardar",
+			CANCEL: "Cancelar",
 			BACK: "Volver",
 			EXIT: "Salir",
 			REQUIRED: "Requerido",
@@ -86,9 +91,13 @@ module.exports = {
 		LOAD_SUCCESS: name => {
 			return "USUARIO '" + name + "' CARGADO CON ÉXITO";
 		},
+		DID_SELECT: "DID",
+		CERTIFICATE_SELECT: "CERTIFICADO A PEDIR",
 		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
+			REQUEST: "Cargar por pedido",
+			QR_LOAD: "Cargar por Qr",
 			GENERATE: "Generar Qr"
 		}
 	}
