@@ -9,7 +9,7 @@ const fetch = require("node-fetch");
 const { Credentials } = require("uport-credentials");
 
 const { Resolver } = require("did-resolver");
-const { ethrDid } = require("ethr-did-resolver").getResolver();
+const { ethrDid } = require("ethr-did-resolver").getResolver({ rpcUrl: "https://mainnet.infura.io/v3/ethr-did" });
 const resolver = new Resolver(ethrDid);
 
 module.exports.decodeCertificate = async function(jwt, errMsg) {

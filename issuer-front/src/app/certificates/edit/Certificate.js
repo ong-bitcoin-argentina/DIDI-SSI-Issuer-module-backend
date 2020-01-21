@@ -434,18 +434,18 @@ class Certificate extends Component {
 		);
 	};
 
-	participantSelected(id, position) {
+	participantSelected(did, position) {
 		const self = this;
 		self.setState({ loading: true });
 
 		ParticipantService.get(
-			id,
+			did,
 			function(participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
 
 				participant.data.forEach(dataElem => {
-					const dataToUpdate = partToUpdate.find(data => data.name === dataElem.name);
-					dataToUpdate.value = dataElem.value;
+					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === dataElem.name.toLowerCase());
+					if (dataToUpdate) dataToUpdate.value = dataElem.value;
 				});
 
 				self.setState({
@@ -470,7 +470,7 @@ class Certificate extends Component {
 
 		for (let newPart of this.state.parts) {
 			if (pos >= len) this.addParticipant();
-			this.participantSelected(newPart._id, pos);
+			this.participantSelected(newPart.did, pos);
 			pos++;
 		}
 

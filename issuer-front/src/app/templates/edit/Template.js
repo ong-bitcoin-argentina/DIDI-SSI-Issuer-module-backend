@@ -228,6 +228,7 @@ class Template extends Component {
 				id="name"
 				label={Messages.EDIT.DIALOG.FIELD.NAME}
 				type="text"
+				value={this.state.name}
 				onChange={event => this.setState({ name: event.target.value })}
 				fullWidth
 			/>
@@ -250,6 +251,10 @@ class Template extends Component {
 	};
 
 	renderDialogTypes = () => {
+		let types = Constants.TEMPLATES.TYPES;
+		if (this.state.type === Constants.TEMPLATES.DATA_TYPES.PARTICIPANT)
+			types = Object.assign({}, Constants.TEMPLATES.TYPES, Constants.TEMPLATES.SHARED_TYPES);
+
 		return (
 			<div id="Types">
 				<InputLabel>{Messages.EDIT.DIALOG.FIELD.TYPES}</InputLabel>
@@ -258,10 +263,17 @@ class Template extends Component {
 					autoFocus
 					value={this.state.dataType}
 					onChange={event => {
-						this.setState({ dataType: event.target.value });
+						if (Object.values(Constants.TEMPLATES.SHARED_TYPES).indexOf(event.target.value) >= 0) {
+							const val = Object.keys(Constants.TEMPLATES.SHARED_TYPES).find(
+								key => Constants.TEMPLATES.SHARED_TYPES[key] === event.target.value
+							);
+							this.setState({ name: val, dataType: "Text" });
+						} else {
+							this.setState({ name: "", dataType: event.target.value });
+						}
 					}}
 				>
-					{Object.values(Constants.TEMPLATES.TYPES).map((type, key) => {
+					{Object.values(types).map((type, key) => {
 						return (
 							<MenuItem value={type} key={"type-" + key}>
 								{type}
@@ -422,17 +434,19 @@ class Template extends Component {
 
 	renderSectionButtons = type => {
 		return (
-			<button
-				className="AddButton"
-				onClick={() => {
-					this.onDialogOpen(type);
-				}}
-			>
-				<div className="AddButton">
-					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
-				</div>
-			</button>
+			<div className="SectionButtons">
+				<button
+					className="AddButton"
+					onClick={() => {
+						this.onDialogOpen(type);
+					}}
+				>
+					<div className="AddButton">
+						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+						<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
+					</div>
+				</button>
+			</div>
 		);
 	};
 

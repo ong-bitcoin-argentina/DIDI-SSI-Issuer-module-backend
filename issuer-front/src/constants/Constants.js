@@ -27,8 +27,8 @@ module.exports = {
 			GET_NEW: id => {
 				return API + "/participant/new/" + id;
 			},
-			GET: id => {
-				return API + "/participant/" + id;
+			GET: did => {
+				return API + "/participant/" + did;
 			}
 		},
 		CERTIFICATES: {
@@ -93,6 +93,23 @@ module.exports = {
 			NUMBER: "Number",
 			BOOLEAN: "Boolean",
 			CHECKBOX: "Checkbox"
+		},
+		SHARED_TYPES: {
+			Email: "Email",
+			Phone: "Telefono",
+			dni: "Dni",
+			nationality: "Nacionalidad",
+			names: "Nombres",
+			lastNames: "Apellidos",
+			streetAddress: "Direccion",
+			numberStreet: "Calle",
+			floor: "Piso",
+			department: "Departamento",
+			zipCode: "Codigo Zip",
+			city: "Ciudad",
+			municipality: "Municipalidad",
+			province: "Provincia",
+			country: "Pais"
 		},
 		DATA_TYPES: {
 			CERT: "cert",

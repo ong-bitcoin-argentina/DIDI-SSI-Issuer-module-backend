@@ -1,6 +1,18 @@
 const Participant = require("../models/Participant");
 const Messages = require("../constants/Messages");
 
+var getByDid = async function(did) {
+	try {
+		let participant = await Participant.getByDid(did);
+		if (!participant) return Promise.reject(Messages.PARTICIPANT.ERR.GET);
+		return Promise.resolve(participant);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.PARTICIPANT.ERR.GET);
+	}
+};
+module.exports.getByDid = getByDid;
+
 var getById = async function(id) {
 	try {
 		let participant = await Participant.getById(id);
@@ -23,6 +35,16 @@ module.exports.getAllByTemplateId = async function(templateId) {
 	}
 };
 
+module.exports.getGlobalParticipants = async function() {
+	try {
+		let participants = await Participant.getGlobalParticipants();
+		return Promise.resolve(participants);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.PARTICIPANT.ERR.GET);
+	}
+};
+
 module.exports.getNewByTemplateId = async function(templateId) {
 	try {
 		let participant = await Participant.getNewByTemplateId(templateId);
@@ -33,9 +55,9 @@ module.exports.getNewByTemplateId = async function(templateId) {
 	}
 };
 
-module.exports.create = async function(name, data, templateId) {
+module.exports.create = async function(name, data, templateId, makeNew) {
 	try {
-		const participant = await Participant.generate(name, data, templateId);
+		const participant = await Participant.generate(name, data, templateId, makeNew);
 		if (!participant) return Promise.reject(Messages.PARTICIPANT.ERR.CREATE);
 		return Promise.resolve(participant);
 	} catch (err) {
