@@ -87,7 +87,7 @@ ParticipantSchema.methods.delete = async function() {
 const Participant = mongoose.model("Participant", ParticipantSchema);
 module.exports = Participant;
 
-Participant.generate = async function(name, data, templateId, newPart) {
+Participant.generate = async function(name, data, templateId) {
 	let participant;
 	try {
 		const query = { name: name, templateId: templateId, deleted: false };
@@ -99,7 +99,7 @@ Participant.generate = async function(name, data, templateId, newPart) {
 
 	if (!participant) {
 		participant = new Participant();
-		participant.new = newPart;
+		participant.new = true;
 		participant.name = name;
 		participant.templateId = templateId;
 		participant.data = data;
@@ -107,7 +107,7 @@ Participant.generate = async function(name, data, templateId, newPart) {
 		participant.deleted = false;
 	} else {
 		participant.mergeData(data);
-		participant.new = newPart;
+		participant.new = true;
 	}
 
 	try {

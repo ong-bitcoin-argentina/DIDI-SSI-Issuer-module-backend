@@ -68,7 +68,7 @@ router.post(
 					dataElems.push({ name: dataKey, value: dataValue });
 				}
 			}
-			const participant = await ParticipantService.create(name, dataElems, undefined, false);
+			const participant = await ParticipantService.create(name, dataElems, undefined);
 			return ResponseHandler.sendRes(res, participant);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -100,7 +100,7 @@ router.post(
 				}
 			}
 
-			const participant = await ParticipantService.create(name, dataElems, templateId, true);
+			const participant = await ParticipantService.create(name, dataElems, templateId);
 			return ResponseHandler.sendRes(res, participant);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

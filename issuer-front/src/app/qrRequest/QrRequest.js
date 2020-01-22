@@ -30,7 +30,6 @@ class QrRequest extends Component {
 			loading: false,
 			isQrDialogOpen: false,
 			isRequestDialogOpen: false,
-			did: "",
 			qrSet: false
 		};
 	}
@@ -38,14 +37,14 @@ class QrRequest extends Component {
 	componentDidMount() {
 		const self = this;
 		setInterval(function() {
-			if (self.state.qr && self.state.selectedTemplate) {
+			if (self.state.qrSet || self.state.awaitingDid) {
 				ParticipantService.getNew(
 					self.state.selectedTemplate._id,
 					function(participant) {
-						if (participant) {
-							self.setState({ participant: participant, waitingQr: false, qr: undefined });
-							self.onQrAnswerDetected(participant);
-						}
+						if (self.state.awaitingDid && participant.data[0].value === self.state.awaitingDid)
+							self.setState({ participant: participant, awaitingDid: undefined });
+						if (participant && self.state.qrSet)
+							self.setState({ participant: participant, qrSet: false, qr: undefined });
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -55,10 +54,6 @@ class QrRequest extends Component {
 			}
 		}, 10000);
 	}
-
-	onQrAnswerDetected = participant => {
-		console.log(participant);
-	};
 
 	generateQrCode = () => {
 		const token = Cookie.get("token");
@@ -73,9 +68,18 @@ class QrRequest extends Component {
 				self.setState({
 					qr: qr,
 					participant: undefined,
-					loading: false,
-					qrSet: false
+					loading: false
 				});
+
+				setTimeout(function() {
+					const canvas = document.getElementById("canvas");
+					if (canvas) {
+						QRCode.toCanvas(canvas, qr, function(error) {
+							if (error) console.error(error);
+						});
+						self.setState({ qrSet: true });
+					}
+				}, 100);
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -101,10 +105,11 @@ class QrRequest extends Component {
 			token,
 			self.state.did,
 			self.state.certificate,
-			function(qr) {
+			function(_) {
 				self.setState({
 					loading: false,
-					isRequestDialogOpen: false
+					isRequestDialogOpen: false,
+					awaitingDid: self.state.did
 				});
 			},
 			function(err) {
@@ -115,11 +120,11 @@ class QrRequest extends Component {
 	};
 
 	onRequestDialogClose = () => {
-		this.setState({ isRequestDialogOpen: false, qr: undefined, qrSet: false });
+		this.setState({ isRequestDialogOpen: false });
 	};
 
 	onRequestDialogOpen = () => {
-		this.setState({ isRequestDialogOpen: true, qr: undefined, qrSet: false });
+		this.setState({ isRequestDialogOpen: true, certificate: undefined, did: undefined });
 	};
 
 	onQrDialogClose = () => {
@@ -127,7 +132,7 @@ class QrRequest extends Component {
 	};
 
 	onQrDialogOpen = () => {
-		this.setState({ isQrDialogOpen: true, qr: undefined, qrSet: false });
+		this.setState({ isQrDialogOpen: true, qr: undefined, qrSet: false, selectedTemplate: undefined });
 	};
 
 	// volver a login
@@ -228,19 +233,6 @@ class QrRequest extends Component {
 			return <div></div>;
 		}
 
-		const self = this;
-		if (!self.state.qrSet) {
-			setTimeout(function() {
-				const canvas = document.getElementById("canvas");
-				if (canvas) {
-					QRCode.toCanvas(canvas, qr, function(error) {
-						if (error) console.error(error);
-					});
-					self.setState({ qrSet: true });
-				}
-			}, 100);
-		}
-
 		return (
 			<div className="QrPetition">
 				<canvas id="canvas"></canvas>
@@ -301,7 +293,7 @@ class QrRequest extends Component {
 					<Select
 						className="CertificateSelect"
 						displayEmpty
-						value={certificates}
+						value={this.state.certificate || ""}
 						onChange={event => {
 							this.setState({ certificate: event.target.value });
 						}}

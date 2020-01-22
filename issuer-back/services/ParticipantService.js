@@ -55,9 +55,9 @@ module.exports.getNewByTemplateId = async function(templateId) {
 	}
 };
 
-module.exports.create = async function(name, data, templateId, makeNew) {
+module.exports.create = async function(name, data, templateId) {
 	try {
-		const participant = await Participant.generate(name, data, templateId, makeNew);
+		const participant = await Participant.generate(name, data, templateId);
 		if (!participant) return Promise.reject(Messages.PARTICIPANT.ERR.CREATE);
 		return Promise.resolve(participant);
 	} catch (err) {
