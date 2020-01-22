@@ -164,6 +164,10 @@ router.put(
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA]
 		},
 		{
+			name: "category",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
@@ -173,10 +177,11 @@ router.put(
 		const data = JSON.parse(req.body.data);
 		const preview = req.body.preview;
 		const type = req.body.type;
+		const category = req.body.category || [];
 		const id = req.params.id;
 
 		try {
-			let template = await TemplateService.edit(id, data, preview, type);
+			let template = await TemplateService.edit(id, data, preview, type, category);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

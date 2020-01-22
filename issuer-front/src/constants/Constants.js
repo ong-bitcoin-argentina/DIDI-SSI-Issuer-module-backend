@@ -86,6 +86,7 @@ module.exports = {
 			},
 			TYPING_TIMEOUT: 1000
 		},
+		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD"],
 		TYPES: {
 			TEXT: "Text",
 			PARAGRAPH: "Paragraph",

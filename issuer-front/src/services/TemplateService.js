@@ -70,6 +70,7 @@ export default class TemplateService {
 			body: JSON.stringify({
 				data: JSON.stringify(templateData),
 				preview: template.previewData,
+				category: template.category,
 				type: template.previewType
 			})
 		};

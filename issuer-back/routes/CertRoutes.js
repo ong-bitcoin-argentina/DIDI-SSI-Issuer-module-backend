@@ -117,8 +117,9 @@ const generateFullCertificate = async function(credentials, template, cert, part
 		const name = cert.data.cert[0].value;
 		const data = {};
 		data[name] = {
+			category: Constants.CERT_CATEGORY_MAPPING[template.category],
 			preview: {
-				type: template.previewData.length / 2,
+				type: template.previewType,
 				fields: template.previewData
 			},
 			data: {}

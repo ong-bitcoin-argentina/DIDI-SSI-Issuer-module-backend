@@ -29,6 +29,14 @@ const CERT_FIELD_TYPES = {
 	Checkbox: "Checkbox"
 };
 
+const CERT_CATEGORY_TYPES = ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD"];
+const CERT_CATEGORY_MAPPING = {
+	EDUCACION: "education",
+	FINANZAS: "finance",
+	VIVIENDA: "livingPlace",
+	IDENTIDAD: "identity"
+};
+
 const DIDI_API = process.env.DIDI_API;
 
 module.exports = {
@@ -68,6 +76,10 @@ module.exports = {
 	},
 
 	USER_TYPES: USER_TYPES,
+
+	CERT_CATEGORY_MAPPING: CERT_CATEGORY_MAPPING,
+	CERT_CATEGORY_TYPES: CERT_CATEGORY_TYPES,
+
 	CERT_FIELD_TYPES: CERT_FIELD_TYPES,
 	CERT_FIELD_MANDATORY: {
 		DID: "DID",

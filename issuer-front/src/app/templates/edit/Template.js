@@ -183,6 +183,7 @@ class Template extends Component {
 			<div className="Template">
 				{this.renderDialog()}
 				{!loading && this.renderTemplateType()}
+				{!loading && this.renderTemplateCategory()}
 				{!loading && this.renderTemplate()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.state.error && this.state.error.message}</div>
@@ -246,6 +247,34 @@ class Template extends Component {
 					}}
 				></input>
 				<div className="RequiredText">{Messages.EDIT.DIALOG.FIELD.REQUIRED}</div>
+			</div>
+		);
+	};
+
+	renderTemplateCategory = () => {
+		const template = this.state.template;
+		const categories = Constants.TEMPLATES.CATEGORIES;
+		return (
+			<div>
+				<h2 className="DataTitle">{Messages.EDIT.DATA.CATEGORIES}</h2>
+				<Select
+					className="CategoriesPicker"
+					displayEmpty
+					value={template.category ? template.category : ""}
+					onChange={event => {
+						template.category = event.target.value;
+						this.setState({ template: template });
+					}}
+					renderValue={selected => selected}
+				>
+					{categories.map((elem, key) => {
+						return (
+							<MenuItem key={"Category-" + key} value={elem}>
+								<ListItemText primary={elem} />
+							</MenuItem>
+						);
+					})}
+				</Select>
 			</div>
 		);
 	};
