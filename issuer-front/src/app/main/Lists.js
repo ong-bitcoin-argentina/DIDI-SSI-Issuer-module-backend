@@ -151,7 +151,7 @@ class Lists extends Component {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.LAST_NAME}</div>
-						<input type="text" class="TableInputFilter" onChange={this.onLastNameFilterChange} />
+						<input type="text" className="TableInputFilter" onChange={this.onLastNameFilterChange} />
 					</div>
 				),
 				accessor: "lastName"
@@ -160,7 +160,7 @@ class Lists extends Component {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.NAME}</div>
-						<input type="text" class="TableInputFilter" onChange={this.onFirstNameFilterChange} />
+						<input type="text" className="TableInputFilter" onChange={this.onFirstNameFilterChange} />
 					</div>
 				),
 				accessor: "firstName"

@@ -70,6 +70,7 @@ export default class TemplateService {
 			body: JSON.stringify({
 				data: JSON.stringify(templateData),
 				preview: template.previewData,
+				category: template.category,
 				type: template.previewType
 			})
 		};
@@ -143,6 +144,33 @@ export default class TemplateService {
 		};
 
 		fetch(Constants.API_ROUTES.TEMPLATES.GET_QR(id), data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
+	static sendRequest(token, did, cert, cb, errCb) {
+		const data = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				did: did,
+				certName: cert
+			})
+		};
+
+		fetch(Constants.API_ROUTES.TEMPLATES.QR_PETITION, data)
 			.then(data => {
 				return data.json();
 			})

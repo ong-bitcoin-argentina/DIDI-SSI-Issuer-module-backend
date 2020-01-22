@@ -148,7 +148,6 @@ class Certificate extends Component {
 
 	getParticipants = function() {
 		const self = this;
-
 		return new Promise(function(resolve, reject) {
 			ParticipantService.getAll(
 				self.state.template._id,
@@ -435,18 +434,18 @@ class Certificate extends Component {
 		);
 	};
 
-	participantSelected(id, position) {
+	participantSelected(did, position) {
 		const self = this;
 		self.setState({ loading: true });
 
 		ParticipantService.get(
-			id,
+			did,
 			function(participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
 
 				participant.data.forEach(dataElem => {
-					const dataToUpdate = partToUpdate.find(data => data.name === dataElem.name);
-					dataToUpdate.value = dataElem.value;
+					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === dataElem.name.toLowerCase());
+					if (dataToUpdate) dataToUpdate.value = dataElem.value;
 				});
 
 				self.setState({
@@ -471,7 +470,7 @@ class Certificate extends Component {
 
 		for (let newPart of this.state.parts) {
 			if (pos >= len) this.addParticipant();
-			this.participantSelected(newPart._id, pos);
+			this.participantSelected(newPart.did, pos);
 			pos++;
 		}
 
@@ -817,6 +816,9 @@ class Certificate extends Component {
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
 				<DialogContent>
+					{participants && participants.length > 0 && (
+						<div className="DataName">{Messages.EDIT.DIALOG.PARTICIPANT.NAME}</div>
+					)}
 					{participants && participants.length > 0 && (
 						<Select
 							className="ParticipantsSelector"

@@ -1,10 +1,32 @@
 @import "../../styles/Colors.scss";
 
+.QrTitle {
+	margin-top: 30px;
+	color: $BackgroundText;
+}
+
 .QrReq {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	min-height: 337px;
+}
+
+.QrRequestButtons {
+	margin-top: 20px;
+	display: flex;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.QrButtons {
+	margin-top: 20px;
+	display: flex;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.QrButton {
+	margin-right: 10px;
 }
 
 .QrPetition {
@@ -27,4 +49,20 @@
 	align-self: center;
 	margin-top: 20px;
 	margin-bottom: 20px;
+}
+
+.QrDialogButton {
+	margin-right: 10px;
+}
+
+.CertificateSelector {
+	margin-top: 15px;
+}
+
+.CertificateSelect {
+	width: 100%;
+}
+
+.SendButton {
+	margin-right: 10px;
 }

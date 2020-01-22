@@ -29,6 +29,43 @@ router.get(
 	}
 );
 
+router.post(
+	"/qr",
+	Validator.validate([
+		{
+			name: "did",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+		},
+		{
+			name: "certName",
+			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const did = req.body.did;
+		const certName = req.body.certName;
+
+		try {
+			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/";
+			const data = {
+				callbackUrl: cb,
+				claims: {
+					verifiable: {
+						[certName]: null
+					},
+					user_info: { "FULL NAME": { essential: true } }
+				}
+			};
+			const result = await MouroService.createShareRequest(data);
+			await MouroService.sendShareRequest(did, result);
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
 router.get(
 	"/:id/qr",
 	Validator.validate([
@@ -43,14 +80,20 @@ router.get(
 		const id = req.params.id;
 		try {
 			const template = await TemplateService.getById(id);
-			const requested = template.data.participant
-				.map(dataElem => dataElem.name)
-				.filter(req => req != "DID" && req != "EXPIRATION DATE");
-			requested.push("FULL NAME");
 			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + template._id;
+			const data = {
+				callbackUrl: cb,
+				claims: {
+					user_info: { "FULL NAME": { essential: true } }
+				}
+			};
+			template.data.participant.forEach(element => {
+				const name = element.name;
+				if (req != "DID" && req != "EXPIRATION DATE") data["claims"]["user_info"][name] = null;
+			});
 
-			const cert = await MouroService.createShareRequest(cb, requested);
-
+			console.log(data);
+			const cert = await MouroService.createShareRequest(data);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -121,6 +164,10 @@ router.put(
 			validate: [Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA]
 		},
 		{
+			name: "category",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
@@ -130,10 +177,11 @@ router.put(
 		const data = JSON.parse(req.body.data);
 		const preview = req.body.preview;
 		const type = req.body.type;
+		const category = req.body.category || [];
 		const id = req.params.id;
 
 		try {
-			let template = await TemplateService.edit(id, data, preview, type);
+			let template = await TemplateService.edit(id, data, preview, type, category);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

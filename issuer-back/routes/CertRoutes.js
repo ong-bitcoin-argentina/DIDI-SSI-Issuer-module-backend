@@ -117,8 +117,9 @@ const generateFullCertificate = async function(credentials, template, cert, part
 		const name = cert.data.cert[0].value;
 		const data = {};
 		data[name] = {
+			category: Constants.CERT_CATEGORY_MAPPING[template.category],
 			preview: {
-				type: template.previewData.length / 2,
+				type: template.previewType,
 				fields: template.previewData
 			},
 			data: {}
@@ -365,7 +366,7 @@ router.delete(
 
 			const calls = [];
 			for (let jwt of cert.jwts) {
-				calls.push(MouroService.revokeCertificate(jwt.hash, did));
+				calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
 			}
 
 			await Promise.all(calls);

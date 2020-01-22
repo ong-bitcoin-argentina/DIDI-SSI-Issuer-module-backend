@@ -12,8 +12,7 @@ const dataElement = {
 	},
 	type: {
 		type: String,
-		enum: Object.keys(Constants.CERT_FIELD_TYPES),
-		required: true
+		enum: Object.keys(Constants.CERT_FIELD_TYPES)
 	},
 	options: [
 		{
@@ -38,6 +37,11 @@ const TemplateSchema = mongoose.Schema({
 	},
 	previewData: [{ type: String }],
 	previewType: { type: String },
+	category: {
+		type: String,
+		enum: Object.keys(Constants.CERT_CATEGORY_TYPES),
+		required: true
+	},
 	data: {
 		cert: [dataElement],
 		participant: [dataElement],
@@ -55,10 +59,11 @@ const TemplateSchema = mongoose.Schema({
 
 TemplateSchema.index({ name: 1 });
 
-TemplateSchema.methods.edit = async function(data, previewData, previewType) {
+TemplateSchema.methods.edit = async function(data, previewData, previewType, category) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: {
+			category: category,
 			previewData: previewData,
 			previewType: previewType,
 			data: data

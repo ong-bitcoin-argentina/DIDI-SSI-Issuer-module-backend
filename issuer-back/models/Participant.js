@@ -33,7 +33,24 @@ const ParticipantSchema = mongoose.Schema({
 	}
 });
 
-ParticipantSchema.index({ name: 1, templateId: 1 });
+ParticipantSchema.index({ name: 1, templateId: 1, deleted: 1 });
+
+ParticipantSchema.methods.mergeData = function(other) {
+	const acum = {};
+	this.data.forEach(elem => {
+		acum[elem.name] = elem.value;
+	});
+	other.data.forEach(elem => {
+		acum[elem.name] = elem.value;
+	});
+
+	const result = [];
+	for (let key of Object.keys(acum)) {
+		result.push({ name: key, value: acum[key] });
+	}
+
+	this.data = result;
+};
 
 ParticipantSchema.methods.edit = async function(name, data) {
 	const updateQuery = { _id: this._id };
@@ -71,25 +88,27 @@ const Participant = mongoose.model("Participant", ParticipantSchema);
 module.exports = Participant;
 
 Participant.generate = async function(name, data, templateId) {
+	let participant;
 	try {
 		const query = { name: name, templateId: templateId, deleted: false };
-		const action = {
-			$set: { new: true }
-		};
-		const participant = await Participant.findOneAndUpdate(query, action);
-		console.log(participant);
-		if (participant) return Promise.resolve(participant);
+		participant = await Participant.findOne(query);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
 	}
 
-	let participant = new Participant();
-	participant.name = name;
-	participant.templateId = templateId;
-	participant.data = data;
-	participant.createdOn = new Date();
-	participant.deleted = false;
+	if (!participant) {
+		participant = new Participant();
+		participant.new = true;
+		participant.name = name;
+		participant.templateId = templateId;
+		participant.data = data;
+		participant.createdOn = new Date();
+		participant.deleted = false;
+	} else {
+		participant.mergeData(data);
+		participant.new = true;
+	}
 
 	try {
 		participant = await participant.save();
@@ -131,11 +150,40 @@ Participant.getAllByTemplateId = async function(templateId) {
 	}
 };
 
+Participant.getByDid = async function(did) {
+	try {
+		const query = { "data.0.value": did, deleted: false };
+		const participants = await Participant.find(query);
+		if (participants.length == 0) return Promise.resolve([]);
+
+		if (participants.length == 1) return Promise.resolve(participants[0]);
+
+		let result = participants[0];
+		for (let i = 1; i < participants.length; i++) result.mergeData(participants[i]);
+
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
 Participant.getById = async function(id) {
 	try {
 		const query = { _id: ObjectId(id), deleted: false };
 		const participant = await Participant.findOne(query);
 		return Promise.resolve(participant);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+Participant.getGlobalParticipants = async function() {
+	try {
+		const query = { templateId: { $exists: false }, deleted: false };
+		const participants = await Participant.find(query);
+		return Promise.resolve(participants);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

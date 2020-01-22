@@ -45,7 +45,7 @@ export default class ParticipantsService {
 			.catch(err => errCb(err));
 	}
 
-	static get(id, cb, errCb) {
+	static get(did, cb, errCb) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -53,7 +53,7 @@ export default class ParticipantsService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.PARTICIPANTS.GET(id), data)
+		fetch(Constants.API_ROUTES.PARTICIPANTS.GET(did), data)
 			.then(data => {
 				return data.json();
 			})

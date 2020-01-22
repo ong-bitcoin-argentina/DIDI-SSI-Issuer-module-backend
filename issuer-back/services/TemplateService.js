@@ -35,11 +35,11 @@ module.exports.create = async function(name) {
 	}
 };
 
-module.exports.edit = async function(id, data, previewData, previewType) {
+module.exports.edit = async function(id, data, previewData, previewType, category) {
 	try {
 		let template = await getById(id);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.GET);
-		template = await template.edit(data, previewData, previewType);
+		template = await template.edit(data, previewData, previewType, category);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
 		return Promise.resolve(template);
 	} catch (err) {

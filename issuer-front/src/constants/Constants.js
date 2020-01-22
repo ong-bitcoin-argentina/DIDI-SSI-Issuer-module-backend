@@ -8,6 +8,7 @@ module.exports = {
 			GET_QR: id => {
 				return API + "/template/" + id + "/qr/";
 			},
+			QR_PETITION: API + "/template/qr/",
 			GET: id => {
 				return API + "/template/" + id;
 			},
@@ -26,8 +27,8 @@ module.exports = {
 			GET_NEW: id => {
 				return API + "/participant/new/" + id;
 			},
-			GET: id => {
-				return API + "/participant/" + id;
+			GET: did => {
+				return API + "/participant/" + did;
 			}
 		},
 		CERTIFICATES: {
@@ -85,6 +86,7 @@ module.exports = {
 			},
 			TYPING_TIMEOUT: 1000
 		},
+		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD"],
 		TYPES: {
 			TEXT: "Text",
 			PARAGRAPH: "Paragraph",
@@ -92,6 +94,23 @@ module.exports = {
 			NUMBER: "Number",
 			BOOLEAN: "Boolean",
 			CHECKBOX: "Checkbox"
+		},
+		SHARED_TYPES: {
+			Email: "Email",
+			Phone: "Telefono",
+			dni: "Dni",
+			nationality: "Nacionalidad",
+			names: "Nombres",
+			lastNames: "Apellidos",
+			streetAddress: "Direccion",
+			numberStreet: "Calle",
+			floor: "Piso",
+			department: "Departamento",
+			zipCode: "Codigo Zip",
+			city: "Ciudad",
+			municipality: "Municipalidad",
+			province: "Provincia",
+			country: "Pais"
 		},
 		DATA_TYPES: {
 			CERT: "cert",
@@ -133,6 +152,7 @@ module.exports = {
 		TABLE: {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
-		}
+		},
+		REQUEST_TYPES: ["Email", "Phone", "Datos Personales", "Domicilio Legal"]
 	}
 };
