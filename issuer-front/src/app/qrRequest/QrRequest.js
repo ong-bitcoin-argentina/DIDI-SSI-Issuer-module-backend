@@ -37,12 +37,10 @@ class QrRequest extends Component {
 	componentDidMount() {
 		const self = this;
 		setInterval(function() {
-			if (self.state.qrSet || self.state.awaitingDid) {
+			if (self.state.qrSet) {
 				ParticipantService.getNew(
 					self.state.selectedTemplate._id,
 					function(participant) {
-						if (self.state.awaitingDid && participant.data[0].value === self.state.awaitingDid)
-							self.setState({ participant: participant, awaitingDid: undefined });
 						if (participant && self.state.qrSet)
 							self.setState({ participant: participant, qrSet: false, qr: undefined });
 					},

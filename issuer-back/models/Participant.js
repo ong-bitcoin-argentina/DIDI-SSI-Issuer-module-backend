@@ -40,7 +40,7 @@ ParticipantSchema.methods.mergeData = function(other) {
 	this.data.forEach(elem => {
 		acum[elem.name] = elem.value;
 	});
-	other.data.forEach(elem => {
+	other.forEach(elem => {
 		acum[elem.name] = elem.value;
 	});
 
@@ -159,7 +159,7 @@ Participant.getByDid = async function(did) {
 		if (participants.length == 1) return Promise.resolve(participants[0]);
 
 		let result = participants[0];
-		for (let i = 1; i < participants.length; i++) result.mergeData(participants[i]);
+		for (let i = 1; i < participants.length; i++) result.mergeData(participants[i].data);
 
 		return Promise.resolve(result);
 	} catch (err) {

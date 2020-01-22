@@ -443,10 +443,12 @@ class Certificate extends Component {
 			function(participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
 
-				participant.data.forEach(dataElem => {
-					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === dataElem.name.toLowerCase());
-					if (dataToUpdate) dataToUpdate.value = dataElem.value;
-				});
+				if (participant.data) {
+					participant.data.forEach(dataElem => {
+						const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === dataElem.name.toLowerCase());
+						if (dataToUpdate) dataToUpdate.value = dataElem.value;
+					});
+				}
 
 				self.setState({
 					participants: self.state.participants,
@@ -470,7 +472,7 @@ class Certificate extends Component {
 
 		for (let newPart of this.state.parts) {
 			if (pos >= len) this.addParticipant();
-			this.participantSelected(newPart.did, pos);
+			this.participantSelected(newPart.data[0].value, pos);
 			pos++;
 		}
 
