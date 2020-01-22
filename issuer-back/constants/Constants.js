@@ -11,6 +11,9 @@ const ISSUER_SERVER_PRIVATE_KEY = process.env.ISSUER_SERVER_PRIVATE_KEY;
 const ADDRESS = process.env.ADDRESS;
 const PORT = process.env.PORT;
 
+const BLOCK_CHAIN_URL = process.env.BLOCK_CHAIN_URL;
+const BLOCK_CHAIN_CONTRACT = process.env.BLOCK_CHAIN_CONTRACT;
+
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
 const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
@@ -80,6 +83,8 @@ module.exports = {
 		},
 		CONTEXT: "https://www.w3.org/2018/credentials/v1"
 	},
+
+	BLOCKCHAIN: { BLOCK_CHAIN_URL: BLOCK_CHAIN_URL, BLOCK_CHAIN_CONTRACT: BLOCK_CHAIN_CONTRACT },
 
 	DIDI_API: DIDI_API,
 

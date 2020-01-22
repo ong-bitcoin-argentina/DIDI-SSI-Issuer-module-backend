@@ -9,10 +9,10 @@ const fetch = require("node-fetch");
 const { Credentials } = require("uport-credentials");
 
 const { Resolver } = require("did-resolver");
-const { ethrDid } = require("ethr-did-resolver").getResolver({
-	rpcUrl: "https://mainnet.infura.io/v3/***REMOVED***"
-});
-const resolver = new Resolver(ethrDid);
+const { getResolver } = require("ethr-did-resolver");
+const resolver = new Resolver(
+	getResolver({ rpcUrl: Constants.BLOCKCHAIN.BLOCK_CHAIN_URL, registry: Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT })
+);
 
 module.exports.decodeCertificate = async function(jwt, errMsg) {
 	try {
