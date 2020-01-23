@@ -46,6 +46,7 @@ module.exports = {
 	VALIDATION_TYPES: {
 		IS_VALID_TOKEN_ADMIN: "isValidTokenAdmin",
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
+		IS_ARRAY: "isArray",
 		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",
 		IS_BOOLEAN: "isBoolean",
@@ -56,7 +57,8 @@ module.exports = {
 		IS_TEMPLATE_DATA_TYPE: "isTemplateDataType",
 		IS_TEMPLATE_DATA_VALUE: "isTemplateDataValue",
 		IS_TEMPLATE_PREVIEW_DATA: "isTemplatePreviewData",
-		IS_CERT_MICRO_CRED_DATA: "isCertMicroCredData"
+		IS_CERT_MICRO_CRED_DATA: "isCertMicroCredData",
+		IS_NEW_PARTICIPANTS_DATA: "isNewParticipantsData"
 	},
 
 	DATA_TYPES: {

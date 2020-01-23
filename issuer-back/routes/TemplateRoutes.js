@@ -30,24 +30,25 @@ router.get(
 );
 
 router.post(
-	"/qr",
+	"/request/:requestCode",
 	Validator.validate([
 		{
-			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			name: "dids",
+			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
 		},
 		{
 			name: "certName",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const did = req.body.did;
+		const dids = req.body.dids;
 		const certName = req.body.certName;
+		const requestCode = req.params.requestCode;
 
 		try {
-			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/";
+			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + requestCode;
 			const data = {
 				callbackUrl: cb,
 				claims: {
@@ -58,7 +59,7 @@ router.post(
 				}
 			};
 			const result = await MouroService.createShareRequest(data);
-			await MouroService.sendShareRequest(did, result);
+			for (let did of dids) await MouroService.sendShareRequest(did, result);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -67,7 +68,7 @@ router.post(
 );
 
 router.get(
-	"/:id/qr",
+	"/:id/qr/:requestCode",
 	Validator.validate([
 		{
 			name: "token",
@@ -78,9 +79,17 @@ router.get(
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
+		const requestCode = req.params.requestCode;
 		try {
 			const template = await TemplateService.getById(id);
-			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + template._id;
+			const cb =
+				Constants.ADDRESS +
+				":" +
+				Constants.PORT +
+				"/api/1.0/didi_issuer/participant/" +
+				template._id +
+				"/" +
+				requestCode;
 			const data = {
 				callbackUrl: cb,
 				claims: {

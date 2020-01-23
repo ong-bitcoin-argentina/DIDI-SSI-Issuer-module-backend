@@ -85,6 +85,16 @@ let _doValidate = function(param, isHead) {
 		return validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
 	};
 
+	let validateIsArray = function(validation, param) {
+		return validation.custom(async function(value) {
+			if (Array.isArray(value)) {
+				return Promise.resolve(value);
+			} else {
+				return Promise.reject(Messages.VALIDATION.BOOLEAN_FORMAT_INVALID(param.name));
+			}
+		});
+	};
+
 	let validateIsBoolean = function(validation, param) {
 		return validation.custom(async function(value) {
 			if (value === "true" || value === true || value === "false" || value === false) {
@@ -348,6 +358,20 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
+	let validateNewParticipantsData = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			try {
+				const data = req.body.data;
+				for (let dataElem of data) {
+					if (!dataElem.did) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+			}
+		});
+	};
+
 	let validation = createValidation(param.name, isHead, param.optional);
 
 	if (param.validate && param.validate.length) {
@@ -367,6 +391,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_STRING:
 					validation = validateIsString(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_ARRAY:
+					validation = validateIsArray(validation, param);
 					break;
 				case Constants.VALIDATION_TYPES.IS_BOOLEAN:
 					validation = validateIsBoolean(validation, param);
@@ -391,6 +418,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA:
 					validation = validateTemplateMicroCredData(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_NEW_PARTICIPANTS_DATA:
+					validation = validateNewParticipantsData(validation, param);
 					break;
 			}
 		});

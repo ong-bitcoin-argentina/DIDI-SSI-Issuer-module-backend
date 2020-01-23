@@ -5,10 +5,12 @@ module.exports = {
 		LOGIN: API + "/user/login",
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
-			GET_QR: id => {
-				return API + "/template/" + id + "/qr/";
+			GET_QR: (id, code) => {
+				return API + "/template/" + id + "/qr/" + code;
 			},
-			QR_PETITION: API + "/template/qr/",
+			REQUEST: code => {
+				return API + "/template/request/" + code;
+			},
 			GET: id => {
 				return API + "/template/" + id;
 			},
@@ -21,6 +23,7 @@ module.exports = {
 			}
 		},
 		PARTICIPANTS: {
+			POST_NEW: API + "/participant/new/",
 			GET_ALL: id => {
 				return API + "/participant/all/" + id;
 			},
@@ -29,7 +32,8 @@ module.exports = {
 			},
 			GET: did => {
 				return API + "/participant/" + did;
-			}
+			},
+			GET_DIDS: API + "/participant/dids"
 		},
 		CERTIFICATES: {
 			CREATE: API + "/cert",

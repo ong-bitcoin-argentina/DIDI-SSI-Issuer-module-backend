@@ -12,7 +12,8 @@
 }
 
 .QrRequestButtons {
-	margin-top: 20px;
+	flex-direction: column;
+	margin-top: 5px;
 	display: flex;
 	margin-left: auto;
 	margin-right: auto;
@@ -23,6 +24,21 @@
 	display: flex;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.ButtonsRow {
+	flex-direction: row;
+	margin-top: 5px;
+}
+
+.react-file-reader {
+	float: left;
+}
+
+.LoadDidsFromCsv {
+	float: left;
+	width: 75px;
+	height: 45px;
 }
 
 .QrButton {
@@ -55,14 +71,34 @@
 	margin-right: 10px;
 }
 
-.CertificateSelector {
+.DidSelect {
+	width: 100%;
+}
+
+.DataName {
 	margin-top: 15px;
+}
+
+.CertificateSelector {
+	margin-top: 0px;
 }
 
 .CertificateSelect {
 	width: 100%;
 }
 
+.CertificateButtons {
+	margin-top: 5px;
+}
+
 .SendButton {
 	margin-right: 10px;
+}
+
+.QrTitle {
+	margin-bottom: 5px;
+}
+
+.DidLoaded {
+	margin-top: 50px;
 }

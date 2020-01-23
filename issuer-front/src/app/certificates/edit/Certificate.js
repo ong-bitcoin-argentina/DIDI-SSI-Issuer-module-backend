@@ -51,7 +51,7 @@ class Certificate extends Component {
 		setInterval(function() {
 			if (self.state.waitingQr && self.state.template) {
 				ParticipantService.getNew(
-					self.state.template._id,
+					self.state.requestCode,
 					function(participant) {
 						if (participant) {
 							self.setState({ parts: [participant], waitingQr: false });
@@ -472,14 +472,12 @@ class Certificate extends Component {
 
 		for (let newPart of this.state.parts) {
 			if (pos >= len) this.addParticipant();
-			this.participantSelected(newPart.data[0].value, pos);
+			this.participantSelected(newPart.did, pos);
 			pos++;
 		}
 
 		this.setState({ parts: [] });
-		if (len >= pos) {
-			this.state.cert.data.participant.splice(pos, len - pos);
-		}
+		if (len >= pos) this.state.cert.data.participant.splice(pos, len - pos);
 	};
 
 	// guardar cert y volver a listado de certificados
@@ -591,12 +589,18 @@ class Certificate extends Component {
 		const self = this;
 		self.setState({ loading: true, qr: undefined });
 
+		const code = Math.random()
+			.toString(36)
+			.slice(-8);
+
 		// obtener template
 		TemplateService.getQrPetition(
 			token,
 			self.state.template._id,
+			code,
 			function(qr) {
 				self.setState({
+					requestCode: code,
 					qr: qr,
 					loading: false,
 					qrSet: false

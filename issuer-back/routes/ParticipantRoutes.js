@@ -7,18 +7,23 @@ const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
+router.get("/dids", async function(req, res) {
+	try {
+		const partDids = await ParticipantService.getAllDids();
+		const result = [];
+		for (let key of Object.keys(partDids)) result.push({ did: key, name: partDids[key] });
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		return ResponseHandler.sendErr(res, err);
+	}
+});
+
 router.get("/all/:templateId", async function(req, res) {
 	const templateId = req.params.templateId;
 	try {
 		const participants = await ParticipantService.getAllByTemplateId(templateId);
-		const globalParticipants = await ParticipantService.getGlobalParticipants();
-		const allParticipants = participants.concat(globalParticipants);
-
-		const mergedParticipants = {};
-		for (let part of allParticipants) mergedParticipants[part.data[0].value] = part;
-
-		const result = Object.values(mergedParticipants).map(partData => {
-			return { did: partData.data[0].value, name: partData.name };
+		const result = participants.map(partData => {
+			return { did: partData.did, name: partData.name };
 		});
 		return ResponseHandler.sendRes(res, result);
 	} catch (err) {
@@ -26,10 +31,10 @@ router.get("/all/:templateId", async function(req, res) {
 	}
 });
 
-router.get("/new/:templateId", async function(req, res) {
-	const templateId = req.params.templateId;
+router.get("/new/:requestCode", async function(req, res) {
+	const requestCode = req.params.requestCode;
 	try {
-		const participant = await ParticipantService.getNewByTemplateId(templateId);
+		const participant = await ParticipantService.getByRequestCode(requestCode);
 		return ResponseHandler.sendRes(res, participant);
 	} catch (err) {
 		return ResponseHandler.sendErr(res, err);
@@ -47,10 +52,36 @@ router.get("/:did", async function(req, res) {
 });
 
 router.post(
-	"/",
+	"/new/",
+	Validator.validate([
+		{
+			name: "data",
+			validate: [Constants.VALIDATION_TYPES.IS_NEW_PARTICIPANTS_DATA]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const data = req.body.data;
+		const dids = data.map(dataElem => dataElem.did);
+		try {
+			let result = [];
+			for (let dataElem of data) {
+				const participant = await ParticipantService.create(dataElem.name, dataElem.did, [], undefined, "");
+				result.push({ did: participant.did, name: participant.name });
+			}
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+router.post(
+	"/:requestCode",
 	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
 	Validator.checkValidationResult,
 	async function(req, res) {
+		const requestCode = req.params.requestCode;
 		const jwt = req.body.access_token;
 
 		try {
@@ -58,7 +89,7 @@ router.post(
 			const reqData = await MouroService.decodeCertificate(data.payload.verified[0], Messages.CERTIFICATE.ERR.VERIFY);
 
 			let name = data.payload.own["FULL NAME"];
-			const dataElems = [{ name: "DID", value: data.payload.iss }];
+			const dataElems = [];
 
 			const subject = reqData.payload.vc.credentialSubject;
 			for (let key of Object.keys(subject)) {
@@ -68,7 +99,7 @@ router.post(
 					dataElems.push({ name: dataKey, value: dataValue });
 				}
 			}
-			const participant = await ParticipantService.create(name, dataElems, undefined);
+			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, undefined, requestCode);
 			return ResponseHandler.sendRes(res, participant);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -77,10 +108,11 @@ router.post(
 );
 
 router.post(
-	"/:templateId",
+	"/:templateId/:requestCode",
 	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
 	Validator.checkValidationResult,
 	async function(req, res) {
+		const requestCode = req.params.requestCode;
 		const templateId = req.params.templateId;
 		const jwt = req.body.access_token;
 
@@ -88,7 +120,7 @@ router.post(
 			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
 
 			let name;
-			const dataElems = [{ name: "DID", value: data.payload.iss }];
+			const dataElems = [];
 
 			const own = data.payload.own;
 			for (let key of Object.keys(own)) {
@@ -100,7 +132,7 @@ router.post(
 				}
 			}
 
-			const participant = await ParticipantService.create(name, dataElems, templateId);
+			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, templateId, requestCode);
 			return ResponseHandler.sendRes(res, participant);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
