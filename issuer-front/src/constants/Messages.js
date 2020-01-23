@@ -18,7 +18,8 @@ module.exports = {
 		},
 		DIALOG: {
 			QR: {
-				TITLE: "Cargar Participante"
+				TITLE: "Cargar Participante",
+				DIDS_TITLE: "DIDS Cargados:"
 			},
 			PARTICIPANT: {
 				TITLE: "Agregar Participante",
@@ -37,6 +38,7 @@ module.exports = {
 			}
 		},
 		BUTTONS: {
+			LOAD_DIDS_FROM_CSV: "Cargar Dids por CSV",
 			ADD_MICRO_CRED_LABEL: "Agregar Micro",
 			REMOVE_MICRO_CRED_LABEL: "Quitar Micro",
 			ADD_MICRO_CRED: "+",

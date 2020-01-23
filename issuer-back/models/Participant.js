@@ -17,8 +17,13 @@ const ParticipantSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
+	did: {
+		type: String,
+		required: true
+	},
 	data: [dataElement],
 	templateId: String,
+	requestCode: String,
 	new: {
 		type: Boolean,
 		default: true
@@ -87,10 +92,10 @@ ParticipantSchema.methods.delete = async function() {
 const Participant = mongoose.model("Participant", ParticipantSchema);
 module.exports = Participant;
 
-Participant.generate = async function(name, data, templateId) {
+Participant.generate = async function(name, did, data, templateId, code) {
 	let participant;
 	try {
-		const query = { name: name, templateId: templateId, deleted: false };
+		const query = { did: did, templateId: templateId, deleted: false };
 		participant = await Participant.findOne(query);
 	} catch (err) {
 		console.log(err);
@@ -99,7 +104,9 @@ Participant.generate = async function(name, data, templateId) {
 
 	if (!participant) {
 		participant = new Participant();
-		participant.new = true;
+		participant.did = did;
+		participant.new = data.length === 0;
+		participant.requestCode = code;
 		participant.name = name;
 		participant.templateId = templateId;
 		participant.data = data;
@@ -107,7 +114,8 @@ Participant.generate = async function(name, data, templateId) {
 		participant.deleted = false;
 	} else {
 		participant.mergeData(data);
-		participant.new = true;
+		participant.requestCode = code;
+		participant.new = participant.data.length === 0;
 	}
 
 	try {
@@ -119,16 +127,11 @@ Participant.generate = async function(name, data, templateId) {
 	}
 };
 
-Participant.getNewByTemplateId = async function(templateId) {
+Participant.getByRequestCode = async function(requestCode) {
 	try {
-		const query = { templateId: ObjectId(templateId), new: true, deleted: false };
+		const query = { requestCode: requestCode, new: false, deleted: false };
 		const participant = await Participant.find(query);
 		if (participant.length) {
-			const updateQuery = { _id: participant[0]._id };
-			const updateAction = {
-				$set: { new: false }
-			};
-			await Participant.findOneAndUpdate(updateQuery, updateAction);
 			return Promise.resolve(participant[0]);
 		} else {
 			return Promise.resolve(undefined);
@@ -141,9 +144,23 @@ Participant.getNewByTemplateId = async function(templateId) {
 
 Participant.getAllByTemplateId = async function(templateId) {
 	try {
-		const query = { templateId: ObjectId(templateId), deleted: false };
+		const query = { templateId: ObjectId(templateId), new: false, deleted: false };
 		const participants = await Participant.find(query);
-		return Promise.resolve(participants);
+
+		const queryGlobal = { templateId: { $exists: false }, new: false, deleted: false };
+		const globalParticipants = await Participant.find(queryGlobal);
+
+		globalParticipants.forEach(globalPart => {
+			participants.forEach(part => {
+				if (global.did === part.did) globalPart.mergeData(part.data);
+			});
+		});
+
+		participants.forEach(part => {
+			if (!globalParticipants.find(globalPart => globalPart.did === part.did)) globalParticipants.push(part);
+		});
+
+		return Promise.resolve(globalParticipants);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
@@ -152,7 +169,7 @@ Participant.getAllByTemplateId = async function(templateId) {
 
 Participant.getByDid = async function(did) {
 	try {
-		const query = { "data.0.value": did, deleted: false };
+		const query = { did: did, deleted: false };
 		const participants = await Participant.find(query);
 		if (participants.length == 0) return Promise.resolve([]);
 
@@ -173,17 +190,6 @@ Participant.getById = async function(id) {
 		const query = { _id: ObjectId(id), deleted: false };
 		const participant = await Participant.findOne(query);
 		return Promise.resolve(participant);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(err);
-	}
-};
-
-Participant.getGlobalParticipants = async function() {
-	try {
-		const query = { templateId: { $exists: false }, deleted: false };
-		const participants = await Participant.find(query);
-		return Promise.resolve(participants);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

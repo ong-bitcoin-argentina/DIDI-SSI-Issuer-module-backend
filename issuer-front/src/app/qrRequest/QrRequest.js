@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
 import "./QrRequest.scss";
 
+import ReactFileReader from "react-file-reader";
+
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -30,7 +32,8 @@ class QrRequest extends Component {
 			loading: false,
 			isQrDialogOpen: false,
 			isRequestDialogOpen: false,
-			qrSet: false
+			qrSet: false,
+			requestSent: false
 		};
 	}
 
@@ -39,10 +42,23 @@ class QrRequest extends Component {
 		setInterval(function() {
 			if (self.state.qrSet) {
 				ParticipantService.getNew(
-					self.state.selectedTemplate._id,
+					self.state.requestCode,
 					function(participant) {
 						if (participant && self.state.qrSet)
 							self.setState({ participant: participant, qrSet: false, qr: undefined });
+					},
+					function(err) {
+						self.setState({ error: err });
+						console.log(err);
+					}
+				);
+			}
+
+			if (self.state.requestSent) {
+				ParticipantService.getNew(
+					self.state.globalRequestCode,
+					function(participant) {
+						if (participant && self.state.requestSent) self.setState({ participant: participant, requestSent: false });
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -58,12 +74,18 @@ class QrRequest extends Component {
 		const self = this;
 		self.setState({ loading: true, qr: undefined });
 
+		const code = Math.random()
+			.toString(36)
+			.slice(-8);
+
 		// obtener template
 		TemplateService.getQrPetition(
 			token,
 			self.state.selectedTemplate._id,
+			code,
 			function(qr) {
 				self.setState({
+					requestCode: code,
 					qr: qr,
 					participant: undefined,
 					loading: false
@@ -98,17 +120,60 @@ class QrRequest extends Component {
 		const self = this;
 		self.setState({ loading: true });
 
+		const globalRequestCode = Math.random()
+			.toString(36)
+			.slice(-8);
+
 		// mandar pedido
 		TemplateService.sendRequest(
 			token,
 			self.state.did,
 			self.state.certificate,
+			globalRequestCode,
 			function(_) {
 				self.setState({
 					loading: false,
-					isRequestDialogOpen: false,
+					requestSent: true,
+					globalRequestCode: globalRequestCode,
 					awaitingDid: self.state.did
 				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
+	LoadDidsFromCsv = files => {
+		const self = this;
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			const result = [];
+			const data = reader.result.split(/[\r\n,]+/);
+
+			let index = 0;
+			do {
+				const did = data[index];
+				const name = index + 1 < data.length ? data[index + 1] : "";
+				result.push({ did: did, name: name });
+				index += 2;
+			} while (index < data.length);
+
+			self.addDids(result);
+		};
+		reader.readAsText(files[0]);
+	};
+
+	addDids = data => {
+		const self = this;
+		this.setState({ loading: true });
+		ParticipantService.createNew(
+			data,
+			function(dids) {
+				const local = self.state.dids;
+				let didsResult = local ? [...new Set(self.state.dids.concat(dids))] : dids;
+				self.setState({ loading: false, dids: didsResult, addedDids: true });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -150,39 +215,72 @@ class QrRequest extends Component {
 		}
 
 		const loading = this.state.loading;
-		const part = this.state.participant;
-		if (part) {
-			return (
-				<div className="ParticipantLoaded">
-					<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
-					{!loading && part && this.renderParticipant(part)}
-					{!loading && this.renderParticipantButtons()}
-				</div>
-			);
-		}
+		if (loading) return <div></div>;
 
+		const part = this.state.participant;
+		if (part) return this.renderParticipantLoadedScreen(part);
+
+		const dids = this.state.dids;
+		const addedDids = this.state.addedDids;
+		if (dids && addedDids) return this.renderAddedDidsScreen(dids);
+
+		return this.renderAddParticipantScreen();
+	}
+
+	renderAddParticipantScreen = () => {
 		return (
 			<div className="QrReq">
-				{!loading && this.renderRequestDialog()}
-				{!loading && this.renderQrDialog()}
+				{this.renderRequestDialog()}
+				{this.renderQrDialog()}
 				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
-				{!loading && this.renderButtons()}
+				{this.renderButtons()}
 			</div>
 		);
-	}
+	};
+
+	renderAddedDidsScreen = dids => {
+		return (
+			<div className="DidLoaded">
+				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.DIDS_TITLE}</div>
+				{dids.map((did, key) => (
+					<li key={"did-" + key}>{did}</li>
+				))}
+				{this.renderResultButtons()}
+			</div>
+		);
+	};
+
+	renderParticipantLoadedScreen = part => {
+		return (
+			<div className="ParticipantLoaded">
+				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
+				{part && this.renderParticipant(part)}
+				{this.renderResultButtons()}
+			</div>
+		);
+	};
 
 	renderButtons = () => {
 		return (
 			<div className="QrRequestButtons">
-				<button className="QrDialogButton" onClick={this.onQrDialogOpen}>
-					{Messages.QR.BUTTONS.QR_LOAD}
-				</button>
-				<button className="QrRequestButton" onClick={this.onRequestDialogOpen}>
-					{Messages.QR.BUTTONS.REQUEST}
-				</button>
-				<button className="LogoutButton" onClick={this.onLogout}>
-					{Messages.EDIT.BUTTONS.EXIT}
-				</button>
+				<div className="ButtonsRow">
+					<button className="QrDialogButton" onClick={this.onQrDialogOpen}>
+						{Messages.QR.BUTTONS.QR_LOAD}
+					</button>
+					<button className="QrRequestButton" onClick={this.onRequestDialogOpen}>
+						{Messages.QR.BUTTONS.REQUEST}
+					</button>
+				</div>
+
+				<div className="ButtonsRow">
+					<ReactFileReader className="LoadDidsFromCsv" handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
+						<button className="LoadDidsFromCsv">{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}</button>
+					</ReactFileReader>
+
+					<button className="LogoutButton" onClick={this.onLogout}>
+						{Messages.EDIT.BUTTONS.EXIT}
+					</button>
+				</div>
 			</div>
 		);
 	};
@@ -332,7 +430,7 @@ class QrRequest extends Component {
 		);
 	};
 
-	renderParticipantButtons = () => {
+	renderResultButtons = () => {
 		return (
 			<div className="CertificateButtons">
 				<button className="BackButton" onClick={this.onBack}>

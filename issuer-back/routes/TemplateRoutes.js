@@ -30,7 +30,7 @@ router.get(
 );
 
 router.post(
-	"/qr",
+	"/request/:requestCode",
 	Validator.validate([
 		{
 			name: "did",
@@ -45,9 +45,10 @@ router.post(
 	async function(req, res) {
 		const did = req.body.did;
 		const certName = req.body.certName;
+		const requestCode = req.params.requestCode;
 
 		try {
-			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/";
+			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + requestCode;
 			const data = {
 				callbackUrl: cb,
 				claims: {
@@ -67,7 +68,7 @@ router.post(
 );
 
 router.get(
-	"/:id/qr",
+	"/:id/qr/:requestCode",
 	Validator.validate([
 		{
 			name: "token",
@@ -78,9 +79,17 @@ router.get(
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
+		const requestCode = req.params.requestCode;
 		try {
 			const template = await TemplateService.getById(id);
-			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + template._id;
+			const cb =
+				Constants.ADDRESS +
+				":" +
+				Constants.PORT +
+				"/api/1.0/didi_issuer/participant/" +
+				template._id +
+				"/" +
+				requestCode;
 			const data = {
 				callbackUrl: cb,
 				claims: {

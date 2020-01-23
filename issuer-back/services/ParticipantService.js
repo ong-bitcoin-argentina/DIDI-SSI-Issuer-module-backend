@@ -35,19 +35,9 @@ module.exports.getAllByTemplateId = async function(templateId) {
 	}
 };
 
-module.exports.getGlobalParticipants = async function() {
+module.exports.getByRequestCode = async function(requestCode) {
 	try {
-		let participants = await Participant.getGlobalParticipants();
-		return Promise.resolve(participants);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.PARTICIPANT.ERR.GET);
-	}
-};
-
-module.exports.getNewByTemplateId = async function(templateId) {
-	try {
-		let participant = await Participant.getNewByTemplateId(templateId);
+		let participant = await Participant.getByRequestCode(requestCode);
 		return Promise.resolve(participant);
 	} catch (err) {
 		console.log(err);
@@ -55,9 +45,9 @@ module.exports.getNewByTemplateId = async function(templateId) {
 	}
 };
 
-module.exports.create = async function(name, data, templateId) {
+module.exports.create = async function(name, did, data, templateId, code) {
 	try {
-		const participant = await Participant.generate(name, data, templateId);
+		const participant = await Participant.generate(name, did, data, templateId, code);
 		if (!participant) return Promise.reject(Messages.PARTICIPANT.ERR.CREATE);
 		return Promise.resolve(participant);
 	} catch (err) {

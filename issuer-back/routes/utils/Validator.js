@@ -348,6 +348,20 @@ let _doValidate = function(param, isHead) {
 		});
 	};
 
+	let validateNewParticipantsData = function(validation, param) {
+		return validation.custom(async function(value, { req }) {
+			try {
+				const data = req.body.data;
+				for (let dataElem of data) {
+					if (!dataElem.did) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+				}
+			} catch (err) {
+				console.log(err);
+				return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
+			}
+		});
+	};
+
 	let validation = createValidation(param.name, isHead, param.optional);
 
 	if (param.validate && param.validate.length) {
@@ -391,6 +405,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA:
 					validation = validateTemplateMicroCredData(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_NEW_PARTICIPANTS_DATA:
+					validation = validateNewParticipantsData(validation, param);
 					break;
 			}
 		});
