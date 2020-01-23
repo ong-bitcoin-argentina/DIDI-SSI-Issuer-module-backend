@@ -39,8 +39,7 @@ const TemplateSchema = mongoose.Schema({
 	previewType: { type: String },
 	category: {
 		type: String,
-		enum: Object.keys(Constants.CERT_CATEGORY_TYPES),
-		required: true
+		enum: Object.keys(Constants.CERT_CATEGORY_TYPES)
 	},
 	data: {
 		cert: [dataElement],
