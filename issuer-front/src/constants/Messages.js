@@ -18,7 +18,7 @@ module.exports = {
 		},
 		DIALOG: {
 			QR: {
-				TITLE: "Cargar Participante",
+				PARTICIPANT_TITLE: "Cargar Participante",
 				DIDS_TITLE: "DIDS Cargados:"
 			},
 			PARTICIPANT: {

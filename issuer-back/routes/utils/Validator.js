@@ -85,6 +85,16 @@ let _doValidate = function(param, isHead) {
 		return validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
 	};
 
+	let validateIsArray = function(validation, param) {
+		return validation.custom(async function(value) {
+			if (Array.isArray(value)) {
+				return Promise.resolve(value);
+			} else {
+				return Promise.reject(Messages.VALIDATION.BOOLEAN_FORMAT_INVALID(param.name));
+			}
+		});
+	};
+
 	let validateIsBoolean = function(validation, param) {
 		return validation.custom(async function(value) {
 			if (value === "true" || value === true || value === "false" || value === false) {
@@ -381,6 +391,9 @@ let _doValidate = function(param, isHead) {
 					break;
 				case Constants.VALIDATION_TYPES.IS_STRING:
 					validation = validateIsString(validation, param);
+					break;
+				case Constants.VALIDATION_TYPES.IS_ARRAY:
+					validation = validateIsArray(validation, param);
 					break;
 				case Constants.VALIDATION_TYPES.IS_BOOLEAN:
 					validation = validateIsBoolean(validation, param);

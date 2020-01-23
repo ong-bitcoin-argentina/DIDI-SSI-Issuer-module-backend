@@ -7,6 +7,17 @@ const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
+router.get("/dids", async function(req, res) {
+	try {
+		const partDids = await ParticipantService.getAllDids();
+		const result = [];
+		for (let key of Object.keys(partDids)) result.push({ did: key, name: partDids[key] });
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		return ResponseHandler.sendErr(res, err);
+	}
+});
+
 router.get("/all/:templateId", async function(req, res) {
 	const templateId = req.params.templateId;
 	try {
@@ -53,8 +64,12 @@ router.post(
 		const data = req.body.data;
 		const dids = data.map(dataElem => dataElem.did);
 		try {
-			for (let dataElem of data) await ParticipantService.create(dataElem.name, dataElem.did, [], undefined, "");
-			return ResponseHandler.sendRes(res, dids);
+			let result = [];
+			for (let dataElem of data) {
+				const participant = await ParticipantService.create(dataElem.name, dataElem.did, [], undefined, "");
+				result.push({ did: participant.did, name: participant.name });
+			}
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

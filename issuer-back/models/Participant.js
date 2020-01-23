@@ -142,6 +142,17 @@ Participant.getByRequestCode = async function(requestCode) {
 	}
 };
 
+Participant.getAllDids = async function() {
+	const query = { deleted: false };
+	const participants = await Participant.find(query);
+
+	const result = {};
+	participants.forEach(part => {
+		result[part.did] = part.name;
+	});
+	return Promise.resolve(result);
+};
+
 Participant.getAllByTemplateId = async function(templateId) {
 	try {
 		const query = { templateId: ObjectId(templateId), new: false, deleted: false };

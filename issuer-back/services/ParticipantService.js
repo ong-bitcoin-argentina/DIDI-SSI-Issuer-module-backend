@@ -35,6 +35,16 @@ module.exports.getAllByTemplateId = async function(templateId) {
 	}
 };
 
+module.exports.getAllDids = async function() {
+	try {
+		let participants = await Participant.getAllDids();
+		return Promise.resolve(participants);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.PARTICIPANT.ERR.GET);
+	}
+};
+
 module.exports.getByRequestCode = async function(requestCode) {
 	try {
 		let participant = await Participant.getByRequestCode(requestCode);

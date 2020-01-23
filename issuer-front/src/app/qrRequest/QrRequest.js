@@ -32,6 +32,7 @@ class QrRequest extends Component {
 			loading: false,
 			isQrDialogOpen: false,
 			isRequestDialogOpen: false,
+			selectedNames: [],
 			qrSet: false,
 			requestSent: false
 		};
@@ -39,6 +40,16 @@ class QrRequest extends Component {
 
 	componentDidMount() {
 		const self = this;
+		ParticipantService.getAllDids(
+			function(dids) {
+				self.setState({ dids: dids });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+
 		setInterval(function() {
 			if (self.state.qrSet) {
 				ParticipantService.getNew(
@@ -112,7 +123,8 @@ class QrRequest extends Component {
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
 		const did = this.state.did;
 		const validDid = did && did.match(regex);
-		return this.state.certificate && validDid;
+		const selectedName = this.state.selectedNames.length > 0;
+		return this.state.certificate && (validDid || selectedName);
 	};
 
 	sendRequest = () => {
@@ -124,10 +136,18 @@ class QrRequest extends Component {
 			.toString(36)
 			.slice(-8);
 
+		const didList = self.state.dids;
+		const dids = self.state.selectedNames.map(name => {
+			const match = didList.find(didElem => didElem.name === name);
+			return match.did;
+		});
+
+		if (self.state.did) dids.push(self.state.did);
+
 		// mandar pedido
 		TemplateService.sendRequest(
 			token,
-			self.state.did,
+			dids,
 			self.state.certificate,
 			globalRequestCode,
 			function(_) {
@@ -172,8 +192,16 @@ class QrRequest extends Component {
 			data,
 			function(dids) {
 				const local = self.state.dids;
-				let didsResult = local ? [...new Set(self.state.dids.concat(dids))] : dids;
-				self.setState({ loading: false, dids: didsResult, addedDids: true });
+				const acum = {};
+				for (let did of dids) acum[did.did] = did.name;
+				for (let did of local) acum[did.did] = did.name;
+
+				const result = [];
+				for (let key of Object.keys(acum)) {
+					result.push({ did: key, name: acum[key] });
+				}
+
+				self.setState({ loading: false, newDids: dids, dids: result });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -220,9 +248,8 @@ class QrRequest extends Component {
 		const part = this.state.participant;
 		if (part) return this.renderParticipantLoadedScreen(part);
 
-		const dids = this.state.dids;
-		const addedDids = this.state.addedDids;
-		if (dids && addedDids) return this.renderAddedDidsScreen(dids);
+		const newDids = this.state.newDids;
+		if (newDids) return this.renderAddedDidsScreen(newDids);
 
 		return this.renderAddParticipantScreen();
 	}
@@ -232,7 +259,7 @@ class QrRequest extends Component {
 			<div className="QrReq">
 				{this.renderRequestDialog()}
 				{this.renderQrDialog()}
-				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
+				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</div>
 				{this.renderButtons()}
 			</div>
 		);
@@ -243,7 +270,7 @@ class QrRequest extends Component {
 			<div className="DidLoaded">
 				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.DIDS_TITLE}</div>
 				{dids.map((did, key) => (
-					<li key={"did-" + key}>{did}</li>
+					<li key={"did-" + key}>{did.name}</li>
 				))}
 				{this.renderResultButtons()}
 			</div>
@@ -253,7 +280,7 @@ class QrRequest extends Component {
 	renderParticipantLoadedScreen = part => {
 		return (
 			<div className="ParticipantLoaded">
-				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
+				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</div>
 				{part && this.renderParticipant(part)}
 				{this.renderResultButtons()}
 			</div>
@@ -288,7 +315,7 @@ class QrRequest extends Component {
 	renderQrDialog = () => {
 		return (
 			<Dialog open={this.state.isQrDialogOpen} onClose={this.onQrDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.TITLE}</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">
 						{this.renderTemplateSelector()}
@@ -358,7 +385,7 @@ class QrRequest extends Component {
 				onClose={this.onRequestDialogClose}
 				aria-labelledby="form-dialog-title"
 			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.TITLE}</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">
 						{this.renderRequestSelector()}
@@ -371,18 +398,9 @@ class QrRequest extends Component {
 
 	renderRequestSelector = () => {
 		const certificates = Constants.CERTIFICATES.REQUEST_TYPES;
+
 		return (
 			<div className="QrTemplateSelector">
-				<div className="DataName">{Messages.QR.DID_SELECT}</div>
-				<input
-					type="text"
-					className="DataInput"
-					value={this.state.did}
-					onChange={event => {
-						this.setState({ did: event.target.value });
-					}}
-				/>
-
 				<div className="CertificateSelector">
 					<div className="DataName">{Messages.QR.CERTIFICATE_SELECT}</div>
 
@@ -405,6 +423,42 @@ class QrRequest extends Component {
 						})}
 					</Select>
 				</div>
+
+				<div className="DataName">{Messages.QR.DID_SELECT}</div>
+				{/*
+				<input
+					type="text"
+					className="DataInput"
+					value={this.state.did}
+					onChange={event => {
+						this.setState({ did: event.target.value });
+					}}
+				/>
+				*/}
+
+				{this.state.dids && (
+					<Select
+						className="DidSelect"
+						multiple
+						displayEmpty
+						value={this.state.selectedNames}
+						onChange={event => {
+							this.setState({ selectedNames: event.target.value });
+						}}
+						renderValue={value => {
+							return value ? value.join(",") : "";
+						}}
+					>
+						{this.state.dids.map((elem, key) => {
+							return (
+								<MenuItem key={"CertificateSelector-" + key} value={elem.name}>
+									<Checkbox checked={this.state.selectedNames && this.state.selectedNames.indexOf(elem.name) >= 0} />
+									<ListItemText primary={elem.name} />
+								</MenuItem>
+							);
+						})}
+					</Select>
+				)}
 			</div>
 		);
 	};

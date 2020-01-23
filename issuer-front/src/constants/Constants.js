@@ -32,7 +32,8 @@ module.exports = {
 			},
 			GET: did => {
 				return API + "/participant/" + did;
-			}
+			},
+			GET_DIDS: API + "/participant/dids"
 		},
 		CERTIFICATES: {
 			CREATE: API + "/cert",

@@ -157,7 +157,7 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static sendRequest(token, did, cert, code, cb, errCb) {
+	static sendRequest(token, dids, cert, code, cb, errCb) {
 		const data = {
 			method: "POST",
 			headers: {
@@ -165,7 +165,7 @@ export default class TemplateService {
 				token: token
 			},
 			body: JSON.stringify({
-				did: did,
+				dids: dids,
 				certName: cert
 			})
 		};

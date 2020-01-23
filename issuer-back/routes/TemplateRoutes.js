@@ -33,17 +33,17 @@ router.post(
 	"/request/:requestCode",
 	Validator.validate([
 		{
-			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			name: "dids",
+			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
 		},
 		{
 			name: "certName",
-			validate: [Constants.VALIDATION_TYPES.IS_VALID_TOKEN_ADMIN]
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
-		const did = req.body.did;
+		const dids = req.body.dids;
 		const certName = req.body.certName;
 		const requestCode = req.params.requestCode;
 
@@ -59,7 +59,7 @@ router.post(
 				}
 			};
 			const result = await MouroService.createShareRequest(data);
-			await MouroService.sendShareRequest(did, result);
+			for (let did of dids) await MouroService.sendShareRequest(did, result);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
