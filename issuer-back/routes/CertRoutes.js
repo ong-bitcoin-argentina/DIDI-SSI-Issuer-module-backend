@@ -217,6 +217,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		const microCredentials = await Promise.all(generateCertPromises);
 
 		data[name] = {
+			category: Constants.CERT_CATEGORY_MAPPING[template.category],
 			preview: {
 				type: template.previewData.length / 2,
 				fields: template.previewData
