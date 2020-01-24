@@ -28,6 +28,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 var QRCode = require("qrcode");
+let interval;
 
 class Certificate extends Component {
 	constructor(props) {
@@ -41,6 +42,13 @@ class Certificate extends Component {
 			action: "viewing"
 		};
 	}
+
+	componentWillUnmount() {
+		if (interval) {
+			clearInterval(interval);
+		}
+	}
+
 	// cargar templates, certificado, etc
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
@@ -48,7 +56,7 @@ class Certificate extends Component {
 		const token = Cookie.get("token");
 
 		const self = this;
-		setInterval(function() {
+		interval = setInterval(function() {
 			if (self.state.waitingQr && self.state.template) {
 				ParticipantService.getNew(
 					self.state.requestCode,

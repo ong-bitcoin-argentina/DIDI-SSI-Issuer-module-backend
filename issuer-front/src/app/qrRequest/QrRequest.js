@@ -24,6 +24,7 @@ import Messages from "../../constants/Messages";
 
 var QRCode = require("qrcode");
 
+let interval;
 class QrRequest extends Component {
 	constructor(props) {
 		super(props);
@@ -38,6 +39,12 @@ class QrRequest extends Component {
 		};
 	}
 
+	componentWillUnmount() {
+		if (interval) {
+			clearInterval(interval);
+		}
+	}
+
 	componentDidMount() {
 		const self = this;
 		ParticipantService.getAllDids(
@@ -50,7 +57,7 @@ class QrRequest extends Component {
 			}
 		);
 
-		setInterval(function() {
+		interval = setInterval(function() {
 			if (self.state.qrSet) {
 				ParticipantService.getNew(
 					self.state.requestCode,
