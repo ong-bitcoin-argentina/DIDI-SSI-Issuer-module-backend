@@ -456,6 +456,9 @@ class Certificate extends Component {
 						const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === dataElem.name.toLowerCase());
 						if (dataToUpdate) dataToUpdate.value = dataElem.value;
 					});
+
+					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === "did");
+					if (dataToUpdate) dataToUpdate.value = participant.did;
 				}
 
 				self.setState({
