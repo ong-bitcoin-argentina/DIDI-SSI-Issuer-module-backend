@@ -101,7 +101,6 @@ router.get(
 				if (req != "DID" && req != "EXPIRATION DATE") data["claims"]["user_info"][name] = null;
 			});
 
-			console.log(data);
 			const cert = await MouroService.createShareRequest(data);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
@@ -186,7 +185,7 @@ router.put(
 		const data = JSON.parse(req.body.data);
 		const preview = req.body.preview;
 		const type = req.body.type;
-		const category = req.body.category || [];
+		const category = req.body.category || "";
 		const id = req.params.id;
 
 		try {
