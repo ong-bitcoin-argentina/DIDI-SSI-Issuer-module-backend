@@ -119,7 +119,7 @@ const generateFullCertificate = async function(credentials, template, cert, part
 		data[name] = {
 			category: Constants.CERT_CATEGORY_MAPPING[template.category],
 			preview: {
-				type: template.previewType,
+				type: Number(template.previewType),
 				fields: template.previewData
 			},
 			data: {}
@@ -219,7 +219,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		data[name] = {
 			category: Constants.CERT_CATEGORY_MAPPING[template.category],
 			preview: {
-				type: template.previewData.length / 2,
+				type: Number(template.previewType),
 				fields: template.previewData
 			},
 			data: {},
