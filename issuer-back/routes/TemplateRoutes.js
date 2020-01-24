@@ -185,6 +185,7 @@ router.put(
 		const data = JSON.parse(req.body.data);
 		const preview = req.body.preview;
 		const type = req.body.type;
+
 		const category = req.body.category || "";
 		const id = req.params.id;
 
