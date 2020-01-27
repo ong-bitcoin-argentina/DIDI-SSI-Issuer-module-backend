@@ -62,8 +62,7 @@ class QrRequest extends Component {
 				ParticipantService.getNew(
 					self.state.requestCode,
 					function(participant) {
-						if (participant && self.state.qrSet)
-							self.setState({ participant: participant, qrSet: false, qr: undefined });
+						if (participant && self.state.qrSet) self.setState({ participant: participant, qr: undefined });
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -76,7 +75,7 @@ class QrRequest extends Component {
 				ParticipantService.getNew(
 					self.state.globalRequestCode,
 					function(participant) {
-						if (participant && self.state.requestSent) self.setState({ participant: participant, requestSent: false });
+						if (participant && self.state.requestSent) self.setState({ participant: participant });
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -131,7 +130,7 @@ class QrRequest extends Component {
 		const did = this.state.did;
 		const validDid = did && did.match(regex);
 		const selectedName = this.state.selectedNames.length > 0;
-		return this.state.certificate && (validDid || selectedName);
+		return this.state.certificates && this.state.certificates.length && (validDid || selectedName);
 	};
 
 	sendRequest = () => {
@@ -155,7 +154,7 @@ class QrRequest extends Component {
 		TemplateService.sendRequest(
 			token,
 			dids,
-			self.state.certificate,
+			self.state.certificates,
 			globalRequestCode,
 			function(_) {
 				self.setState({
@@ -222,11 +221,11 @@ class QrRequest extends Component {
 	};
 
 	onRequestDialogOpen = () => {
-		this.setState({ isRequestDialogOpen: true, certificate: undefined, did: undefined });
+		this.setState({ isRequestDialogOpen: true, certificates: undefined, did: undefined, requestSent: false });
 	};
 
 	onQrDialogClose = () => {
-		this.setState({ isQrDialogOpen: false, qr: undefined, qrSet: false });
+		this.setState({ isQrDialogOpen: false, qr: undefined });
 	};
 
 	onQrDialogOpen = () => {
@@ -241,6 +240,7 @@ class QrRequest extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
+		this.setState({ qrSet: false, requestSent: false });
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
@@ -253,7 +253,10 @@ class QrRequest extends Component {
 		if (loading) return <div></div>;
 
 		const part = this.state.participant;
-		if (part) return this.renderParticipantLoadedScreen(part);
+		const requestSent = this.state.requestSent;
+		const qrSet = this.state.qrSet;
+		const qr = this.state.qr;
+		if (requestSent || (qrSet && !qr)) return this.renderParticipantLoadedScreen(part);
 
 		const newDids = this.state.newDids;
 		if (newDids) return this.renderAddedDidsScreen(newDids);
@@ -413,17 +416,18 @@ class QrRequest extends Component {
 
 					<Select
 						className="CertificateSelect"
+						multiple
 						displayEmpty
-						value={this.state.certificate || ""}
+						value={this.state.certificates || []}
 						onChange={event => {
-							this.setState({ certificate: event.target.value });
+							this.setState({ certificates: event.target.value });
 						}}
-						renderValue={_ => this.state.certificate}
+						renderValue={_ => (this.state.certificates ? this.state.certificates.join(",") : "")}
 					>
 						{certificates.map((elem, key) => {
 							return (
 								<MenuItem key={"CertificateSelector-" + key} value={elem}>
-									<Checkbox checked={this.state.certificate === elem} />
+									<Checkbox checked={this.state.certificates && this.state.certificates.indexOf(elem) >= 0} />
 									<ListItemText primary={elem} />
 								</MenuItem>
 							);
