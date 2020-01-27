@@ -183,7 +183,7 @@ class QrRequest extends Component {
 			do {
 				const did = data[index];
 				const name = index + 1 < data.length ? data[index + 1] : "";
-				result.push({ did: did, name: name });
+				if (did && name) result.push({ did: did, name: name });
 				index += 2;
 			} while (index < data.length);
 
