@@ -131,7 +131,7 @@ class QrRequest extends Component {
 		const did = this.state.did;
 		const validDid = did && did.match(regex);
 		const selectedName = this.state.selectedNames.length > 0;
-		return this.state.certificate && (validDid || selectedName);
+		return this.state.certificates && this.state.certificates.length && (validDid || selectedName);
 	};
 
 	sendRequest = () => {
@@ -155,7 +155,7 @@ class QrRequest extends Component {
 		TemplateService.sendRequest(
 			token,
 			dids,
-			self.state.certificate,
+			self.state.certificates,
 			globalRequestCode,
 			function(_) {
 				self.setState({
@@ -222,7 +222,7 @@ class QrRequest extends Component {
 	};
 
 	onRequestDialogOpen = () => {
-		this.setState({ isRequestDialogOpen: true, certificate: undefined, did: undefined });
+		this.setState({ isRequestDialogOpen: true, certificates: undefined, did: undefined });
 	};
 
 	onQrDialogClose = () => {
@@ -413,17 +413,18 @@ class QrRequest extends Component {
 
 					<Select
 						className="CertificateSelect"
+						multiple
 						displayEmpty
-						value={this.state.certificate || ""}
+						value={this.state.certificates || []}
 						onChange={event => {
-							this.setState({ certificate: event.target.value });
+							this.setState({ certificates: event.target.value });
 						}}
-						renderValue={_ => this.state.certificate}
+						renderValue={_ => this.state.certificates ? this.state.certificates.join(',') : ""}
 					>
 						{certificates.map((elem, key) => {
 							return (
 								<MenuItem key={"CertificateSelector-" + key} value={elem}>
-									<Checkbox checked={this.state.certificate === elem} />
+									<Checkbox checked={this.state.certificates && this.state.certificates.indexOf(elem) >= 0} />
 									<ListItemText primary={elem} />
 								</MenuItem>
 							);

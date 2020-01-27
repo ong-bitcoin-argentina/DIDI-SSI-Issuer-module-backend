@@ -37,24 +37,28 @@ router.post(
 			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
 		},
 		{
-			name: "certName",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+			name: "certNames",
+			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const dids = req.body.dids;
-		const certName = req.body.certName;
+		const certNames = req.body.certNames;
 		const requestCode = req.params.requestCode;
 
 		try {
 			const cb = Constants.ADDRESS + ":" + Constants.PORT + "/api/1.0/didi_issuer/participant/" + requestCode;
+
+			const verifiable = {};
+			for (let certName of certNames) {
+				verifiable[certName] = null;
+			}
+
 			const data = {
 				callbackUrl: cb,
 				claims: {
-					verifiable: {
-						[certName]: null
-					},
+					verifiable: verifiable,
 					user_info: { "FULL NAME": { essential: true } }
 				}
 			};

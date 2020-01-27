@@ -86,17 +86,19 @@ router.post(
 
 		try {
 			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
-			const reqData = await MouroService.decodeCertificate(data.payload.verified[0], Messages.CERTIFICATE.ERR.VERIFY);
 
 			let name = data.payload.own["FULL NAME"];
 			const dataElems = [];
 
-			const subject = reqData.payload.vc.credentialSubject;
-			for (let key of Object.keys(subject)) {
-				const data = subject[key].data;
-				for (let dataKey of Object.keys(data)) {
-					const dataValue = data[dataKey];
-					dataElems.push({ name: dataKey, value: dataValue });
+			for (let payload of data.payload.verified) {
+				const reqData = await MouroService.decodeCertificate(payload, Messages.CERTIFICATE.ERR.VERIFY);
+				const subject = reqData.payload.vc.credentialSubject;
+				for (let key of Object.keys(subject)) {
+					const data = subject[key].data;
+					for (let dataKey of Object.keys(data)) {
+						const dataValue = data[dataKey];
+						dataElems.push({ name: dataKey, value: dataValue });
+					}
 				}
 			}
 			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, undefined, requestCode);
