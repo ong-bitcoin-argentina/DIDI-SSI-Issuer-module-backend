@@ -62,8 +62,7 @@ class QrRequest extends Component {
 				ParticipantService.getNew(
 					self.state.requestCode,
 					function(participant) {
-						if (participant && self.state.qrSet)
-							self.setState({ participant: participant, qrSet: false, qr: undefined });
+						if (participant && self.state.qrSet) self.setState({ participant: participant, qr: undefined });
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -76,7 +75,7 @@ class QrRequest extends Component {
 				ParticipantService.getNew(
 					self.state.globalRequestCode,
 					function(participant) {
-						if (participant && self.state.requestSent) self.setState({ participant: participant, requestSent: false });
+						if (participant && self.state.requestSent) self.setState({ participant: participant });
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -222,11 +221,11 @@ class QrRequest extends Component {
 	};
 
 	onRequestDialogOpen = () => {
-		this.setState({ isRequestDialogOpen: true, certificates: undefined, did: undefined });
+		this.setState({ isRequestDialogOpen: true, certificates: undefined, did: undefined, requestSent: false });
 	};
 
 	onQrDialogClose = () => {
-		this.setState({ isQrDialogOpen: false, qr: undefined, qrSet: false });
+		this.setState({ isQrDialogOpen: false, qr: undefined });
 	};
 
 	onQrDialogOpen = () => {
@@ -241,6 +240,7 @@ class QrRequest extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
+		this.setState({ qrSet: false, requestSent: false });
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
@@ -253,7 +253,10 @@ class QrRequest extends Component {
 		if (loading) return <div></div>;
 
 		const part = this.state.participant;
-		if (part) return this.renderParticipantLoadedScreen(part);
+		const requestSent = this.state.requestSent;
+		const qrSet = this.state.qrSet;
+		const qr = this.state.qr;
+		if (requestSent || (qrSet && !qr)) return this.renderParticipantLoadedScreen(part);
 
 		const newDids = this.state.newDids;
 		if (newDids) return this.renderAddedDidsScreen(newDids);
@@ -419,7 +422,7 @@ class QrRequest extends Component {
 						onChange={event => {
 							this.setState({ certificates: event.target.value });
 						}}
-						renderValue={_ => this.state.certificates ? this.state.certificates.join(',') : ""}
+						renderValue={_ => (this.state.certificates ? this.state.certificates.join(",") : "")}
 					>
 						{certificates.map((elem, key) => {
 							return (
