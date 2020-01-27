@@ -111,9 +111,9 @@ module.exports = {
 			floor: "Piso",
 			department: "Departamento",
 			zipCode: "Codigo Zip",
-			city: "Ciudad",
+			// city: "Ciudad",
 			municipality: "Municipalidad",
-			province: "Provincia",
+			// province: "Provincia",
 			country: "Pais"
 		},
 		DATA_TYPES: {
