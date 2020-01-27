@@ -101,7 +101,7 @@ module.exports = {
 		},
 		SHARED_TYPES: {
 			Email: "Email",
-			phoneNumber: "Telefono",
+			Phone: "Telefono",
 			dni: "Dni",
 			nationality: "Nacionalidad",
 			names: "Nombres",
