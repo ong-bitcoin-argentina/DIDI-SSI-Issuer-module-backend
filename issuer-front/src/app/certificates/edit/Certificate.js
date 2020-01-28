@@ -453,7 +453,12 @@ class Certificate extends Component {
 
 				if (participant.data) {
 					participant.data.forEach(dataElem => {
-						const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === dataElem.name.toLowerCase());
+						const dataToUpdate = partToUpdate.find(data => {
+							const name = data.name.toLowerCase();
+							const mappedName = Constants.TEMPLATES.TYPE_MAPPING[data.name];
+							const elemName = dataElem.name.toLowerCase();
+							return name === elemName || (mappedName && mappedName.toLowerCase() === elemName);
+						});
 						if (dataToUpdate) dataToUpdate.value = dataElem.value;
 					});
 

@@ -292,11 +292,8 @@ class Template extends Component {
 					autoFocus
 					value={this.state.dataType}
 					onChange={event => {
-						if (Object.values(Constants.TEMPLATES.SHARED_TYPES).indexOf(event.target.value) >= 0) {
-							const val = Object.keys(Constants.TEMPLATES.SHARED_TYPES).find(
-								key => Constants.TEMPLATES.SHARED_TYPES[key] === event.target.value
-							);
-							this.setState({ name: val, dataType: "Text" });
+						if (Object.keys(Constants.TEMPLATES.SHARED_TYPES).indexOf(event.target.value) >= 0) {
+							this.setState({ name: event.target.value, dataType: "Text" });
 						} else {
 							this.setState({ name: "", dataType: event.target.value });
 						}

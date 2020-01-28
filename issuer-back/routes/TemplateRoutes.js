@@ -102,7 +102,13 @@ router.get(
 			};
 			template.data.participant.forEach(element => {
 				const name = element.name;
-				if (req != "DID" && req != "EXPIRATION DATE") data["claims"]["user_info"][name] = null;
+				if (req != "DID" && req != "EXPIRATION DATE") {
+					if (Constants.TYPE_MAPPING[name]) {
+						data["claims"]["user_info"][Constants.TYPE_MAPPING[name]] = null;
+					} else {
+						data["claims"]["user_info"][name] = null;
+					}
+				}
 			});
 
 			const cert = await MouroService.createShareRequest(data);

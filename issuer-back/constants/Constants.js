@@ -67,6 +67,24 @@ module.exports = {
 		PARTICIPANT: "participant"
 	},
 
+	TYPE_MAPPING: {
+		Email: "Email",
+		Telefono: "Phone",
+		Dni: "dni",
+		Nacionalidad: "nationality",
+		Nombres: "names",
+		Apellidos: "lastNames",
+		Direccion: "streetAddress",
+		Calle: "numberStreet",
+		Piso: "floor",
+		Departamento: "department",
+		"Codigo Zip": "zipCode",
+		// Ciudad: "city",
+		// Municipalidad: "municipality",
+		// Provincia: "province",
+		Pais: "country"
+	},
+
 	COMMON_PASSWORDS: ["123456", "contraseña", "password"],
 	PASSWORD_MIN_LENGTH: 6,
 	SALT_WORK_FACTOR: 16,
