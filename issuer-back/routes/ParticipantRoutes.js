@@ -62,7 +62,7 @@ router.post(
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const data = req.body.data;
-		const dids = data.map(dataElem => dataElem.did);
+		// const dids = data.map(dataElem => dataElem.did);
 		try {
 			let result = [];
 			for (let dataElem of data) {
@@ -97,7 +97,8 @@ router.post(
 					const data = subject[key].data;
 					for (let dataKey of Object.keys(data)) {
 						const dataValue = data[dataKey];
-						if (dataKey && dataValue) dataElems.push({ name: dataKey, value: dataValue });
+						const key = dataKey.toLowerCase() === "phonenumber" ? "Phone" : dataKey;
+						if (dataKey && dataValue) dataElems.push({ name: key, value: dataValue });
 					}
 				}
 			}
