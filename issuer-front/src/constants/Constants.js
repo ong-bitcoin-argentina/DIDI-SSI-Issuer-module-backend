@@ -112,7 +112,7 @@ module.exports = {
 			department: "Departamento",
 			zipCode: "Codigo Zip",
 			// city: "Ciudad",
-			municipality: "Municipalidad",
+			// municipality: "Municipalidad",
 			// province: "Provincia",
 			country: "Pais"
 		},

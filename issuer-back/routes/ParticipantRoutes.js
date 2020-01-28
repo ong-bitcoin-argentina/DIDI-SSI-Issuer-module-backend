@@ -67,7 +67,7 @@ router.post(
 			let result = [];
 			for (let dataElem of data) {
 				const participant = await ParticipantService.create(dataElem.name, dataElem.did, [], undefined, "");
-				result.push({ did: participant.did, name: participant.name });
+				if (participant.did && participant.name) result.push({ did: participant.did, name: participant.name });
 			}
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -97,7 +97,7 @@ router.post(
 					const data = subject[key].data;
 					for (let dataKey of Object.keys(data)) {
 						const dataValue = data[dataKey];
-						dataElems.push({ name: dataKey, value: dataValue });
+						if (dataKey && dataValue) dataElems.push({ name: dataKey, value: dataValue });
 					}
 				}
 			}
@@ -127,10 +127,10 @@ router.post(
 			const own = data.payload.own;
 			for (let key of Object.keys(own)) {
 				const val = own[key];
-				if (key === "FULL NAME") {
+				if (key === "FULL NAME" && val) {
 					name = val;
 				} else {
-					dataElems.push({ name: key, value: val });
+					if (key && val) dataElems.push({ name: key, value: val });
 				}
 			}
 
