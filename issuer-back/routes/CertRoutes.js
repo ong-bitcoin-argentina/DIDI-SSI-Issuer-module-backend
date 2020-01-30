@@ -183,6 +183,9 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		const microCreds = {};
 
 		let did, expDate;
+		let allNames = [];
+		let usedNames = [];
+
 		// recorrer el certificado y obtener la info para cada microcredencial
 		allData.forEach(dataElem => {
 			switch (dataElem.name) {
@@ -194,38 +197,27 @@ const generateCertificate = async function(credentials, template, cert, part) {
 					break;
 			}
 
-			let allNames = [];
-			let usedNames = [];
-
 			for (let microCredData of cert.microCredentials) {
 				const names = microCredData.names;
-				allNames = [...allNames, ...names];
 				if (names.indexOf(dataElem.name) >= 0) {
-					if (microCreds[microCredData.title]) {
-						microCreds[microCredData.title].push(dataElem);
-						usedNames.push(microCredData.title);
-					} else {
-						microCreds[microCredData.title] = [dataElem];
-						usedNames.push(microCredData.title);
-					}
+					if (!microCreds[microCredData.title]) microCreds[microCredData.title] = [];
+					microCreds[microCredData.title].push(dataElem);
+					usedNames.push(dataElem.name);
 				}
 			}
+			allNames.push(dataElem.name);
+		});
 
-			let extra = [];
-			allNames.forEach(name => {
-				if (usedNames.indexOf(name) < 0) extra.push(name);
-			});
+		let extra = [];
+		allNames.forEach(name => {
+			if (usedNames.indexOf(name) < 0) extra.push(name);
+		});
 
-			if (extra.length) {
-				for (let microCredData of cert.microCredentials) {
-					const names = microCredData.names;
-					extra.forEach(name => {
-						if (names.indexOf(name) >= 0) {
-							if (!microCreds["Otros Datos"]) microCreds["Otros Datos"] = [];
-							microCreds["Otros Datos"].push(dataElem);
-						}
-					});
-				}
+		extra.forEach(name => {
+			const dataElem = allData.find(elem => elem.name === name);
+			if (dataElem) {
+				if (!microCreds["Otros Datos"]) microCreds["Otros Datos"] = [];
+				microCreds["Otros Datos"].push(dataElem);
 			}
 		});
 
