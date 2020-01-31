@@ -1,33 +1,22 @@
-const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 const Constants = require("../../constants/Constants");
-
-const genRandomString = function(length) {
-	return crypto
-		.randomBytes(Math.ceil(length / 2))
-		.toString("hex")
-		.slice(0, length);
-};
-
-var sha512 = function(password, salt) {
-	var hash = crypto.createHmac("sha512", salt);
-	hash.update(password);
-	var value = hash.digest("hex");
-	return {
-		salt: salt,
-		hash: value
-	};
-};
+const salt = Constants.HASH_SALT;
 
 class Hashing {
-	static hash(data) {
-		const salt = genRandomString(Constants.SALT_WORK_FACTOR);
-		const hashData = sha512(data, salt);
-		return { salt: salt, hash: hashData.hash };
+	static async hash(data) {
+		const hash = await bcrypt.hash(data, salt);
+		return { salt: salt, hash: hash };
 	}
 
-	static validateHash(data, hashData) {
-		const hashData2 = sha512(data, hashData.salt);
-		return hashData2.hash == hashData.hash;
+	static async saltedHash(data) {
+		const saltRounds = 11;
+		const salt = await bcrypt.genSalt(saltRounds);
+		const hash = await bcrypt.hash(data, salt);
+		return { salt: salt, hash: hash };
+	}
+
+	static async validateHash(data, hashData) {
+		return await bcrypt.compare(data, hashData.hash);
 	}
 }
 

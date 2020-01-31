@@ -1,22 +1,14 @@
 const mongoose = require("mongoose");
 const Hashing = require("./utils/Hashing");
 const Constants = require("../constants/Constants");
+const HashedData = require("./dataTypes/HashedData");
 
 const UserSchema = mongoose.Schema({
 	name: {
 		type: String,
 		required: true
 	},
-	password: {
-		salt: {
-			type: String,
-			required: true
-		},
-		hash: {
-			type: String,
-			required: true
-		}
-	},
+	password: HashedData,
 	type: {
 		type: String,
 		enum: Object.keys(Constants.USER_TYPES),
@@ -45,7 +37,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
 };
 
 UserSchema.methods.updatePassword = async function(password) {
-	const hashData = Hashing.hash(password);
+	const hashData = await Hashing.saltedHash(password);
 
 	const updateQuery = { _id: this._id };
 	const updateAction = {
@@ -69,31 +61,19 @@ User.generate = async function(name, pass) {
 	try {
 		const query = { name: name, deleted: false };
 		user = await User.findOne(query);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(err);
-	}
 
-	if (!user) {
-		user = new User();
-	}
+		if (!user) user = new User();
 
-	user.name = name;
-	user.createdOn = new Date();
+		user.password = await Hashing.saltedHash(pass);
+		user.name = name;
+		user.deleted = false;
+		user.createdOn = new Date();
 
-	// TODO user types
-	user.type = Constants.USER_TYPES.Admin;
+		// TODO user types
+		user.type = Constants.USER_TYPES.Admin;
 
-	user.deleted = false;
+		console.log(user);
 
-	try {
-		user.password = Hashing.hash(pass);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(err);
-	}
-
-	try {
 		user = await user.save();
 		return Promise.resolve(user);
 	} catch (err) {
