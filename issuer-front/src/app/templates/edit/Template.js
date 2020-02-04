@@ -203,6 +203,9 @@ class Template extends Component {
 					{this.renderDialogRequired()}
 				</DialogContent>
 				<DialogActions>
+					<Button onClick={this.onDialogClose} color="primary">
+						{Messages.EDIT.DIALOG.FIELD.CLOSE}
+					</Button>
 					<Button
 						onClick={this.createField}
 						disabled={
@@ -212,9 +215,6 @@ class Template extends Component {
 						color="primary"
 					>
 						{Messages.EDIT.DIALOG.FIELD.CREATE}
-					</Button>
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.EDIT.DIALOG.FIELD.CLOSE}
 					</Button>
 				</DialogActions>
 			</Dialog>
