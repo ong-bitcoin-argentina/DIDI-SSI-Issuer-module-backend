@@ -92,21 +92,27 @@ CertSchema.methods.emmit = async function(creds) {
 
 var copyData = function(data) {
 	return {
-		cert: data.cert.map(data => {
-			if (data.name === Constants.CERT_FIELD_MANDATORY.DID) data.name = data.name.trim();
-			return {
-				name: data.name,
-				value: data.value ? data.value : ""
-			};
-		}),
-		participant: data.participant.map(array => {
-			return array.map(data => {
+		cert: data.cert
+			.map(data => {
+				if (data.name === Constants.CERT_FIELD_MANDATORY.DID) data.name = data.name.trim();
+				return {
+					name: data.name,
+					value: data.value ? data.value : ""
+				};
+			})
+			.filter(data => data.value !== ""),
+		participant: data.participant
+			.map(array => {
+				return array.map(data => {
+					return { name: data.name, value: data.value ? data.value : "" };
+				});
+			})
+			.filter(data => data.value !== ""),
+		others: data.others
+			.map(data => {
 				return { name: data.name, value: data.value ? data.value : "" };
-			});
-		}),
-		others: data.others.map(data => {
-			return { name: data.name, value: data.value ? data.value : "" };
-		})
+			})
+			.filter(data => data.value !== "")
 	};
 };
 

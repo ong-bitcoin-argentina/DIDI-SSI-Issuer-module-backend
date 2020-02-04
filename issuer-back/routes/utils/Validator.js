@@ -204,7 +204,7 @@ let _doValidate = function(param, isHead) {
 						return Promise.reject(err);
 				}
 
-				await validateValueMatchesType(type, value, err);
+				if (data[0].required || value) await validateValueMatchesType(type, value, err);
 				return Promise.resolve(value);
 			} catch (err) {
 				console.log(err);
@@ -221,7 +221,7 @@ let _doValidate = function(param, isHead) {
 					return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
 				}
 				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(elem.name);
-				await validateValueMatchesType(template.type, elem.value, err);
+				if (elem.required || elem.value) await validateValueMatchesType(template.type, elem.value, err);
 			}
 
 			const allNames = dataSection.map(elem => elem.name);

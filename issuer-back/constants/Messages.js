@@ -77,7 +77,7 @@ module.exports = {
 			INVALID_DATA_VALUE: function(type) {
 				return {
 					code: "INVALID_DATA_VALUE",
-					message: "el campo " + type + " no es un valor por defecto valido para ese campo."
+					message: "el campo " + type + " contiene un valor invalido."
 				};
 			}
 		},

@@ -39,6 +39,9 @@ class Certificate extends Component {
 			isDialogOpen: false,
 			waitingQr: false,
 			parts: [],
+			partsBackup: [],
+			templatesBackup: [],
+			certsBackup: [],
 			action: "viewing"
 		};
 	}
