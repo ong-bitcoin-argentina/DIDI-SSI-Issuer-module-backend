@@ -295,7 +295,7 @@ class Template extends Component {
 						if (Object.keys(Constants.TEMPLATES.SHARED_TYPES).indexOf(event.target.value) >= 0) {
 							this.setState({ name: event.target.value, dataType: "Text" });
 						} else {
-							this.setState({ name: "", dataType: event.target.value });
+							this.setState({ dataType: event.target.value });
 						}
 					}}
 				>
