@@ -70,7 +70,7 @@ export default class DataRenderer {
 				return (
 					<DatePicker
 						disabled={!allowEdit}
-						className="DataInput"
+						className="DataInput Date"
 						selected={value ? new Date(value) : undefined}
 						onChange={date => {
 							date = dateFormat(date, "yyyy-mm-dd hh:MM:ss");

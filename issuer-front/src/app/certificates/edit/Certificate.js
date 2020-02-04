@@ -681,6 +681,7 @@ class Certificate extends Component {
 						</div>
 					);
 				})}
+				<div>{"(* requerido)"}</div>
 			</div>
 		);
 	};
@@ -803,6 +804,7 @@ class Certificate extends Component {
 										self.setState({ cert: cert });
 									}
 								)}
+								<div className="RequiredMarker">{dataElem.required ? "*" : " "}</div>
 							</div>
 						</div>
 					);
