@@ -39,9 +39,6 @@ class Certificate extends Component {
 			isDialogOpen: false,
 			waitingQr: false,
 			parts: [],
-			partsBackup: [],
-			templatesBackup: [],
-			certsBackup: [],
 			action: "viewing"
 		};
 	}
@@ -561,7 +558,11 @@ class Certificate extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
-		this.props.history.push(Constants.ROUTES.CERTIFICATES);
+		if (this.state.loading && this.state.error) {
+			this.setState({ loading: false, error: false });
+		} else {
+			this.props.history.push(Constants.ROUTES.CERTIFICATES);
+		}
 	};
 
 	// volver a login
