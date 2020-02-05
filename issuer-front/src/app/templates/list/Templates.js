@@ -28,23 +28,26 @@ class Templates extends Component {
 		};
 	}
 
-	// abrir dialogo de creacion de templates
+	// abrir dialogo de creacion de modelos
 	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
 
-	// cerrar dialogo de creacion de templates
+	// cerrar dialogo de creacion de modelos
 	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
 
-	// actualizar nombre del template a crear
+	// actualizar nombre del modelo a crear
 	updateName = event => {
 		this.setState({ name: event.target.value, error: "" });
 	};
 
 	render() {
 		const loading = this.props.loading;
+		const isDeleteDialogOpen = this.props.isDeleteDialogOpen;
 		const isDialogOpen = this.state.isDialogOpen;
+		const templateId = this.props.selectedTemplateId;
 		return (
 			<div className="Templates">
 				{this.renderSectionButtons()}
+				{isDeleteDialogOpen && templateId && this.renderDeleteDialog(templateId)}
 				{isDialogOpen && this.renderDialog()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
@@ -94,7 +97,33 @@ class Templates extends Component {
 						{Messages.LIST.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CLOSE}
+						{Messages.LIST.DIALOG.CANCEL}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
+
+	renderDeleteDialog = templateId => {
+		const isOpen = this.props.isDeleteDialogOpen;
+		return (
+			<Dialog open={isOpen} onClose={this.props.onDeleteDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.DELETE_TEMPLATE_TITLE}</DialogTitle>
+				<DialogContent>
+					<div>{Messages.LIST.DIALOG.DELETE_CONFIRMATION}</div>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							this.props.onDeleteDialogClose();
+							this.props.onTemplateDelete(templateId);
+						}}
+						color="primary"
+					>
+						{Messages.LIST.DIALOG.DELETE}
+					</Button>
+					<Button onClick={this.props.onDeleteDialogClose} color="primary">
+						{Messages.LIST.DIALOG.CANCEL}
 					</Button>
 				</DialogActions>
 			</Dialog>

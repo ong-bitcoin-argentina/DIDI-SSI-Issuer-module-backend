@@ -27,6 +27,7 @@ class Lists extends Component {
 
 		this.state = {
 			loading: false,
+			isDeleteDialogOpen: false,
 			tabIndex: 1,
 			selectedElems: {},
 			certificates: [],
@@ -54,7 +55,7 @@ class Lists extends Component {
 					<div
 						className="DeleteAction"
 						onClick={() => {
-							self.onTemplateDelete(template._id);
+							self.setState({ isDeleteDialogOpen: true, selectedTemplateId: template._id });
 						}}
 					>
 						{Messages.LIST.BUTTONS.DELETE}
@@ -124,16 +125,16 @@ class Lists extends Component {
 							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
 						</div>
 					}
-					{
+					{!cert.emmitedOn && (
 						<div
 							className="DeleteAction"
 							onClick={() => {
-								self.onCertificateDelete(cert._id);
+								self.setState({ isDeleteDialogOpen: true, selectedCertId: cert._id });
 							}}
 						>
 							{Messages.LIST.BUTTONS.DELETE}
 						</div>
-					}
+					)}
 				</div>
 			)
 		};
@@ -459,7 +460,6 @@ class Lists extends Component {
 		if (emmitedFilter) {
 			if (emmitedFilter === "EMITIDOS") {
 				cert = cert.filter(certData => {
-					console.log(certData);
 					return certData.createdOn !== "-";
 				});
 			} else {
@@ -470,6 +470,10 @@ class Lists extends Component {
 		}
 
 		this.setState({ filteredCertificates: cert });
+	};
+
+	onDeleteDialogClose = () => {
+		this.setState({ isDeleteDialogOpen: false });
 	};
 
 	// a pantalla de edicion
@@ -504,6 +508,10 @@ class Lists extends Component {
 						loading={this.state.loading}
 						error={this.state.error}
 						onTemplateCreate={this.onTemplateCreate}
+						selectedTemplateId={this.state.selectedTemplateId}
+						onTemplateDelete={this.onTemplateDelete}
+						onDeleteDialogClose={this.onDeleteDialogClose}
+						isDeleteDialogOpen={this.state.isDeleteDialogOpen}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>
@@ -513,10 +521,13 @@ class Lists extends Component {
 						certificates={this.state.filteredCertificates}
 						columns={this.state.certColumns}
 						loading={this.state.loading}
-						onCertificateDelete={this.onCertificateDelete}
 						onCertificateEmmit={this.onCertificateEmmit}
 						onCertificateMultiEmmit={this.onCertificateMultiEmmit}
 						onCertificateCreate={this.onCertificateCreate}
+						selectedCertId={this.state.selectedCertId}
+						onCertificateDelete={this.onCertificateDelete}
+						onDeleteDialogClose={this.onDeleteDialogClose}
+						isDeleteDialogOpen={this.state.isDeleteDialogOpen}
 						error={this.state.error}
 						onLogout={this.onLogout}
 					/>

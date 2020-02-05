@@ -60,9 +60,14 @@ module.exports = {
 	},
 	LIST: {
 		DIALOG: {
+			DELETE_CONFIRMATION: "Esta seguro?",
+			DELETE_CERT_TITLE: "Borrar Certificado",
+			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
+			DELETE: "Borrar",
 			TITLE: "Crear Modelo",
 			NAME: "Nombre",
 			CREATE: "Crear",
+			CANCEL: "Cancelar",
 			CLOSE: "Cerrar"
 		},
 		TABLE: {

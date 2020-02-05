@@ -47,9 +47,12 @@ class Certificates extends Component {
 	render() {
 		const loading = this.props.loading;
 		const isDialogOpen = this.state.isDialogOpen;
+		const isDeleteDialogOpen = this.props.isDeleteDialogOpen;
+		const certId = this.props.selectedCertId;
 		return (
 			<div className="Certificates">
 				{isDialogOpen && this.renderDialog()}
+				{isDeleteDialogOpen && certId && this.renderDeleteDialog(certId)}
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
@@ -78,7 +81,33 @@ class Certificates extends Component {
 						{Messages.LIST.DIALOG.CREATE}
 					</Button>
 					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CLOSE}
+						{Messages.LIST.DIALOG.CANCEL}
+					</Button>
+				</DialogActions>
+			</Dialog>
+		);
+	};
+
+	renderDeleteDialog = certId => {
+		const isOpen = this.props.isDeleteDialogOpen;
+		return (
+			<Dialog open={isOpen} onClose={this.props.onDeleteDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.DELETE_CERT_TITLE}</DialogTitle>
+				<DialogContent>
+					<div>{Messages.LIST.DIALOG.DELETE_CONFIRMATION}</div>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={() => {
+							this.props.onDeleteDialogClose();
+							this.props.onCertificateDelete(certId);
+						}}
+						color="primary"
+					>
+						{Messages.LIST.DIALOG.DELETE}
+					</Button>
+					<Button onClick={this.props.onDeleteDialogClose} color="primary">
+						{Messages.LIST.DIALOG.CANCEL}
 					</Button>
 				</DialogActions>
 			</Dialog>
