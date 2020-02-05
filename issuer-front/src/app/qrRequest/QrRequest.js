@@ -328,6 +328,8 @@ class QrRequest extends Component {
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOAD_BY_QR}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">
+						{!this.state.qrSet && <div>{Messages.QR.TEMPLATE_SELECT_MESSAGE}</div>}
+						{this.state.qrSet && <div>{Messages.QR.QR_MESSAGE}</div>}
 						{this.renderTemplateSelector()}
 						{this.renderQrPetition()}
 						{this.renderQrButtons()}
