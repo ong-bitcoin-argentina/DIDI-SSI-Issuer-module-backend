@@ -205,7 +205,7 @@ class Certificate extends Component {
 	addParticipant = () => {
 		const participant = this.state.cert.data.participant;
 		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
-		this.setState({ cert: this.state.cert, error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+		this.setState({ cert: this.state.cert });
 	};
 
 	createSampleCsv = () => {
@@ -384,7 +384,7 @@ class Certificate extends Component {
 			self.state.cert.data.participant = participant;
 			self.state.cert.data.others = othersData;
 
-			self.setState({ cert: self.state.cert });
+			self.setState({ cert: self.state.cert, error: undefined });
 		};
 		reader.readAsText(files[0]);
 	};
@@ -423,8 +423,8 @@ class Certificate extends Component {
 							selectedTemplate: selectedTemplate,
 							participants: participants,
 							template: template,
+							error: undefined,
 							cert: self.certFromTemplate(template),
-							error: { message: Constants.CERTIFICATES.ERR.INVALID_DID },
 							loading: false,
 							action: "creating"
 						});
@@ -468,6 +468,7 @@ class Certificate extends Component {
 
 				self.setState({
 					participants: self.state.participants,
+					error: undefined,
 					action: self.state.action,
 					loading: false
 				});
@@ -578,7 +579,10 @@ class Certificate extends Component {
 
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		if (!did.match(regex)) return true;
+		if (!did.match(regex)) {
+			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+			return true;
+		}
 
 		const cert = this.state.cert.data.cert;
 		const participant = this.state.cert.data.participant.flat();
@@ -588,9 +592,11 @@ class Certificate extends Component {
 		for (let index in all) {
 			const dataElem = all[index];
 			if (dataElem.required && !dataElem.value) {
+				if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name) });
 				return true;
 			}
 		}
+
 		return false;
 	};
 
@@ -639,13 +645,15 @@ class Certificate extends Component {
 		}
 
 		const loading = this.state.loading;
+		const error = this.state.error;
+		console.log(error);
 		return (
 			<div className="Certificate">
 				{!loading && this.renderTemplateSelector()}
 				{!loading && this.renderCert()}
 				{this.renderParticipantDialog()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	}
@@ -800,8 +808,8 @@ class Certificate extends Component {
 									type,
 									this.state.action === "creating" || this.state.action === "editing",
 									(dataElem, value) => {
-										if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(value);
 										dataElem.value = value;
+										if (this.state.error) this.setState({ error: undefined });
 										self.setState({ cert: cert });
 									}
 								)}

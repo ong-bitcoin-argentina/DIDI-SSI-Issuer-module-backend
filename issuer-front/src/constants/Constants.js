@@ -131,7 +131,7 @@ module.exports = {
 			// city: "Ciudad",
 			// municipality: "Municipalidad",
 			// province: "Provincia",
-			"Pais": "Pais"
+			Pais: "Pais"
 		},
 		DATA_TYPES: {
 			CERT: "cert",
@@ -158,6 +158,9 @@ module.exports = {
 			},
 			CSV_REQUIRED_VALUE_MISSING: function(field) {
 				return { err: "CSV_REQUIRED_VALUE_MISSING", message: "CSV invàlido, el campo " + field + " es obligatorio" };
+			},
+			MISSING_FIELD: function(field) {
+				return { err: "REQUIRED_VALUE_MISSING", message: "El campo " + field + " es obligatorio" };
 			}
 		},
 		MANDATORY_DATA: {
