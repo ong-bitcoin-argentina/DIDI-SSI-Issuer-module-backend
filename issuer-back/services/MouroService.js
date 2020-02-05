@@ -67,6 +67,8 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 		}
 	};
 
+	if (Constants.ISSUER_DELEGATOR_DID) vcPayload["delegator"] = "did:ethr:" + Constants.ISSUER_DELEGATOR_DID;
+
 	try {
 		let result = await createVerifiableCredential(vcPayload, vcissuer);
 		if (Constants.DEBUGG) console.log(result);
@@ -81,11 +83,12 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 // recibe el caertificado y lo envia a didi-server para ser guardado
 module.exports.saveCertificate = async function(cert) {
 	try {
+		const did = Constants.ISSUER_DELEGATOR_DID ? Constants.ISSUER_DELEGATOR_DID : Constants.ISSUER_SERVER_DID;
 		var response = await fetch(Constants.DIDI_API + "/issuer/issueCertificate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				did: "did:ethr:" + Constants.ISSUER_SERVER_DID,
+				did: "did:ethr:" + did,
 				jwt: cert
 			})
 		});
