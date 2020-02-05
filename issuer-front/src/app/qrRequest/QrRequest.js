@@ -269,7 +269,7 @@ class QrRequest extends Component {
 			<div className="QrReq">
 				{this.renderRequestDialog()}
 				{this.renderQrDialog()}
-				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</div>
+				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
 				{this.renderButtons()}
 			</div>
 		);
@@ -325,7 +325,7 @@ class QrRequest extends Component {
 	renderQrDialog = () => {
 		return (
 			<Dialog open={this.state.isQrDialogOpen} onClose={this.onQrDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOAD_BY_QR}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">
 						{this.renderTemplateSelector()}
@@ -395,7 +395,7 @@ class QrRequest extends Component {
 				onClose={this.onRequestDialogClose}
 				aria-labelledby="form-dialog-title"
 			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOAD_BY_REQUEST}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">
 						{this.renderRequestSelector()}

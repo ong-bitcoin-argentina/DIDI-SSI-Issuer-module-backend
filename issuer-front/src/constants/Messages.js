@@ -18,6 +18,9 @@ module.exports = {
 		},
 		DIALOG: {
 			QR: {
+				LOAD_BY_REQUEST: "Cargar participante por pedido",
+				LOAD_BY_QR: "Cargar participante con código Qr",
+				TITLE: "Cargar Participantes",
 				PARTICIPANT_TITLE: "Se enviaron las solicitudes.",
 				DIDS_TITLE: "DIDS Cargados:"
 			},
