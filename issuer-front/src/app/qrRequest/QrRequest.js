@@ -33,6 +33,7 @@ class QrRequest extends Component {
 			loading: false,
 			isQrDialogOpen: false,
 			isRequestDialogOpen: false,
+			certificates: [],
 			selectedNames: [],
 			qrSet: false,
 			requestSent: false
@@ -49,10 +50,10 @@ class QrRequest extends Component {
 		const self = this;
 		ParticipantService.getAllDids(
 			function(dids) {
-				self.setState({ dids: dids });
+				self.setState({ dids: dids, error: false });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -62,10 +63,11 @@ class QrRequest extends Component {
 				ParticipantService.getNew(
 					self.state.requestCode,
 					function(participant) {
-						if (participant && self.state.qrSet) self.setState({ participant: participant, qr: undefined });
+						if (participant && self.state.qrSet)
+							self.setState({ participant: participant, qr: undefined, error: false });
 					},
 					function(err) {
-						self.setState({ error: err });
+						self.setState({ loading: false, error: err });
 						console.log(err);
 					}
 				);
@@ -75,10 +77,10 @@ class QrRequest extends Component {
 				ParticipantService.getNew(
 					self.state.globalRequestCode,
 					function(participant) {
-						if (participant && self.state.requestSent) self.setState({ participant: participant });
+						if (participant && self.state.requestSent) self.setState({ participant: participant, error: false });
 					},
 					function(err) {
-						self.setState({ error: err });
+						self.setState({ loading: false, error: err });
 						console.log(err);
 					}
 				);
@@ -105,7 +107,8 @@ class QrRequest extends Component {
 					requestCode: code,
 					qr: qr,
 					participant: undefined,
-					loading: false
+					loading: false,
+					error: false
 				});
 
 				setTimeout(function() {
@@ -119,7 +122,7 @@ class QrRequest extends Component {
 				}, 100);
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -161,11 +164,12 @@ class QrRequest extends Component {
 					loading: false,
 					requestSent: true,
 					globalRequestCode: globalRequestCode,
-					awaitingDid: self.state.did
+					awaitingDid: self.state.did,
+					error: false
 				});
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, isRequestDialogOpen: false, error: err });
 				console.log(err);
 			}
 		);
@@ -207,10 +211,10 @@ class QrRequest extends Component {
 					result.push({ did: key, name: acum[key] });
 				}
 
-				self.setState({ loading: false, newDids: dids, dids: result });
+				self.setState({ loading: false, newDids: dids, dids: result, error: false });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -221,7 +225,7 @@ class QrRequest extends Component {
 	};
 
 	onRequestDialogOpen = () => {
-		this.setState({ isRequestDialogOpen: true, certificates: undefined, did: undefined, requestSent: false });
+		this.setState({ isRequestDialogOpen: true, certificates: [], did: undefined, requestSent: false });
 	};
 
 	onQrDialogClose = () => {
@@ -256,26 +260,28 @@ class QrRequest extends Component {
 		const requestSent = this.state.requestSent;
 		const qrSet = this.state.qrSet;
 		const qr = this.state.qr;
-		if (requestSent || (qrSet && !qr)) return this.renderParticipantLoadedScreen(part);
+		const error = this.state.error;
+		if (requestSent || (qrSet && !qr)) return this.renderParticipantLoadedScreen(part, error);
 
 		const newDids = this.state.newDids;
-		if (newDids) return this.renderAddedDidsScreen(newDids);
+		if (newDids) return this.renderAddedDidsScreen(newDids, error);
 
-		return this.renderAddParticipantScreen();
+		return this.renderAddParticipantScreen(error);
 	}
 
-	renderAddParticipantScreen = () => {
+	renderAddParticipantScreen = error => {
 		return (
 			<div className="QrReq">
 				{this.renderRequestDialog()}
 				{this.renderQrDialog()}
 				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
 				{this.renderButtons()}
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	};
 
-	renderAddedDidsScreen = dids => {
+	renderAddedDidsScreen = (dids, error) => {
 		return (
 			<div className="DidLoaded">
 				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.DIDS_TITLE}</div>
@@ -283,16 +289,18 @@ class QrRequest extends Component {
 					<li key={"did-" + key}>{did.name}</li>
 				))}
 				{this.renderResultButtons()}
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	};
 
-	renderParticipantLoadedScreen = part => {
+	renderParticipantLoadedScreen = (part, error) => {
 		return (
 			<div className="ParticipantLoaded">
 				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</div>
 				{part && this.renderParticipant(part)}
 				{this.renderResultButtons()}
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	};
@@ -420,7 +428,7 @@ class QrRequest extends Component {
 						className="CertificateSelect"
 						multiple
 						displayEmpty
-						value={this.state.certificates || []}
+						value={this.state.certificates}
 						onChange={event => {
 							this.setState({ certificates: event.target.value });
 						}}

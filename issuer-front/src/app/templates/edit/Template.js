@@ -58,7 +58,8 @@ class Template extends Component {
 					isDialogOpen: false,
 					template: template,
 					radioValue: template.previewType,
-					loading: false
+					loading: false,
+					error: false
 				});
 			},
 			function(err) {
@@ -70,7 +71,11 @@ class Template extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
-		this.props.history.push(Constants.ROUTES.TEMPLATES);
+		if (this.state.loading && this.state.error) {
+			this.setState({ loading: false, error: false });
+		} else {
+			this.props.history.push(Constants.ROUTES.TEMPLATES);
+		}
 	};
 
 	// volver a login
@@ -156,6 +161,7 @@ class Template extends Component {
 	onSave = () => {
 		const token = Cookie.get("token");
 		const template = this.state.template;
+		template.previewType = this.state.radioValue;
 		const self = this;
 
 		self.setState({ loading: true });
@@ -163,7 +169,7 @@ class Template extends Component {
 			token,
 			template,
 			async function(_) {
-				self.setState({ loading: false });
+				self.setState({ loading: false, error: false });
 				self.props.history.push(Constants.ROUTES.LIST);
 				// self.props.history.push(Constants.ROUTES.TEMPLATES);
 			},
@@ -365,9 +371,8 @@ class Template extends Component {
 			.filter(elemData => elemData.required)
 			.map(elementData => elementData.name);
 
-		const missing =
-			Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[this.state.radioValue] - this.state.template.previewData.length;
 		const radioValue = this.state.radioValue;
+		const missing = Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[radioValue] - this.state.template.previewData.length;
 
 		return (
 			<div className="Template-Type">
@@ -377,7 +382,7 @@ class Template extends Component {
 					className="PreviewFieldTypePicker"
 					aria-label="gender"
 					name="gender1"
-					value={this.state.radioValue}
+					value={radioValue}
 					onChange={event => {
 						this.setState({ radioValue: event.target.value });
 					}}

@@ -247,6 +247,7 @@ class Lists extends Component {
 							certificates: certificates,
 							certColumns: certColumns,
 							filteredCertificates: certificates,
+							error: false,
 							loading: false
 						});
 					},
@@ -277,7 +278,7 @@ class Lists extends Component {
 			id,
 			async function(cert) {
 				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
-				self.setState({ certificates: certificates, loading: false });
+				self.setState({ certificates: certificates, loading: false, error: false });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -364,7 +365,7 @@ class Lists extends Component {
 			async function(template) {
 				const templates = self.state.templates;
 				templates.push(self.getTemplateData(template));
-				self.setState({ templates: templates, loading: false });
+				self.setState({ templates: templates, loading: false, error: false });
 			},
 			function(err) {
 				self.setState({ error: err });
@@ -383,7 +384,7 @@ class Lists extends Component {
 			id,
 			async function(template) {
 				const templates = self.state.templates.filter(t => t._id !== template._id);
-				self.setState({ templates: templates, loading: false });
+				self.setState({ templates: templates, loading: false, error: false });
 			},
 			function(err) {
 				self.setState({ error: err });

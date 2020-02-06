@@ -62,7 +62,7 @@ class Certificate extends Component {
 					self.state.requestCode,
 					function(participant) {
 						if (participant) {
-							self.setState({ parts: [participant], waitingQr: false });
+							self.setState({ parts: [participant], waitingQr: false, error: false });
 							self.onParticipantsAdd();
 						}
 					},
@@ -117,7 +117,8 @@ class Certificate extends Component {
 				id,
 				function(cert) {
 					self.setState({
-						cert: cert
+						cert: cert,
+						error: false
 					});
 					resolve();
 				},
@@ -143,7 +144,8 @@ class Certificate extends Component {
 					self.setState({
 						action: action,
 						selectedTemplate: selectedTemplate,
-						template: template
+						template: template,
+						error: false
 					});
 					resolve();
 				},
@@ -161,7 +163,8 @@ class Certificate extends Component {
 				self.state.template._id,
 				function(participants) {
 					self.setState({
-						participants: participants
+						participants: participants,
+						error: false
 					});
 					resolve();
 				},
@@ -423,7 +426,7 @@ class Certificate extends Component {
 							selectedTemplate: selectedTemplate,
 							participants: participants,
 							template: template,
-							error: undefined,
+							error: false,
 							cert: self.certFromTemplate(template),
 							loading: false,
 							action: "creating"
@@ -468,7 +471,7 @@ class Certificate extends Component {
 
 				self.setState({
 					participants: self.state.participants,
-					error: undefined,
+					error: false,
 					action: self.state.action,
 					loading: false
 				});
@@ -508,7 +511,7 @@ class Certificate extends Component {
 			token,
 			cert,
 			async function(_) {
-				self.setState({ loading: false });
+				self.setState({ loading: false, error: false });
 				self.props.history.push(Constants.ROUTES.CERTIFICATES);
 			},
 			function(err) {
@@ -629,7 +632,8 @@ class Certificate extends Component {
 					requestCode: code,
 					qr: qr,
 					loading: false,
-					qrSet: false
+					qrSet: false,
+					error: false
 				});
 			},
 			function(err) {
@@ -646,7 +650,6 @@ class Certificate extends Component {
 
 		const loading = this.state.loading;
 		const error = this.state.error;
-		console.log(error);
 		return (
 			<div className="Certificate">
 				{!loading && this.renderTemplateSelector()}
@@ -852,7 +855,6 @@ class Certificate extends Component {
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
 				<DialogContent>
-
 					{participants && participants.length > 0 && <div>{Messages.QR.QR_MESSAGE}</div>}
 					{participants && participants.length > 0 && (
 						<Select
