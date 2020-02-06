@@ -244,8 +244,12 @@ class QrRequest extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
-		this.setState({ qrSet: false, requestSent: false });
-		this.props.history.push(Constants.ROUTES.LOGIN);
+		if (this.state.error) {
+			this.setState({ loading: false, error: false });
+		} else {
+			this.setState({ qrSet: false, requestSent: false, newDids: false });
+			// this.props.history.push(Constants.ROUTES.LOGIN);
+		}
 	};
 
 	render() {
