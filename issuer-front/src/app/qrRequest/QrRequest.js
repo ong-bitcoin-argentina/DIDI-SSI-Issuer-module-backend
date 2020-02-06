@@ -247,7 +247,13 @@ class QrRequest extends Component {
 		if (this.state.error) {
 			this.setState({ loading: false, error: false });
 		} else {
-			this.setState({ qrSet: false, requestSent: false, newDids: false });
+			this.setState({
+				qrSet: false,
+				requestSent: false,
+				newDids: false,
+				isQrDialogOpen: false,
+				isRequestDialogOpen: false
+			});
 			// this.props.history.push(Constants.ROUTES.LOGIN);
 		}
 	};
