@@ -833,7 +833,7 @@ class Certificate extends Component {
 
 		return (
 			<div className="TemplateSelector">
-				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT}</div>
+				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
 
 				<Autocomplete
 					options={templates}
@@ -878,7 +878,7 @@ class Certificate extends Component {
 						</Select>
 					)}
 
-					<div>{Messages.QR.QR_MESSAGE}</div>
+					<div>{Messages.QR.QR_MESSAGE_CERT}</div>
 					{this.renderQrPetition()}
 				</DialogContent>
 				<DialogActions>

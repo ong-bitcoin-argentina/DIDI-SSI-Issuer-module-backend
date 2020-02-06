@@ -105,7 +105,9 @@ module.exports = {
 		DID_SELECT: "DID",
 		CERTIFICATE_SELECT: "CERTIFICADO A PEDIR",
 		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
+		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
 		TEMPLATE_SELECT_MESSAGE: "Elige el template para el que se pediran los datos:",
+		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
 		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el template elegido:",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
