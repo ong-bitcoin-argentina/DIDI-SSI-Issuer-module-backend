@@ -855,7 +855,7 @@ class Certificate extends Component {
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
 				<DialogContent>
-					{participants && participants.length > 0 && <div>{Messages.QR.QR_MESSAGE}</div>}
+					{participants && participants.length > 0 && <div>{Messages.QR.TEMPLATE_SELECT_MESSAGE}</div>}
 					{participants && participants.length > 0 && (
 						<Select
 							className="ParticipantsSelector"
