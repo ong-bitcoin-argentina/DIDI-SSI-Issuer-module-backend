@@ -14,9 +14,8 @@ const ParticipantRoutes = require("./routes/ParticipantRoutes");
 
 const log = console.log;
 console.log = function(data) {
-	log(new Date().toISOString() + ": ");
+	process.stdout.write(new Date().toISOString() + ": ");
 	log(data);
-	log();
 };
 
 // set up node module clusters - one worker per CPU available

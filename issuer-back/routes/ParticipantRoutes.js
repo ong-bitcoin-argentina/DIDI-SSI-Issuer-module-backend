@@ -76,73 +76,6 @@ router.post(
 	}
 );
 
-router.post(
-	"/:requestCode",
-	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const requestCode = req.params.requestCode;
-		const jwt = req.body.access_token;
-
-		try {
-			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
-
-			let name = data.payload.own["FULL NAME"];
-			const dataElems = [];
-
-			for (let payload of data.payload.verified) {
-				const reqData = await MouroService.decodeCertificate(payload, Messages.CERTIFICATE.ERR.VERIFY);
-				const subject = reqData.payload.vc.credentialSubject;
-				for (let key of Object.keys(subject)) {
-					const data = subject[key].data;
-					for (let dataKey of Object.keys(data)) {
-						const dataValue = data[dataKey];
-						const key = dataKey.toLowerCase() === "phonenumber" ? "Phone" : dataKey;
-						if (dataKey && dataValue) dataElems.push({ name: key, value: dataValue });
-					}
-				}
-			}
-			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, undefined, requestCode);
-			return ResponseHandler.sendRes(res, participant);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-router.post(
-	"/:templateId/:requestCode",
-	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const requestCode = req.params.requestCode;
-		const templateId = req.params.templateId;
-		const jwt = req.body.access_token;
-
-		try {
-			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
-
-			let name;
-			const dataElems = [];
-
-			const own = data.payload.own;
-			for (let key of Object.keys(own)) {
-				const val = own[key];
-				if (key === "FULL NAME" && val) {
-					name = val;
-				} else {
-					if (key && val) dataElems.push({ name: key, value: val });
-				}
-			}
-
-			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, templateId, requestCode);
-			return ResponseHandler.sendRes(res, participant);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
 router.put(
 	"/:id/",
 	Validator.validate([
@@ -179,5 +112,75 @@ router.delete("/:id", async function(req, res) {
 		return ResponseHandler.sendErr(res, err);
 	}
 });
+
+// -- disclosure requests --
+// carga de info de participante global a partir de un pedido de certificado
+router.post(
+	"/:requestCode",
+	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const requestCode = req.params.requestCode;
+		const jwt = req.body.access_token;
+
+		try {
+			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
+
+			let name = data.payload.own["FULL NAME"];
+			const dataElems = [];
+
+			for (let payload of data.payload.verified) {
+				const reqData = await MouroService.decodeCertificate(payload, Messages.CERTIFICATE.ERR.VERIFY);
+				const subject = reqData.payload.vc.credentialSubject;
+				for (let key of Object.keys(subject)) {
+					const data = subject[key].data;
+					for (let dataKey of Object.keys(data)) {
+						const dataValue = data[dataKey];
+						const key = dataKey.toLowerCase() === "phonenumber" ? "Phone" : dataKey;
+						if (dataKey && dataValue) dataElems.push({ name: key, value: dataValue });
+					}
+				}
+			}
+			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, undefined, requestCode);
+			return ResponseHandler.sendRes(res, participant);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+// carga de info de participante para un template en particular a partir del QR
+router.post(
+	"/:templateId/:requestCode",
+	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const requestCode = req.params.requestCode;
+		const templateId = req.params.templateId;
+		const jwt = req.body.access_token;
+
+		try {
+			const data = await MouroService.decodeCertificate(jwt, Messages.CERTIFICATE.ERR.VERIFY);
+
+			let name;
+			const dataElems = [];
+
+			const own = data.payload.own;
+			for (let key of Object.keys(own)) {
+				const val = own[key];
+				if (key === "FULL NAME" && val) {
+					name = val;
+				} else {
+					if (key && val) dataElems.push({ name: key, value: val });
+				}
+			}
+
+			const participant = await ParticipantService.create(name, data.payload.iss, dataElems, templateId, requestCode);
+			return ResponseHandler.sendRes(res, participant);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
 
 module.exports = router;

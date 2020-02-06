@@ -34,12 +34,17 @@ module.exports.verifyCertificate = async function(jwt, errMsg) {
 	}
 };
 
-module.exports.createShareRequest = async function(data) {
-	const signer = SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
-	const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
-
+module.exports.createShareRequest = async function(claims, cb) {
 	try {
-		let result = await credentials.createDisclosureRequest(data);
+		const payload = {
+			delegator: Constants.ISSUER_DELEGATOR_DID ? "did:ethr:" + Constants.ISSUER_DELEGATOR_DID : undefined,
+			callback: cb,
+			claims: claims,
+			type: "shareReq"
+		};
+		const signer = SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
+		const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
+		const result = await credentials.signJWT(payload);
 		if (Constants.DEBUGG) console.log(result);
 		return Promise.resolve(result);
 	} catch (err) {
@@ -83,12 +88,11 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 // recibe el caertificado y lo envia a didi-server para ser guardado
 module.exports.saveCertificate = async function(cert) {
 	try {
-		const did = Constants.ISSUER_DELEGATOR_DID ? Constants.ISSUER_DELEGATOR_DID : Constants.ISSUER_SERVER_DID;
 		var response = await fetch(Constants.DIDI_API + "/issuer/issueCertificate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				did: "did:ethr:" + did,
+				did: "did:ethr:" + Constants.ISSUER_SERVER_DID,
 				jwt: cert
 			})
 		});
@@ -124,14 +128,17 @@ module.exports.revokeCertificate = async function(jwt, hash, sub) {
 // recibe el caertificado y lo envia a didi-server para ser guardado
 module.exports.sendShareRequest = async function(did, cert) {
 	try {
+		const payload = {
+			issuerDid: "did:ethr:" + Constants.ISSUER_SERVER_DID,
+			did: did,
+			jwt: cert
+		};
+		if (Constants.ISSUER_DELEGATOR_DID) payload["delegatorDid"] = "did:ethr:" + Constants.ISSUER_DELEGATOR_DID;
+
 		var response = await fetch(Constants.DIDI_API + "/issuer/issueShareRequest", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				issuerDid: "did:ethr:" + Constants.ISSUER_SERVER_DID,
-				did: did,
-				jwt: cert
-			})
+			body: JSON.stringify(payload)
 		});
 
 		const jsonResp = await response.json();
