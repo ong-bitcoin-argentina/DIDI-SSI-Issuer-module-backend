@@ -31,6 +31,12 @@ class Lists extends Component {
 			loading: false,
 			isDeleteDialogOpen: false,
 			tabIndex: 1,
+			selectedParticipants: {
+				tel: {},
+				email: {},
+				personal: {},
+				address: {}
+			},
 			selectedElems: {},
 			certificates: [],
 			filteredCertificates: [],
@@ -51,7 +57,11 @@ class Lists extends Component {
 		ParticipantsService.getGlobal(
 			async function(participants) {
 				participants = participants.map(participant => {
-					return ParticipantsTableHelper.getParticipantData(participant);
+					return ParticipantsTableHelper.getParticipantData(
+						participant,
+						self.state.selectedParticipants,
+						self.onParticipantSelectToggle
+					);
 				});
 				const participantColumns = ParticipantsTableHelper.getParticipantColumns();
 
@@ -118,23 +128,39 @@ class Lists extends Component {
 		);
 	}
 
+	onParticipantSelectToggle = (id, type, value) => {
+		const selectedParticipants = this.state.selectedParticipants;
+		selectedParticipants[type][id] = value;
+		this.setState({ selectedParticipants: selectedParticipants });
+	};
+
 	// recargar tabla de participantes
 	onParticipantsReload = () => {
 		const self = this;
 		self.setState({ loading: true });
-		ParticipantsService.getGlobal(async function(participants) {
-			participants = participants.map(participant => {
-				return ParticipantsTableHelper.getParticipantData(participant);
-			});
-			const participantColumns = ParticipantsTableHelper.getParticipantColumns();
+		ParticipantsService.getGlobal(
+			async function(participants) {
+				participants = participants.map(participant => {
+					return ParticipantsTableHelper.getParticipantData(
+						participant,
+						self.state.selectedParticipants,
+						self.onParticipantSelectToggle
+					);
+				});
+				const participantColumns = ParticipantsTableHelper.getParticipantColumns();
 
-			self.setState({
-				participants: participants,
-				participantColumns: participantColumns,
-				error: false,
-				loading: false
-			});
-		});
+				self.setState({
+					participants: participants,
+					participantColumns: participantColumns,
+					error: false,
+					loading: false
+				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
 	};
 
 	// abrir dialogo de confirmacion para borrado de certificados
@@ -444,6 +470,7 @@ class Lists extends Component {
 						columns={this.state.participantColumns}
 						error={this.state.error}
 						onParticipantsReload={this.onParticipantsReload}
+						selectedParticipants={this.state.selectedParticipants}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>

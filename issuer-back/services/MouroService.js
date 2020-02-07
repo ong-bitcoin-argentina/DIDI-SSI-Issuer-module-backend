@@ -36,7 +36,10 @@ module.exports.verifyCertificate = async function(jwt, errMsg) {
 
 module.exports.createShareRequest = async function(claims, cb) {
 	try {
+		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
+
 		const payload = {
+			exp: exp,
 			delegator: Constants.ISSUER_DELEGATOR_DID ? "did:ethr:" + Constants.ISSUER_DELEGATOR_DID : undefined,
 			callback: cb,
 			claims: claims,
@@ -128,8 +131,11 @@ module.exports.revokeCertificate = async function(jwt, hash, sub) {
 // recibe el caertificado y lo envia a didi-server para ser guardado
 module.exports.sendShareRequest = async function(did, cert) {
 	try {
+		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
+
 		const payload = {
 			issuerDid: "did:ethr:" + Constants.ISSUER_SERVER_DID,
+			exp: exp,
 			did: did,
 			jwt: cert
 		};

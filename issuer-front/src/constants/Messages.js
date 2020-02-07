@@ -18,7 +18,7 @@ module.exports = {
 		},
 		DIALOG: {
 			QR: {
-				LOAD_BY_REQUEST: "Cargar participante por pedido",
+				REQUEST_SENT: "Pedido enviado",
 				LOAD_BY_QR: "Cargar participante con código Qr",
 				DIDS_TITLE: "DIDS Cargados:"
 			},
@@ -53,6 +53,7 @@ module.exports = {
 			SEND: "Enviar",
 			SAVE: "Guardar",
 			CANCEL: "Cancelar",
+			CLOSE: "Cerrar",
 			BACK: "Volver",
 			EXIT: "Salir",
 			REQUIRED: "Requerido",
@@ -113,7 +114,7 @@ module.exports = {
 		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el template elegido:",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
-			REQUEST: "Cargar por pedido",
+			REQUEST: "Pedir certificados",
 			QR_LOAD: "Cargar por Qr",
 			GENERATE: "Generar Qr"
 		}

@@ -35,12 +35,6 @@
 	float: left;
 }
 
-.LoadDidsFromCsv {
-	float: left;
-	width: 75px;
-	height: 45px;
-}
-
 .QrButton {
 	margin-right: 10px;
 }
@@ -68,7 +62,23 @@
 }
 
 .QrDialogButton {
-	margin-right: 10px;
+	float: left;
+}
+
+.QrButtonsRow {
+	margin-top: 5px;
+}
+
+.PartRequestButton {
+	margin-left: 10px;
+}
+
+.LoadDidsFromCsv {
+	height: 45px;
+}
+
+.QrLogoutButton {
+	float: right;
 }
 
 .DidSelect {

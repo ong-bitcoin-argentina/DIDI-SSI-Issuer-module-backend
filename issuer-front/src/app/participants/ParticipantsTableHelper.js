@@ -3,35 +3,73 @@ import Messages from "../../constants/Messages";
 import Constants from "../../constants/Constants";
 import MaterialIcon from "material-icons-react";
 
+import Checkbox from "@material-ui/core/Checkbox";
+
 class ParticipantsTableHelper {
 	// genera las columnas de la tabla de certificados
-	static getParticipantData(participant) {
+	static getParticipantData(participant, selectedParticipants, onParticipantSelectToggle) {
 		return {
 			did: participant.did,
 			name: participant.name,
 			tel: (
-				<did>
+				<div>
 					{participant.tel && <MaterialIcon color="green" icon={Constants.TEMPLATES.ICONS.OK} />}
-					{!participant.tel && <MaterialIcon color="red" icon={Constants.TEMPLATES.ICONS.MISSING} />}
-				</did>
+					{!participant.tel && (
+						<div className="Actions">
+							<Checkbox
+								checked={selectedParticipants["tel"][participant.did]}
+								onChange={(_, value) => {
+									onParticipantSelectToggle(participant.did, "tel", value);
+								}}
+							/>
+						</div>
+					)}
+				</div>
 			),
 			mail: (
-				<did>
+				<div>
 					{participant.mail && <MaterialIcon color="green" icon={Constants.TEMPLATES.ICONS.OK} />}
-					{!participant.mail && <MaterialIcon color="red" icon={Constants.TEMPLATES.ICONS.MISSING} />}
-				</did>
+					{!participant.mail && (
+						<div className="Actions">
+							<Checkbox
+								checked={selectedParticipants["email"][participant.did]}
+								onChange={(_, value) => {
+									onParticipantSelectToggle(participant.did, "email", value);
+								}}
+							/>
+						</div>
+					)}
+				</div>
 			),
 			personal: (
-				<did>
+				<div>
 					{participant.personal && <MaterialIcon color="green" icon={Constants.TEMPLATES.ICONS.OK} />}
-					{!participant.personal && <MaterialIcon color="red" icon={Constants.TEMPLATES.ICONS.MISSING} />}
-				</did>
+					{!participant.personal && (
+						<div className="Actions">
+							<Checkbox
+								checked={selectedParticipants["personal"][participant.did]}
+								onChange={(_, value) => {
+									onParticipantSelectToggle(participant.did, "personal", value);
+								}}
+							/>
+						</div>
+					)}
+				</div>
 			),
 			address: (
-				<did>
+				<div>
 					{participant.address && <MaterialIcon color="green" icon={Constants.TEMPLATES.ICONS.OK} />}
-					{!participant.address && <MaterialIcon color="red" icon={Constants.TEMPLATES.ICONS.MISSING} />}
-				</did>
+					{!participant.address && (
+						<div className="Actions">
+							<Checkbox
+								checked={selectedParticipants["address"][participant.did]}
+								onChange={(_, value) => {
+									onParticipantSelectToggle(participant.did, "address", value);
+								}}
+							/>
+						</div>
+					)}
+				</div>
 			)
 		};
 	}

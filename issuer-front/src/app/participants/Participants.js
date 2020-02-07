@@ -12,11 +12,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import Checkbox from "@material-ui/core/Checkbox";
-import ListItemText from "@material-ui/core/ListItemText";
 
 import TemplateService from "../../services/TemplateService";
 import ParticipantService from "../../services/ParticipantService";
@@ -35,9 +31,7 @@ class Participants extends Component {
 		this.state = {
 			loading: false,
 			isQrDialogOpen: false,
-			isRequestDialogOpen: false,
-			certificates: [],
-			selectedNames: [],
+			isConfirmationDialogOpen: false,
 			qrSet: false,
 			requestSent: false
 		};
@@ -67,7 +61,13 @@ class Participants extends Component {
 					self.state.requestCode,
 					function(participant) {
 						if (participant && self.state.qrSet)
-							self.setState({ participant: participant, qr: undefined, error: false });
+							self.setState({
+								participant: participant,
+								qr: undefined,
+								qrSet: false,
+								isQrDialogOpen: false,
+								error: false
+							});
 					},
 					function(err) {
 						self.setState({ loading: false, error: err });
@@ -78,18 +78,6 @@ class Participants extends Component {
 
 			if (self.state.requestSent) {
 				self.props.onParticipantsReload();
-				ParticipantService.getNew(
-					self.state.globalRequestCode,
-					function(participant) {
-						if (participant && self.state.requestSent) {
-							self.setState({ requestSent: false, error: false });
-						}
-					},
-					function(err) {
-						self.setState({ loading: false, error: err });
-						console.log(err);
-					}
-				);
 			}
 		}, 10000);
 	}
@@ -134,51 +122,61 @@ class Participants extends Component {
 		);
 	};
 
+	// retorna true si hay algun elemento en la tabla seleccionado
 	canSendRequest = () => {
-		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		const did = this.state.did;
-		const validDid = did && did.match(regex);
-		const selectedName = this.state.selectedNames.length > 0;
-		return this.state.certificates && this.state.certificates.length && (validDid || selectedName);
+		const partIds = this.props.participants.map(part => part.did);
+		const selectedParticipants = this.props.selectedParticipants;
+
+		console.log(partIds);
+		console.log(selectedParticipants);
+
+		for (let partId of partIds) {
+			for (let type of Object.keys(selectedParticipants)) {
+				if (selectedParticipants[type][partId]) return true;
+			}
+		}
+		return false;
 	};
 
-	sendRequest = () => {
+	sendRequests = () => {
+		const partIds = this.props.participants.map(part => part.did);
+		const selectedParticipants = this.props.selectedParticipants;
+		const requests = {};
+
+		for (let partId of partIds) {
+			for (let type of Object.keys(selectedParticipants)) {
+				if (selectedParticipants[type][partId]) {
+					if (!requests[partId]) requests[partId] = [];
+					requests[partId].push(Constants.CERTIFICATES.REQUEST_TYPES[type]);
+				}
+			}
+		}
+
 		const token = Cookie.get("token");
 		const self = this;
 
-		const globalRequestCode = Math.random()
-			.toString(36)
-			.slice(-8);
+		for (let partId of Object.keys(requests)) {
+			const globalRequestCode = Math.random()
+				.toString(36)
+				.slice(-8);
 
-		const didList = self.state.dids;
-		const dids = self.state.selectedNames.map(name => {
-			const match = didList.find(didElem => didElem.name === name);
-			return match.did;
-		});
-
-		if (self.state.did) dids.push(self.state.did);
-
-		self.setState({ isRequestDialogOpen: false });
-		// mandar pedido
-		TemplateService.sendRequest(
-			token,
-			dids,
-			self.state.certificates,
-			globalRequestCode,
-			function(_) {
-				self.setState({
-					requestSent: true,
-					globalRequestCode: globalRequestCode,
-					awaitingDid: self.state.did,
-					error: false
-				});
-			},
-			function(err) {
-				self.props.onParticipantsReload();
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
+			// mandar pedido
+			TemplateService.sendRequest(
+				token,
+				[partId],
+				requests[partId],
+				globalRequestCode,
+				function(_) {
+					self.setState({
+						requestSent: true
+					});
+				},
+				function(err) {
+					self.setState({ error: err });
+					console.log(err);
+				}
+			);
+		}
 	};
 
 	LoadDidsFromCsv = files => {
@@ -227,12 +225,8 @@ class Participants extends Component {
 		);
 	};
 
-	onRequestDialogClose = () => {
-		this.setState({ isRequestDialogOpen: false });
-	};
-
-	onRequestDialogOpen = () => {
-		this.setState({ isRequestDialogOpen: true, certificates: [], did: undefined, requestSent: false });
+	onConfirmationDialogClose = () => {
+		this.setState({ isConfirmationDialogOpen: false });
 	};
 
 	onQrDialogClose = () => {
@@ -258,7 +252,7 @@ class Participants extends Component {
 				qrSet: false,
 				requestSent: false,
 				isQrDialogOpen: false,
-				isRequestDialogOpen: false
+				isConfirmationDialogOpen: false
 			});
 			this.componentDidMount();
 			// this.props.history.push(Constants.ROUTES.LOGIN);
@@ -270,16 +264,7 @@ class Participants extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		// console.log(this.props.participants);
-
-		const loading = this.state.loading;
-		if (loading) return <div></div>;
-
 		const error = this.state.error;
-		return this.renderAddParticipantScreen(error);
-	}
-
-	renderAddParticipantScreen = error => {
 		return (
 			<div className="QrReq">
 				{this.renderRequestDialog()}
@@ -289,7 +274,7 @@ class Participants extends Component {
 				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
-	};
+	}
 
 	renderTable = () => {
 		const participants = this.props.participants;
@@ -312,21 +297,20 @@ class Participants extends Component {
 	renderButtons = () => {
 		return (
 			<div className="QrRequestButtons">
-				<div className="ButtonsRow">
-					<button className="QrDialogButton" onClick={this.onQrDialogOpen}>
-						{Messages.QR.BUTTONS.QR_LOAD}
-					</button>
-					<button className="QrRequestButton" onClick={this.onRequestDialogOpen}>
+				<div className="PartRequestRow">
+					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
+						<button className="LoadDidsFromCsv">{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}</button>
+					</ReactFileReader>
+					<button className="PartRequestButton" disabled={!this.canSendRequest()} onClick={this.sendRequests}>
 						{Messages.QR.BUTTONS.REQUEST}
 					</button>
 				</div>
 
-				<div className="ButtonsRow">
-					<ReactFileReader className="LoadDidsFromCsv" handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
-						<button className="LoadDidsFromCsv">{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}</button>
-					</ReactFileReader>
-
-					<button className="LogoutButton" onClick={this.onLogout}>
+				<div className="QrButtonsRow">
+					<button className="QrDialogButton" onClick={this.onQrDialogOpen}>
+						{Messages.QR.BUTTONS.QR_LOAD}
+					</button>
+					<button className="LogoutButton QrLogoutButton" onClick={this.onLogout}>
 						{Messages.EDIT.BUTTONS.EXIT}
 					</button>
 				</div>
@@ -405,99 +389,19 @@ class Participants extends Component {
 	renderRequestDialog = () => {
 		return (
 			<Dialog
-				open={this.state.isRequestDialogOpen}
-				onClose={this.onRequestDialogClose}
+				open={this.state.isConfirmationDialogOpen}
+				onClose={this.onConfirmationDialogClose}
 				aria-labelledby="form-dialog-title"
 			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOAD_BY_REQUEST}</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.REQUEST_SENT}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">
-						{this.renderRequestSelector()}
-						{this.renderRequestButtons()}
+						<button className="CloseButton" onClick={this.onConfirmationDialogClose}>
+							{Messages.EDIT.BUTTONS.CLOSE}
+						</button>
 					</div>
 				</DialogContent>
 			</Dialog>
-		);
-	};
-
-	renderRequestSelector = () => {
-		const certificates = Constants.CERTIFICATES.REQUEST_TYPES;
-
-		return (
-			<div className="QrTemplateSelector">
-				<div className="CertificateSelector">
-					<div className="DataName">{Messages.QR.CERTIFICATE_SELECT}</div>
-
-					<Select
-						className="CertificateSelect"
-						multiple
-						displayEmpty
-						value={this.state.certificates}
-						onChange={event => {
-							this.setState({ certificates: event.target.value });
-						}}
-						renderValue={_ => (this.state.certificates ? this.state.certificates.join(",") : "")}
-					>
-						{certificates.map((elem, key) => {
-							return (
-								<MenuItem key={"CertificateSelector-" + key} value={elem}>
-									<Checkbox checked={this.state.certificates && this.state.certificates.indexOf(elem) >= 0} />
-									<ListItemText primary={elem} />
-								</MenuItem>
-							);
-						})}
-					</Select>
-				</div>
-
-				<div className="DataName">{Messages.QR.DID_SELECT}</div>
-				{/*
-				<input
-					type="text"
-					className="DataInput"
-					value={this.state.did}
-					onChange={event => {
-						this.setState({ did: event.target.value });
-					}}
-				/>
-				*/}
-
-				{this.state.dids && (
-					<Select
-						className="DidSelect"
-						multiple
-						displayEmpty
-						value={this.state.selectedNames}
-						onChange={event => {
-							this.setState({ selectedNames: event.target.value });
-						}}
-						renderValue={value => {
-							return value ? value.join(",") : "";
-						}}
-					>
-						{this.state.dids.map((elem, key) => {
-							return (
-								<MenuItem key={"CertificateSelector-" + key} value={elem.name}>
-									<Checkbox checked={this.state.selectedNames && this.state.selectedNames.indexOf(elem.name) >= 0} />
-									<ListItemText primary={elem.name} />
-								</MenuItem>
-							);
-						})}
-					</Select>
-				)}
-			</div>
-		);
-	};
-
-	renderRequestButtons = () => {
-		return (
-			<div className="QrButtons">
-				<button disabled={!this.canSendRequest()} className="SendButton" onClick={this.sendRequest}>
-					{Messages.EDIT.BUTTONS.SEND}
-				</button>
-				<button className="CloseButton" onClick={this.onRequestDialogClose}>
-					{Messages.EDIT.BUTTONS.CANCEL}
-				</button>
-			</div>
 		);
 	};
 

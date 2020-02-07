@@ -180,6 +180,11 @@ module.exports = {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
 		},
-		REQUEST_TYPES: ["Email", "Phone", "Datos Personales", "Domicilio Legal"]
+		REQUEST_TYPES: {
+			email: "Email",
+			tel: "Phone",
+			personal: "Datos Personales",
+			address: "Domicilio Legal"
+		}
 	}
 };
