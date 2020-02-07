@@ -65,8 +65,14 @@
 	float: left;
 }
 
+.PartRequestRow {
+	display: flex;
+}
+
 .QrButtonsRow {
-	margin-top: 5px;
+	align-self: center;
+	margin-top: 10px;
+	display: flex;
 }
 
 .PartRequestButton {

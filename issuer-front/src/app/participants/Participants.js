@@ -176,6 +176,19 @@ class Participants extends Component {
 		}
 	};
 
+	// generar csv de ejemplo para carga de participantes
+	createSampleCsv = () => {
+		const csv = "DID(ej:did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31),NOMBRE(un texto)";
+
+		const element = document.createElement("a");
+		const file = new Blob([csv], { type: "text/plain" });
+		element.href = URL.createObjectURL(file);
+		element.download = "sample.csv";
+		document.body.appendChild(element);
+		element.click();
+	};
+
+	// cargar participantes desde csv
 	LoadDidsFromCsv = files => {
 		const self = this;
 		var reader = new FileReader();
@@ -183,7 +196,7 @@ class Participants extends Component {
 			const result = [];
 			const data = reader.result.split(/[\r\n,]+/);
 
-			let index = 0;
+			let index = 2;
 			do {
 				const did = data[index];
 				const name = index + 1 < data.length ? data[index + 1] : "";
@@ -295,6 +308,10 @@ class Participants extends Component {
 		return (
 			<div className="QrRequestButtons">
 				<div className="PartRequestRow">
+					<button className="SampleCsv" onClick={this.createSampleCsv}>
+						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
+					</button>
+
 					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
 						<button className="LoadDidsFromCsv">{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}</button>
 					</ReactFileReader>
