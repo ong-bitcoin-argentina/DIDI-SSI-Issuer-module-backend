@@ -594,6 +594,13 @@ class Certificate extends Component {
 		const all = cert.concat(participant).concat(others);
 		for (let index in all) {
 			const dataElem = all[index];
+			if (dataElem.name === Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE) {
+				if (new Date(dataElem.value) < new Date()) {
+					if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.EXP_DATE_INVALID });
+					return true;
+				}
+			}
+
 			if (dataElem.required && !dataElem.value) {
 				if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name) });
 				return true;

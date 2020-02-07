@@ -63,6 +63,14 @@ module.exports = {
 		EDIT_CERT: "/certificates/edit/"
 	},
 
+	CERT_FIELD_MANDATORY: {
+		DID: "DID",
+		NAME: "CERTIFICADO O CURSO",
+		FIRST_NAME: "NOMBRE",
+		LAST_NAME: "APELLIDO",
+		EXPIRATION_DATE: "EXPIRATION DATE"
+	},
+
 	TEMPLATES: {
 		PREVIEW_ELEMS_LENGTH: {
 			1: 2,
@@ -164,7 +172,8 @@ module.exports = {
 			},
 			MISSING_FIELD: function(field) {
 				return { err: "REQUIRED_VALUE_MISSING", message: "El campo " + field + " es obligatorio" };
-			}
+			},
+			EXP_DATE_INVALID: { err: "EXP_DATE_INVALID", message: "La fecha de expiracion debe ser mayor a la fecha actual." }
 		},
 		MANDATORY_DATA: {
 			DID: "DID",
