@@ -7,7 +7,7 @@ import Login from "../login/Login";
 import Lists from "./Lists";
 import Template from "../templates/edit/Template";
 import Certificate from "../certificates/edit/Certificate";
-import QrRequest from "../qrRequest/QrRequest";
+import Participants from "../participants/Participants";
 
 class App extends Component {
 	render() {
@@ -22,7 +22,7 @@ class App extends Component {
 						<Route exact path={Constants.ROUTES.CERTIFICATES} component={Lists} />
 						<Route path={Constants.ROUTES.EDIT_TEMPLATE} component={Template} />
 						<Route path={Constants.ROUTES.EDIT_CERT} component={Certificate} />
-						<Route path={Constants.ROUTES.QR_REQUEST} component={QrRequest} />
+						<Route path={Constants.ROUTES.QR_REQUEST} component={Participants} />
 					</Switch>
 				</Router>
 			</div>

@@ -1,6 +1,28 @@
 import Constants from "../constants/Constants";
 
 export default class ParticipantsService {
+	static getGlobal(cb, errCb) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		};
+
+		fetch(Constants.API_ROUTES.PARTICIPANTS.GET_GLOBAL, data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
 	static getAll(templateId, cb, errCb) {
 		const data = {
 			method: "GET",

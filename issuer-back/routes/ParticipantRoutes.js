@@ -18,6 +18,39 @@ router.get("/dids", async function(req, res) {
 	}
 });
 
+router.get("/global", async function(req, res) {
+	const containsData = function(partData, names) {
+		return partData.data.find(data => names.indexOf(data.name) >= 0) !== undefined;
+	};
+
+	try {
+		const participants = await ParticipantService.getGlobalParticipants();
+		const result = participants.map(partData => {
+			return {
+				did: partData.did,
+				name: partData.name,
+				tel: containsData(partData, ["Phone"]),
+				mail: containsData(partData, ["email"]),
+				personal: containsData(partData, ["dni", "nationality"]),
+				address: containsData(partData, [
+					"streetAddress",
+					"numberStreet",
+					"floor",
+					"department",
+					"zipCode",
+					"city",
+					"municipality",
+					"province",
+					"country"
+				])
+			};
+		});
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		return ResponseHandler.sendErr(res, err);
+	}
+});
+
 router.get("/all/:templateId", async function(req, res) {
 	const templateId = req.params.templateId;
 	try {

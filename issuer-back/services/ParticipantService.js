@@ -25,6 +25,16 @@ var getById = async function(id) {
 };
 module.exports.getById = getById;
 
+module.exports.getGlobalParticipants = async function() {
+	try {
+		let participants = await Participant.getGlobalParticipants();
+		return Promise.resolve(participants);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.PARTICIPANT.ERR.GET);
+	}
+};
+
 module.exports.getAllByTemplateId = async function(templateId) {
 	try {
 		let participants = await Participant.getAllByTemplateId(templateId);

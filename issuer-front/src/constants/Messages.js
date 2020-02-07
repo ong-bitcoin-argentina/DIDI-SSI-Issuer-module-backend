@@ -20,8 +20,6 @@ module.exports = {
 			QR: {
 				LOAD_BY_REQUEST: "Cargar participante por pedido",
 				LOAD_BY_QR: "Cargar participante con código Qr",
-				TITLE: "Cargar Participantes",
-				PARTICIPANT_TITLE: "Se enviaron las solicitudes.",
 				DIDS_TITLE: "DIDS Cargados:"
 			},
 			PARTICIPANT: {
@@ -74,6 +72,10 @@ module.exports = {
 			CLOSE: "Cerrar"
 		},
 		TABLE: {
+			HAS_TEL: "TELEFONO",
+			HAS_MAIL: "MAIL",
+			HAS_PERSONAL: "DATOS PERSONALES",
+			HAS_ADDRESS: "DOMICILIO",
 			TEMPLATE: "TEMPLATE DE CERTIFICADO",
 			CERT: "CERTIFICADO",
 			LAST_NAME: "APELLIDO",

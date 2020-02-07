@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
-import "./QrRequest.scss";
+import "./Participants.scss";
+
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
 import ReactFileReader from "react-file-reader";
 
@@ -25,7 +28,7 @@ import Messages from "../../constants/Messages";
 var QRCode = require("qrcode");
 
 let interval;
-class QrRequest extends Component {
+class Participants extends Component {
 	constructor(props) {
 		super(props);
 
@@ -74,10 +77,13 @@ class QrRequest extends Component {
 			}
 
 			if (self.state.requestSent) {
+				self.props.onParticipantsReload();
 				ParticipantService.getNew(
 					self.state.globalRequestCode,
 					function(participant) {
-						if (participant && self.state.requestSent) self.setState({ participant: participant, error: false });
+						if (participant && self.state.requestSent) {
+							self.setState({ requestSent: false, error: false });
+						}
 					},
 					function(err) {
 						self.setState({ loading: false, error: err });
@@ -139,7 +145,6 @@ class QrRequest extends Component {
 	sendRequest = () => {
 		const token = Cookie.get("token");
 		const self = this;
-		self.setState({ loading: true });
 
 		const globalRequestCode = Math.random()
 			.toString(36)
@@ -153,6 +158,7 @@ class QrRequest extends Component {
 
 		if (self.state.did) dids.push(self.state.did);
 
+		self.setState({ isRequestDialogOpen: false });
 		// mandar pedido
 		TemplateService.sendRequest(
 			token,
@@ -161,7 +167,6 @@ class QrRequest extends Component {
 			globalRequestCode,
 			function(_) {
 				self.setState({
-					loading: false,
 					requestSent: true,
 					globalRequestCode: globalRequestCode,
 					awaitingDid: self.state.did,
@@ -169,7 +174,8 @@ class QrRequest extends Component {
 				});
 			},
 			function(err) {
-				self.setState({ loading: false, isRequestDialogOpen: false, error: err });
+				self.props.onParticipantsReload();
+				self.setState({ error: err });
 				console.log(err);
 			}
 		);
@@ -211,7 +217,8 @@ class QrRequest extends Component {
 					result.push({ did: key, name: acum[key] });
 				}
 
-				self.setState({ loading: false, newDids: dids, dids: result, error: false });
+				self.props.onParticipantsReload();
+				self.setState({ loading: false, dids: result, error: false });
 			},
 			function(err) {
 				self.setState({ loading: false, error: err });
@@ -250,10 +257,10 @@ class QrRequest extends Component {
 			this.setState({
 				qrSet: false,
 				requestSent: false,
-				newDids: false,
 				isQrDialogOpen: false,
 				isRequestDialogOpen: false
 			});
+			this.componentDidMount();
 			// this.props.history.push(Constants.ROUTES.LOGIN);
 		}
 	};
@@ -263,19 +270,12 @@ class QrRequest extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
+		// console.log(this.props.participants);
+
 		const loading = this.state.loading;
 		if (loading) return <div></div>;
 
-		const part = this.state.participant;
-		const requestSent = this.state.requestSent;
-		const qrSet = this.state.qrSet;
-		const qr = this.state.qr;
 		const error = this.state.error;
-		if (requestSent || (qrSet && !qr)) return this.renderParticipantLoadedScreen(part, error);
-
-		const newDids = this.state.newDids;
-		if (newDids) return this.renderAddedDidsScreen(newDids, error);
-
 		return this.renderAddParticipantScreen(error);
 	}
 
@@ -284,33 +284,27 @@ class QrRequest extends Component {
 			<div className="QrReq">
 				{this.renderRequestDialog()}
 				{this.renderQrDialog()}
-				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.TITLE}</div>
+				{this.renderTable()}
 				{this.renderButtons()}
 				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	};
 
-	renderAddedDidsScreen = (dids, error) => {
-		return (
-			<div className="DidLoaded">
-				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.DIDS_TITLE}</div>
-				{dids.map((did, key) => (
-					<li key={"did-" + key}>{did.name}</li>
-				))}
-				{this.renderResultButtons()}
-				<div className="errMsg">{error && error.message}</div>
-			</div>
-		);
-	};
+	renderTable = () => {
+		const participants = this.props.participants;
+		const columns = this.props.columns ? this.props.columns : [];
 
-	renderParticipantLoadedScreen = (part, error) => {
 		return (
-			<div className="ParticipantLoaded">
-				<div className="QrTitle">{Messages.EDIT.DIALOG.QR.PARTICIPANT_TITLE}</div>
-				{part && this.renderParticipant(part)}
-				{this.renderResultButtons()}
-				<div className="errMsg">{error && error.message}</div>
+			<div className="TemplateTable">
+				<ReactTable
+					previousText={Messages.LIST.TABLE.PREV}
+					nextText={Messages.LIST.TABLE.NEXT}
+					data={participants}
+					columns={columns}
+					defaultPageSize={Constants.TEMPLATES.TABLE.PAGE_SIZE}
+					minRows={Constants.TEMPLATES.TABLE.MIN_ROWS}
+				/>
 			</div>
 		);
 	};
@@ -529,4 +523,4 @@ class QrRequest extends Component {
 	};
 }
 
-export default withRouter(QrRequest);
+export default withRouter(Participants);

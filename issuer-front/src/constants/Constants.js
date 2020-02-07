@@ -24,6 +24,7 @@ module.exports = {
 		},
 		PARTICIPANTS: {
 			POST_NEW: API + "/participant/new/",
+			GET_GLOBAL: API + "/participant/global/",
 			GET_ALL: id => {
 				return API + "/participant/all/" + id;
 			},
@@ -70,7 +71,9 @@ module.exports = {
 		},
 
 		ICONS: {
-			ADD_BUTTON: "add_box"
+			ADD_BUTTON: "add_box",
+			OK: "check_circle_outline",
+			MISSING: "highlight_off"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,

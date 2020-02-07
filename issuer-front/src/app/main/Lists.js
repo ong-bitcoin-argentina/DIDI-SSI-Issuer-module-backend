@@ -16,10 +16,12 @@ import TemplateTableHelper from "../templates/list/TemplateTableHelper";
 import Certificates from "../certificates/list/Certificates";
 import CertificateTableHelper from "../certificates/list/CertificateTableHelper";
 
-import QrRequest from "../qrRequest/QrRequest";
+import Participants from "../participants/Participants";
+import ParticipantsTableHelper from "../participants/ParticipantsTableHelper";
 
 import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
+import ParticipantsService from "../../services/ParticipantService";
 
 class Lists extends Component {
 	constructor(props) {
@@ -46,43 +48,62 @@ class Lists extends Component {
 		const self = this;
 
 		self.setState({ loading: true, tabIndex: tabIndex });
-		TemplateService.getAll(
-			token,
-			async function(templates) {
-				templates = templates.map(template => {
-					return TemplateTableHelper.getTemplateData(template, self.onTemplateEdit, self.onTemplateDeleteDialogOpen);
+		ParticipantsService.getGlobal(
+			async function(participants) {
+				participants = participants.map(participant => {
+					return ParticipantsTableHelper.getParticipantData(participant);
 				});
-				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-				CertificateService.getAll(
+				const participantColumns = ParticipantsTableHelper.getParticipantColumns();
+
+				TemplateService.getAll(
 					token,
-					async function(certificates) {
-						certificates = certificates.map(certificate => {
-							return CertificateTableHelper.getCertificatesData(
-								certificate,
-								self.state.selectedElems,
-								self.onCertificateSelectToggle,
-								self.onCertificateEmmit,
-								self.onCertificateEdit,
-								self.onCertificateDeleteDialogOpen
+					async function(templates) {
+						templates = templates.map(template => {
+							return TemplateTableHelper.getTemplateData(
+								template,
+								self.onTemplateEdit,
+								self.onTemplateDeleteDialogOpen
 							);
 						});
-						const certColumns = CertificateTableHelper.getCertColumns(
-							certificates,
-							self.onEmmitedFilterChange,
-							self.onTemplateFilterChange,
-							self.onFirstNameFilterChange,
-							self.onLastNameFilterChange
-						);
+						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+						CertificateService.getAll(
+							token,
+							async function(certificates) {
+								certificates = certificates.map(certificate => {
+									return CertificateTableHelper.getCertificatesData(
+										certificate,
+										self.state.selectedElems,
+										self.onCertificateSelectToggle,
+										self.onCertificateEmmit,
+										self.onCertificateEdit,
+										self.onCertificateDeleteDialogOpen
+									);
+								});
+								const certColumns = CertificateTableHelper.getCertColumns(
+									certificates,
+									self.onEmmitedFilterChange,
+									self.onTemplateFilterChange,
+									self.onFirstNameFilterChange,
+									self.onLastNameFilterChange
+								);
 
-						self.setState({
-							templates: templates,
-							templateColumns: templateColumns,
-							certificates: certificates,
-							certColumns: certColumns,
-							filteredCertificates: certificates,
-							error: false,
-							loading: false
-						});
+								self.setState({
+									templates: templates,
+									templateColumns: templateColumns,
+									certificates: certificates,
+									certColumns: certColumns,
+									filteredCertificates: certificates,
+									participants: participants,
+									participantColumns: participantColumns,
+									error: false,
+									loading: false
+								});
+							},
+							function(err) {
+								self.setState({ error: err });
+								console.log(err);
+							}
+						);
 					},
 					function(err) {
 						self.setState({ error: err });
@@ -96,6 +117,25 @@ class Lists extends Component {
 			}
 		);
 	}
+
+	// recargar tabla de participantes
+	onParticipantsReload = () => {
+		const self = this;
+		self.setState({ loading: true });
+		ParticipantsService.getGlobal(async function(participants) {
+			participants = participants.map(participant => {
+				return ParticipantsTableHelper.getParticipantData(participant);
+			});
+			const participantColumns = ParticipantsTableHelper.getParticipantColumns();
+
+			self.setState({
+				participants: participants,
+				participantColumns: participantColumns,
+				error: false,
+				loading: false
+			});
+		});
+	};
 
 	// abrir dialogo de confirmacion para borrado de certificados
 	onCertificateDeleteDialogOpen = id => {
@@ -396,11 +436,14 @@ class Lists extends Component {
 					/>
 				</TabPanel>
 				<TabPanel>
-					<QrRequest
+					<Participants
 						selected={this.state.tabIndex === 2}
 						loading={this.state.loading}
 						templates={this.state.templates}
+						participants={this.state.participants}
+						columns={this.state.participantColumns}
 						error={this.state.error}
+						onParticipantsReload={this.onParticipantsReload}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>

@@ -179,15 +179,28 @@ Participant.getAllDids = async function() {
 	return Promise.resolve(result);
 };
 
+Participant.getGlobalParticipants = async function() {
+	const queryGlobal = { templateId: { $exists: false }, deleted: false };
+	const globalParticipants = await Participant.find(queryGlobal);
+	for (let part of globalParticipants) {
+		await part.decryptData();
+	}
+	return Promise.resolve(globalParticipants);
+};
+
 Participant.getAllByTemplateId = async function(templateId) {
 	try {
 		const query = { templateId: ObjectId(templateId), "data.0": { $exists: true }, deleted: false };
 		const participants = await Participant.find(query);
-		participants.forEach(part => part.decryptData());
+		for (let part of participants) {
+			await part.decryptData();
+		}
 
 		const queryGlobal = { templateId: { $exists: false }, "data.0": { $exists: true }, deleted: false };
 		const globalParticipants = await Participant.find(queryGlobal);
-		globalParticipants.forEach(part => part.decryptData());
+		for (let part of globalParticipants) {
+			await part.decryptData();
+		}
 
 		for (let globalPart of globalParticipants) {
 			for (let part of participants) {
