@@ -127,9 +127,6 @@ class Participants extends Component {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
 
-		console.log(partIds);
-		console.log(selectedParticipants);
-
 		for (let partId of partIds) {
 			for (let type of Object.keys(selectedParticipants)) {
 				if (selectedParticipants[type][partId]) return true;
