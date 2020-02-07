@@ -11,15 +11,15 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 
 import Templates from "../templates/list/Templates";
+import TemplateTableHelper from "../templates/list/TemplateTableHelper";
+
 import Certificates from "../certificates/list/Certificates";
+import CertificateTableHelper from "../certificates/list/CertificateTableHelper";
+
 import QrRequest from "../qrRequest/QrRequest";
 
 import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
-
-import Checkbox from "@material-ui/core/Checkbox";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 
 class Lists extends Component {
 	constructor(props) {
@@ -36,186 +36,6 @@ class Lists extends Component {
 		};
 	}
 
-	// mapear certificados al formato requerido por "ReactTable"
-	getTemplateData = template => {
-		const self = this;
-		return {
-			_id: template._id,
-			name: template.name,
-			actions: (
-				<div className="Actions">
-					<div
-						className="EditAction"
-						onClick={() => {
-							self.onTemplateEdit(template._id);
-						}}
-					>
-						{Messages.LIST.BUTTONS.EDIT}
-					</div>
-					<div
-						className="DeleteAction"
-						onClick={() => {
-							self.setState({ isDeleteDialogOpen: true, selectedTemplateId: template._id });
-						}}
-					>
-						{Messages.LIST.BUTTONS.DELETE}
-					</div>
-				</div>
-			)
-		};
-	};
-
-	getTemplateColumns = templates => {
-		return [
-			{
-				Header: Messages.LIST.TABLE.TEMPLATE,
-				accessor: "name"
-			},
-			{
-				Header: "",
-				accessor: "actions"
-			}
-		];
-	};
-
-	// mapear certificados al formato requerido por "ReactTable"
-	getCertificatesData = cert => {
-		const emmited = cert.emmitedOn;
-		const self = this;
-
-		return {
-			_id: cert._id,
-			certName: cert.name,
-			createdOn: emmited ? cert.emmitedOn.split("T")[0] : "-",
-			firstName: cert.firstName,
-			lastName: cert.lastName,
-			select: (
-				<div className="Actions">
-					{!emmited && (
-						<Checkbox
-							checked={this.state.selectedElems[cert._id]}
-							onChange={(_, value) => {
-								const stateElem = this.state.selectedElems;
-								stateElem[cert._id] = value;
-								this.setState({ selectedElems: this.state.selectedElems });
-							}}
-						/>
-					)}
-				</div>
-			),
-			actions: (
-				<div className="Actions">
-					{!emmited && (
-						<div
-							className="EmmitAction"
-							onClick={() => {
-								self.onCertificateEmmit(cert._id);
-							}}
-						>
-							{Messages.LIST.BUTTONS.EMMIT}
-						</div>
-					)}
-					{
-						<div
-							className="EditAction"
-							onClick={() => {
-								self.onCertificateEdit(cert._id);
-							}}
-						>
-							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
-						</div>
-					}
-					{!cert.emmitedOn && (
-						<div
-							className="DeleteAction"
-							onClick={() => {
-								self.setState({ isDeleteDialogOpen: true, selectedCertId: cert._id });
-							}}
-						>
-							{Messages.LIST.BUTTONS.DELETE}
-						</div>
-					)}
-				</div>
-			)
-		};
-	};
-
-	getCertColumns = certificates => {
-		const certNames = [...new Set(certificates.map(cert => cert.certName))];
-
-		return [
-			/*{
-				Header: "Id",
-				accessor: "_id"
-			},*/
-			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.LAST_NAME}</div>
-						<input type="text" className="TableInputFilter" onChange={this.onLastNameFilterChange} />
-					</div>
-				),
-				accessor: "lastName"
-			},
-			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.NAME}</div>
-						<input type="text" className="TableInputFilter" onChange={this.onFirstNameFilterChange} />
-					</div>
-				),
-				accessor: "firstName"
-			},
-			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.CERT}</div>
-						<Select className="TableInputFilter Checkbox" onChange={this.onTemplateFilterChange}>
-							<MenuItem value={undefined} className="DataInput">
-								{""}
-							</MenuItem>
-							{certNames.map((certName, key) => {
-								return (
-									<MenuItem value={certName} key={"cert-option-" + key} className="DataInput">
-										{certName}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</div>
-				),
-				accessor: "certName"
-			},
-			{
-				Header: Messages.LIST.TABLE.EMISSION_DATE,
-				accessor: "createdOn"
-			},
-			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.ACTIONS}</div>
-						<Select className="TableInputFilter Checkbox" onChange={this.onEmmitedFilterChange}>
-							<MenuItem value={undefined} className="DataInput">
-								{""}
-							</MenuItem>
-							<MenuItem value={"EMITIDOS"} className="DataInput">
-								{"EMITIDOS"}
-							</MenuItem>
-							<MenuItem value={"NO EMITIDOS"} className="DataInput">
-								{"NO EMITIDOS"}
-							</MenuItem>
-						</Select>
-					</div>
-				),
-				accessor: "actions"
-			},
-			{
-				Header: Messages.LIST.TABLE.SELECT,
-				accessor: "select"
-			}
-		];
-	};
-
 	// cargar certificados
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
@@ -230,16 +50,29 @@ class Lists extends Component {
 			token,
 			async function(templates) {
 				templates = templates.map(template => {
-					return self.getTemplateData(template);
+					return TemplateTableHelper.getTemplateData(template, self.onTemplateEdit, self.onTemplateDeleteDialogOpen);
 				});
-				const templateColumns = self.getTemplateColumns(templates);
+				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
 				CertificateService.getAll(
 					token,
 					async function(certificates) {
 						certificates = certificates.map(certificate => {
-							return self.getCertificatesData(certificate);
+							return CertificateTableHelper.getCertificatesData(
+								certificate,
+								self.state.selectedElems,
+								self.onCertificateSelectToggle,
+								self.onCertificateEmmit,
+								self.onCertificateEdit,
+								self.onCertificateDeleteDialogOpen
+							);
 						});
-						const certColumns = self.getCertColumns(certificates);
+						const certColumns = CertificateTableHelper.getCertColumns(
+							certificates,
+							self.onEmmitedFilterChange,
+							self.onTemplateFilterChange,
+							self.onFirstNameFilterChange,
+							self.onLastNameFilterChange
+						);
 
 						self.setState({
 							templates: templates,
@@ -264,6 +97,16 @@ class Lists extends Component {
 		);
 	}
 
+	// abrir dialogo de confirmacion para borrado de certificados
+	onCertificateDeleteDialogOpen = id => {
+		this.setState({ isDeleteDialogOpen: true, selectedCertId: id });
+	};
+
+	// cerrar dialogo de confirmacion para borrado de certificados
+	onDeleteDialogClose = () => {
+		this.setState({ isDeleteDialogOpen: false });
+	};
+
 	// borrar certificados
 	onCertificateDelete = id => {
 		const token = Cookie.get("token");
@@ -287,28 +130,14 @@ class Lists extends Component {
 		);
 	};
 
-	// emitir certificados
-	onCertificateEmmit = id => {
-		const token = Cookie.get("token");
-		const self = this;
-
-		const cert = self.state.certificates.find(t => t._id === id);
-		cert.actions = <div></div>;
-
-		self.setState({ cert: self.state.certificates });
-		CertificateService.emmit(
-			token,
-			id,
-			async function(_) {
-				self.componentDidMount();
-			},
-			function(err) {
-				console.log(err);
-				self.setState({ error: err });
-			}
-		);
+	// selecciionar certificados para emision multiple
+	onCertificateSelectToggle = (certId, value) => {
+		const stateElem = this.state.selectedElems;
+		stateElem[certId] = value;
+		this.setState({ selectedElems: this.state.selectedElems });
 	};
 
+	// emitir certificados marcados para emision multiple
 	onCertificateMultiEmmit = () => {
 		const keys = Object.keys(this.state.selectedElems);
 		const toEmmit = keys.filter(key => this.state.selectedElems[key]);
@@ -349,6 +178,28 @@ class Lists extends Component {
 			});
 	};
 
+	// emitir certificados
+	onCertificateEmmit = id => {
+		const token = Cookie.get("token");
+		const self = this;
+
+		const cert = self.state.certificates.find(t => t._id === id);
+		cert.actions = <div></div>;
+
+		self.setState({ cert: self.state.certificates });
+		CertificateService.emmit(
+			token,
+			id,
+			async function(_) {
+				self.componentDidMount();
+			},
+			function(err) {
+				console.log(err);
+				self.setState({ error: err });
+			}
+		);
+	};
+
 	// a pantalla de edicion
 	onCertificateEdit = id => {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
@@ -364,7 +215,12 @@ class Lists extends Component {
 			name,
 			async function(template) {
 				const templates = self.state.templates;
-				templates.push(self.getTemplateData(template));
+				const data = TemplateTableHelper.getTemplateData(
+					template,
+					self.onTemplateEdit,
+					self.onTemplateDeleteDialogOpen
+				);
+				templates.push(data);
 				self.setState({ templates: templates, loading: false, error: false });
 			},
 			function(err) {
@@ -372,6 +228,11 @@ class Lists extends Component {
 				console.log(err);
 			}
 		);
+	};
+
+	// abrir dialogo de borrado
+	onTemplateDeleteDialogOpen = id => {
+		this.setState({ isDeleteDialogOpen: true, selectedTemplateId: id });
 	};
 
 	// borrar templates
@@ -393,7 +254,7 @@ class Lists extends Component {
 		);
 	};
 
-	// filtros de tabla de certificados
+	// filtro por nombre
 	onFirstNameFilterChange = event => {
 		const filter = event.target.value;
 		this.updateFiltererCertificates(
@@ -404,6 +265,8 @@ class Lists extends Component {
 		);
 		this.setState({ firstNameFilter: filter });
 	};
+
+	// filtro por apellido
 	onLastNameFilterChange = event => {
 		const filter = event.target.value;
 		this.updateFiltererCertificates(
@@ -415,6 +278,7 @@ class Lists extends Component {
 		this.setState({ lastNameFilter: filter });
 	};
 
+	// filtro por modelo de certificado
 	onTemplateFilterChange = event => {
 		const filter = event.target.value;
 		this.updateFiltererCertificates(
@@ -426,6 +290,7 @@ class Lists extends Component {
 		this.setState({ templateFilter: filter });
 	};
 
+	// filtro por estado de emision de certificado
 	onEmmitedFilterChange = event => {
 		const filter = event.target.value;
 		this.updateFiltererCertificates(
@@ -437,6 +302,7 @@ class Lists extends Component {
 		this.setState({ emmitedFilter: filter });
 	};
 
+	// actualizar tabla en funcion de los filtros
 	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter, emmitedFilter) => {
 		let cert = this.state.certificates;
 
@@ -471,10 +337,6 @@ class Lists extends Component {
 		}
 
 		this.setState({ filteredCertificates: cert });
-	};
-
-	onDeleteDialogClose = () => {
-		this.setState({ isDeleteDialogOpen: false });
 	};
 
 	// a pantalla de edicion
