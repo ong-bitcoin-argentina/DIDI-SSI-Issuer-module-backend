@@ -236,6 +236,7 @@ class Lists extends Component {
 
 		const cert = self.state.certificates.find(t => t._id === id);
 		cert.actions = <div></div>;
+		cert.select = <div></div>;
 
 		self.setState({ cert: self.state.certificates, loading: true });
 		CertificateService.delete(
@@ -327,6 +328,7 @@ class Lists extends Component {
 		const certs = this.state.certificates.filter(t => toEmmit.indexOf(t._id) > -1);
 		certs.forEach(cert => {
 			cert.actions = <div></div>;
+			cert.selected = <div></div>;
 		});
 
 		this.setState({ cert: this.state.certificates });
@@ -365,6 +367,7 @@ class Lists extends Component {
 
 		const cert = self.state.certificates.find(t => t._id === id);
 		cert.actions = <div></div>;
+		cert.select = <div></div>;
 
 		self.setState({ cert: self.state.certificates });
 		CertificateService.emmit(
