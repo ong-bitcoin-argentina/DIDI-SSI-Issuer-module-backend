@@ -20,6 +20,9 @@ module.exports = {
 			QR: {
 				REQUEST_SENT: "Pedido enviado",
 				LOAD_BY_QR: "Cargar participante con código Qr",
+				LOADED_BY_QR: name => {
+					return "Participante " + name + " cargado.";
+				},
 				DIDS_TITLE: "DIDS Cargados:"
 			},
 			PARTICIPANT: {

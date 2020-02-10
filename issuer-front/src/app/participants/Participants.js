@@ -32,6 +32,8 @@ class Participants extends Component {
 			loading: false,
 			isQrDialogOpen: false,
 			isConfirmationDialogOpen: false,
+			isRequestSendDialogOpen: false,
+			isQrLoadedDialogOpen: false,
 			qrSet: false,
 			requestSent: false
 		};
@@ -66,6 +68,7 @@ class Participants extends Component {
 								qr: undefined,
 								qrSet: false,
 								isQrDialogOpen: false,
+								isQrLoadedDialogOpen: true,
 								error: false
 							});
 					},
@@ -157,6 +160,10 @@ class Participants extends Component {
 				.toString(36)
 				.slice(-8);
 
+			self.setState({
+				isRequestSendDialogOpen: true
+			});
+
 			// mandar pedido
 			TemplateService.sendRequest(
 				token,
@@ -235,6 +242,14 @@ class Participants extends Component {
 		);
 	};
 
+	onQrLoadedDialogClose = () => {
+		this.setState({ isQrLoadedDialogOpen: false });
+	};
+
+	onRequestSendDialogClose = () => {
+		this.setState({ isRequestSendDialogOpen: false });
+	};
+
 	onConfirmationDialogClose = () => {
 		this.setState({ isConfirmationDialogOpen: false });
 	};
@@ -262,7 +277,8 @@ class Participants extends Component {
 				qrSet: false,
 				requestSent: false,
 				isQrDialogOpen: false,
-				isConfirmationDialogOpen: false
+				isRequestSendDialogOpen: false,
+				isQrLoadedDialogOpen: false
 			});
 			this.componentDidMount();
 			// this.props.history.push(Constants.ROUTES.LOGIN);
@@ -274,9 +290,12 @@ class Participants extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
+		const participant = this.state.participant;
 		const error = this.state.error;
 		return (
 			<div className="QrReq">
+				{participant && this.renderQrLoadedDialog(participant.name)}
+				{this.renderRequestSentDialog()}
 				{this.renderRequestDialog()}
 				{this.renderQrDialog()}
 				{this.renderTable()}
@@ -329,6 +348,59 @@ class Participants extends Component {
 					</button>
 				</div>
 			</div>
+		);
+	};
+
+	renderQrLoadedDialog = loadedParticipant => {
+		return (
+			<Dialog open={this.state.isQrLoadedDialogOpen} onClose={this.onQrLoadedDialogClose} aria-labelledby="form-dialog-title">
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOADED_BY_QR(loadedParticipant)}</DialogTitle>
+				<DialogContent>
+					<div className="QrReq">
+						<button className="LogoutButton QrLogoutButton" onClick={this.onQrLoadedDialogClose}>
+							{Messages.EDIT.BUTTONS.CLOSE}
+						</button>
+					</div>
+				</DialogContent>
+			</Dialog>
+		);
+	};
+
+	renderRequestSentDialog = () => {
+		return (
+			<Dialog
+				open={this.state.isRequestSendDialogOpen}
+				onClose={this.onRequestSendDialogClose}
+				aria-labelledby="form-dialog-title"
+			>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.REQUEST_SENT}</DialogTitle>
+				<DialogContent>
+					<div className="QrReq">
+						<button className="LogoutButton QrLogoutButton" onClick={this.onRequestSendDialogClose}>
+							{Messages.EDIT.BUTTONS.CLOSE}
+						</button>
+					</div>
+				</DialogContent>
+			</Dialog>
+		);
+	};
+
+	renderRequestSentDialog = () => {
+		return (
+			<Dialog
+				open={this.state.isRequestSendDialogOpen}
+				onClose={this.onRequestSendDialogClose}
+				aria-labelledby="form-dialog-title"
+			>
+				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.REQUEST_SENT}</DialogTitle>
+				<DialogContent>
+					<div className="QrReq">
+						<button className="LogoutButton QrLogoutButton" onClick={this.onRequestSendDialogClose}>
+							{Messages.EDIT.BUTTONS.CLOSE}
+						</button>
+					</div>
+				</DialogContent>
+			</Dialog>
 		);
 	};
 
