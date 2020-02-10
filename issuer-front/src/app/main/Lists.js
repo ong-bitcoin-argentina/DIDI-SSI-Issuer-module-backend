@@ -45,7 +45,8 @@ class Lists extends Component {
 				personal: {},
 				address: {}
 			},
-			selectedElems: {},
+			allSelectedCerts: false,
+			selectedCerts: {},
 			certificates: [],
 			filteredCertificates: [],
 			templates: []
@@ -66,7 +67,7 @@ class Lists extends Component {
 			async function(parts) {
 				const allSelectedParticipants = self.state.allSelectedParticipants;
 				const selectedParticipants = self.state.selectedParticipants;
-				self.updateSelectedState(parts, selectedParticipants, allSelectedParticipants);
+				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 
 				TemplateService.getAll(
 					token,
@@ -81,31 +82,12 @@ class Lists extends Component {
 						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
 						CertificateService.getAll(
 							token,
-							async function(certificates) {
-								certificates = certificates.map(certificate => {
-									return CertificateTableHelper.getCertificatesData(
-										certificate,
-										self.state.selectedElems,
-										self.onCertificateSelectToggle,
-										self.onCertificateEmmit,
-										self.onCertificateEdit,
-										self.onCertificateDeleteDialogOpen
-									);
-								});
-								const certColumns = CertificateTableHelper.getCertColumns(
-									certificates,
-									self.onEmmitedFilterChange,
-									self.onTemplateFilterChange,
-									self.onFirstNameFilterChange,
-									self.onLastNameFilterChange
-								);
-
+							async function(certs) {
+								const selectedCerts = self.state.selectedCerts;
+								self.updateSelectedCertsState(certs, selectedCerts);
 								self.setState({
 									templates: templates,
 									templateColumns: templateColumns,
-									certificates: certificates,
-									certColumns: certColumns,
-									filteredCertificates: certificates,
 									error: false,
 									loading: false
 								});
@@ -134,7 +116,7 @@ class Lists extends Component {
 		const allSelectedParticipants = this.state.allSelectedParticipants;
 		const selectedParticipants = this.state.selectedParticipants;
 		selectedParticipants[type][id] = value;
-		this.updateSelectedState(this.state.parts, selectedParticipants, allSelectedParticipants);
+		this.updateSelectedParticipantsState(this.state.parts, selectedParticipants, allSelectedParticipants);
 	};
 
 	// seleccionar certificado a pedir para todos los participantes
@@ -147,11 +129,11 @@ class Lists extends Component {
 			if (!part[type]) selectedParticipants[type][part.did] = value;
 		});
 		allSelectedParticipants[type] = value;
-		this.updateSelectedState(parts, selectedParticipants, allSelectedParticipants);
+		this.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 	};
 
 	// actualizar seleccion de certificados a pedir para participantes
-	updateSelectedState = (parts, selectedParts, allSelectedParticipants) => {
+	updateSelectedParticipantsState = (parts, selectedParts, allSelectedParticipants) => {
 		const types = this.state.partTypes;
 		parts.forEach(part => {
 			types.forEach(type => {
@@ -272,15 +254,73 @@ class Lists extends Component {
 
 	// selecciionar certificados para emision multiple
 	onCertificateSelectToggle = (certId, value) => {
-		const stateElem = this.state.selectedElems;
-		stateElem[certId] = value;
-		this.setState({ selectedElems: this.state.selectedElems });
+		const certs = this.state.certs;
+		const allSelectedCerts = this.state.allSelectedCerts;
+		const selectedCerts = this.state.selectedCerts;
+		selectedCerts[certId] = value;
+		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+	};
+
+	// seleccionar todos los certificados para emitirlos
+	onCertificateSelectAllToggle = value => {
+		let allSelectedCerts = this.state.allSelectedCerts;
+		const certs = this.state.certs;
+		const selectedCerts = this.state.selectedCerts;
+
+		certs.forEach(cert => {
+			if (!cert["emmitedOn"]) selectedCerts[cert._id] = value;
+		});
+		allSelectedCerts = value;
+		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+	};
+
+	// actualizar seleccion de certificados a emitir
+	updateSelectedCertsState = (certs, selectedCerts) => {
+		let allSelected = true;
+		certs.forEach(cert => {
+			if (!cert["emmitedOn"] && !selectedCerts[cert._id]) {
+				selectedCerts[cert._id] = false;
+				allSelected = false;
+			}
+		});
+
+		this.setState({
+			selectedCerts: selectedCerts,
+			allSelectedCerts: allSelected
+		});
+
+		const certificates = certs.map(certificate => {
+			return CertificateTableHelper.getCertificatesData(
+				certificate,
+				selectedCerts,
+				this.onCertificateSelectToggle,
+				this.onCertificateEmmit,
+				this.onCertificateEdit,
+				this.onCertificateDeleteDialogOpen
+			);
+		});
+		const certColumns = CertificateTableHelper.getCertColumns(
+			certificates,
+			allSelected,
+			this.onCertificateSelectAllToggle,
+			this.onEmmitedFilterChange,
+			this.onTemplateFilterChange,
+			this.onFirstNameFilterChange,
+			this.onLastNameFilterChange
+		);
+
+		this.setState({
+			certs: certs,
+			certificates: certificates,
+			filteredCertificates: certificates,
+			certColumns: certColumns
+		});
 	};
 
 	// emitir certificados marcados para emision multiple
 	onCertificateMultiEmmit = () => {
-		const keys = Object.keys(this.state.selectedElems);
-		const toEmmit = keys.filter(key => this.state.selectedElems[key]);
+		const keys = Object.keys(this.state.selectedCerts);
+		const toEmmit = keys.filter(key => this.state.selectedCerts[key]);
 
 		if (toEmmit.length === 0) return;
 
