@@ -31,9 +31,17 @@ class Lists extends Component {
 			loading: false,
 			isDeleteDialogOpen: false,
 			tabIndex: 1,
+			partTypes: ["tel", "mail", "personal", "address"],
+			parts: [],
+			allSelectedParticipants: {
+				tel: false,
+				mail: false,
+				personal: false,
+				address: false
+			},
 			selectedParticipants: {
 				tel: {},
-				email: {},
+				mail: {},
 				personal: {},
 				address: {}
 			},
@@ -55,15 +63,10 @@ class Lists extends Component {
 
 		self.setState({ loading: true, tabIndex: tabIndex });
 		ParticipantsService.getGlobal(
-			async function(participants) {
-				participants = participants.map(participant => {
-					return ParticipantsTableHelper.getParticipantData(
-						participant,
-						self.state.selectedParticipants,
-						self.onParticipantSelectToggle
-					);
-				});
-				const participantColumns = ParticipantsTableHelper.getParticipantColumns();
+			async function(parts) {
+				const allSelectedParticipants = self.state.allSelectedParticipants;
+				const selectedParticipants = self.state.selectedParticipants;
+				self.updateSelectedState(parts, selectedParticipants, allSelectedParticipants);
 
 				TemplateService.getAll(
 					token,
@@ -103,8 +106,6 @@ class Lists extends Component {
 									certificates: certificates,
 									certColumns: certColumns,
 									filteredCertificates: certificates,
-									participants: participants,
-									participantColumns: participantColumns,
 									error: false,
 									loading: false
 								});
@@ -128,10 +129,68 @@ class Lists extends Component {
 		);
 	}
 
+	// seleccionar certificado a pedir para el participante
 	onParticipantSelectToggle = (id, type, value) => {
+		const allSelectedParticipants = this.state.allSelectedParticipants;
 		const selectedParticipants = this.state.selectedParticipants;
 		selectedParticipants[type][id] = value;
-		this.setState({ selectedParticipants: selectedParticipants });
+		this.updateSelectedState(this.state.parts, selectedParticipants, allSelectedParticipants);
+	};
+
+	// seleccionar certificado a pedir para todos los participantes
+	onParticipantSelectAllToggle = (type, value) => {
+		const parts = this.state.parts;
+		const allSelectedParticipants = this.state.allSelectedParticipants;
+		const selectedParticipants = this.state.selectedParticipants;
+
+		parts.forEach(part => {
+			if (!part[type]) selectedParticipants[type][part.did] = value;
+		});
+		allSelectedParticipants[type] = value;
+		this.updateSelectedState(parts, selectedParticipants, allSelectedParticipants);
+	};
+
+	// actualizar seleccion de certificados a pedir para participantes
+	updateSelectedState = (parts, selectedParts, allSelectedParticipants) => {
+		const types = this.state.partTypes;
+		parts.forEach(part => {
+			types.forEach(type => {
+				if (!part[type] && !selectedParts[type][part.did]) selectedParts[type][part.did] = false;
+			});
+		});
+
+		types.forEach(type => {
+			allSelectedParticipants[type] = true;
+			for (let did of Object.keys(selectedParts[type])) {
+				if (!selectedParts[type][did]) {
+					allSelectedParticipants[type] = false;
+				}
+			}
+		});
+
+		this.setState({
+			selectedParticipants: selectedParts,
+			allSelectedParticipants: allSelectedParticipants
+		});
+
+		const participants = parts.map(participant => {
+			return ParticipantsTableHelper.getParticipantData(
+				participant,
+				this.state.selectedParticipants,
+				this.onParticipantSelectToggle
+			);
+		});
+
+		const participantColumns = ParticipantsTableHelper.getParticipantColumns(
+			this.state.allSelectedParticipants,
+			this.onParticipantSelectAllToggle
+		);
+
+		this.setState({
+			parts: parts,
+			participants: participants,
+			participantColumns: participantColumns
+		});
 	};
 
 	// recargar tabla de participantes
@@ -139,17 +198,32 @@ class Lists extends Component {
 		const self = this;
 		self.setState({ loading: true });
 		ParticipantsService.getGlobal(
-			async function(participants) {
-				participants = participants.map(participant => {
+			async function(parts) {
+				parts.forEach(part => {
+					self.state.partTypes.forEach(type => {
+						self.state.selectedParticipants[type][part.did] = false;
+					});
+				});
+				self.setState({
+					selectedParticipants: self.state.selectedParticipants,
+					allSelectedParticipants: self.state.allSelectedParticipants
+				});
+
+				const participants = parts.map(participant => {
 					return ParticipantsTableHelper.getParticipantData(
 						participant,
 						self.state.selectedParticipants,
 						self.onParticipantSelectToggle
 					);
 				});
-				const participantColumns = ParticipantsTableHelper.getParticipantColumns();
+
+				const participantColumns = ParticipantsTableHelper.getParticipantColumns(
+					self.state.allSelectedParticipants,
+					self.onParticipantSelectAllToggle
+				);
 
 				self.setState({
+					allSelectedParticipants: self.state.allSelectedParticipants,
 					participants: participants,
 					participantColumns: participantColumns,
 					error: false,

@@ -32,9 +32,9 @@ class ParticipantsTableHelper {
 					{!participant.mail && (
 						<div className="Actions">
 							<Checkbox
-								checked={selectedParticipants["email"][participant.did]}
+								checked={selectedParticipants["mail"][participant.did]}
 								onChange={(_, value) => {
-									onParticipantSelectToggle(participant.did, "email", value);
+									onParticipantSelectToggle(participant.did, "mail", value);
 								}}
 							/>
 						</div>
@@ -75,26 +75,74 @@ class ParticipantsTableHelper {
 	}
 
 	// genera los headers para las columnas de la tabla de certificados
-	static getParticipantColumns() {
+	static getParticipantColumns(allSelectedParts, onParticipantSelectAllToggle) {
 		return [
 			{
 				Header: Messages.LIST.TABLE.NAME,
 				accessor: "name"
 			},
 			{
-				Header: Messages.LIST.TABLE.HAS_TEL,
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.HAS_TEL}</div>
+						<div className="Actions">
+							<Checkbox
+								checked={allSelectedParts["tel"]}
+								onChange={(_, value) => {
+									onParticipantSelectAllToggle("tel", value);
+								}}
+							/>
+						</div>
+					</div>
+				),
 				accessor: "tel"
 			},
 			{
-				Header: Messages.LIST.TABLE.HAS_MAIL,
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.HAS_MAIL}</div>
+						<div className="Actions">
+							<Checkbox
+								checked={allSelectedParts["mail"]}
+								onChange={(_, value) => {
+									onParticipantSelectAllToggle("mail", value);
+								}}
+							/>
+						</div>
+					</div>
+				),
 				accessor: "mail"
 			},
 			{
-				Header: Messages.LIST.TABLE.HAS_PERSONAL,
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.HAS_PERSONAL}</div>
+						<div className="Actions">
+							<Checkbox
+								checked={allSelectedParts["personal"]}
+								onChange={(_, value) => {
+									onParticipantSelectAllToggle("personal", value);
+								}}
+							/>
+						</div>
+					</div>
+				),
 				accessor: "personal"
 			},
 			{
-				Header: Messages.LIST.TABLE.HAS_ADDRESS,
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.HAS_ADDRESS}</div>
+						<div className="Actions">
+							<Checkbox
+								checked={allSelectedParts["address"]}
+								onChange={(_, value) => {
+									onParticipantSelectAllToggle("address", value);
+								}}
+							/>
+						</div>
+					</div>
+				),
 				accessor: "address"
 			}
 		];

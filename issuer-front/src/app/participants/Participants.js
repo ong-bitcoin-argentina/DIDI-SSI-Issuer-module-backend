@@ -312,6 +312,7 @@ class Participants extends Component {
 		return (
 			<div className="TemplateTable">
 				<ReactTable
+					sortable={false}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={participants}
@@ -353,7 +354,11 @@ class Participants extends Component {
 
 	renderQrLoadedDialog = loadedParticipant => {
 		return (
-			<Dialog open={this.state.isQrLoadedDialogOpen} onClose={this.onQrLoadedDialogClose} aria-labelledby="form-dialog-title">
+			<Dialog
+				open={this.state.isQrLoadedDialogOpen}
+				onClose={this.onQrLoadedDialogClose}
+				aria-labelledby="form-dialog-title"
+			>
 				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOADED_BY_QR(loadedParticipant)}</DialogTitle>
 				<DialogContent>
 					<div className="QrReq">

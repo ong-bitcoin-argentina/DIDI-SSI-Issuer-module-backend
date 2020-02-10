@@ -137,6 +137,7 @@ class Templates extends Component {
 		return (
 			<div className="TemplateTable">
 				<ReactTable
+					sortable={false}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={templates}
