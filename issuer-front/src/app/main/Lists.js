@@ -260,9 +260,6 @@ class Lists extends Component {
 		const self = this;
 
 		const cert = self.state.certificates.find(t => t._id === id);
-		cert.actions = <div></div>;
-		cert.select = <div></div>;
-
 		self.setState({ cert: self.state.certificates, loading: true });
 		CertificateService.delete(
 			token,
@@ -360,6 +357,8 @@ class Lists extends Component {
 
 		const token = Cookie.get("token");
 		const self = this;
+
+		let errors = [];
 		const promises = toEmmit.map(elem => {
 			return new Promise(function(resolve, reject) {
 				CertificateService.emmit(
@@ -369,7 +368,8 @@ class Lists extends Component {
 						resolve();
 					},
 					function(err) {
-						reject(err);
+						errors.push(err.message);
+						resolve();
 					}
 				);
 			});
@@ -377,10 +377,24 @@ class Lists extends Component {
 
 		Promise.all(promises)
 			.then(function() {
-				self.componentDidMount();
+				if (errors.length) {
+					let err = {};
+					err.message = (
+						<ul>
+							{errors.map((error, key) => (
+								<li key={"err-" + key} className="errorList">
+									{error}
+								</li>
+							))}
+						</ul>
+					);
+
+					self.setState({ error: err });
+				} else {
+					self.componentDidMount();
+				}
 			})
 			.catch(function(err) {
-				console.log(err);
 				self.setState({ error: err });
 			});
 	};

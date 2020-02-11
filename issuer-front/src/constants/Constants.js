@@ -206,7 +206,7 @@ module.exports = {
 			MIN_ROWS: 3
 		},
 		REQUEST_TYPES: {
-			email: "Email",
+			mail: "Email",
 			tel: "Phone",
 			personal: "Datos Personales",
 			address: "Domicilio Legal"

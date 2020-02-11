@@ -81,8 +81,9 @@ router.post(
 	Validator.checkValidationResult,
 	async function(req, res) {
 		const id = req.params.id;
+		let cert;
 		try {
-			const cert = await CertService.getById(id);
+			cert = await CertService.getById(id);
 			let template = await TemplateService.getById(cert.templateId);
 
 			const partData = cert.data.participant.map(array => {
@@ -104,7 +105,14 @@ router.post(
 			if (credentials.length) result = await CertService.emmit(cert, credentials);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
-			console.log(err);
+			if (err.message && cert)
+				err.message =
+					"(nombre: " +
+					cert.data.participant[0][1].value +
+					", certificado: " +
+					cert.data.cert[0].value +
+					"): " +
+					err.message;
 			return ResponseHandler.sendErr(res, err);
 		}
 	}
