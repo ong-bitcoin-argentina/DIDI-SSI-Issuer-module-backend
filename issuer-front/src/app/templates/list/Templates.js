@@ -73,7 +73,7 @@ class Templates extends Component {
 	renderDialog = () => {
 		return (
 			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.TITLE}</DialogTitle>
+				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}</DialogTitle>
 				<DialogContent>
 					<TextField
 						autoFocus

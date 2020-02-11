@@ -10,7 +10,6 @@ import MaterialIcon from "material-icons-react";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -23,7 +22,6 @@ class Certificates extends Component {
 
 		this.state = {
 			loading: false,
-			isDialogOpen: false,
 			name: ""
 		};
 	}
@@ -38,20 +36,12 @@ class Certificates extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT);
 	};
 
-	// abrir dialogo de creacion de certificados
-	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
-
-	// cerrar dialogo de creacion de certificados
-	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
-
 	render() {
 		const loading = this.props.loading;
-		const isDialogOpen = this.state.isDialogOpen;
 		const isDeleteDialogOpen = this.props.isDeleteDialogOpen;
 		const certId = this.props.selectedCertId;
 		return (
 			<div className="Certificates">
-				{isDialogOpen && this.renderDialog()}
 				{isDeleteDialogOpen && certId && this.renderDeleteDialog(certId)}
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
@@ -60,33 +50,6 @@ class Certificates extends Component {
 			</div>
 		);
 	}
-
-	renderDialog = () => {
-		return (
-			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.TITLE}</DialogTitle>
-				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label={Messages.LIST.DIALOG.NAME}
-						type="text"
-						onChange={this.props.updateName}
-						fullWidth
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={this.onCertificateCreate} disabled={!this.state.name} color="primary">
-						{Messages.LIST.DIALOG.CREATE}
-					</Button>
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
 
 	renderDeleteDialog = certId => {
 		const isOpen = this.props.isDeleteDialogOpen;
