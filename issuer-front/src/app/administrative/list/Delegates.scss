@@ -1,0 +1,17 @@
+@import "../../../styles/Colors.scss";
+
+.Admin {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.DelegatesTable {
+	background-color: $TableBackground;
+	color: $TableText;
+	margin-bottom: 10px;
+}
+
+.CreateDelegateButtonText {
+	margin-top: 5px;	
+}

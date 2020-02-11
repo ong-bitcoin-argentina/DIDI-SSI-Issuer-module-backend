@@ -72,8 +72,6 @@ User.generate = async function(name, pass) {
 		// TODO user types
 		user.type = Constants.USER_TYPES.Admin;
 
-		console.log(user);
-
 		user = await user.save();
 		return Promise.resolve(user);
 	} catch (err) {

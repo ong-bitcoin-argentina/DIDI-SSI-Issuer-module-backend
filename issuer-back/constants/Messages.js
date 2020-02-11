@@ -20,6 +20,13 @@ module.exports = {
 			}
 		}
 	},
+	DELEGATE: {
+		ERR: {
+			CREATE: { code: "DELEGATE_CREATE", message: "El delegado no pudo ser creado." },
+			GET: { code: "DELEGATE_GET", message: "El delegado no pudo ser obtenido." },
+			DELETE: { code: "DELEGATE_DELETE", message: "El delegado no pudo ser borrado." }
+		}
+	},
 	USER: {
 		ERR: {
 			INVALID_USER: { code: "INVALID_USER", message: "El usuario y contraseña no coinciden." },

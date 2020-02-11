@@ -69,14 +69,17 @@ module.exports = {
 			DELETE_CONFIRMATION: "Esta seguro?",
 			DELETE_CERT_TITLE: "Borrar Certificado",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
+			DELETE_DELEGATE_TITLE: "Borrar Delegado",
 			DELETE: "Borrar",
 			TITLE: "Crear Modelo",
+			DID: "Did",
 			NAME: "Nombre",
 			CREATE: "Crear",
 			CANCEL: "Cancelar",
 			CLOSE: "Cerrar"
 		},
 		TABLE: {
+			DID: "DID",
 			HAS_TEL: "TELEFONO",
 			HAS_MAIL: "MAIL",
 			HAS_PERSONAL: "DATOS PERSONALES",
@@ -92,6 +95,8 @@ module.exports = {
 			ACTIONS: "ACCIONES"
 		},
 		BUTTONS: {
+			CREATE_DELEGATE: "CREAR DELEGADO",
+			DELEGATES: "DELEGADOS",
 			TO_QR: "REGISTRAR PARTICIPANTE",
 			TO_CERTIFICATES: "CERTIFICADOS",
 			TO_TEMPLATES: "TEMPLATES",

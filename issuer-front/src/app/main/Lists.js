@@ -23,6 +23,10 @@ import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
 import ParticipantsService from "../../services/ParticipantService";
 
+import Delegates from "../administrative/list/Delegates";
+import DelegateService from "../../services/DelegateService";
+import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
+
 class Lists extends Component {
 	constructor(props) {
 		super(props);
@@ -49,7 +53,9 @@ class Lists extends Component {
 			selectedCerts: {},
 			certificates: [],
 			filteredCertificates: [],
-			templates: []
+			templates: [],
+			delegates: [],
+			delegateColumns: []
 		};
 	}
 
@@ -80,17 +86,36 @@ class Lists extends Component {
 							);
 						});
 						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+						self.setState({
+							templates: templates,
+							templateColumns: templateColumns
+						});
 						CertificateService.getAll(
 							token,
 							async function(certs) {
 								const selectedCerts = self.state.selectedCerts;
 								self.updateSelectedCertsState(certs, selectedCerts);
-								self.setState({
-									templates: templates,
-									templateColumns: templateColumns,
-									error: false,
-									loading: false
-								});
+
+								DelegateService.getAll(
+									token,
+									async function(delegates) {
+										delegates = delegates.map(delegate => {
+											return DelegatesTableHelper.getDelegatesData(delegate, self.onDelegateDeleteDialogOpen);
+										});
+										const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
+
+										self.setState({
+											delegateColumns: delegateColumns,
+											delegates: delegates,
+											error: false,
+											loading: false
+										});
+									},
+									function(err) {
+										self.setState({ error: err });
+										console.log(err);
+									}
+								);
 							},
 							function(err) {
 								self.setState({ error: err });
@@ -527,6 +552,54 @@ class Lists extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_TEMPLATE + id);
 	};
 
+	// abrir dialogo de borrado
+	onDelegateDeleteDialogOpen = did => {
+		this.setState({ isDeleteDialogOpen: true, selectedDelegateDid: did });
+	};
+
+	// crear delegacion
+	onDelegateCreate = (did, name) => {
+		const token = Cookie.get("token");
+		const self = this;
+		self.setState({ loading: true });
+		DelegateService.create(
+			token,
+			did,
+			name,
+			async function(delegate) {
+				const delegates = self.state.delegates;
+				const data = DelegatesTableHelper.getDelegatesData(delegate, self.onDelegateDeleteDialogOpen);
+				delegates.push(data);
+				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
+				self.setState({ delegates: delegates, delegateColumns: delegateColumns, loading: false, error: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
+	// borrar delegacion
+	onDelegateDelete = () => {
+		const did = this.state.selectedDelegateDid;
+		const token = Cookie.get("token");
+		const self = this;
+		self.setState({ loading: true });
+		DelegateService.delete(
+			token,
+			did,
+			async function(delegate) {
+				const delegates = self.state.delegates.filter(t => t.did !== delegate.did);
+				self.setState({ delegates: delegates, loading: false, error: false });
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
 	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
@@ -544,6 +617,7 @@ class Lists extends Component {
 					<Tab>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
 					<Tab>{Messages.LIST.BUTTONS.TO_CERTIFICATES}</Tab>
 					<Tab>{Messages.LIST.BUTTONS.TO_QR}</Tab>
+					<Tab>{Messages.LIST.BUTTONS.DELEGATES}</Tab>
 				</TabList>
 
 				<TabPanel>
@@ -588,6 +662,20 @@ class Lists extends Component {
 						error={this.state.error}
 						onParticipantsReload={this.onParticipantsReload}
 						selectedParticipants={this.state.selectedParticipants}
+						onLogout={this.onLogout}
+					/>
+				</TabPanel>
+
+				<TabPanel>
+					<Delegates
+						selected={this.state.tabIndex === 3}
+						isDeleteDialogOpen={this.state.isDeleteDialogOpen}
+						delegates={this.state.delegates}
+						columns={this.state.delegateColumns}
+						onDelegateCreate={this.onDelegateCreate}
+						onDelegateDelete={this.onDelegateDelete}
+						onDeleteDialogClose={this.onDeleteDialogClose}
+						error={this.state.error}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>

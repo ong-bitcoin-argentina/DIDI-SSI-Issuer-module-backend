@@ -8,6 +8,7 @@ import Lists from "./Lists";
 import Template from "../templates/edit/Template";
 import Certificate from "../certificates/edit/Certificate";
 import Participants from "../participants/Participants";
+import Delegates from "../administrative/list/Delegates";
 
 class App extends Component {
 	render() {
@@ -23,6 +24,7 @@ class App extends Component {
 						<Route path={Constants.ROUTES.EDIT_TEMPLATE} component={Template} />
 						<Route path={Constants.ROUTES.EDIT_CERT} component={Certificate} />
 						<Route path={Constants.ROUTES.QR_REQUEST} component={Participants} />
+						<Route path={Constants.ROUTES.DELEGATES} component={Delegates} />
 					</Switch>
 				</Router>
 			</div>

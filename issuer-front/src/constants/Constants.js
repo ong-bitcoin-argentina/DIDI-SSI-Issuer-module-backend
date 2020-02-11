@@ -51,10 +51,16 @@ module.exports = {
 			DELETE: id => {
 				return API + "/cert/" + id;
 			}
+		},
+		DELEGATE: {
+			CREATE: API + "/delegate",
+			DELETE: API + "/delegate",
+			GET_ALL: API + "/delegate/all"
 		}
 	},
 	ROUTES: {
 		LOGIN: "/login",
+		DELEGATES: "/admin",
 		QR_REQUEST: "/qr_request",
 		LIST: "/list",
 		TEMPLATES: "/templates",
@@ -69,6 +75,16 @@ module.exports = {
 		FIRST_NAME: "NOMBRE",
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"
+	},
+
+	DELEGATES: {
+		ICONS: {
+			ADD_BUTTON: "add_box"
+		},
+		TABLE: {
+			PAGE_SIZE: 10,
+			MIN_ROWS: 3
+		}
 	},
 
 	TEMPLATES: {

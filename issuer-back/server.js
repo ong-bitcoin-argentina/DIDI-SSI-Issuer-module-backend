@@ -11,6 +11,7 @@ const UserRoutes = require("./routes/UserRoutes");
 const TemplateRoutes = require("./routes/TemplateRoutes");
 const CertRoutes = require("./routes/CertRoutes");
 const ParticipantRoutes = require("./routes/ParticipantRoutes");
+const DelegateRoutes = require("./routes/DelegateRoutes");
 
 const log = console.log;
 console.log = function(data) {
@@ -74,6 +75,7 @@ app.use(route + "/user", UserRoutes);
 app.use(route + "/participant", ParticipantRoutes);
 app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
+app.use(route + "/delegate", DelegateRoutes);
 
 if (cluster.isMaster) {
 	console.log(Messages.INDEX.MSG.STARTING_WORKERS(numCPUs));
