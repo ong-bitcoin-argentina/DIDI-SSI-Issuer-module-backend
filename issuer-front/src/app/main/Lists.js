@@ -260,6 +260,9 @@ class Lists extends Component {
 		const self = this;
 
 		const cert = self.state.certificates.find(t => t._id === id);
+		cert.actions = <div></div>;
+		cert.select = <div></div>;
+
 		self.setState({ cert: self.state.certificates, loading: true });
 		CertificateService.delete(
 			token,
