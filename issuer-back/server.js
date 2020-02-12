@@ -13,19 +13,20 @@ const CertRoutes = require("./routes/CertRoutes");
 const ParticipantRoutes = require("./routes/ParticipantRoutes");
 const DelegateRoutes = require("./routes/DelegateRoutes");
 
-const log = console.log;
-console.log = function(data) {
-	process.stdout.write(new Date().toISOString() + ": ");
-	log(data);
-};
-
-// set up node module clusters - one worker per CPU available
+// inicializar cluster para workers, uno por cpu disponible
 var cluster = require("cluster");
 var numCPUs = require("os").cpus().length;
 
 const app = express();
 var http = require("http");
 var server = http.createServer(app);
+
+// sobreescribir log para agregarle el timestamp
+const log = console.log;
+console.log = function(data) {
+	process.stdout.write(new Date().toISOString() + ": ");
+	log(data);
+};
 
 app.use(
 	bodyParser.urlencoded({
@@ -36,6 +37,7 @@ app.use(bodyParser.json());
 
 if (Constants.DEBUGG) console.log(Messages.INDEX.MSG.CONNECTING + Constants.MONGO_URL);
 
+// configuracion de mongoose
 mongoose
 	.connect(Constants.MONGO_URL, {
 		useCreateIndex: true,
@@ -50,7 +52,7 @@ mongoose
 
 app.get("/", (_, res) => res.send(Messages.INDEX.MSG.HELLO_WORLD));
 
-// log calls
+// loggear llamadas
 app.use(function(req, _, next) {
 	if (Constants.DEBUGG) {
 		console.log(req.method + " " + req.originalUrl);
@@ -62,7 +64,7 @@ app.use(function(req, _, next) {
 
 app.use(cors());
 
-// log errors
+// loggear errores
 app.use(function(error, _, _, next) {
 	console.log(error);
 	next();
@@ -77,6 +79,7 @@ app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
 app.use(route + "/delegate", DelegateRoutes);
 
+// forkear workers
 if (cluster.isMaster) {
 	console.log(Messages.INDEX.MSG.STARTING_WORKERS(numCPUs));
 

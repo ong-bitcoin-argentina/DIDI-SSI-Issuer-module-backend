@@ -1,6 +1,8 @@
 const Constants = require("../../constants/Constants");
 
 class ResponseHandler {
+
+	// mandar respuesta html generica
 	static sendHtml(res, data) {
 		res.writeHead(200, {
 			"Content-Type": "text/html"
@@ -10,6 +12,7 @@ class ResponseHandler {
 		return res.end();
 	}
 
+	// mandar respuesta exitosa generica
 	static sendRes(res, data) {
 		res.type("application/json");
 
@@ -24,6 +27,7 @@ class ResponseHandler {
 		});
 	}
 
+	// mandar respuesta de error generica
 	static sendErr(res, err) {
 		if (Constants.DEBUGG)
 			console.log({

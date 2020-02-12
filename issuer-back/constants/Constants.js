@@ -52,7 +52,6 @@ module.exports = {
 	DEBUGG: DEBUGG,
 
 	VALIDATION_TYPES: {
-		IS_VALID_TOKEN_ADMIN: "isValidTokenAdmin",
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ARRAY: "isArray",
 		IS_ADMIN: "isAdmin",

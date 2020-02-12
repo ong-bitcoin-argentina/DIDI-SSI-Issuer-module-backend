@@ -11,6 +11,7 @@ var Web3 = require("web3");
 const provider = new Web3.providers.HttpProvider(Constants.BLOCKCHAIN.RSK_URL);
 const web3 = new Web3(provider);
 
+// obtiene el contrato (ethr-did-registry)
 const getContract = function(credentials) {
 	return new web3.eth.Contract(DidRegistryContract.abi, Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT, {
 		from: credentials.from,
@@ -18,6 +19,7 @@ const getContract = function(credentials) {
 	});
 };
 
+// realiza una transaccion generica a un contrato ethereum
 const makeSignedTransaction = async function(bytecode, credentials) {
 	const getNonce = async function(web3, senderAddress) {
 		var result = await web3.eth.getTransactionCount(senderAddress, "pending");
@@ -54,6 +56,7 @@ const makeSignedTransaction = async function(bytecode, credentials) {
 	return res;
 };
 
+// realiza una delegacion de "userDID" a "otherDID"
 module.exports.addDelegate = async function(userDID, credentials, otherDID) {
 	const contract = getContract(credentials);
 	const bytecode = await contract.methods
@@ -63,6 +66,7 @@ module.exports.addDelegate = async function(userDID, credentials, otherDID) {
 	return result;
 };
 
+// anula la delegacion de "userDID" a "otherDID" de existir esta
 module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
 	const contract = getContract(credentials);
 	const bytecode = await contract.methods.revokeDelegate(userDID, regName, otherDID).encodeABI();
@@ -70,6 +74,7 @@ module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
 	return result;
 };
 
+// retorna true si "userDID" realizo una delegacion de DID a "otherDID"
 module.exports.validDelegate = async function(userDID, credentials, otherDID) {
 	const contract = getContract(credentials);
 	const result = await contract.methods.validDelegate(userDID, regName, otherDID).call(credentials);

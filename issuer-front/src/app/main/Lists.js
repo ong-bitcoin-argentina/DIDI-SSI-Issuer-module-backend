@@ -21,7 +21,7 @@ import ParticipantsTableHelper from "../participants/ParticipantsTableHelper";
 
 import CertificateService from "../../services/CertificateService";
 import TemplateService from "../../services/TemplateService";
-import ParticipantsService from "../../services/ParticipantService";
+import ParticipantService from "../../services/ParticipantService";
 
 import Delegates from "../administrative/list/Delegates";
 import DelegateService from "../../services/DelegateService";
@@ -69,7 +69,8 @@ class Lists extends Component {
 		const self = this;
 
 		self.setState({ loading: true, tabIndex: tabIndex });
-		ParticipantsService.getGlobal(
+		ParticipantService.getGlobal(
+			token,
 			async function(parts) {
 				const allSelectedParticipants = self.state.allSelectedParticipants;
 				const selectedParticipants = self.state.selectedParticipants;
@@ -203,36 +204,16 @@ class Lists extends Component {
 	// recargar tabla de participantes
 	onParticipantsReload = () => {
 		const self = this;
+		const token = Cookie.get("token");
 		self.setState({ loading: true });
-		ParticipantsService.getGlobal(
+		ParticipantService.getGlobal(
+			token,
 			async function(parts) {
-				parts.forEach(part => {
-					self.state.partTypes.forEach(type => {
-						self.state.selectedParticipants[type][part.did] = false;
-					});
-				});
-				self.setState({
-					selectedParticipants: self.state.selectedParticipants,
-					allSelectedParticipants: self.state.allSelectedParticipants
-				});
-
-				const participants = parts.map(participant => {
-					return ParticipantsTableHelper.getParticipantData(
-						participant,
-						self.state.selectedParticipants,
-						self.onParticipantSelectToggle
-					);
-				});
-
-				const participantColumns = ParticipantsTableHelper.getParticipantColumns(
-					self.state.allSelectedParticipants,
-					self.onParticipantSelectAllToggle
-				);
+				const allSelectedParticipants = self.state.allSelectedParticipants;
+				const selectedParticipants = self.state.selectedParticipants;
+				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 
 				self.setState({
-					allSelectedParticipants: self.state.allSelectedParticipants,
-					participants: participants,
-					participantColumns: participantColumns,
 					error: false,
 					loading: false
 				});

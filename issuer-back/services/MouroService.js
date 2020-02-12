@@ -14,6 +14,7 @@ const resolver = new Resolver(
 	getResolver({ rpcUrl: Constants.BLOCKCHAIN.BLOCK_CHAIN_URL, registry: Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT })
 );
 
+// decodifica el certificado, retornando la info (independientemente de si el certificado es valido o no)
 module.exports.decodeCertificate = async function(jwt, errMsg) {
 	try {
 		let result = await decodeJWT(jwt);
@@ -24,6 +25,7 @@ module.exports.decodeCertificate = async function(jwt, errMsg) {
 	}
 };
 
+// analiza la validez del certificado
 module.exports.verifyCertificate = async function(jwt, errMsg) {
 	try {
 		let result = await verifyJWT(jwt, { resolver: resolver, audience: "did:ethr:" + Constants.ISSUER_SERVER_DID });
@@ -34,6 +36,8 @@ module.exports.verifyCertificate = async function(jwt, errMsg) {
 	}
 };
 
+// genera un certificado con un pedido de informacion (certificado o informacion de certificado),
+// la cual esta especificada en "claims", si el usuario accede, se ejecuta una llamada a "cb" con el resultado en el body contenido en "access_token"
 module.exports.createShareRequest = async function(claims, cb) {
 	try {
 		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
@@ -128,7 +132,7 @@ module.exports.revokeCertificate = async function(jwt, hash, sub) {
 	}
 };
 
-// recibe el caertificado y lo envia a didi-server para ser guardado
+// recibe el pedido y lo envia a didi-server para ser enviado al usuario
 module.exports.sendShareRequest = async function(did, cert) {
 	try {
 		const exp = ((new Date().getTime() + 600000) / 1000) | 0;

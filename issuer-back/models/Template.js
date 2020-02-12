@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const Constants = require("../constants/Constants");
 
+// Modelo de certificado a partir del cual se podran generar certificados particulares
+// define la data que tendra que agregarse a los mismos y la forma en que esta se mostrara en la app
+
 const dataElement = {
 	name: {
 		type: String,
@@ -58,6 +61,7 @@ const TemplateSchema = mongoose.Schema({
 
 TemplateSchema.index({ name: 1 });
 
+// modificar modelo de certificado
 TemplateSchema.methods.edit = async function(data, previewData, previewType, category) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
@@ -78,6 +82,7 @@ TemplateSchema.methods.edit = async function(data, previewData, previewType, cat
 	}
 };
 
+// marcare modelo de certificado como borrado
 TemplateSchema.methods.delete = async function() {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
@@ -96,6 +101,7 @@ TemplateSchema.methods.delete = async function() {
 const Template = mongoose.model("Template", TemplateSchema);
 module.exports = Template;
 
+// crear modelo de certificado "vacio" (con los campos por defecto)
 Template.generate = async function(name) {
 	try {
 		const query = { name: name, deleted: false };
@@ -165,6 +171,7 @@ Template.generate = async function(name) {
 	}
 };
 
+// obtener todos los modelos de certificados
 Template.getAll = async function() {
 	try {
 		const query = { deleted: false };
@@ -176,6 +183,7 @@ Template.getAll = async function() {
 	}
 };
 
+// obtener modelo de certificado a partir de su id
 Template.getById = async function(id) {
 	try {
 		const query = { _id: id, deleted: false };

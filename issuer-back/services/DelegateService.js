@@ -1,6 +1,7 @@
 const Delegate = require("../models/Delegate");
 const Messages = require("../constants/Messages");
 
+// obtiene todas las delegaciones
 module.exports.getAll = async function() {
 	try {
 		const delegates = await Delegate.getAll();
@@ -11,6 +12,7 @@ module.exports.getAll = async function() {
 	}
 };
 
+// registra una nueva delegacion en la base de datos local
 module.exports.create = async function(did, name) {
 	try {
 		const delegate = await Delegate.generate(did, name);
@@ -22,6 +24,7 @@ module.exports.create = async function(did, name) {
 	}
 };
 
+// marca la delegacion como borrada en la base de datos local
 module.exports.delete = async function(did) {
 	try {
 		const delegate = await Delegate.delete(did);

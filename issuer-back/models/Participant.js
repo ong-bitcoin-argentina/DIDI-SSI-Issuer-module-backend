@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const Encryption = require("./utils/Encryption");
 
+// Informacion de participantes, aqui se almacena la informacion de certificados o campos que se pide a usuarios de didi
+// se utiliza para carga automatica de datos al generar certificados (tanto carga por qr como por pedido de certificado)
+
 const dataElement = {
 	name: {
 		type: String,
@@ -41,6 +44,7 @@ const ParticipantSchema = mongoose.Schema({
 
 ParticipantSchema.index({ name: 1, templateId: 1, deleted: 1 });
 
+// encriptar info
 const _doEncryptData = async function(data) {
 	for (let dataElem of data) {
 		await Encryption.setEncryptedData(dataElem, "name", dataElem.name);
@@ -48,6 +52,7 @@ const _doEncryptData = async function(data) {
 	}
 };
 
+// desencriptar info
 const _doDecryptData = async function(data) {
 	for (let dataElem of data) {
 		dataElem.name = await Encryption.decript(dataElem.name);
@@ -55,14 +60,17 @@ const _doDecryptData = async function(data) {
 	}
 };
 
+// encriptar valor
 ParticipantSchema.methods.encryptData = async function() {
 	await _doEncryptData(this.data);
 };
 
+// desencriptar valor
 ParticipantSchema.methods.decryptData = async function() {
 	await _doDecryptData(this.data);
 };
 
+// combina la info de participante con la recibida en "other" eliminando los duplicados
 ParticipantSchema.methods.mergeData = function(other) {
 	const acum = {};
 	this.data.forEach(elem => {
@@ -80,6 +88,7 @@ ParticipantSchema.methods.mergeData = function(other) {
 	this.data = result;
 };
 
+// modifica la info de participante
 ParticipantSchema.methods.edit = async function(name, data) {
 	await _doEncryptData(data);
 	const updateQuery = { _id: this._id };
@@ -98,6 +107,7 @@ ParticipantSchema.methods.edit = async function(name, data) {
 	}
 };
 
+// marca la info de participante como borrada
 ParticipantSchema.methods.delete = async function() {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
@@ -116,6 +126,7 @@ ParticipantSchema.methods.delete = async function() {
 const Participant = mongoose.model("Participant", ParticipantSchema);
 module.exports = Participant;
 
+// guarda nueva info de participante o modifica el existente de ya existir uno con el mismo modelo de certificado (templateId)
 Participant.generate = async function(name, did, data, templateId, code) {
 	let participant;
 	try {
@@ -151,6 +162,8 @@ Participant.generate = async function(name, did, data, templateId, code) {
 	}
 };
 
+// obtiene la info de participante por numero de pedido
+// (para hacer pulling en qr)
 Participant.getByRequestCode = async function(requestCode) {
 	try {
 		const query = { requestCode: requestCode, new: false, deleted: false };
@@ -168,6 +181,7 @@ Participant.getByRequestCode = async function(requestCode) {
 	}
 };
 
+// retorna un objeto con todos los dids sobre los que se tiene info y los nombres de los usuarios asociados a los mismos
 Participant.getAllDids = async function() {
 	const query = { deleted: false };
 	const participants = await Participant.find(query);
@@ -179,6 +193,7 @@ Participant.getAllDids = async function() {
 	return Promise.resolve(result);
 };
 
+// retorna la data de participantes global, la referida a certificados conocidos (tel, mail, info personal y direccion)
 Participant.getGlobalParticipants = async function() {
 	const queryGlobal = { templateId: { $exists: false }, deleted: false };
 	const globalParticipants = await Participant.find(queryGlobal);
@@ -188,6 +203,7 @@ Participant.getGlobalParticipants = async function() {
 	return Promise.resolve(globalParticipants);
 };
 
+// retorna la data de participantes referida a un modelo de certificados particular
 Participant.getAllByTemplateId = async function(templateId) {
 	try {
 		const query = { templateId: ObjectId(templateId), "data.0": { $exists: true }, deleted: false };
@@ -219,6 +235,7 @@ Participant.getAllByTemplateId = async function(templateId) {
 	}
 };
 
+// retorna la data de participante a partir de su did
 Participant.getByDid = async function(did) {
 	try {
 		const query = { did: did, deleted: false };
@@ -246,6 +263,7 @@ Participant.getByDid = async function(did) {
 	}
 };
 
+// retorna la data de participante a partir del id
 Participant.getById = async function(id) {
 	try {
 		const query = { _id: ObjectId(id), deleted: false };

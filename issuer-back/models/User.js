@@ -3,6 +3,8 @@ const Hashing = require("./utils/Hashing");
 const Constants = require("../constants/Constants");
 const HashedData = require("./dataTypes/HashedData");
 
+// Usuario para loguearse en el issuer
+// (de momento solo sirve para eso)
 const UserSchema = mongoose.Schema({
 	name: {
 		type: String,
@@ -26,6 +28,7 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.index({ name: 1 });
 
+// verifica la clave
 UserSchema.methods.comparePassword = async function(candidatePassword) {
 	try {
 		const result = Hashing.validateHash(candidatePassword, this.password);
@@ -36,6 +39,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
 	}
 };
 
+// actualiza la clave
 UserSchema.methods.updatePassword = async function(password) {
 	const hashData = await Hashing.saltedHash(password);
 
@@ -56,6 +60,7 @@ UserSchema.methods.updatePassword = async function(password) {
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
+// crea un nuevo usuario
 User.generate = async function(name, pass) {
 	let user;
 	try {

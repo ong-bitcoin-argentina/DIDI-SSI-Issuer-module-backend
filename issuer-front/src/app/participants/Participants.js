@@ -46,8 +46,10 @@ class Participants extends Component {
 	}
 
 	componentDidMount() {
+		const token = Cookie.get("token");
 		const self = this;
 		ParticipantService.getAllDids(
+			token,
 			function(dids) {
 				self.setState({ dids: dids, error: false });
 			},
@@ -59,7 +61,9 @@ class Participants extends Component {
 
 		interval = setInterval(function() {
 			if (self.state.qrSet) {
+				const token = Cookie.get("token");
 				ParticipantService.getNew(
+					token,
 					self.state.requestCode,
 					function(participant) {
 						if (participant && self.state.qrSet)
@@ -217,9 +221,11 @@ class Participants extends Component {
 	};
 
 	addDids = data => {
+		const token = Cookie.get("token");
 		const self = this;
 		this.setState({ loading: true });
 		ParticipantService.createNew(
+			token,
 			data,
 			function(dids) {
 				const local = self.state.dids;

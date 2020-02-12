@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// Registro local de las delegaciones del issuer para emitir certificados
 const DelegateSchema = mongoose.Schema({
 	name: {
 		type: String,
@@ -24,12 +25,14 @@ DelegateSchema.index({ did: 1 });
 const Delegate = mongoose.model("Delegate", DelegateSchema);
 module.exports = Delegate;
 
+// obtiene todas las delegaciones
 Delegate.getAll = async function() {
 	const query = { deleted: false };
 	const delegates = await Delegate.find(query);
 	return Promise.resolve(delegates);
 };
 
+// registra una nueva delegacion en la base de datos local
 Delegate.generate = async function(did, name) {
 	let delegate;
 	try {
@@ -51,6 +54,7 @@ Delegate.generate = async function(did, name) {
 	}
 };
 
+// marca la delegacion como borrada en la base de datos local
 Delegate.delete = async function(did) {
 	try {
 		const query = { did: did };

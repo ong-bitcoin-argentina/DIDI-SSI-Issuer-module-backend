@@ -59,6 +59,7 @@ class Certificate extends Component {
 		interval = setInterval(function() {
 			if (self.state.waitingQr && self.state.template) {
 				ParticipantService.getNew(
+					token,
 					self.state.requestCode,
 					function(participant) {
 						if (participant) {
@@ -158,8 +159,10 @@ class Certificate extends Component {
 
 	getParticipants = function() {
 		const self = this;
+		const token = Cookie.get("token");
 		return new Promise(function(resolve, reject) {
 			ParticipantService.getAll(
+				token,
 				self.state.template._id,
 				function(participants) {
 					self.setState({
@@ -420,6 +423,7 @@ class Certificate extends Component {
 			selectedTemplate._id,
 			function(template) {
 				ParticipantService.getAll(
+					token,
 					template._id,
 					function(participants) {
 						self.setState({
@@ -447,9 +451,11 @@ class Certificate extends Component {
 
 	participantSelected(did, position) {
 		const self = this;
+		const token = Cookie.get("token");
 		self.setState({ loading: true });
 
 		ParticipantService.get(
+			token,
 			did,
 			function(participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
