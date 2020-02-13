@@ -552,11 +552,15 @@ class Lists extends Component {
 
 	// abrir dialogo de borrado
 	onDelegateDeleteDialogOpen = did => {
-		this.setState({ isDeleteDialogOpen: true, selectedDelegateDid: did });
+		this.delegates.openDeleteDialog();
+		this.setState({ selectedDelegateDid: did });
 	};
 
 	// crear delegacion
-	onDelegateCreate = (did, name) => {
+	onDelegateCreate = data => {
+		const did = data.did;
+		const name = data.name;
+
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
@@ -581,6 +585,7 @@ class Lists extends Component {
 	// borrar delegacion
 	onDelegateDelete = () => {
 		const did = this.state.selectedDelegateDid;
+
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
@@ -589,10 +594,10 @@ class Lists extends Component {
 			did,
 			async function(delegate) {
 				const delegates = self.state.delegates.filter(t => t.did !== delegate.did);
-				self.setState({ delegates: delegates, loading: false, error: false });
+				self.setState({ delegates: delegates, loading: false, error: false, selectedDelegateDid: undefined });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ error: err, selectedDelegateDid: undefined });
 				console.log(err);
 			}
 		);
@@ -666,13 +671,12 @@ class Lists extends Component {
 
 				<TabPanel>
 					<Delegates
+						onRef={ref => (this.delegates = ref)}
 						selected={this.state.tabIndex === 3}
-						isDeleteDialogOpen={this.state.isDeleteDialogOpen}
 						delegates={this.state.delegates}
 						columns={this.state.delegateColumns}
-						onDelegateCreate={this.onDelegateCreate}
-						onDelegateDelete={this.onDelegateDelete}
-						onDeleteDialogClose={this.onDeleteDialogClose}
+						onCreate={this.onDelegateCreate}
+						onDelete={this.onDelegateDelete}
 						error={this.state.error}
 						onLogout={this.onLogout}
 					/>

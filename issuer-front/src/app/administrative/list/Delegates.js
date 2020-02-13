@@ -10,37 +10,32 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 
 import MaterialIcon from "material-icons-react";
-
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import InputDialog from "../../utils/dialogs/InputDialog";
+import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 
 class Delegates extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			isDialogOpen: false,
 			loading: false
 		};
 	}
 
-	updateName = event => {
-		this.setState({ name: event.target.value });
+	// generar referencia para abrir dialogo de borrado desde el padre
+	componentDidMount() {
+		this.props.onRef(this);
+	}
+
+	// borrar referencia
+	componentWillUnmount() {
+		this.props.onRef(undefined);
+	}
+
+	// abrir dialogo de borrado
+	openDeleteDialog = () => {
+		if (this.deleteDialog) this.deleteDialog.open();
 	};
-
-	updateDid = event => {
-		this.setState({ did: event.target.value });
-	};
-
-	// abrir dialogo de creacion de modelos
-	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "", did: "" });
-
-	// cerrar dialogo de creacion de modelos
-	onDialogClose = () => this.setState({ isDialogOpen: false, name: "", did: "" });
 
 	// volver a login
 	onLogout = () => {
@@ -48,6 +43,7 @@ class Delegates extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	// mostrar pantalla de delegacion
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -57,9 +53,10 @@ class Delegates extends Component {
 		const loading = this.state.loading;
 		return (
 			<div className="Admin">
-				{this.renderDialog()}
-				{this.renderSectionButtons()}
+				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
+
+				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
 				<div className="errMsg">{error && error.message}</div>
@@ -67,12 +64,43 @@ class Delegates extends Component {
 		);
 	}
 
+	// muestra el dialogo de creacion
+	renderCreateDialog = () => {
+		return (
+			<InputDialog
+				onRef={ref => (this.createDialog = ref)}
+				title={Messages.LIST.DIALOG.CREATE_DELEGATE_TITLE}
+				fieldNames={["name", "did"]}
+				onAccept={this.props.onCreate}
+			/>
+		);
+	};
+
+	// muestra el dialogo de borrado
+	renderDeleteDialog = () => {
+		return (
+			<ConfirmationDialog
+				onRef={ref => (this.deleteDialog = ref)}
+				title={Messages.LIST.DIALOG.DELETE_DELEGATE_TITLE}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				confirm={Messages.LIST.DIALOG.DELETE}
+				onAccept={this.props.onDelete}
+			/>
+		);
+	};
+
+	// mostrar boton de creacion
 	renderSectionButtons = () => {
 		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
 				{selected && (
-					<button className="CreateButton" onClick={this.onDialogOpen}>
+					<button
+						className="CreateButton"
+						onClick={() => {
+							if (this.createDialog) this.createDialog.open();
+						}}
+					>
 						<MaterialIcon icon={Constants.DELEGATES.ICONS.ADD_BUTTON} />
 						<div className="CreateDelegateButtonText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
@@ -81,6 +109,7 @@ class Delegates extends Component {
 		);
 	};
 
+	// mostrar tabla de delegados
 	renderTable = () => {
 		const delegates = this.props.delegates;
 		const columns = this.props.columns ? this.props.columns : [];
@@ -100,75 +129,7 @@ class Delegates extends Component {
 		);
 	};
 
-	renderDialog = () => {
-		return (
-			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.CREATE_DELEGATE_TITLE}</DialogTitle>
-				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="did"
-						label={Messages.LIST.DIALOG.DID}
-						type="text"
-						onChange={this.updateDid}
-						fullWidth
-					/>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label={Messages.LIST.DIALOG.NAME}
-						type="text"
-						onChange={this.updateName}
-						fullWidth
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							this.onDialogClose();
-							this.props.onDelegateCreate(this.state.did, this.state.name);
-						}}
-						disabled={!this.state.name && !this.state.did}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.CREATE}
-					</Button>
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
-	renderDeleteDialog = () => {
-		const isOpen = this.props.isDeleteDialogOpen;
-		return (
-			<Dialog open={isOpen} onClose={this.props.onDeleteDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.DELETE_DELEGATE_TITLE}</DialogTitle>
-				<DialogContent>
-					<div>{Messages.LIST.DIALOG.DELETE_CONFIRMATION}</div>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							this.props.onDeleteDialogClose();
-							this.props.onDelegateDelete();
-						}}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.DELETE}
-					</Button>
-					<Button onClick={this.props.onDeleteDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
+	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
 			<div className="AdminButtons">

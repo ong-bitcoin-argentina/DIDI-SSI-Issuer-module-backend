@@ -7,12 +7,8 @@ import "react-table/react-table.css";
 
 import ReactFileReader from "react-file-reader";
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
+import QrDialog from "../utils/dialogs/QrDialog";
+import ConfirmationDialog from "../utils/dialogs/ConfirmationDialog";
 
 import TemplateService from "../../services/TemplateService";
 import ParticipantService from "../../services/ParticipantService";
@@ -21,8 +17,6 @@ import Cookie from "js-cookie";
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
 
-var QRCode = require("qrcode");
-
 let interval;
 class Participants extends Component {
 	constructor(props) {
@@ -30,21 +24,18 @@ class Participants extends Component {
 
 		this.state = {
 			loading: false,
-			isQrDialogOpen: false,
-			isConfirmationDialogOpen: false,
-			isRequestSendDialogOpen: false,
-			isQrLoadedDialogOpen: false,
-			qrSet: false,
 			requestSent: false
 		};
 	}
 
+	// parar pooling de participantes
 	componentWillUnmount() {
 		if (interval) {
 			clearInterval(interval);
 		}
 	}
 
+	// carga los participantes e inicializa el pooling de participantes
 	componentDidMount() {
 		const token = Cookie.get("token");
 		const self = this;
@@ -60,74 +51,11 @@ class Participants extends Component {
 		);
 
 		interval = setInterval(function() {
-			if (self.state.qrSet) {
-				const token = Cookie.get("token");
-				ParticipantService.getNew(
-					token,
-					self.state.requestCode,
-					function(participant) {
-						if (participant && self.state.qrSet)
-							self.setState({
-								participant: participant,
-								qr: undefined,
-								qrSet: false,
-								isQrDialogOpen: false,
-								isQrLoadedDialogOpen: true,
-								error: false
-							});
-					},
-					function(err) {
-						self.setState({ loading: false, error: err });
-						console.log(err);
-					}
-				);
-			}
-
 			if (self.state.requestSent) {
 				self.props.onParticipantsReload();
 			}
 		}, 10000);
 	}
-
-	generateQrCode = () => {
-		const token = Cookie.get("token");
-		const self = this;
-		self.setState({ loading: true, qr: undefined });
-
-		const code = Math.random()
-			.toString(36)
-			.slice(-8);
-
-		// obtener template
-		TemplateService.getQrPetition(
-			token,
-			self.state.selectedTemplate._id,
-			code,
-			function(qr) {
-				self.setState({
-					requestCode: code,
-					qr: qr,
-					participant: undefined,
-					loading: false,
-					error: false
-				});
-
-				setTimeout(function() {
-					const canvas = document.getElementById("canvas");
-					if (canvas) {
-						QRCode.toCanvas(canvas, qr, function(error) {
-							if (error) console.error(error);
-						});
-						self.setState({ qrSet: true });
-					}
-				}, 100);
-			},
-			function(err) {
-				self.setState({ loading: false, error: err });
-				console.log(err);
-			}
-		);
-	};
 
 	// retorna true si hay algun elemento en la tabla seleccionado
 	canSendRequest = () => {
@@ -142,6 +70,7 @@ class Participants extends Component {
 		return false;
 	};
 
+	// manda los pedidos correspondientes a los participantes/certificados seleccionados
 	sendRequests = () => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
@@ -164,9 +93,7 @@ class Participants extends Component {
 				.toString(36)
 				.slice(-8);
 
-			self.setState({
-				isRequestSendDialogOpen: true
-			});
+			if (self.reqSentDialog) self.reqSentDialog.open();
 
 			// mandar pedido
 			TemplateService.sendRequest(
@@ -220,6 +147,7 @@ class Participants extends Component {
 		reader.readAsText(files[0]);
 	};
 
+	// agrega los dids a partir de la info extraida del csv
 	addDids = data => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -248,26 +176,6 @@ class Participants extends Component {
 		);
 	};
 
-	onQrLoadedDialogClose = () => {
-		this.setState({ isQrLoadedDialogOpen: false });
-	};
-
-	onRequestSendDialogClose = () => {
-		this.setState({ isRequestSendDialogOpen: false });
-	};
-
-	onConfirmationDialogClose = () => {
-		this.setState({ isConfirmationDialogOpen: false });
-	};
-
-	onQrDialogClose = () => {
-		this.setState({ isQrDialogOpen: false, qr: undefined });
-	};
-
-	onQrDialogOpen = () => {
-		this.setState({ isQrDialogOpen: true, qr: undefined, qrSet: false, selectedTemplate: undefined });
-	};
-
 	// volver a login
 	onLogout = () => {
 		Cookie.set("token", "");
@@ -276,33 +184,29 @@ class Participants extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
+		if (this.reqSentDialog) this.reqSentDialog.close();
+
 		if (this.state.error) {
 			this.setState({ loading: false, error: false });
 		} else {
+			if (this.qrDialog) this.qrDialog.close();
 			this.setState({
-				qrSet: false,
-				requestSent: false,
-				isQrDialogOpen: false,
-				isRequestSendDialogOpen: false,
-				isQrLoadedDialogOpen: false
+				requestSent: false
 			});
 			this.componentDidMount();
-			// this.props.history.push(Constants.ROUTES.LOGIN);
 		}
 	};
 
+	// mostrar pantalla de carga de participantes
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const participant = this.state.participant;
 		const error = this.state.error;
 		return (
 			<div className="QrReq">
-				{participant && this.renderQrLoadedDialog(participant.name)}
 				{this.renderRequestSentDialog()}
-				{this.renderRequestDialog()}
 				{this.renderQrDialog()}
 				{this.renderTable()}
 				{this.renderButtons()}
@@ -311,6 +215,31 @@ class Participants extends Component {
 		);
 	}
 
+	// muestra el dialogo de carga de participantes por qr para modelo de certificado
+	renderQrDialog = () => {
+		return (
+			<QrDialog
+				onRef={ref => (this.qrDialog = ref)}
+				title={Messages.EDIT.DIALOG.QR.LOAD_BY_QR}
+				templates={this.props.templates}
+			/>
+		);
+	};
+
+	// muestra el dialogo de "pedido enviado"
+	renderRequestSentDialog = () => {
+		return (
+			<ConfirmationDialog
+				onRef={ref => (this.reqSentDialog = ref)}
+				title={Messages.EDIT.DIALOG.QR.REQUEST_SENT}
+				message={""}
+				confirm={Messages.EDIT.BUTTONS.CLOSE}
+				hideClose={true}
+			/>
+		);
+	};
+
+	// mostrar tabla de participantes
 	renderTable = () => {
 		const participants = this.props.participants;
 		const columns = this.props.columns ? this.props.columns : [];
@@ -330,6 +259,7 @@ class Participants extends Component {
 		);
 	};
 
+	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
 			<div className="QrRequestButtons">
@@ -347,178 +277,18 @@ class Participants extends Component {
 				</div>
 
 				<div className="QrButtonsRow">
-					<button className="QrDialogButton" onClick={this.onQrDialogOpen}>
+					<button
+						className="QrDialogButton"
+						onClick={() => {
+							if (this.qrDialog) this.qrDialog.open();
+						}}
+					>
 						{Messages.QR.BUTTONS.QR_LOAD}
 					</button>
 					<button className="LogoutButton QrLogoutButton" onClick={this.onLogout}>
 						{Messages.EDIT.BUTTONS.EXIT}
 					</button>
 				</div>
-			</div>
-		);
-	};
-
-	renderQrLoadedDialog = loadedParticipant => {
-		return (
-			<Dialog
-				open={this.state.isQrLoadedDialogOpen}
-				onClose={this.onQrLoadedDialogClose}
-				aria-labelledby="form-dialog-title"
-			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOADED_BY_QR(loadedParticipant)}</DialogTitle>
-				<DialogContent>
-					<div className="QrReq">
-						<button className="LogoutButton QrLogoutButton" onClick={this.onQrLoadedDialogClose}>
-							{Messages.EDIT.BUTTONS.CLOSE}
-						</button>
-					</div>
-				</DialogContent>
-			</Dialog>
-		);
-	};
-
-	renderRequestSentDialog = () => {
-		return (
-			<Dialog
-				open={this.state.isRequestSendDialogOpen}
-				onClose={this.onRequestSendDialogClose}
-				aria-labelledby="form-dialog-title"
-			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.REQUEST_SENT}</DialogTitle>
-				<DialogContent>
-					<div className="QrReq">
-						<button className="LogoutButton QrLogoutButton" onClick={this.onRequestSendDialogClose}>
-							{Messages.EDIT.BUTTONS.CLOSE}
-						</button>
-					</div>
-				</DialogContent>
-			</Dialog>
-		);
-	};
-
-	renderRequestSentDialog = () => {
-		return (
-			<Dialog
-				open={this.state.isRequestSendDialogOpen}
-				onClose={this.onRequestSendDialogClose}
-				aria-labelledby="form-dialog-title"
-			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.REQUEST_SENT}</DialogTitle>
-				<DialogContent>
-					<div className="QrReq">
-						<button className="LogoutButton QrLogoutButton" onClick={this.onRequestSendDialogClose}>
-							{Messages.EDIT.BUTTONS.CLOSE}
-						</button>
-					</div>
-				</DialogContent>
-			</Dialog>
-		);
-	};
-
-	renderQrDialog = () => {
-		return (
-			<Dialog open={this.state.isQrDialogOpen} onClose={this.onQrDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.LOAD_BY_QR}</DialogTitle>
-				<DialogContent>
-					<div className="QrReq">
-						{!this.state.qrSet && <div>{Messages.QR.TEMPLATE_SELECT_MESSAGE}</div>}
-						{this.state.qrSet && <div>{Messages.QR.QR_MESSAGE}</div>}
-						{this.renderTemplateSelector()}
-						{this.renderQrPetition()}
-						{this.renderQrButtons()}
-					</div>
-				</DialogContent>
-			</Dialog>
-		);
-	};
-
-	renderTemplateSelector = () => {
-		const templates = this.props.templates;
-		if (!templates) {
-			return <div></div>;
-		}
-
-		return (
-			<div className="QrTemplateSelector">
-				<div className="DataName">{Messages.QR.TEMPLATE_SELECT}</div>
-
-				<Autocomplete
-					options={templates}
-					getOptionLabel={option => (option ? option.name : "")}
-					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
-					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={(_, value) => {
-						this.setState({ selectedTemplate: value });
-					}}
-				/>
-			</div>
-		);
-	};
-
-	renderQrPetition() {
-		const qr = this.state.qr;
-		if (!qr) {
-			return <div></div>;
-		}
-
-		return (
-			<div className="QrPetition">
-				<canvas id="canvas"></canvas>
-			</div>
-		);
-	}
-
-	renderQrButtons = () => {
-		const disabled = !this.state.selectedTemplate;
-
-		return (
-			<div className="QrButtons">
-				<button className="QrButton" disabled={disabled} onClick={this.generateQrCode}>
-					{Messages.QR.BUTTONS.GENERATE}
-				</button>
-				<button className="CloseButton" onClick={this.onQrDialogClose}>
-					{Messages.EDIT.BUTTONS.CANCEL}
-				</button>
-			</div>
-		);
-	};
-
-	renderRequestDialog = () => {
-		return (
-			<Dialog
-				open={this.state.isConfirmationDialogOpen}
-				onClose={this.onConfirmationDialogClose}
-				aria-labelledby="form-dialog-title"
-			>
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.QR.REQUEST_SENT}</DialogTitle>
-				<DialogContent>
-					<div className="QrReq">
-						<button className="CloseButton" onClick={this.onConfirmationDialogClose}>
-							{Messages.EDIT.BUTTONS.CLOSE}
-						</button>
-					</div>
-				</DialogContent>
-			</Dialog>
-		);
-	};
-
-	renderParticipant = part => {
-		return (
-			<div className="Participant">
-				<div>{Messages.QR.LOAD_SUCCESS(part.name)}</div>
-			</div>
-		);
-	};
-
-	renderResultButtons = () => {
-		return (
-			<div className="CertificateButtons">
-				<button className="BackButton" onClick={this.onBack}>
-					{Messages.EDIT.BUTTONS.BACK}
-				</button>
-				<button className="LogoutButton" onClick={this.onLogout}>
-					{Messages.EDIT.BUTTONS.EXIT}
-				</button>
 			</div>
 		);
 	};
