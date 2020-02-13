@@ -327,11 +327,12 @@ class Certificate extends Component {
 		};
 
 		let assignElement = function(dataElem, data) {
-			if (data === "") {
-				if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
+			if (data === "" || data === " ") {
+				// if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
 			} else {
-				if (!validateValueMatchesType(dataElem, data))
+				if (!validateValueMatchesType(dataElem, data)) {
 					return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_INVALID(dataElem.name);
+				}
 			}
 		};
 
@@ -829,7 +830,7 @@ class Certificate extends Component {
 										self.setState({ cert: cert });
 									}
 								)}
-								<div className="RequiredMarker">{dataElem.required ? "*" : " "}</div>
+								<div className="RequiredMarker">{dataElem.required ? " * " : "   "}</div>
 							</div>
 						</div>
 					);
