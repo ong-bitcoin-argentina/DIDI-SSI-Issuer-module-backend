@@ -7,9 +7,9 @@ const BlockchainService = require("../services/BlockchainService");
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 
-/* 
-	retorna todos los dids a los que el issuer delego su permiso para emitir certificados
-*/
+/**
+ *	retorna todos los dids a los que el issuer delego su permiso para emitir certificados
+ */
 router.get(
 	"/all",
 	Validator.validate([
@@ -30,9 +30,9 @@ router.get(
 	}
 );
 
-/* 
-	autoriza al did recibido a emitir certificados
-*/
+/**
+ *	autoriza al did recibido a emitir certificados
+ */
 router.post(
 	"/",
 	Validator.validate([
@@ -73,9 +73,9 @@ router.post(
 	}
 );
 
-/* 
-	revoca autorizacion al did recibido para emitir certificados
-*/
+/**
+ *	revoca autorizacion al did recibido para emitir certificados
+ */
 router.delete(
 	"/",
 	Validator.validate([
