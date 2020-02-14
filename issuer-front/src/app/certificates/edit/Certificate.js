@@ -20,29 +20,21 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
-import Button from "@material-ui/core/Button";
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import QrDialog from "../../utils/dialogs/QrDialog";
 
-var QRCode = require("qrcode");
 let interval;
-
 class Certificate extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			loading: false,
-			isDialogOpen: false,
-			waitingQr: false,
-			parts: [],
 			action: "viewing"
 		};
 	}
 
+	// parar pooling de participante (espera respuestas del qr)
 	componentWillUnmount() {
 		if (interval) {
 			clearInterval(interval);
@@ -56,43 +48,26 @@ class Certificate extends Component {
 		const token = Cookie.get("token");
 
 		const self = this;
-		interval = setInterval(function() {
-			if (self.state.waitingQr && self.state.template) {
-				ParticipantService.getNew(
-					self.state.requestCode,
-					function(participant) {
-						if (participant) {
-							self.setState({ parts: [participant], waitingQr: false });
-							self.onParticipantsAdd();
-						}
-					},
-					function(err) {
-						self.setState({ error: err });
-						console.log(err);
-					}
-				);
-			}
-		}, 10000);
-
 		(async () => {
-			this.setState({ loading: true });
+			self.setState({ loading: true });
 
 			try {
-				await this.getTemplates(token);
+				await self.getTemplates(token);
 				if (id) {
-					await this.getCert(token, id);
-					await this.getTemplate(token);
-					await this.getParticipants();
+					await self.getCert(token, id);
+					await self.getTemplate(token);
+					await self.getParticipants();
 				}
 			} catch (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
 
-			this.setState({ loading: false });
+			self.setState({ loading: false });
 		})();
 	}
 
+	// carga modelos de certificados
 	getTemplates = function(token) {
 		const self = this;
 		return new Promise(function(resolve, reject) {
@@ -109,6 +84,7 @@ class Certificate extends Component {
 		});
 	};
 
+	// carga certificado
 	getCert = function(token, id) {
 		const self = this;
 		return new Promise(function(resolve, reject) {
@@ -117,7 +93,8 @@ class Certificate extends Component {
 				id,
 				function(cert) {
 					self.setState({
-						cert: cert
+						cert: cert,
+						error: false
 					});
 					resolve();
 				},
@@ -128,6 +105,7 @@ class Certificate extends Component {
 		});
 	};
 
+	// carga modelo de certificado
 	getTemplate = function(token) {
 		const self = this;
 
@@ -143,7 +121,8 @@ class Certificate extends Component {
 					self.setState({
 						action: action,
 						selectedTemplate: selectedTemplate,
-						template: template
+						template: template,
+						error: false
 					});
 					resolve();
 				},
@@ -154,14 +133,18 @@ class Certificate extends Component {
 		});
 	};
 
+	// carga lista de participantes de los que se tiene info para el modelo de certificado
 	getParticipants = function() {
 		const self = this;
+		const token = Cookie.get("token");
 		return new Promise(function(resolve, reject) {
 			ParticipantService.getAll(
+				token,
 				self.state.template._id,
 				function(participants) {
 					self.setState({
-						participants: participants
+						participants: participants,
+						error: false
 					});
 					resolve();
 				},
@@ -188,6 +171,7 @@ class Certificate extends Component {
 		};
 	};
 
+	// mapear data del certificado a partir del modelo
 	certDataFromTemplate = (template, field) => {
 		return template.data[field].map(data => {
 			return {
@@ -201,13 +185,19 @@ class Certificate extends Component {
 		});
 	};
 
+	// respuesta del qr -> actualizar participante con los datos recibidos
+	onDataReceived = parts => {
+		this.onParticipantsAdd(parts);
+	};
+
 	// agregar info de participante con los datos por defecto del template
 	addParticipant = () => {
 		const participant = this.state.cert.data.participant;
 		participant.push(this.certDataFromTemplate(this.state.template, "participant"));
-		this.setState({ cert: this.state.cert, error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+		this.setState({ cert: this.state.cert });
 	};
 
+	// genera csv de ejemplo para carga por csv
 	createSampleCsv = () => {
 		const getSample = function(dataElem) {
 			switch (dataElem.type) {
@@ -281,6 +271,7 @@ class Certificate extends Component {
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadCertFromCsv = files => {
+		// retorna true si el dato es valido (valida segun el tipo de dato requerido en el modelo de certificado)
 		let validateValueMatchesType = function(dataElem, value) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
@@ -320,17 +311,20 @@ class Certificate extends Component {
 			}
 		};
 
+		// asigna los datos a partir del csv, si en este hay datos validos que asignar
 		let assignElement = function(dataElem, data) {
-			if (data === "") {
-				if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
+			if (data === "" || data === " ") {
+				// if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
 			} else {
-				if (!validateValueMatchesType(dataElem, data))
+				if (!validateValueMatchesType(dataElem, data)) {
 					return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_INVALID(dataElem.name);
+				}
 			}
 		};
 
 		const self = this;
 		var reader = new FileReader();
+		// iterar los campos del certificado y asignar los valores correspondiente del csv
 		reader.onload = function(e) {
 			const participant = [];
 			const data = reader.result.split(/[\r\n,]+/);
@@ -384,7 +378,7 @@ class Certificate extends Component {
 			self.state.cert.data.participant = participant;
 			self.state.cert.data.others = othersData;
 
-			self.setState({ cert: self.state.cert });
+			self.setState({ cert: self.state.cert, error: undefined });
 		};
 		reader.readAsText(files[0]);
 	};
@@ -417,14 +411,15 @@ class Certificate extends Component {
 			selectedTemplate._id,
 			function(template) {
 				ParticipantService.getAll(
+					token,
 					template._id,
 					function(participants) {
 						self.setState({
 							selectedTemplate: selectedTemplate,
 							participants: participants,
 							template: template,
+							error: false,
 							cert: self.certFromTemplate(template),
-							error: { message: Constants.CERTIFICATES.ERR.INVALID_DID },
 							loading: false,
 							action: "creating"
 						});
@@ -442,11 +437,14 @@ class Certificate extends Component {
 		);
 	};
 
+	// busca la data del participante en issuer-back y lo carga en la posicion indicada dentro de la lista de participantes
 	participantSelected(did, position) {
 		const self = this;
+		const token = Cookie.get("token");
 		self.setState({ loading: true });
 
 		ParticipantService.get(
+			token,
 			did,
 			function(participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
@@ -468,6 +466,7 @@ class Certificate extends Component {
 
 				self.setState({
 					participants: self.state.participants,
+					error: false,
 					action: self.state.action,
 					loading: false
 				});
@@ -479,20 +478,19 @@ class Certificate extends Component {
 		);
 	}
 
-	onParticipantsAdd = () => {
+	// agrega todos los participantes en 'parts' a la lista de participantes
+	onParticipantsAdd = (parts) => {
 		const len = this.state.cert.data.participant.length;
 		let pos = 0;
 
-		this.setState({ isDialogOpen: false });
-		if (this.state.parts.length === 0) return;
+		if (parts.length === 0) return;
 
-		for (let newPart of this.state.parts) {
+		for (let newPart of parts) {
 			if (pos >= len) this.addParticipant();
 			this.participantSelected(newPart.did, pos);
 			pos++;
 		}
 
-		this.setState({ parts: [] });
 		if (len >= pos) this.state.cert.data.participant.splice(pos, len - pos);
 	};
 
@@ -507,7 +505,7 @@ class Certificate extends Component {
 			token,
 			cert,
 			async function(_) {
-				self.setState({ loading: false });
+				self.setState({ loading: false, error: false });
 				self.props.history.push(Constants.ROUTES.CERTIFICATES);
 			},
 			function(err) {
@@ -517,12 +515,14 @@ class Certificate extends Component {
 		);
 	};
 
+	// agrega microcredencial a la lista de microcredenciales
 	addMicroCredential = () => {
 		const cert = this.state.cert;
 		cert.microCredentials.push({ title: "", names: [] });
 		this.setState({ cert: cert });
 	};
 
+	// borra microcredencial de la lista de microcredenciales
 	removeMicroCredential = key => {
 		const cert = this.state.cert;
 		if (cert.microCredentials.length > 1) {
@@ -545,6 +545,7 @@ class Certificate extends Component {
 		this.setState({ cert: cert });
 	};
 
+	// habilita o deshabilita microcredenciales
 	splitChanged = value => {
 		const cert = this.state.cert;
 		cert.split = value;
@@ -558,7 +559,11 @@ class Certificate extends Component {
 
 	// volver a listado de certificados
 	onBack = () => {
-		this.props.history.push(Constants.ROUTES.CERTIFICATES);
+		if (this.state.loading && this.state.error) {
+			this.setState({ loading: false, error: false });
+		} else {
+			this.props.history.push(Constants.ROUTES.CERTIFICATES);
+		}
 	};
 
 	// volver a login
@@ -574,7 +579,10 @@ class Certificate extends Component {
 
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		if (!did.match(regex)) return true;
+		if (!did.match(regex)) {
+			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+			return true;
+		}
 
 		const cert = this.state.cert.data.cert;
 		const participant = this.state.cert.data.participant.flat();
@@ -583,21 +591,21 @@ class Certificate extends Component {
 		const all = cert.concat(participant).concat(others);
 		for (let index in all) {
 			const dataElem = all[index];
+			if (dataElem.name === Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE) {
+				if (new Date(dataElem.value) < new Date()) {
+					if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.EXP_DATE_INVALID });
+					return true;
+				}
+			}
+
 			if (dataElem.required && !dataElem.value) {
+				if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name) });
 				return true;
 			}
 		}
+
 		return false;
 	};
-
-	// abrir dialogo de creacion de participantes
-	onDialogOpen = () => {
-		this.generateQrCode();
-		this.setState({ isDialogOpen: true, parts: [], waitingQr: true });
-	};
-
-	// cerrar dialogo de creacion de participantes
-	onDialogClose = () => this.setState({ isDialogOpen: false, parts: [], waitingQr: false });
 
 	// obtener codigo qr a mostrar
 	generateQrCode = () => {
@@ -619,7 +627,8 @@ class Certificate extends Component {
 					requestCode: code,
 					qr: qr,
 					loading: false,
-					qrSet: false
+					qrSet: false,
+					error: false
 				});
 			},
 			function(err) {
@@ -629,59 +638,40 @@ class Certificate extends Component {
 		);
 	};
 
+	// mostrar pantalla de edicion de certificados
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
 		const loading = this.state.loading;
+		const error = this.state.error;
 		return (
 			<div className="Certificate">
 				{!loading && this.renderTemplateSelector()}
 				{!loading && this.renderCert()}
-				{this.renderParticipantDialog()}
+				{this.renderQrDialog()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	}
 
-	renderCert = () => {
-		const cert = this.state.cert;
-		if (!cert) return <div></div>;
-
-		const certData = cert.data.cert;
-		const othersData = cert.data.others;
-		const partData = cert.data.participant;
-
-		const viewing = this.state.action === "viewing";
-
+	// muestra el dialogo de carga de participantes por qr o previamente almacenados en didi-issuer
+	renderQrDialog = () => {
 		return (
-			<div className="CertSectionContent">
-				{!viewing && this.renderSplit(cert)}
-				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
-				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
-
-				{partData.map((data, key) => {
-					return (
-						<div className="ParticipantContent" key={"part-" + key}>
-							<div hidden={key === 0}>
-								<button
-									className="RemoveParticipantButton"
-									hidden={this.state.viewing}
-									onClick={() => this.removeParticipant(key)}
-								>
-									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
-								</button>
-							</div>
-							{this.renderSection(cert, data)}
-						</div>
-					);
-				})}
-			</div>
+			<QrDialog
+				onRef={ref => (this.qrDialog = ref)}
+				title={Messages.EDIT.DIALOG.QR.LOAD_BY_QR}
+				onDataReceived={this.onDataReceived}
+				template={this.state.template}
+				templates={this.state.templates}
+				participants={this.state.participants}
+			/>
 		);
 	};
 
+	// muestra la seccion de seleccion de microcredenciales
 	renderSplit = cert => {
 		const allData = cert.data.cert
 			.concat(cert.data.participant[0])
@@ -777,6 +767,45 @@ class Certificate extends Component {
 		);
 	};
 
+	// muestra la seccion de data del certificado
+	renderCert = () => {
+		const cert = this.state.cert;
+		if (!cert) return <div></div>;
+
+		const certData = cert.data.cert;
+		const othersData = cert.data.others;
+		const partData = cert.data.participant;
+
+		const viewing = this.state.action === "viewing";
+
+		return (
+			<div className="CertSectionContent">
+				{!viewing && this.renderSplit(cert)}
+				{this.renderSection(cert, certData, Constants.TEMPLATES.DATA_TYPES.CERT)}
+				{this.renderSection(cert, othersData, Constants.TEMPLATES.DATA_TYPES.OTHERS)}
+
+				{partData.map((data, key) => {
+					return (
+						<div className="ParticipantContent" key={"part-" + key}>
+							<div hidden={key === 0}>
+								<button
+									className="RemoveParticipantButton"
+									hidden={this.state.viewing}
+									onClick={() => this.removeParticipant(key)}
+								>
+									{Messages.EDIT.BUTTONS.REMOVE_PARTICIPANTS}
+								</button>
+							</div>
+							{this.renderSection(cert, data)}
+						</div>
+					);
+				})}
+				<div>{"(* requerido)"}</div>
+			</div>
+		);
+	};
+
+	// muestra datos del certificado
 	renderSection = (cert, data, type) => {
 		const self = this;
 
@@ -795,11 +824,12 @@ class Certificate extends Component {
 									type,
 									this.state.action === "creating" || this.state.action === "editing",
 									(dataElem, value) => {
-										if (dataElem.name === Constants.CERTIFICATES.MANDATORY_DATA.DID) self.validateDID(value);
 										dataElem.value = value;
+										if (this.state.error) this.setState({ error: undefined });
 										self.setState({ cert: cert });
 									}
 								)}
+								<div className="RequiredMarker">{dataElem.required ? " * " : "   "}</div>
 							</div>
 						</div>
 					);
@@ -808,6 +838,7 @@ class Certificate extends Component {
 		);
 	};
 
+	// mostrar selector de modelos de certificados
 	renderTemplateSelector = () => {
 		const templates = this.state.templates;
 		if (!templates) {
@@ -816,7 +847,7 @@ class Certificate extends Component {
 
 		return (
 			<div className="TemplateSelector">
-				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT}</div>
+				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
 
 				<Autocomplete
 					options={templates}
@@ -831,80 +862,7 @@ class Certificate extends Component {
 		);
 	};
 
-	renderParticipantDialog = () => {
-		const participants = this.state.participants;
-
-		return (
-			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
-				<DialogContent>
-					{participants && participants.length > 0 && (
-						<div className="DataName">{Messages.EDIT.DIALOG.PARTICIPANT.NAME}</div>
-					)}
-					{participants && participants.length > 0 && (
-						<Select
-							className="ParticipantsSelector"
-							multiple
-							displayEmpty
-							value={this.state.parts}
-							onChange={event => {
-								this.setState({ parts: event.target.value });
-							}}
-							renderValue={selected => selected.map(sel => sel.name).join(", ")}
-						>
-							{participants.map((elem, key) => {
-								return (
-									<MenuItem key={"ParticipantsSelector-" + key} value={elem}>
-										<Checkbox checked={this.state.parts.indexOf(elem) > -1} />
-										<ListItemText primary={elem.name} />
-									</MenuItem>
-								);
-							})}
-						</Select>
-					)}
-
-					{this.renderQrPetition()}
-				</DialogContent>
-				<DialogActions>
-					{participants && participants.length > 0 && (
-						<Button onClick={this.onParticipantsAdd} color="primary">
-							{Messages.EDIT.DIALOG.PARTICIPANT.CREATE}
-						</Button>
-					)}
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.EDIT.DIALOG.PARTICIPANT.CLOSE}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
-	renderQrPetition() {
-		const qr = this.state.qr;
-		if (!qr) {
-			return <div></div>;
-		}
-
-		const self = this;
-		if (!self.state.qrSet) {
-			setTimeout(function() {
-				const canvas = document.getElementById("canvas");
-				if (canvas) {
-					QRCode.toCanvas(canvas, qr, function(error) {
-						if (error) console.error(error);
-					});
-					self.setState({ qrSet: true });
-				}
-			}, 100);
-		}
-
-		return (
-			<div className="QrPetition">
-				<canvas id="canvas"></canvas>
-			</div>
-		);
-	}
-
+	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
 			<div>
@@ -920,7 +878,9 @@ class Certificate extends Component {
 					<button
 						className="AddParticipant"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						onClick={this.onDialogOpen}
+						onClick={() => {
+							if (this.qrDialog) this.qrDialog.open();
+						}}
 					>
 						{Messages.EDIT.BUTTONS.LOAD_PARTICIPANTS}
 					</button>

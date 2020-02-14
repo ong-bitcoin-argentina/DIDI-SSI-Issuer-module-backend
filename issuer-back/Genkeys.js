@@ -1,4 +1,5 @@
 const { Credentials } = require('uport-credentials');
-const identity = Credentials.createIdentity();
 
+// genera par did / clave privada
+const identity = Credentials.createIdentity();
 console.log(identity)

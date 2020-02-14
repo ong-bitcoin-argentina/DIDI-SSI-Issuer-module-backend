@@ -1,27 +1,28 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router";
-import "./Templates.scss";
+import { withRouter, Redirect } from "react-router";
+import "./Delegates.scss";
+
+import Constants from "../../../constants/Constants";
+import Messages from "../../../constants/Messages";
+import Cookie from "js-cookie";
 
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-import Constants from "../../../constants/Constants";
-import Messages from "../../../constants/Messages";
-
+import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
-import MaterialIcon from "material-icons-react";
 
-class Templates extends Component {
+class Delegates extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: true
+			loading: false
 		};
 	}
 
-	// generar referencia para abrirlo desde el padre
+	// generar referencia para abrir dialogo de borrado desde el padre
 	componentDidMount() {
 		this.props.onRef(this);
 	}
@@ -31,22 +32,34 @@ class Templates extends Component {
 		this.props.onRef(undefined);
 	}
 
-	// abrir dialogo de borrado de modelos
+	// abrir dialogo de borrado
 	openDeleteDialog = () => {
 		if (this.deleteDialog) this.deleteDialog.open();
 	};
 
-	// mostrar pantalla de modelos de certificados
+	// volver a login
+	onLogout = () => {
+		Cookie.set("token", "");
+		this.props.history.push(Constants.ROUTES.LOGIN);
+	};
+
+	// mostrar pantalla de delegacion
 	render() {
-		const loading = this.props.loading;
+		if (!Cookie.get("token")) {
+			return <Redirect to={Constants.ROUTES.LOGIN} />;
+		}
+
+		const error = this.state.error;
+		const loading = this.state.loading;
 		return (
-			<div className="Templates">
-				{this.renderSectionButtons()}
-				{this.renderDeleteDialog()}
+			<div className="Admin">
 				{this.renderCreateDialog()}
+				{this.renderDeleteDialog()}
+
+				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
-				<div className="errMsg">{this.props.error && this.props.error.message}</div>
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	}
@@ -56,8 +69,8 @@ class Templates extends Component {
 		return (
 			<InputDialog
 				onRef={ref => (this.createDialog = ref)}
-				title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
-				fieldNames={["name"]}
+				title={Messages.LIST.DIALOG.CREATE_DELEGATE_TITLE}
+				fieldNames={["name", "did"]}
 				onAccept={this.props.onCreate}
 			/>
 		);
@@ -68,7 +81,7 @@ class Templates extends Component {
 		return (
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
-				title={Messages.LIST.DIALOG.DELETE_TEMPLATE_TITLE}
+				title={Messages.LIST.DIALOG.DELETE_DELEGATE_TITLE}
 				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
@@ -76,7 +89,7 @@ class Templates extends Component {
 		);
 	};
 
-	// muestra boton de creacion de modelos de certificados
+	// mostrar boton de creacion
 	renderSectionButtons = () => {
 		const selected = this.props.selected;
 		return (
@@ -88,29 +101,29 @@ class Templates extends Component {
 							if (this.createDialog) this.createDialog.open();
 						}}
 					>
-						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
+						<MaterialIcon icon={Constants.DELEGATES.ICONS.ADD_BUTTON} />
+						<div className="CreateDelegateButtonText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
 				)}
 			</div>
 		);
 	};
 
-	// muestra tabla de modelos de certificados
+	// mostrar tabla de delegados
 	renderTable = () => {
-		const templates = this.props.templates;
+		const delegates = this.props.delegates;
 		const columns = this.props.columns ? this.props.columns : [];
 
 		return (
-			<div className="TemplateTable">
+			<div className="DelegatesTable">
 				<ReactTable
 					sortable={false}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
-					data={templates}
+					data={delegates}
 					columns={columns}
-					defaultPageSize={Constants.TEMPLATES.TABLE.PAGE_SIZE}
-					minRows={Constants.TEMPLATES.TABLE.MIN_ROWS}
+					defaultPageSize={Constants.DELEGATES.TABLE.PAGE_SIZE}
+					minRows={Constants.DELEGATES.TABLE.MIN_ROWS}
 				/>
 			</div>
 		);
@@ -119,11 +132,13 @@ class Templates extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
-			<button className="LogoutButton" onClick={this.props.onLogout}>
-				{Messages.LIST.BUTTONS.EXIT}
-			</button>
+			<div className="AdminButtons">
+				<button className="LogoutButton" onClick={this.onLogout}>
+					{Messages.EDIT.BUTTONS.EXIT}
+				</button>
+			</div>
 		);
 	};
 }
 
-export default withRouter(Templates);
+export default withRouter(Delegates);

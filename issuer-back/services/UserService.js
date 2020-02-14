@@ -6,6 +6,7 @@ const Messages = require("../constants/Messages");
 
 const TokenService = require("./TokenService");
 
+// compara las contraseñas y retorna el resultado
 module.exports.login = async function(name, password) {
 	let user;
 	try {
@@ -26,6 +27,7 @@ module.exports.login = async function(name, password) {
 	}
 };
 
+// obtener usuario del issuer por id
 module.exports.getById = async function(userId) {
 	let user;
 	try {
@@ -38,6 +40,7 @@ module.exports.getById = async function(userId) {
 	}
 };
 
+// crear usuario para loguearse en el issuer
 module.exports.create = async function(name, password) {
 	try {
 		const user = await User.generate(name, password);

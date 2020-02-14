@@ -1,6 +1,7 @@
 const Template = require("../models/Template");
 const Messages = require("../constants/Messages");
 
+// obtener el modelo de certificado a correspondiente a ese id
 var getById = async function(id) {
 	try {
 		let template = await Template.getById(id);
@@ -13,6 +14,7 @@ var getById = async function(id) {
 };
 module.exports.getById = getById;
 
+// retorna todos los modelos de certificados
 module.exports.getAll = async function() {
 	try {
 		let templates = await Template.getAll();
@@ -24,6 +26,7 @@ module.exports.getAll = async function() {
 	}
 };
 
+// genera un nuevo modelo de certificado
 module.exports.create = async function(name) {
 	try {
 		const template = await Template.generate(name);
@@ -35,6 +38,7 @@ module.exports.create = async function(name) {
 	}
 };
 
+// modifica el modelo de certificado
 module.exports.edit = async function(id, data, previewData, previewType, category) {
 	try {
 		let template = await getById(id);
@@ -48,6 +52,7 @@ module.exports.edit = async function(id, data, previewData, previewType, categor
 	}
 };
 
+// marca el modelo de certificado como borrado
 module.exports.delete = async function(id) {
 	try {
 		let template = await getById(id);

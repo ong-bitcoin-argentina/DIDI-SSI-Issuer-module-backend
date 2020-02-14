@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.ObjectId;
 const Constants = require("../constants/Constants");
 
+// certificado generado a partir de un modelo, para ser completado y emitido
+
 const dataElement = {
 	name: {
 		type: String,
@@ -58,6 +60,7 @@ const CertSchema = mongoose.Schema({
 
 CertSchema.index({ name: 1 });
 
+// marcar certificado como borrado en bd local
 CertSchema.methods.delete = async function() {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
@@ -73,6 +76,7 @@ CertSchema.methods.delete = async function() {
 	}
 };
 
+// marcar certificado como emitido en bd local
 CertSchema.methods.emmit = async function(creds) {
 	const now = new Date();
 
@@ -90,26 +94,34 @@ CertSchema.methods.emmit = async function(creds) {
 	}
 };
 
+// copiar los campos de 'data' al formato requerido por el certificado
 var copyData = function(data) {
 	return {
-		cert: data.cert.map(data => {
-			if (data.name === Constants.CERT_FIELD_MANDATORY.DID) data.name = data.name.trim();
-			return {
-				name: data.name,
-				value: data.value ? data.value : ""
-			};
-		}),
-		participant: data.participant.map(array => {
-			return array.map(data => {
+		cert: data.cert
+			.map(data => {
+				if (data.name === Constants.CERT_FIELD_MANDATORY.DID) data.name = data.name.trim();
+				return {
+					name: data.name,
+					value: data.value ? data.value : ""
+				};
+			})
+			.filter(data => data.value !== ""),
+		participant: data.participant
+			.map(array => {
+				return array.map(data => {
+					return { name: data.name, value: data.value ? data.value : "" };
+				});
+			})
+			.filter(data => data.value !== ""),
+		others: data.others
+			.map(data => {
 				return { name: data.name, value: data.value ? data.value : "" };
-			});
-		}),
-		others: data.others.map(data => {
-			return { name: data.name, value: data.value ? data.value : "" };
-		})
+			})
+			.filter(data => data.value !== "")
 	};
 };
 
+// modificar certificado
 CertSchema.methods.edit = async function(data, split, microCredentials) {
 	this.data = copyData(data);
 	this.split = split;
@@ -127,6 +139,7 @@ CertSchema.methods.edit = async function(data, split, microCredentials) {
 const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
+// crear certificado a partir de la data y el modelo de certificado
 Cert.generate = async function(data, templateId, split, microCredentials) {
 	try {
 		let cert = new Cert();
@@ -146,6 +159,7 @@ Cert.generate = async function(data, templateId, split, microCredentials) {
 	}
 };
 
+// obtener todos los certificados
 Cert.getAll = async function() {
 	try {
 		const query = { deleted: false };
@@ -157,6 +171,7 @@ Cert.getAll = async function() {
 	}
 };
 
+// obtener certificado por id
 Cert.getById = async function(id) {
 	try {
 		const query = { _id: id, deleted: false };

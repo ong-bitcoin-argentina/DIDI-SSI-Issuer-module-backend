@@ -8,7 +8,7 @@
 
 	padding-left: 5px;
 
-	width: 500px;
+	width: 470px;
 	height: 40px;
 
 	text-align: left;
@@ -20,7 +20,7 @@
 }
 
 .Number {
-	width: 510px;
+	width: 480px;
 }
 
 .Paragraph {
@@ -28,11 +28,14 @@
 }
 
 .Boolean {
-	width: 510px;
+	width: 500px;
 	height: 45px;
 }
 
 .Checkbox {
-	width: 510px;
+	width: 500px;
 	height: 45px;
+}
+.react-datepicker-wrapper {
+	width: auto;
 }

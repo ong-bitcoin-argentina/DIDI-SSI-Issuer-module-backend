@@ -24,6 +24,7 @@ module.exports = {
 		},
 		PARTICIPANTS: {
 			POST_NEW: API + "/participant/new/",
+			GET_GLOBAL: API + "/participant/global/",
 			GET_ALL: id => {
 				return API + "/participant/all/" + id;
 			},
@@ -50,16 +51,40 @@ module.exports = {
 			DELETE: id => {
 				return API + "/cert/" + id;
 			}
+		},
+		DELEGATE: {
+			CREATE: API + "/delegate",
+			DELETE: API + "/delegate",
+			GET_ALL: API + "/delegate/all"
 		}
 	},
 	ROUTES: {
 		LOGIN: "/login",
+		DELEGATES: "/admin",
 		QR_REQUEST: "/qr_request",
 		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
 		CERTIFICATES: "/certificates",
 		EDIT_CERT: "/certificates/edit/"
+	},
+
+	CERT_FIELD_MANDATORY: {
+		DID: "DID",
+		NAME: "CERTIFICADO O CURSO",
+		FIRST_NAME: "NOMBRE",
+		LAST_NAME: "APELLIDO",
+		EXPIRATION_DATE: "EXPIRATION DATE"
+	},
+
+	DELEGATES: {
+		ICONS: {
+			ADD_BUTTON: "add_box"
+		},
+		TABLE: {
+			PAGE_SIZE: 10,
+			MIN_ROWS: 3
+		}
 	},
 
 	TEMPLATES: {
@@ -70,7 +95,9 @@ module.exports = {
 		},
 
 		ICONS: {
-			ADD_BUTTON: "add_box"
+			ADD_BUTTON: "add_box",
+			OK: "check_circle_outline",
+			MISSING: "highlight_off"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
@@ -131,7 +158,7 @@ module.exports = {
 			// city: "Ciudad",
 			// municipality: "Municipalidad",
 			// province: "Provincia",
-			"Pais": "Pais"
+			Pais: "Pais"
 		},
 		DATA_TYPES: {
 			CERT: "cert",
@@ -158,7 +185,11 @@ module.exports = {
 			},
 			CSV_REQUIRED_VALUE_MISSING: function(field) {
 				return { err: "CSV_REQUIRED_VALUE_MISSING", message: "CSV invàlido, el campo " + field + " es obligatorio" };
-			}
+			},
+			MISSING_FIELD: function(field) {
+				return { err: "REQUIRED_VALUE_MISSING", message: "El campo " + field + " es obligatorio" };
+			},
+			EXP_DATE_INVALID: { err: "EXP_DATE_INVALID", message: "La fecha de expiracion debe ser mayor a la fecha actual." }
 		},
 		MANDATORY_DATA: {
 			DID: "DID",
@@ -174,6 +205,11 @@ module.exports = {
 			PAGE_SIZE: 10,
 			MIN_ROWS: 3
 		},
-		REQUEST_TYPES: ["Email", "Phone", "Datos Personales", "Domicilio Legal"]
+		REQUEST_TYPES: {
+			mail: "Email",
+			tel: "Phone",
+			personal: "Datos Personales",
+			address: "Domicilio Legal"
+		}
 	}
 };

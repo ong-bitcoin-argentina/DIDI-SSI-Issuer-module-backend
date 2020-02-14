@@ -14,6 +14,7 @@ const resolver = new Resolver(
 	getResolver({ rpcUrl: Constants.BLOCKCHAIN.BLOCK_CHAIN_URL, registry: Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT })
 );
 
+// decodifica el certificado, retornando la info (independientemente de si el certificado es valido o no)
 module.exports.decodeCertificate = async function(jwt, errMsg) {
 	try {
 		let result = await decodeJWT(jwt);
@@ -24,6 +25,7 @@ module.exports.decodeCertificate = async function(jwt, errMsg) {
 	}
 };
 
+// analiza la validez del certificado
 module.exports.verifyCertificate = async function(jwt, errMsg) {
 	try {
 		let result = await verifyJWT(jwt, { resolver: resolver, audience: "did:ethr:" + Constants.ISSUER_SERVER_DID });
@@ -34,12 +36,22 @@ module.exports.verifyCertificate = async function(jwt, errMsg) {
 	}
 };
 
-module.exports.createShareRequest = async function(data) {
-	const signer = SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
-	const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
-
+// genera un certificado con un pedido de informacion (certificado o informacion de certificado),
+// la cual esta especificada en "claims", si el usuario accede, se ejecuta una llamada a "cb" con el resultado en el body contenido en "access_token"
+module.exports.createShareRequest = async function(claims, cb) {
 	try {
-		let result = await credentials.createDisclosureRequest(data);
+		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
+
+		const payload = {
+			exp: exp,
+			delegator: Constants.ISSUER_DELEGATOR_DID ? "did:ethr:" + Constants.ISSUER_DELEGATOR_DID : undefined,
+			callback: cb,
+			claims: claims,
+			type: "shareReq"
+		};
+		const signer = SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
+		const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
+		const result = await credentials.signJWT(payload);
 		if (Constants.DEBUGG) console.log(result);
 		return Promise.resolve(result);
 	} catch (err) {
@@ -66,6 +78,8 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 			credentialSubject: subject
 		}
 	};
+
+	if (Constants.ISSUER_DELEGATOR_DID) vcPayload["delegator"] = "did:ethr:" + Constants.ISSUER_DELEGATOR_DID;
 
 	try {
 		let result = await createVerifiableCredential(vcPayload, vcissuer);
@@ -118,17 +132,23 @@ module.exports.revokeCertificate = async function(jwt, hash, sub) {
 	}
 };
 
-// recibe el caertificado y lo envia a didi-server para ser guardado
+// recibe el pedido y lo envia a didi-server para ser enviado al usuario
 module.exports.sendShareRequest = async function(did, cert) {
 	try {
+		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
+
+		const payload = {
+			issuerDid: "did:ethr:" + Constants.ISSUER_SERVER_DID,
+			exp: exp,
+			did: did,
+			jwt: cert
+		};
+		if (Constants.ISSUER_DELEGATOR_DID) payload["delegatorDid"] = "did:ethr:" + Constants.ISSUER_DELEGATOR_DID;
+
 		var response = await fetch(Constants.DIDI_API + "/issuer/issueShareRequest", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				issuerDid: "did:ethr:" + Constants.ISSUER_SERVER_DID,
-				did: did,
-				jwt: cert
-			})
+			body: JSON.stringify(payload)
 		});
 
 		const jsonResp = await response.json();

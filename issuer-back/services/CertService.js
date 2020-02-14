@@ -13,6 +13,7 @@ var getById = async function(id) {
 };
 module.exports.getById = getById;
 
+// retorna todos los certificados
 module.exports.getAll = async function() {
 	try {
 		let certs = await Cert.getAll();
@@ -24,6 +25,7 @@ module.exports.getAll = async function() {
 	}
 };
 
+// crea un certificado a partir del modelo
 module.exports.create = async function(data, templateId, split, microCredentials) {
 	try {
 		const cert = await Cert.generate(data, templateId, split, microCredentials);
@@ -35,6 +37,7 @@ module.exports.create = async function(data, templateId, split, microCredentials
 	}
 };
 
+// modifica un certificado no emitido
 module.exports.edit = async function(id, data, split, microCredentials) {
 	try {
 		let cert = await getById(id);
@@ -47,6 +50,7 @@ module.exports.edit = async function(id, data, split, microCredentials) {
 	}
 };
 
+// agrega la informacion de los campos del modelo de certificado al certificaod puntual para ser mostrados
 module.exports.addTemplateDataToCert = function(cert, template) {
 	const data = {
 		cert: cert.data.cert.map(elem => {
@@ -95,6 +99,7 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 	};
 };
 
+// marcar certificado como emitido
 module.exports.emmit = async function(cert, creds) {
 	try {
 		await cert.emmit(creds);
@@ -105,6 +110,7 @@ module.exports.emmit = async function(cert, creds) {
 	}
 };
 
+// marcar certificado como borrado
 module.exports.delete = async function(id) {
 	try {
 		let cert = await getById(id);

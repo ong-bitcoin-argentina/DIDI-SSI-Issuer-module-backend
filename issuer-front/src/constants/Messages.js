@@ -18,7 +18,11 @@ module.exports = {
 		},
 		DIALOG: {
 			QR: {
-				PARTICIPANT_TITLE: "Se enviaron las solicitudes.",
+				REQUEST_SENT: "Pedido enviado",
+				LOAD_BY_QR: "Cargar participante con código Qr",
+				LOADED_BY_QR: name => {
+					return "Participante " + name + " cargado.";
+				},
 				DIDS_TITLE: "DIDS Cargados:"
 			},
 			PARTICIPANT: {
@@ -44,6 +48,7 @@ module.exports = {
 			ADD_MICRO_CRED: "+",
 			REMOVE_MICRO_CRED: "-",
 			REMOVE_PARTICIPANTS: "X",
+			SAMPLE_PART_FROM_CSV: "Generar CSV",
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
@@ -52,6 +57,7 @@ module.exports = {
 			SEND: "Enviar",
 			SAVE: "Guardar",
 			CANCEL: "Cancelar",
+			CLOSE: "Cerrar",
 			BACK: "Volver",
 			EXIT: "Salir",
 			REQUIRED: "Requerido",
@@ -60,12 +66,25 @@ module.exports = {
 	},
 	LIST: {
 		DIALOG: {
-			TITLE: "Crear Modelo",
+			DELETE_CONFIRMATION: "Esta seguro?",
+			DELETE_CERT_TITLE: "Borrar Certificado",
+			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
+			DELETE_DELEGATE_TITLE: "Borrar Delegado",
+			DELETE: "Borrar",
+			CREATE_DELEGATE_TITLE: "Crear Delegado",
+			CREATE_TEMPLATE_TITLE: "Crear Modelo",
+			DID: "Did",
 			NAME: "Nombre",
 			CREATE: "Crear",
+			CANCEL: "Cancelar",
 			CLOSE: "Cerrar"
 		},
 		TABLE: {
+			DID: "DID",
+			HAS_TEL: "TELEFONO",
+			HAS_MAIL: "MAIL",
+			HAS_PERSONAL: "DATOS PERSONALES",
+			HAS_ADDRESS: "DOMICILIO",
 			TEMPLATE: "TEMPLATE DE CERTIFICADO",
 			CERT: "CERTIFICADO",
 			LAST_NAME: "APELLIDO",
@@ -77,6 +96,8 @@ module.exports = {
 			ACTIONS: "ACCIONES"
 		},
 		BUTTONS: {
+			CREATE_DELEGATE: "CREAR DELEGADO",
+			DELEGATES: "DELEGADOS",
 			TO_QR: "REGISTRAR PARTICIPANTE",
 			TO_CERTIFICATES: "CERTIFICADOS",
 			TO_TEMPLATES: "TEMPLATES",
@@ -97,9 +118,13 @@ module.exports = {
 		DID_SELECT: "DID",
 		CERTIFICATE_SELECT: "CERTIFICADO A PEDIR",
 		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
+		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
+		TEMPLATE_SELECT_MESSAGE: "Elige el template para el que se pediran los datos:",
+		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
+		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el template elegido:",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
-			REQUEST: "Cargar por pedido",
+			REQUEST: "Pedir certificados",
 			QR_LOAD: "Cargar por Qr",
 			GENERATE: "Generar Qr"
 		}
