@@ -52,7 +52,7 @@ class Participants extends Component {
 
 		interval = setInterval(function() {
 			if (self.state.requestSent) {
-				self.props.onParticipantsReload();
+				self.props.onReload();
 			}
 		}, 10000);
 	}
@@ -166,7 +166,7 @@ class Participants extends Component {
 					result.push({ did: key, name: acum[key] });
 				}
 
-				self.props.onParticipantsReload();
+				self.props.onReload();
 				self.setState({ loading: false, dids: result, error: false });
 			},
 			function(err) {

@@ -8,47 +8,42 @@ import "react-table/react-table.css";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import InputDialog from "../../utils/dialogs/InputDialog";
+import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
-
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 
 class Templates extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: true,
-			isDialogOpen: false,
-			name: ""
+			loading: true
 		};
 	}
 
-	// abrir dialogo de creacion de modelos
-	onDialogOpen = () => this.setState({ isDialogOpen: true, name: "" });
+	// generar referencia para abrirlo desde el padre
+	componentDidMount() {
+		this.props.onRef(this);
+	}
 
-	// cerrar dialogo de creacion de modelos
-	onDialogClose = () => this.setState({ isDialogOpen: false, name: "" });
+	// borrar referencia
+	componentWillUnmount() {
+		this.props.onRef(undefined);
+	}
 
-	// actualizar nombre del modelo a crear
-	updateName = event => {
-		this.setState({ name: event.target.value, error: "" });
+	// abrir dialogo de borrado de modelos
+	openDeleteDialog = () => {
+		if (this.deleteDialog) this.deleteDialog.open();
 	};
 
+	// mostrar pantalla de modelos de certificados
 	render() {
 		const loading = this.props.loading;
-		const isDeleteDialogOpen = this.props.isDeleteDialogOpen;
-		const isDialogOpen = this.state.isDialogOpen;
-		const templateId = this.props.selectedTemplateId;
 		return (
 			<div className="Templates">
 				{this.renderSectionButtons()}
-				{isDeleteDialogOpen && templateId && this.renderDeleteDialog(templateId)}
-				{isDialogOpen && this.renderDialog()}
+				{this.renderDeleteDialog()}
+				{this.renderCreateDialog()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
 				<div className="errMsg">{this.props.error && this.props.error.message}</div>
@@ -56,12 +51,43 @@ class Templates extends Component {
 		);
 	}
 
+	// muestra el dialogo de creacion
+	renderCreateDialog = () => {
+		return (
+			<InputDialog
+				onRef={ref => (this.createDialog = ref)}
+				title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
+				fieldNames={["name"]}
+				onAccept={this.props.onCreate}
+			/>
+		);
+	};
+
+	// muestra el dialogo de borrado
+	renderDeleteDialog = () => {
+		return (
+			<ConfirmationDialog
+				onRef={ref => (this.deleteDialog = ref)}
+				title={Messages.LIST.DIALOG.DELETE_TEMPLATE_TITLE}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				confirm={Messages.LIST.DIALOG.DELETE}
+				onAccept={this.props.onDelete}
+			/>
+		);
+	};
+
+	// muestra boton de creacion de modelos de certificados
 	renderSectionButtons = () => {
 		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
 				{selected && (
-					<button className="CreateButton" onClick={this.onDialogOpen}>
+					<button
+						className="CreateButton"
+						onClick={() => {
+							if (this.createDialog) this.createDialog.open();
+						}}
+					>
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
 						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
 					</button>
@@ -70,66 +96,7 @@ class Templates extends Component {
 		);
 	};
 
-	renderDialog = () => {
-		return (
-			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}</DialogTitle>
-				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label={Messages.LIST.DIALOG.NAME}
-						type="text"
-						onChange={this.updateName}
-						fullWidth
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							this.onDialogClose();
-							this.props.onTemplateCreate(this.state.name);
-						}}
-						disabled={!this.state.name}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.CREATE}
-					</Button>
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
-	renderDeleteDialog = templateId => {
-		const isOpen = this.props.isDeleteDialogOpen;
-		return (
-			<Dialog open={isOpen} onClose={this.props.onDeleteDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.DELETE_TEMPLATE_TITLE}</DialogTitle>
-				<DialogContent>
-					<div>{Messages.LIST.DIALOG.DELETE_CONFIRMATION}</div>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							this.props.onDeleteDialogClose();
-							this.props.onTemplateDelete(templateId);
-						}}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.DELETE}
-					</Button>
-					<Button onClick={this.props.onDeleteDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
+	// muestra tabla de modelos de certificados
 	renderTable = () => {
 		const templates = this.props.templates;
 		const columns = this.props.columns ? this.props.columns : [];
@@ -149,6 +116,7 @@ class Templates extends Component {
 		);
 	};
 
+	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
 			<button className="LogoutButton" onClick={this.props.onLogout}>

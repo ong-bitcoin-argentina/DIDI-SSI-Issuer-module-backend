@@ -5,16 +5,11 @@ import "./Certificates.scss";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
-import MaterialIcon from "material-icons-react";
-
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
+import MaterialIcon from "material-icons-react";
 
 class Certificates extends Component {
 	constructor(props) {
@@ -24,6 +19,16 @@ class Certificates extends Component {
 			loading: false,
 			name: ""
 		};
+	}
+
+	// generar referencia para abrirlo desde el padre
+	componentDidMount() {
+		this.props.onRef(this);
+	}
+
+	// borrar referencia
+	componentWillUnmount() {
+		this.props.onRef(undefined);
 	}
 
 	// a pantalla de edicion
@@ -36,13 +41,17 @@ class Certificates extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT);
 	};
 
+	// abrir dialogo de borrado de modelos
+	openDeleteDialog = () => {
+		if(this.deleteDialog) this.deleteDialog.open()
+	};
+
+	// mostrar pantalla de certificados
 	render() {
 		const loading = this.props.loading;
-		const isDeleteDialogOpen = this.props.isDeleteDialogOpen;
-		const certId = this.props.selectedCertId;
 		return (
 			<div className="Certificates">
-				{isDeleteDialogOpen && certId && this.renderDeleteDialog(certId)}
+				{this.renderDeleteDialog()}
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
@@ -51,32 +60,20 @@ class Certificates extends Component {
 		);
 	}
 
-	renderDeleteDialog = certId => {
-		const isOpen = this.props.isDeleteDialogOpen;
+	// muestra el dialogo de borrado
+	renderDeleteDialog = () => {
 		return (
-			<Dialog open={isOpen} onClose={this.props.onDeleteDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.LIST.DIALOG.DELETE_CERT_TITLE}</DialogTitle>
-				<DialogContent>
-					<div>{Messages.LIST.DIALOG.DELETE_CONFIRMATION}</div>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							this.props.onDeleteDialogClose();
-							this.props.onCertificateDelete(certId);
-						}}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.DELETE}
-					</Button>
-					<Button onClick={this.props.onDeleteDialogClose} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<ConfirmationDialog
+				onRef={ref => (this.deleteDialog = ref)}
+				title={Messages.LIST.DIALOG.DELETE_CERT_TITLE}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				confirm={Messages.LIST.DIALOG.DELETE}
+				onAccept={this.props.onDelete}
+			/>
 		);
 	};
 
+	// muestra boton de creacion de certificados
 	renderSectionButtons = () => {
 		const selected = this.props.selected;
 		return (
@@ -91,6 +88,7 @@ class Certificates extends Component {
 		);
 	};
 
+	// muestra tabla de certificados
 	renderTable = () => {
 		const certificates = this.props.certificates;
 		const columns = this.props.columns ? this.props.columns : [];
@@ -110,10 +108,11 @@ class Certificates extends Component {
 		);
 	};
 
+	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
 			<div className="CertButtons">
-				<button className="EmmitSelectedButton" onClick={this.props.onCertificateMultiEmmit}>
+				<button className="EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
 					{Messages.LIST.BUTTONS.EMMIT_SELECTED}
 				</button>
 				<button className="LogoutButton" onClick={this.props.onLogout}>

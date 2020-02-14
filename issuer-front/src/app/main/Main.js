@@ -1,4 +1,4 @@
-import "./Lists.scss";
+import "./Main.scss";
 import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
 
@@ -27,13 +27,12 @@ import Delegates from "../administrative/list/Delegates";
 import DelegateService from "../../services/DelegateService";
 import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 
-class Lists extends Component {
+class Main extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			loading: false,
-			isDeleteDialogOpen: false,
 			tabIndex: 1,
 			partTypes: ["tel", "mail", "personal", "address"],
 			parts: [],
@@ -227,16 +226,15 @@ class Lists extends Component {
 
 	// abrir dialogo de confirmacion para borrado de certificados
 	onCertificateDeleteDialogOpen = id => {
-		this.setState({ isDeleteDialogOpen: true, selectedCertId: id });
-	};
-
-	// cerrar dialogo de confirmacion para borrado de certificados
-	onDeleteDialogClose = () => {
-		this.setState({ isDeleteDialogOpen: false });
+		if (this.certificatesSection) {
+			this.setState({ selectedCertId: id });
+			this.certificatesSection.openDeleteDialog();
+		}
 	};
 
 	// borrar certificados
-	onCertificateDelete = id => {
+	onCertificateDelete = () => {
+		const id = this.state.selectedCertId;
 		const token = Cookie.get("token");
 		const self = this;
 
@@ -412,7 +410,8 @@ class Lists extends Component {
 	};
 
 	// crear templates
-	onTemplateCreate = name => {
+	onTemplateCreate = data => {
+		const name = data.name;
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
@@ -438,11 +437,15 @@ class Lists extends Component {
 
 	// abrir dialogo de borrado
 	onTemplateDeleteDialogOpen = id => {
-		this.setState({ isDeleteDialogOpen: true, selectedTemplateId: id });
+		if (this.templatesSection) {
+			this.setState({ selectedTemplateId: id });
+			this.templatesSection.openDeleteDialog();
+		}
 	};
 
 	// borrar templates
-	onTemplateDelete = id => {
+	onTemplateDelete = () => {
+		const id = this.state.selectedTemplateId;
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
@@ -552,8 +555,10 @@ class Lists extends Component {
 
 	// abrir dialogo de borrado
 	onDelegateDeleteDialogOpen = did => {
-		this.delegates.openDeleteDialog();
-		this.setState({ selectedDelegateDid: did });
+		if (this.delegatesSection) {
+			this.setState({ selectedDelegateDid: did });
+			this.delegatesSection.openDeleteDialog();
+		}
 	};
 
 	// crear delegacion
@@ -609,6 +614,7 @@ class Lists extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	// mostrar pantalla principal con tabs para las distintas secciones
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -625,32 +631,26 @@ class Lists extends Component {
 
 				<TabPanel>
 					<Templates
+						onRef={ref => (this.templatesSection = ref)}
 						selected={this.state.tabIndex === 0}
 						templates={this.state.templates}
 						columns={this.state.templateColumns}
 						loading={this.state.loading}
 						error={this.state.error}
-						onTemplateCreate={this.onTemplateCreate}
-						selectedTemplateId={this.state.selectedTemplateId}
-						onTemplateDelete={this.onTemplateDelete}
-						onDeleteDialogClose={this.onDeleteDialogClose}
-						isDeleteDialogOpen={this.state.isDeleteDialogOpen}
+						onCreate={this.onTemplateCreate}
+						onDelete={this.onTemplateDelete}
 						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 				<TabPanel>
 					<Certificates
+						onRef={ref => (this.certificatesSection = ref)}
 						selected={this.state.tabIndex === 1}
 						certificates={this.state.filteredCertificates}
 						columns={this.state.certColumns}
 						loading={this.state.loading}
-						onCertificateEmmit={this.onCertificateEmmit}
-						onCertificateMultiEmmit={this.onCertificateMultiEmmit}
-						onCertificateCreate={this.onCertificateCreate}
-						selectedCertId={this.state.selectedCertId}
-						onCertificateDelete={this.onCertificateDelete}
-						onDeleteDialogClose={this.onDeleteDialogClose}
-						isDeleteDialogOpen={this.state.isDeleteDialogOpen}
+						onMultiEmmit={this.onCertificateMultiEmmit}
+						onDelete={this.onCertificateDelete}
 						error={this.state.error}
 						onLogout={this.onLogout}
 					/>
@@ -663,7 +663,7 @@ class Lists extends Component {
 						participants={this.state.participants}
 						columns={this.state.participantColumns}
 						error={this.state.error}
-						onParticipantsReload={this.onParticipantsReload}
+						onReload={this.onParticipantsReload}
 						selectedParticipants={this.state.selectedParticipants}
 						onLogout={this.onLogout}
 					/>
@@ -671,7 +671,7 @@ class Lists extends Component {
 
 				<TabPanel>
 					<Delegates
-						onRef={ref => (this.delegates = ref)}
+						onRef={ref => (this.delegatesSection = ref)}
 						selected={this.state.tabIndex === 3}
 						delegates={this.state.delegates}
 						columns={this.state.delegateColumns}
@@ -686,4 +686,4 @@ class Lists extends Component {
 	}
 }
 
-export default withRouter(Lists);
+export default withRouter(Main);

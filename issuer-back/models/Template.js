@@ -42,7 +42,7 @@ const TemplateSchema = mongoose.Schema({
 	previewType: { type: String },
 	category: {
 		type: String,
-		enum: Object.keys(Constants.CERT_CATEGORY_TYPES)
+		enum: Constants.CERT_CATEGORY_TYPES
 	},
 	data: {
 		cert: [dataElement],
@@ -116,6 +116,7 @@ Template.generate = async function(name) {
 	template.name = name;
 	template.previewType = "1";
 	template.previewData = [Constants.CERT_FIELD_MANDATORY.FIRST_NAME, Constants.CERT_FIELD_MANDATORY.LAST_NAME];
+	template.category = Constants.CERT_CATEGORY_TYPES[0];
 	template.data = {
 		cert: [
 			{

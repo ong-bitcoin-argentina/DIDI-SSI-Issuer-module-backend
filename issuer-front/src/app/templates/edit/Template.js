@@ -6,19 +6,13 @@ import Cookie from "js-cookie";
 import MaterialIcon from "material-icons-react";
 
 import DataRenderer from "../../utils/DataRenderer";
+import TemplateFieldAddDialog from "../../utils/dialogs/TemplateFieldAddDialog";
 
 import TemplateService from "../../../services/TemplateService";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -34,14 +28,11 @@ class Template extends Component {
 			loading: true,
 			typingTimeout: 0,
 			typing: false,
-			isDialogOpen: false,
-			radioValue: 1,
-			options: [],
-			dataType: Constants.TEMPLATES.TYPES.TEXT
+			radioValue: 1
 		};
 	}
 
-	// cargar template
+	// cargar modelo de certificado
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
@@ -55,7 +46,6 @@ class Template extends Component {
 			async function(template) {
 				self.setState({
 					id: id,
-					isDialogOpen: false,
 					template: template,
 					radioValue: template.previewType,
 					loading: false,
@@ -69,7 +59,7 @@ class Template extends Component {
 		);
 	}
 
-	// volver a listado de certificados
+	// volver a listado
 	onBack = () => {
 		if (this.state.loading && this.state.error) {
 			this.setState({ loading: false, error: false });
@@ -85,18 +75,11 @@ class Template extends Component {
 	};
 
 	// agregar campo al template con la info proveniente del dialogo
-	createField = () => {
-		const type = this.state.type;
-		const data = {
-			name: this.state.name,
-			type: this.state.dataType,
-			mandatory: false,
-			required: this.state.required,
-			options: this.state.options.length ? this.state.options : []
-		};
+	createField = (data, type) => {
+		if (this.templateFieldAddDialog) this.templateFieldAddDialog.close();
 
 		this.state.template.data[type].push(data);
-		this.setState({ template: this.state.template, isDialogOpen: false });
+		this.setState({ template: this.state.template });
 	};
 
 	// marcar campo como requerido / no requerido
@@ -143,20 +126,6 @@ class Template extends Component {
 		this.setState({ template: template });
 	};
 
-	// abrir dialogo para insercion de campo en el template
-	onDialogOpen = type =>
-		this.setState({
-			isDialogOpen: true,
-			name: "",
-			type: type,
-			dataType: Constants.TEMPLATES.TYPES.TEXT,
-			options: [],
-			required: false
-		});
-
-	// cerrar dialogo para insercion de campo en el template
-	onDialogClose = () => this.setState({ isDialogOpen: false });
-
 	// guardar template y volver a listado de templates
 	onSave = () => {
 		const token = Cookie.get("token");
@@ -180,6 +149,7 @@ class Template extends Component {
 		);
 	};
 
+	// mostrar pantalla de edicion de modelos de certificados
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -197,66 +167,19 @@ class Template extends Component {
 		);
 	}
 
+	// mostrar dialogo para agregar o eliminar campos del modelo
 	renderDialog = () => {
-		const isCheckbox = this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX;
 		return (
-			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle className="DialogTitle">{Messages.EDIT.DIALOG.FIELD.TITLE}</DialogTitle>
-				<DialogContent>
-					{this.renderDialogName()}
-					{isCheckbox && this.renderDialogCheckbox()}
-					{this.renderDialogTypes()}
-					{this.renderDialogRequired()}
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.EDIT.DIALOG.FIELD.CLOSE}
-					</Button>
-					<Button
-						onClick={this.createField}
-						disabled={
-							!this.state.name ||
-							(this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX && !this.state.options.length)
-						}
-						color="primary"
-					>
-						{Messages.EDIT.DIALOG.FIELD.CREATE}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
-	renderDialogName = () => {
-		return (
-			<TextField
-				autoFocus
-				margin="dense"
-				id="name"
-				label={Messages.EDIT.DIALOG.FIELD.NAME}
-				type="text"
-				value={this.state.name}
-				onChange={event => this.setState({ name: event.target.value })}
-				fullWidth
+			<TemplateFieldAddDialog
+				onRef={ref => (this.templateFieldAddDialog = ref)}
+				title={Messages.EDIT.DIALOG.FIELD.TITLE}
+				onAccept={this.createField}
 			/>
 		);
 	};
 
-	renderDialogRequired = () => {
-		return (
-			<div id="Required">
-				<input
-					className="RequiredInput"
-					type="checkbox"
-					onChange={event => {
-						this.setState({ required: event.target.checked });
-					}}
-				></input>
-				<div className="RequiredText">{Messages.EDIT.DIALOG.FIELD.REQUIRED}</div>
-			</div>
-		);
-	};
-
+	// mostrar controles para definir la categoria del modelo
+	// (como se categorizara al certificado en la app Android)
 	renderTemplateCategory = () => {
 		const template = this.state.template;
 		const categories = Constants.TEMPLATES.CATEGORIES;
@@ -285,84 +208,8 @@ class Template extends Component {
 		);
 	};
 
-	renderDialogTypes = () => {
-		let types = Constants.TEMPLATES.TYPES;
-		if (this.state.type === Constants.TEMPLATES.DATA_TYPES.PARTICIPANT)
-			types = Object.assign({}, Constants.TEMPLATES.TYPES, Constants.TEMPLATES.SHARED_TYPES);
-
-		return (
-			<div id="Types">
-				<InputLabel>{Messages.EDIT.DIALOG.FIELD.TYPES}</InputLabel>
-				<Select
-					className={"DialogTypeDropdown"}
-					autoFocus
-					value={this.state.dataType}
-					onChange={event => {
-						if (Object.keys(Constants.TEMPLATES.SHARED_TYPES).indexOf(event.target.value) >= 0) {
-							this.setState({ name: event.target.value, dataType: "Text" });
-						} else {
-							this.setState({ dataType: event.target.value });
-						}
-					}}
-				>
-					{Object.values(types).map((type, key) => {
-						return (
-							<MenuItem value={type} key={"type-" + key}>
-								{type}
-							</MenuItem>
-						);
-					})}
-				</Select>
-			</div>
-		);
-	};
-
-	renderDialogCheckbox = () => {
-		return (
-			<div>
-				<div id="Options">
-					<TextField
-						autoFocus
-						margin="dense"
-						id="option"
-						label={Messages.EDIT.DIALOG.FIELD.OPTION}
-						type="text"
-						onChange={event => this.setState({ option: event.target.value })}
-						fullWidth
-					/>
-
-					<div
-						id="OptionAdd"
-						onClick={() => {
-							this.state.options.push(this.state.option);
-							this.setState({ options: this.state.options, option: "" });
-						}}
-					>
-						<MaterialIcon id="AddOptionIcon" icon={Constants.TEMPLATES.EDIT.ICONS.ADD_OPTION} color={"#3f51b5"} />
-					</div>
-				</div>
-
-				{this.state.options.map((op, key) => {
-					return (
-						<div key={"opt-" + key}>
-							{op}
-
-							<MaterialIcon
-								id="DeleteIcon"
-								icon={Constants.TEMPLATES.EDIT.ICONS.REMOVE_OPTION}
-								color={"rgb(235, 70, 70)"}
-								onClick={() => {
-									this.state.options.splice(key, 1);
-									this.setState({ options: this.state.options, option: "" });
-								}}
-							/>
-						</div>
-					);
-				})}
-			</div>
-		);
-	};
-
+	// mostrar controles para definir como se mostrara la credencial en la app Android
+	// (cuantos campos se mostraran por defecto y cuales son esos campos)
 	renderTemplateType = () => {
 		const template = this.state.template;
 		const templateElements = template.data.cert
@@ -427,6 +274,10 @@ class Template extends Component {
 		);
 	};
 
+	// mostrar la lista de campos con sus valores por defecto categorizados en:
+	// Datos del certificado
+	// Datos del participante
+	// Otros datos
 	renderTemplate = () => {
 		const template = this.state.template;
 		return (
@@ -442,6 +293,7 @@ class Template extends Component {
 		);
 	};
 
+	// mostrar la lista de campos con sus valores por defecto para una categoria en particular
 	renderSection = (title, data, type) => {
 		return (
 			<div className="TemplateSectionContent">
@@ -463,13 +315,15 @@ class Template extends Component {
 		);
 	};
 
+	// mostrar controles para agregar un campo nuevo en la seccion elegida
+	// (Datos del certificado, Datos del participante, Otros datos)
 	renderSectionButtons = type => {
 		return (
 			<div className="SectionButtons">
 				<button
 					className="AddButton"
 					onClick={() => {
-						this.onDialogOpen(type);
+						if (this.templateFieldAddDialog) this.templateFieldAddDialog.open(type);
 					}}
 				>
 					<div className="AddButton">
@@ -481,6 +335,7 @@ class Template extends Component {
 		);
 	};
 
+	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
 			<div className="TemplateButtons">

@@ -21,15 +21,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 
-/*
-
-import Button from "@material-ui/core/Button";
-
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-*/
 import QrDialog from "../../utils/dialogs/QrDialog";
 
 let interval;
@@ -647,7 +638,7 @@ class Certificate extends Component {
 		);
 	};
 
-	// mostrar pantalla de certificados
+	// mostrar pantalla de edicion de certificados
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -666,7 +657,7 @@ class Certificate extends Component {
 		);
 	}
 
-	// muestra el dialogo de carga de participantes por qr para modelo de certificado
+	// muestra el dialogo de carga de participantes por qr o previamente almacenados en didi-issuer
 	renderQrDialog = () => {
 		return (
 			<QrDialog
@@ -870,80 +861,6 @@ class Certificate extends Component {
 			</div>
 		);
 	};
-	/*
-	renderParticipantDialog = () => {
-		const participants = this.state.participants;
-
-		return (
-			<Dialog open={this.state.isDialogOpen} onClose={this.onDialogClose} aria-labelledby="form-dialog-title">
-				<DialogTitle id="DialogTitle">{Messages.EDIT.DIALOG.PARTICIPANT.TITLE}</DialogTitle>
-				<DialogContent>
-					{participants && participants.length > 0 && <div>{Messages.QR.TEMPLATE_SELECT_MESSAGE}</div>}
-					{participants && participants.length > 0 && (
-						<Select
-							className="ParticipantsSelector"
-							multiple
-							displayEmpty
-							value={this.state.parts}
-							onChange={event => {
-								this.setState({ parts: event.target.value });
-							}}
-							renderValue={selected => selected.map(sel => sel.name).join(", ")}
-						>
-							{participants.map((elem, key) => {
-								return (
-									<MenuItem key={"ParticipantsSelector-" + key} value={elem}>
-										<Checkbox checked={this.state.parts.indexOf(elem) > -1} />
-										<ListItemText primary={elem.name} />
-									</MenuItem>
-								);
-							})}
-						</Select>
-					)}
-
-					<div>{Messages.QR.QR_MESSAGE_CERT}</div>
-					{this.renderQrPetition()}
-				</DialogContent>
-				<DialogActions>
-					{participants && participants.length > 0 && (
-						<Button onClick={this.onParticipantsAdd} color="primary">
-							{Messages.EDIT.DIALOG.PARTICIPANT.CREATE}
-						</Button>
-					)}
-					<Button onClick={this.onDialogClose} color="primary">
-						{Messages.EDIT.DIALOG.PARTICIPANT.CLOSE}
-					</Button>
-				</DialogActions>
-			</Dialog>
-		);
-	};
-
-	renderQrPetition() {
-		const qr = this.state.qr;
-		if (!qr) {
-			return <div></div>;
-		}
-
-		const self = this;
-		if (!self.state.qrSet) {
-			setTimeout(function() {
-				const canvas = document.getElementById("canvas");
-				if (canvas) {
-					QRCode.toCanvas(canvas, qr, function(error) {
-						if (error) console.error(error);
-					});
-					self.setState({ qrSet: true });
-				}
-			}, 100);
-		}
-
-		return (
-			<div className="QrPetition">
-				<canvas id="canvas"></canvas>
-			</div>
-		);
-	}
-	*/
 
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {

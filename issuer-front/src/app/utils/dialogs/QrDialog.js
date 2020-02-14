@@ -33,7 +33,7 @@ export default class QrDialog extends Component {
 		};
 	}
 
-	// generar referencia para abrirlo desde el padre
+	// generar referencia para abrirlo desde el padre y pooling de participantes
 	componentDidMount() {
 		this.props.onRef(this);
 		const self = this;
