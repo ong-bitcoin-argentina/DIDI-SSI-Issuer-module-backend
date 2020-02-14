@@ -6,9 +6,9 @@ const ResponseHandler = require("./utils/ResponseHandler");
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 
-/*
-	Retorna la lista de modelos de certificados para la tabla
-*/
+/**
+ *	retorna la lista con info de los modelos de certificados generados por el issuer para mostrarse en la tabla de modelos de certificados
+ */
 router.get(
 	"/all",
 	Validator.validate([
@@ -32,9 +32,9 @@ router.get(
 	}
 );
 
-/*
-	Retorna un modelo de certificado a partir del id
-*/
+/**
+ *	Retorna un modelo de certificado a partir del id
+ */
 router.get(
 	"/:id",
 	Validator.validate([
@@ -58,9 +58,9 @@ router.get(
 	}
 );
 
-/*
-	Genera un nuevo modelo de certificado sin contenido
-*/
+/**
+ *	Genera un nuevo modelo de certificado sin contenido
+ */
 router.post(
 	"/",
 	Validator.validate([
@@ -84,9 +84,9 @@ router.post(
 	}
 );
 
-/*
-	Modifica un modelo de certificado con los datos recibidos
-*/
+/**
+ *	Modifica un modelo de certificado con los datos recibidos
+ */
 router.put(
 	"/:id/",
 	Validator.validate([
@@ -129,9 +129,9 @@ router.put(
 	}
 );
 
-/*
-	Marca un modelo de certificado como borrado
-*/
+/**
+ *	Marca un modelo de certificado como borrado
+ */
 router.delete(
 	"/:id",
 	Validator.validate([
@@ -156,9 +156,9 @@ router.delete(
 
 // -- disclosure requests --
 
-/*
-	Emite un pedido de info de participante global a partir de un pedido de certificado
-*/
+/**
+ *	Emite un pedido de info de participante global a partir de un pedido de certificado
+ */
 router.post(
 	"/request/:requestCode",
 	Validator.validate([
@@ -207,9 +207,9 @@ router.post(
 	}
 );
 
-/*
-	Genera un QR para pedir info de participante para un template en particular
-*/
+/**
+ *	Genera un QR para pedir info de participante para un template en particular
+ */
 router.get(
 	"/:id/qr/:requestCode",
 	Validator.validate([

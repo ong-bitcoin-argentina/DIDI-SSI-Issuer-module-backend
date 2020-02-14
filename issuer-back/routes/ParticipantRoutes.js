@@ -7,9 +7,9 @@ const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
-/*
-	Retorna los dids y nombres de todos los participantes conocidos
-*/
+/**
+ *	Retorna los dids y nombres de todos los participantes conocidos
+ */
 router.get(
 	"/dids",
 	Validator.validate([
@@ -33,10 +33,10 @@ router.get(
 	}
 );
 
-/*
-	Retorna los participantes con informacion no vinculada a un modelo de certificado en particular
-	e indica que tipo de informacion posee (cual de los certificados)
-*/
+/**
+ *	Retorna los participantes con informacion no vinculada a un modelo de certificado en particular
+ *	e indica que tipo de informacion posee (cual de los certificados)
+ */
 router.get(
 	"/global",
 	Validator.validate([
@@ -90,9 +90,9 @@ router.get(
 	}
 );
 
-/*
-	Retorna los participantes con informacion vinculada a un modelo de certificado
-*/
+/**
+ *	Retorna los participantes con informacion vinculada a un modelo de certificado
+ */
 router.get(
 	"/all/:templateId",
 	Validator.validate([
@@ -117,10 +117,10 @@ router.get(
 	}
 );
 
-/*
-	Retorna la info del el participante con el codigo indicado, si la data de este fue modificada
-	(para hacer pulling en qr)
-*/
+/**
+ *	Retorna la info del el participante con el codigo indicado, si la data de este fue modificada
+ *	(para hacer pulling en qr)
+ */
 router.get(
 	"/new/:requestCode",
 	Validator.validate([
@@ -142,9 +142,9 @@ router.get(
 	}
 );
 
-/*
- 	Retorna la info de participante asociada a un usuario en particular
-*/
+/**
+ * 	Retorna la info de participante asociada a un usuario en particular
+ */
 router.get(
 	"/:did",
 	Validator.validate([
@@ -166,10 +166,10 @@ router.get(
 	}
 );
 
-/*
-	 Inicializa la data de participante con unicamente el did y nombre 
-	 (carga por csv)
-*/
+/**
+ *	 Inicializa la data de participante con unicamente el did y nombre
+ *	 (carga por csv)
+ */
 router.post(
 	"/new/",
 	Validator.validate([
@@ -200,9 +200,9 @@ router.post(
 	}
 );
 
-/*
-	Modifica la data de participante con los datos recibidos
-*/
+/**
+ *	Modifica la data de participante con los datos recibidos
+ */
 router.put(
 	"/:id/",
 	Validator.validate([
@@ -234,9 +234,9 @@ router.put(
 	}
 );
 
-/*
-	Marca la data de participante como borrada
-*/
+/**
+ *	Marca la data de participante como borrada
+ */
 router.delete(
 	"/:id",
 	Validator.validate([
@@ -261,9 +261,9 @@ router.delete(
 
 // -- disclosure requests --
 
-/*
-	Carga de info de participante global a partir de un pedido de certificado realizado con "/template/request/:requestCode"
-*/
+/**
+ *	Carga de info de participante global a partir de un pedido de certificado realizado con "/template/request/:requestCode"
+ */
 router.post(
 	"/:requestCode",
 	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
@@ -303,9 +303,9 @@ router.post(
 	}
 );
 
-/*
-	Carga de info de participante para un template en particular a partir del QR generado en "/template/:id/qr/:requestCode"
-*/
+/**
+ *	Carga de info de participante para un template en particular a partir del QR generado en "/template/:id/qr/:requestCode"
+ */
 router.post(
 	"/:templateId/:requestCode",
 	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),

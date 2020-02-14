@@ -6,10 +6,10 @@ const UserService = require("../services/UserService");
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 
-/*
-	Genera un usuario para el issuer
-	(inseguro: cualquiera puede llamarlo, se recomienda eliminarlo en la version final)
-*/
+/**
+ *	Genera un usuario para el issuer
+ *	(inseguro: cualquiera puede llamarlo, se recomienda eliminarlo en la version final)
+ */
 router.post(
 	"/",
 	Validator.validate([
@@ -33,10 +33,10 @@ router.post(
 	}
 );
 
-/*
-	Valida que la contraseña se corresponda con la del usuario,
-	no genera ningùn token ni informaciòn ùtil.
-*/
+/**
+ *	Valida que la contraseña se corresponda con la del usuario,
+ *	no genera ningùn token ni informaciòn ùtil.
+ */
 router.post(
 	"/login",
 	Validator.validate([

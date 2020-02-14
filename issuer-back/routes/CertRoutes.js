@@ -8,6 +8,9 @@ const CertService = require("../services/CertService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 
+/**
+ *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
+ */
 router.get(
 	"/all",
 	Validator.validate([
@@ -38,6 +41,9 @@ router.get(
 	}
 );
 
+/**
+ *	retorna un certificado a partir de su id
+ */
 router.get(
 	"/:id",
 	Validator.validate([
@@ -69,6 +75,9 @@ router.get(
 	}
 );
 
+/**
+ * 	crea el jwt y lo envia al didi-server para ser guardado en mouro
+ */
 router.post(
 	"/:id/emmit",
 	Validator.validate([
@@ -281,6 +290,9 @@ const generateCertificate = async function(credentials, template, cert, part) {
 	}
 };
 
+/**
+ * Genera un nuevo certificado a partir de la data y el modelo de certificado
+ */
 router.post(
 	"/",
 	Validator.validate([
@@ -332,6 +344,9 @@ router.post(
 	}
 );
 
+/**
+ * Modifica un certificado con los datos recibidos
+ */
 router.put(
 	"/:id",
 	Validator.validate([
@@ -371,6 +386,9 @@ router.put(
 	}
 );
 
+/**
+ * Marca un certificado como borrado
+ */
 router.delete(
 	"/:id",
 	Validator.validate([
