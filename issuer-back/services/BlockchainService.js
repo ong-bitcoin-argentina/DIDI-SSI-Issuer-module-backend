@@ -4,6 +4,8 @@ const { delegateTypes } = require("ethr-did-resolver");
 const regName = delegateTypes.Secp256k1SignatureAuthentication2018;
 // console.log(regName);
 
+const Messages = require("../constants/Messages");
+
 const DidRegistryContract = require("ethr-did-registry");
 var Tx = require("ethereumjs-tx");
 
@@ -58,20 +60,28 @@ const makeSignedTransaction = async function(bytecode, credentials) {
 
 // realiza una delegacion de "userDID" a "otherDID"
 module.exports.addDelegate = async function(userDID, credentials, otherDID) {
-	const contract = getContract(credentials);
-	const bytecode = await contract.methods
-		.addDelegate(userDID, regName, otherDID, Constants.BLOCKCHAIN.DELEGATE_DURATION)
-		.encodeABI();
-	const result = await makeSignedTransaction(bytecode, credentials, otherDID);
-	return result;
+	try {
+		const contract = getContract(credentials);
+		const bytecode = await contract.methods
+			.addDelegate(userDID, regName, otherDID, Constants.BLOCKCHAIN.DELEGATE_DURATION)
+			.encodeABI();
+		const result = await makeSignedTransaction(bytecode, credentials, otherDID);
+		return 	Promise.resolve(result);
+	} catch(err) {
+		return Promise.reject(Messages.DELEGATE.ERR.DELEGATE);
+	}
 };
 
 // anula la delegacion de "userDID" a "otherDID" de existir esta
 module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
-	const contract = getContract(credentials);
-	const bytecode = await contract.methods.revokeDelegate(userDID, regName, otherDID).encodeABI();
-	const result = await makeSignedTransaction(bytecode, credentials, otherDID);
-	return result;
+	try {
+		const contract = getContract(credentials);
+		const bytecode = await contract.methods.revokeDelegate(userDID, regName, otherDID).encodeABI();
+		const result = await makeSignedTransaction(bytecode, credentials, otherDID);
+		return 	Promise.resolve(result);
+	} catch(err) {
+		return Promise.reject(Messages.DELEGATE.ERR.DELEGATE_DELETE);
+	}
 };
 
 // retorna true si "userDID" realizo una delegacion de DID a "otherDID"

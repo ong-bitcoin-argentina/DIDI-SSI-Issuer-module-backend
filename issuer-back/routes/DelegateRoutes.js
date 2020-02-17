@@ -23,7 +23,10 @@ router.get(
 	async function(_, res) {
 		try {
 			const delegates = await DelegateService.getAll();
-			return ResponseHandler.sendRes(res, delegates);
+			const result = delegates.map(delegate => {
+				return { did: delegate.did, name: delegate.name };
+			});
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
@@ -65,8 +68,7 @@ router.post(
 
 			// registro autorizacion en la bd local
 			const delegate = await DelegateService.create(did, name);
-
-			return ResponseHandler.sendRes(res, delegate);
+			return ResponseHandler.sendRes(res, { did: delegate.did, name: delegate.name });
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
@@ -106,7 +108,7 @@ router.delete(
 			// registro revocacion en la bd local
 			const delegate = await DelegateService.delete(did);
 
-			return ResponseHandler.sendRes(res, delegate);
+			return ResponseHandler.sendRes(res, { did: delegate.did, name: delegate.name });
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

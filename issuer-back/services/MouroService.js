@@ -56,7 +56,7 @@ module.exports.createShareRequest = async function(claims, cb) {
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(err);
+		return Promise.reject(Messages.SHARE_REQ.ERR.CREATE);
 	}
 };
 
@@ -155,6 +155,6 @@ module.exports.sendShareRequest = async function(did, cert) {
 		return jsonResp.status === "error" ? Promise.reject(jsonResp) : Promise.resolve(jsonResp.data);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(err);
+		return Promise.reject(Messages.SHARE_REQ.ERR.SEND);
 	}
 };
