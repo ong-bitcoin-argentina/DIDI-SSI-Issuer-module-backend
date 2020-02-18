@@ -66,8 +66,9 @@ module.exports.addDelegate = async function(userDID, credentials, otherDID) {
 			.addDelegate(userDID, regName, otherDID, Constants.BLOCKCHAIN.DELEGATE_DURATION)
 			.encodeABI();
 		const result = await makeSignedTransaction(bytecode, credentials, otherDID);
-		return 	Promise.resolve(result);
-	} catch(err) {
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
 		return Promise.reject(Messages.DELEGATE.ERR.DELEGATE);
 	}
 };
@@ -78,8 +79,9 @@ module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
 		const contract = getContract(credentials);
 		const bytecode = await contract.methods.revokeDelegate(userDID, regName, otherDID).encodeABI();
 		const result = await makeSignedTransaction(bytecode, credentials, otherDID);
-		return 	Promise.resolve(result);
-	} catch(err) {
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
 		return Promise.reject(Messages.DELEGATE.ERR.DELEGATE_DELETE);
 	}
 };
