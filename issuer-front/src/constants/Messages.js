@@ -70,6 +70,9 @@ module.exports = {
 			DELETE_CERT_TITLE: "Borrar Certificado",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
 			DELETE_DELEGATE_TITLE: "Borrar Delegado",
+			REVOKE_CERT_TITLE: "Revocar Certificado",
+			REVOKE_CONFIRMATION: "Esta seguro?",
+			REVOKE: "Revocar",
 			DELETE: "Borrar",
 			CREATE_DELEGATE_TITLE: "Crear Delegado",
 			CREATE_TEMPLATE_TITLE: "Crear Modelo",
@@ -108,6 +111,7 @@ module.exports = {
 			VIEW: "Ver",
 			EDIT: "Editar",
 			DELETE: "Borrar",
+			REVOKE: "Revocar",
 			EXIT: "Salir"
 		}
 	},

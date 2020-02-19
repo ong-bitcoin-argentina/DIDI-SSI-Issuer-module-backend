@@ -43,7 +43,12 @@ class Certificates extends Component {
 
 	// abrir dialogo de borrado de modelos
 	openDeleteDialog = () => {
-		if(this.deleteDialog) this.deleteDialog.open()
+		if (this.deleteDialog) this.deleteDialog.open();
+	};
+
+	// abrir dialogo de borrado de modelos
+	openRevokeDialog = () => {
+		if (this.revokeDialog) this.revokeDialog.open();
 	};
 
 	// mostrar pantalla de certificados
@@ -52,6 +57,7 @@ class Certificates extends Component {
 		return (
 			<div className="Certificates">
 				{this.renderDeleteDialog()}
+				{this.renderRevocationDialog()}
 				{this.renderSectionButtons()}
 				{!loading && this.renderTable()}
 				{this.renderButtons()}
@@ -68,6 +74,19 @@ class Certificates extends Component {
 				title={Messages.LIST.DIALOG.DELETE_CERT_TITLE}
 				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
 				confirm={Messages.LIST.DIALOG.DELETE}
+				onAccept={this.props.onDelete}
+			/>
+		);
+	};
+
+	// muestra el dialogo de revocacion
+	renderRevocationDialog = () => {
+		return (
+			<ConfirmationDialog
+				onRef={ref => (this.revokeDialog = ref)}
+				title={Messages.LIST.DIALOG.REVOKE_CERT_TITLE}
+				message={Messages.LIST.DIALOG.REVOKE_CONFIRMATION}
+				confirm={Messages.LIST.DIALOG.REVOKE}
 				onAccept={this.props.onDelete}
 			/>
 		);

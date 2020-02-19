@@ -13,7 +13,8 @@ class CertificateTableHelper {
 		onCertificateSelectToggle,
 		onCertificateEmmit,
 		onCertificateEdit,
-		onCertificateDelete
+		onCertificateDelete,
+		onCertificateRevoke
 	) {
 		const emmited = cert.emmitedOn;
 
@@ -65,6 +66,16 @@ class CertificateTableHelper {
 							}}
 						>
 							{Messages.LIST.BUTTONS.DELETE}
+						</div>
+					)}
+					{cert.emmitedOn && (
+						<div
+							className="DeleteAction"
+							onClick={() => {
+								onCertificateRevoke(cert._id);
+							}}
+						>
+							{Messages.LIST.BUTTONS.REVOKE}
 						</div>
 					)}
 				</div>

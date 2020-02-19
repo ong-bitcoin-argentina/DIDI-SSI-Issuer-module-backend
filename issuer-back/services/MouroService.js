@@ -50,7 +50,7 @@ module.exports.createShareRequest = async function(claims, cb) {
 			type: "shareReq"
 		};
 		const signer = SimpleSigner(Constants.ISSUER_SERVER_PRIVATE_KEY);
-		const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer });
+		const credentials = new Credentials({ did: "did:ethr:" + Constants.ISSUER_SERVER_DID, signer, resolver });
 		const result = await credentials.signJWT(payload);
 		if (Constants.DEBUGG) console.log(result);
 		return Promise.resolve(result);
