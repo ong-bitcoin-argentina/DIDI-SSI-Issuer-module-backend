@@ -10,7 +10,7 @@ const DidRegistryContract = require("ethr-did-registry");
 var Tx = require("ethereumjs-tx");
 
 var Web3 = require("web3");
-const provider = new Web3.providers.HttpProvider(Constants.BLOCKCHAIN.RSK_URL);
+const provider = new Web3.providers.HttpProvider(Constants.BLOCKCHAIN.BLOCK_CHAIN_URL);
 const web3 = new Web3(provider);
 
 // obtiene el contrato (ethr-did-registry)
