@@ -22,6 +22,7 @@ module.exports = {
 	},
 	DELEGATE: {
 		ERR: {
+			DELEGATE: { code: "DELEGATE", message:  "No se pudo realizar la delegación."},
 			CREATE: { code: "DELEGATE_CREATE", message: "El delegado no pudo ser creado." },
 			GET: { code: "DELEGATE_GET", message: "El delegado no pudo ser obtenido." },
 			DELETE: { code: "DELEGATE_DELETE", message: "El delegado no pudo ser borrado." }
@@ -51,6 +52,12 @@ module.exports = {
 			DELETE: { code: "PARTICIPANT_DELETE", message: "El modelo de participante no pudo ser borrado." }
 		}
 	},
+	SHARE_REQ: {
+		ERR: {
+			CREATE: { code: "SHARE_REQ_CREATE", message: "El pedido de certificados no pudo ser creado." },
+			SEND: { code: "SHARE_REQ_SEND", message: "El pedido de certificados no pudo ser enviado." }
+		}
+	},
 	TEMPLATE: {
 		ERR: {
 			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado." },
@@ -64,7 +71,7 @@ module.exports = {
 		VERIFIED: "Certificado verificado",
 		SAVED: "Certificado guardado",
 		ERR: {
-			VERIFY: { code: "CERT_VERIFY_ERROR", message: "Error al validar la creadencial." }
+			VERIFY: { code: "CERT_VERIFY_ERROR", message: "Error al validar la credencial." }
 		},
 		CERT_FIELDS: {
 			NAME: "CERTIFICADO O CURSO",

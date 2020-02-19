@@ -76,7 +76,136 @@ router.get(
 );
 
 /**
- * 	crea el jwt y lo envia al didi-server para ser guardado en mouro
+ * Genera un nuevo certificado a partir de la data y el modelo de certificado
+ */
+router.post(
+	"/",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		},
+		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "data",
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
+		},
+		{
+			name: "split",
+			validate: [Constants.VALIDATION_TYPES.IS_BOOLEAN]
+		},
+		{
+			name: "microCredentials",
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA],
+			optional: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		try {
+			const data = JSON.parse(req.body.data);
+			const templateId = req.body.templateId;
+			const split = req.body.split;
+			const microCredentials = req.body.microCredentials ? req.body.microCredentials : [];
+
+			const result = [];
+			for (let participantData of data.participant) {
+				let cert;
+				const certData = {
+					cert: data.cert,
+					participant: [participantData],
+					others: data.others
+				};
+
+				cert = await CertService.create(certData, templateId, split, microCredentials);
+				if (cert) result.push(cert);
+			}
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			console.log(err);
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ * Modifica un certificado con los datos recibidos
+ */
+router.put(
+	"/:id",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		},
+		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "data",
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_DATA]
+		},
+		{
+			name: "split",
+			validate: [Constants.VALIDATION_TYPES.IS_BOOLEAN]
+		},
+		{
+			name: "microCredentials",
+			validate: [Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA],
+			optional: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		const data = JSON.parse(req.body.data);
+		const split = req.body.split;
+		const microCredentials = req.body.microCredentials;
+
+		try {
+			const cert = await CertService.edit(id, data, split, microCredentials);
+			return ResponseHandler.sendRes(res, cert);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ * Marca un certificado como borrado y lo revoca en caso de haber sido emitido (no implementado aun)
+ */
+router.delete(
+	"/:id",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+
+		try {
+			const cert = await CertService.delete(id);
+			const did = cert.data.participant[0][0].value;
+
+			const calls = [];
+			for (let jwt of cert.jwts) {
+				calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
+			}
+
+			await Promise.all(calls);
+			return ResponseHandler.sendRes(res, cert);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ * permite crear un certificado y enviarlo al didi-server para ser emitido
  */
 router.post(
 	"/:id/emmit",
@@ -290,9 +419,6 @@ const generateCertificate = async function(credentials, template, cert, part) {
 	}
 };
 
-/**
- * Genera un nuevo certificado a partir de la data y el modelo de certificado
- */
 router.post(
 	"/",
 	Validator.validate([
@@ -344,9 +470,6 @@ router.post(
 	}
 );
 
-/**
- * Modifica un certificado con los datos recibidos
- */
 router.put(
 	"/:id",
 	Validator.validate([
@@ -379,39 +502,6 @@ router.put(
 
 		try {
 			const cert = await CertService.edit(id, data, split, microCredentials);
-			return ResponseHandler.sendRes(res, cert);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-/**
- * Marca un certificado como borrado
- */
-router.delete(
-	"/:id",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const id = req.params.id;
-
-		try {
-			const cert = await CertService.delete(id);
-			const did = cert.data.participant[0][0].value;
-
-			const calls = [];
-			for (let jwt of cert.jwts) {
-				calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
-			}
-
-			await Promise.all(calls);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

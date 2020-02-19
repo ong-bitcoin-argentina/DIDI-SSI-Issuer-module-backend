@@ -224,6 +224,14 @@ class Main extends Component {
 		);
 	};
 
+	// abrir dialogo de confirmacion para revocacion de certificados
+	onCertificateRevoke = id => {
+		if (this.certificatesSection) {
+			this.setState({ selectedCertId: id });
+			this.certificatesSection.openRevokeDialog();
+		}
+	};
+
 	// abrir dialogo de confirmacion para borrado de certificados
 	onCertificateDeleteDialogOpen = id => {
 		if (this.certificatesSection) {
@@ -301,7 +309,8 @@ class Main extends Component {
 				this.onCertificateSelectToggle,
 				this.onCertificateEmmit,
 				this.onCertificateEdit,
-				this.onCertificateDeleteDialogOpen
+				this.onCertificateDeleteDialogOpen,
+				this.onCertificateRevoke
 			);
 		});
 		const certColumns = CertificateTableHelper.getCertColumns(
