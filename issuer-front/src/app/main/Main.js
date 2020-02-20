@@ -134,6 +134,19 @@ class Main extends Component {
 				console.log(err);
 			}
 		);
+
+		DelegateService.getIssuerName(
+			token,
+			function(name) {
+				self.setState({
+					issuerName: name
+				});
+			},
+			function(err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
 	}
 
 	// seleccionar certificado a pedir para el participante
@@ -617,6 +630,25 @@ class Main extends Component {
 		);
 	};
 
+	// renombrar issuer (nombre que aparecera en los certificados emitidos)
+	onIssuerRename = data => {
+		const name = data.name;
+		const token = Cookie.get("token");
+		const self = this;
+		self.setState({ loading: true });
+		DelegateService.changeIssuerName(
+			token,
+			name,
+			async function(name) {
+				self.setState({ error: false, issuerName: name });
+			},
+			function(err) {
+				self.setState({ error: err, selectedDelegateDid: undefined });
+				console.log(err);
+			}
+		);
+	};
+
 	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
@@ -684,8 +716,10 @@ class Main extends Component {
 						selected={this.state.tabIndex === 3}
 						delegates={this.state.delegates}
 						columns={this.state.delegateColumns}
+						onRename={this.onIssuerRename}
 						onCreate={this.onDelegateCreate}
 						onDelete={this.onDelegateDelete}
+						issuerName={this.state.issuerName}
 						error={this.state.error}
 						onLogout={this.onLogout}
 					/>

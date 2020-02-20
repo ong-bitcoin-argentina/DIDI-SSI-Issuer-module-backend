@@ -55,7 +55,9 @@ module.exports = {
 		DELEGATE: {
 			CREATE: API + "/delegate",
 			DELETE: API + "/delegate",
-			GET_ALL: API + "/delegate/all"
+			GET_ALL: API + "/delegate/all",
+			GET_NAME: API + "/delegate/name",
+			CHANGE_NAME: API + "/delegate/name"
 		}
 	},
 	ROUTES: {

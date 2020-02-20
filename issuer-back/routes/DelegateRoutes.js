@@ -55,15 +55,11 @@ router.post(
 		const name = req.body.name;
 		const did = req.body.did;
 		try {
-			// saco el ethr:did: si esta en ese formato
-			let cleanDid = did.split(":");
-			cleanDid = cleanDid[cleanDid.length - 1];
-
 			// autorizo en la blockchain
 			await BlockchainService.addDelegate(
 				Constants.ISSUER_SERVER_DID,
 				{ from: Constants.ISSUER_SERVER_DID, key: Constants.ISSUER_SERVER_PRIVATE_KEY },
-				cleanDid
+				did
 			);
 
 			// registro autorizacion en la bd local
@@ -95,20 +91,72 @@ router.delete(
 	async function(req, res) {
 		const did = req.body.did;
 		try {
-			let cleanDid = did.split(":");
-			cleanDid = cleanDid[cleanDid.length - 1];
-
 			// revoco autorizacion en la blockchain
 			await BlockchainService.removeDelegate(
 				Constants.ISSUER_SERVER_DID,
 				{ from: Constants.ISSUER_SERVER_DID, key: Constants.ISSUER_SERVER_PRIVATE_KEY },
-				cleanDid
+				did
 			);
 
 			// registro revocacion en la bd local
 			const delegate = await DelegateService.delete(did);
 
 			return ResponseHandler.sendRes(res, { did: delegate.did, name: delegate.name });
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ *	Cambiar el nombre que se mostrara en todos los certificados que emita este issuer o sus delegados
+ */
+router.post(
+	"/name",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		},
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const name = req.body.name;
+
+		try {
+			// seteo el nombre en la blockchain
+			await BlockchainService.setDelegateName(
+				Constants.ISSUER_SERVER_DID,
+				{ from: Constants.ISSUER_SERVER_DID, key: Constants.ISSUER_SERVER_PRIVATE_KEY },
+				name
+			);
+			return ResponseHandler.sendRes(res, name);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ *	Retornar el nombre que se mostrara en todos los certificados que emita este issuer o sus delegados
+ */
+router.get(
+	"/name",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		try {
+			// seteo el nombre en la blockchain
+			const name = await BlockchainService.getDelegateName(Constants.ISSUER_SERVER_DID);
+			return ResponseHandler.sendRes(res, name);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

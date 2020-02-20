@@ -53,6 +53,7 @@ class Delegates extends Component {
 		const loading = this.state.loading;
 		return (
 			<div className="Admin">
+				{this.renderRenameDialog()}
 				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
 
@@ -63,6 +64,18 @@ class Delegates extends Component {
 			</div>
 		);
 	}
+
+	// muestra el dialogo de cambio de nombre para el issuer
+	renderRenameDialog = () => {
+		return (
+			<InputDialog
+				onRef={ref => (this.renameDialog = ref)}
+				title={Messages.LIST.DIALOG.ISSUER_RENAME_TITLE(this.props.issuerName)}
+				fieldNames={["name"]}
+				onAccept={this.props.onRename}
+			/>
+		);
+	};
 
 	// muestra el dialogo de creacion
 	renderCreateDialog = () => {
@@ -92,6 +105,7 @@ class Delegates extends Component {
 	// mostrar boton de creacion
 	renderSectionButtons = () => {
 		const selected = this.props.selected;
+		//const name = this.props.issuerName;
 		return (
 			<div className="HeadButtons">
 				{selected && (
@@ -105,6 +119,7 @@ class Delegates extends Component {
 						<div className="CreateDelegateButtonText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
 				)}
+				{/*name && <div className="IssuerName">{name}</div>*/}
 			</div>
 		);
 	};
@@ -133,6 +148,14 @@ class Delegates extends Component {
 	renderButtons = () => {
 		return (
 			<div className="AdminButtons">
+				<button
+					className="RenameButton"
+					onClick={() => {
+						if (this.renameDialog) this.renameDialog.open();
+					}}
+				>
+					{Messages.EDIT.BUTTONS.RENAME_ISSUER}
+				</button>
 				<button className="LogoutButton" onClick={this.onLogout}>
 					{Messages.EDIT.BUTTONS.EXIT}
 				</button>
