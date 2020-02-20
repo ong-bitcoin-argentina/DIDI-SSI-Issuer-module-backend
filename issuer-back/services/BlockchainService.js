@@ -21,6 +21,13 @@ const getContract = function(credentials) {
 	});
 };
 
+// quita la extension "did:ethr:"
+const cleanDid = function(did) {
+	let cleanDid = did.split(":");
+	cleanDid = cleanDid[cleanDid.length - 1];
+	return cleanDid;
+};
+
 // realiza una transaccion generica a un contrato ethereum
 const makeSignedTransaction = async function(bytecode, credentials) {
 	const getNonce = async function(web3, senderAddress) {
@@ -63,9 +70,9 @@ module.exports.addDelegate = async function(userDID, credentials, otherDID) {
 	try {
 		const contract = getContract(credentials);
 		const bytecode = await contract.methods
-			.addDelegate(userDID, regName, otherDID, Constants.BLOCKCHAIN.DELEGATE_DURATION)
+			.addDelegate(cleanDid(userDID), regName, cleanDid(otherDID), Constants.BLOCKCHAIN.DELEGATE_DURATION)
 			.encodeABI();
-		const result = await makeSignedTransaction(bytecode, credentials, otherDID);
+		const result = await makeSignedTransaction(bytecode, credentials);
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);
@@ -77,18 +84,62 @@ module.exports.addDelegate = async function(userDID, credentials, otherDID) {
 module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
 	try {
 		const contract = getContract(credentials);
-		const bytecode = await contract.methods.revokeDelegate(userDID, regName, otherDID).encodeABI();
-		const result = await makeSignedTransaction(bytecode, credentials, otherDID);
+		const bytecode = await contract.methods.revokeDelegate(cleanDid(userDID), regName, cleanDid(otherDID)).encodeABI();
+		const result = await makeSignedTransaction(bytecode, credentials);
 		return Promise.resolve(result);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.DELEGATE.ERR.DELEGATE_DELETE);
+		return Promise.reject(Messages.DELEGATE.ERR.DELETE);
 	}
 };
 
 // retorna true si "userDID" realizo una delegacion de DID a "otherDID"
 module.exports.validDelegate = async function(userDID, credentials, otherDID) {
-	const contract = getContract(credentials);
-	const result = await contract.methods.validDelegate(userDID, regName, otherDID).call(credentials);
-	return result;
+	try {
+		const contract = getContract(credentials);
+		const result = await contract.methods.validDelegate(cleanDid(userDID), regName, cleanDid(otherDID)).call(credentials);
+		return Promise.resolve(result);
+	} catch(err) {
+		console.log(err);
+		return Promise.reject(Messages.DELEGATE.ERR.GET);
+	}
+};
+
+// modifica el nombre que mostrara el delegado
+module.exports.setDelegateName = async function(issuerDID, credentials, name) {
+	try {
+		const contract = getContract(credentials);
+		const bytecode = await contract.methods
+			.setAttribute(cleanDid(issuerDID), web3.utils.fromAscii("name"), web3.utils.fromAscii(name), 99999999)
+			.encodeABI();
+		const result = await makeSignedTransaction(bytecode, credentials);
+		return Promise.resolve(result);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.DELEGATE.ERR.SET_NAME);
+	}
+};
+
+// obtiene el nombre que mostrara el delegado
+module.exports.getDelegateName = async function(issuerDID) {
+	try {
+		const did = cleanDid(issuerDID);
+		const contract = getContract({ from: did });
+		const events = await contract.getPastEvents("DIDAttributeChanged", { fromBlock: 0, toBlock: "latest" });
+
+		const name = web3.utils.fromAscii("name");
+		for (let event of events) {
+			if (
+				event.returnValues.identity === did &&
+				event.returnValues.validTo !== 0 &&
+				event.returnValues.name.substring(0, name.length) === name
+			) {
+				return Promise.resolve(web3.utils.toAscii(event.returnValues.value));
+			}
+		}
+		return Promise.resolve("");
+	} catch(err) {
+		console.log(err);
+		return Promise.reject(Messages.DELEGATE.ERR.GET_NAME);
+	}
 };

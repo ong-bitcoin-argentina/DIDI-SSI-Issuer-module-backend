@@ -53,6 +53,7 @@ module.exports = {
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
 			LOAD_PARTICIPANTS: "Cargar Participantes",
+			RENAME_ISSUER: "Renombrar Emisor",
 			CREATE: "NUEVO CAMPO",
 			SEND: "Enviar",
 			SAVE: "Guardar",
@@ -66,6 +67,9 @@ module.exports = {
 	},
 	LIST: {
 		DIALOG: {
+			ISSUER_RENAME_TITLE: name => {
+				return "Renombrar emisor (El nombre actual es '" + name + "'):";
+			},
 			DELETE_CONFIRMATION: "Esta seguro?",
 			DELETE_CERT_TITLE: "Borrar Certificado",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",

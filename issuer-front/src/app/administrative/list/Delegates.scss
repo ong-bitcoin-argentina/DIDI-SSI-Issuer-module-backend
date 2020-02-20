@@ -13,5 +13,17 @@
 }
 
 .CreateDelegateButtonText {
-	margin-top: 5px;	
+	margin-top: 5px;
+}
+
+.RenameButton {
+	width: 110px;
+}
+
+.IssuerName {
+	color: $BackgroundText;
+	size: 40px;
+	align-self: flex-end;
+	margin-left: 10px;
+	margin-bottom: 5px;
 }

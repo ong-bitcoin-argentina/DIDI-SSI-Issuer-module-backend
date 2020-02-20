@@ -76,4 +76,53 @@ export default class DelegateService {
 			})
 			.catch(err => errCb(err));
 	}
+
+	static getIssuerName(token, cb, errCb) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		fetch(Constants.API_ROUTES.DELEGATE.GET_NAME, data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
+	static changeIssuerName(token, name, cb, errCb) {
+		const data = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name: name
+			})
+		};
+
+		fetch(Constants.API_ROUTES.DELEGATE.CHANGE_NAME, data)
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
 }
