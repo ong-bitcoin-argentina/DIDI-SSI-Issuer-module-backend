@@ -97,9 +97,11 @@ module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
 module.exports.validDelegate = async function(userDID, credentials, otherDID) {
 	try {
 		const contract = getContract(credentials);
-		const result = await contract.methods.validDelegate(cleanDid(userDID), regName, cleanDid(otherDID)).call(credentials);
+		const result = await contract.methods
+			.validDelegate(cleanDid(userDID), regName, cleanDid(otherDID))
+			.call(credentials);
 		return Promise.resolve(result);
-	} catch(err) {
+	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.DELEGATE.ERR.GET);
 	}
@@ -128,17 +130,19 @@ module.exports.getDelegateName = async function(issuerDID) {
 		const events = await contract.getPastEvents("DIDAttributeChanged", { fromBlock: 0, toBlock: "latest" });
 
 		const name = web3.utils.fromAscii("name");
+		let res = "";
 		for (let event of events) {
 			if (
 				event.returnValues.identity === did &&
 				event.returnValues.validTo !== 0 &&
 				event.returnValues.name.substring(0, name.length) === name
 			) {
-				return Promise.resolve(web3.utils.toAscii(event.returnValues.value));
+				res = web3.utils.toAscii(event.returnValues.value);
+				console.log(res);
 			}
 		}
-		return Promise.resolve("");
-	} catch(err) {
+		return Promise.resolve(res);
+	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.DELEGATE.ERR.GET_NAME);
 	}
