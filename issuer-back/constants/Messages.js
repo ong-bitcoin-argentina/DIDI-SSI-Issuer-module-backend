@@ -22,6 +22,8 @@ module.exports = {
 	},
 	DELEGATE: {
 		ERR: {
+			SET_NAME: { code: "SET_NAME", message: "No se pudo actualizar el nombre del emisor." },
+			GET_NAME: { code: "GET_NAME", message: "No se pudo obtener el nombre del emisor." },
 			DELEGATE: { code: "DELEGATE", message: "No se pudo realizar la delegación." },
 			CREATE: { code: "DELEGATE_CREATE", message: "El delegado no pudo ser creado." },
 			GET: { code: "DELEGATE_GET", message: "El delegado no pudo ser obtenido." },
