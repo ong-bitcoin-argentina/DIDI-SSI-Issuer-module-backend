@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { withRouter, Redirect } from "react-router";
 import "./Participants.scss";
 
-import ReactTable from "react-table";
-import "react-table/react-table.css";
+import ReactTable from "react-table-6";
+import "react-table-6/react-table.css";
 
 import ReactFileReader from "react-file-reader";
 

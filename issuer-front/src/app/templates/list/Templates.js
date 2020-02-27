@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { withRouter } from "react-router";
 import "./Templates.scss";
 
-import ReactTable from "react-table";
-import "react-table/react-table.css";
+import ReactTable from "react-table-6";
+import "react-table-6/react-table.css";
 
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
