@@ -206,13 +206,13 @@ Participant.getGlobalParticipants = async function() {
 // retorna la data de participantes referida a un modelo de certificados particular
 Participant.getAllByTemplateId = async function(templateId) {
 	try {
-		const query = { templateId: ObjectId(templateId), "data.0": { $exists: true }, deleted: false };
+		const query = { templateId: ObjectId(templateId), /* "data.0": { $exists: true }, */ deleted: false };
 		const participants = await Participant.find(query);
 		for (let part of participants) {
 			await part.decryptData();
 		}
 
-		const queryGlobal = { templateId: { $exists: false }, "data.0": { $exists: true }, deleted: false };
+		const queryGlobal = { templateId: { $exists: false }, /* "data.0": { $exists: true },*/ deleted: false };
 		const globalParticipants = await Participant.find(queryGlobal);
 		for (let part of globalParticipants) {
 			await part.decryptData();
