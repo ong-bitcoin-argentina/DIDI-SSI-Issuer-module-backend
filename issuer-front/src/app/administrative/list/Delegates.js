@@ -6,8 +6,8 @@ import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 import Cookie from "js-cookie";
 
-import ReactTable from "react-table";
-import "react-table/react-table.css";
+import ReactTable from "react-table-6";
+import "react-table-6/react-table.css";
 
 import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
