@@ -27,3 +27,18 @@
 	float: left;
 	width: 100%;
 }
+
+.Actions {
+	.DeleteAction:hover {
+		cursor: pointer;
+		color: $Delete;
+	}
+	.EditAction:hover {
+		cursor: pointer;
+		color: $Edit;
+	}
+	.EmmitAction:hover {
+		cursor: pointer;
+		color: $Emmit;
+	}
+}
