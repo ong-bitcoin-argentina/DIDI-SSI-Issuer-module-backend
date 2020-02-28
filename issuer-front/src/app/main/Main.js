@@ -680,7 +680,10 @@ class Main extends Component {
 		}
 
 		return (
-			<Tabs selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
+			<Tabs
+				selectedIndex={this.state.tabIndex}
+				onSelect={tabIndex => this.setState({ tabIndex: tabIndex, error: false })}
+			>
 				{this.renderRenameDialog()}
 				{this.renderActions(this.state.loading)}
 
