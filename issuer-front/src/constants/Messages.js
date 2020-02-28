@@ -66,6 +66,9 @@ module.exports = {
 		}
 	},
 	LIST: {
+		MENU: {
+			TITLE: "Menu"
+		},
 		DIALOG: {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
@@ -92,7 +95,7 @@ module.exports = {
 			HAS_MAIL: "MAIL",
 			HAS_PERSONAL: "DATOS PERSONALES",
 			HAS_ADDRESS: "DOMICILIO",
-			TEMPLATE: "TEMPLATE DE CERTIFICADO",
+			TEMPLATE: "MODELO DE CERTIFICADO",
 			CERT: "CERTIFICADO",
 			LAST_NAME: "APELLIDO",
 			NAME: "NOMBRE",
@@ -125,11 +128,12 @@ module.exports = {
 		},
 		DID_SELECT: "DID",
 		CERTIFICATE_SELECT: "CERTIFICADO A PEDIR",
-		TEMPLATE_SELECT: "TEMPLATE DE CERTIFICADO",
+		TEMPLATE_SELECT: "MODELO DE CERTIFICADO",
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
-		TEMPLATE_SELECT_MESSAGE: "Elige el template para el que se pediran los datos:",
+		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de certificado para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
-		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el template elegido:",
+		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de certificado:",
+		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de certificado actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
 			REQUEST: "Pedir certificados",

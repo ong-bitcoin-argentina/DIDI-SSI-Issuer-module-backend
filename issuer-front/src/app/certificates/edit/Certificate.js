@@ -567,12 +567,6 @@ class Certificate extends Component {
 		}
 	};
 
-	// volver a login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	// si el boton de guardar esta deshabilitado
 	// (algun campo obligatorio sin llenar o el did tiene un formato incorrecto)
 	saveDisabled = () => {
@@ -914,9 +908,6 @@ class Certificate extends Component {
 					</button>
 					<button className="BackButton" onClick={this.onBack}>
 						{Messages.EDIT.BUTTONS.BACK}
-					</button>
-					<button className="LogoutButton" onClick={this.onLogout}>
-						{Messages.EDIT.BUTTONS.EXIT}
 					</button>
 				</div>
 			</div>

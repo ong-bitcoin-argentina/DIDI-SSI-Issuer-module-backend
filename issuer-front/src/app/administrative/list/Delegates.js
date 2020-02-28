@@ -36,12 +36,6 @@ class Delegates extends Component {
 		if (this.deleteDialog) this.deleteDialog.open();
 	};
 
-	// volver a login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	// mostrar pantalla de delegacion
 	render() {
 		if (!Cookie.get("token")) {
@@ -53,29 +47,15 @@ class Delegates extends Component {
 		return (
 			<div className={loading ? "Admin Loading" : "Admin"}>
 				{Spinner.render(loading)}
-				{this.renderRenameDialog()}
 				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
 
 				{this.renderSectionButtons(loading)}
 				{this.renderTable()}
-				{this.renderButtons(loading)}
 				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	}
-
-	// muestra el dialogo de cambio de nombre para el issuer
-	renderRenameDialog = () => {
-		return (
-			<InputDialog
-				onRef={ref => (this.renameDialog = ref)}
-				title={Messages.LIST.DIALOG.ISSUER_RENAME_TITLE(this.props.issuerName)}
-				fieldNames={["name"]}
-				onAccept={this.props.onRename}
-			/>
-		);
-	};
 
 	// muestra el dialogo de creacion
 	renderCreateDialog = () => {
@@ -141,26 +121,6 @@ class Delegates extends Component {
 					defaultPageSize={Constants.DELEGATES.TABLE.PAGE_SIZE}
 					minRows={Constants.DELEGATES.TABLE.MIN_ROWS}
 				/>
-			</div>
-		);
-	};
-
-	// mostrar botones al pie de la tabla
-	renderButtons = loading => {
-		return (
-			<div className="AdminButtons">
-				<button
-					className="RenameButton"
-					disabled={loading}
-					onClick={() => {
-						if (this.renameDialog) this.renameDialog.open();
-					}}
-				>
-					{Messages.EDIT.BUTTONS.RENAME_ISSUER}
-				</button>
-				<button className="LogoutButton" onClick={this.onLogout}>
-					{Messages.EDIT.BUTTONS.EXIT}
-				</button>
 			</div>
 		);
 	};

@@ -69,12 +69,6 @@ class Template extends Component {
 		}
 	};
 
-	// volver a login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	// agregar campo al template con la info proveniente del dialogo
 	createField = (data, type) => {
 		if (this.templateFieldAddDialog) this.templateFieldAddDialog.close();
@@ -346,9 +340,6 @@ class Template extends Component {
 				</button>
 				<button className="BackButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
-				</button>
-				<button className="LogoutButton" onClick={this.onLogout}>
-					{Messages.EDIT.BUTTONS.EXIT}
 				</button>
 			</div>
 		);

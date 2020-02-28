@@ -136,9 +136,6 @@ class Certificates extends Component {
 				<button disabled={loading} className="EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
 					{Messages.LIST.BUTTONS.EMMIT_SELECTED}
 				</button>
-				<button className="LogoutButton" onClick={this.props.onLogout}>
-					{Messages.LIST.BUTTONS.EXIT}
-				</button>
 			</div>
 		);
 	};

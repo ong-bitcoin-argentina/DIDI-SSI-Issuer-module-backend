@@ -31,3 +31,15 @@
 	background: $Background;
 	opacity: 0.85;
 }
+
+.ActionsMenu {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+}
+
+.ActionsMenuItems {
+	display: flex;
+	flex-direction: column;
+	
+}
