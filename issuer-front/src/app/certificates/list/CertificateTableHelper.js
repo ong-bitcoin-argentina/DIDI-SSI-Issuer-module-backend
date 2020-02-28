@@ -69,7 +69,7 @@ class CertificateTableHelper {
 							{Messages.LIST.BUTTONS.DELETE}
 						</div>
 					)}
-					{cert.emmitedOn && (
+					{/*cert.emmitedOn && (
 						<div
 							className="DeleteAction"
 							onClick={() => {
@@ -78,7 +78,7 @@ class CertificateTableHelper {
 						>
 							{Messages.LIST.BUTTONS.REVOKE}
 						</div>
-					)}
+						)*/}
 				</div>
 			)
 		};
