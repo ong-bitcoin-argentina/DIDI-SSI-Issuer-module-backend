@@ -260,6 +260,7 @@ export default class QrDialog extends Component {
 		return (
 			<div className="QrPetition">
 				<canvas id="canvas"></canvas>
+				<div className="QR_PD">{Messages.QR.QR_PD}</div>
 			</div>
 		);
 	}
