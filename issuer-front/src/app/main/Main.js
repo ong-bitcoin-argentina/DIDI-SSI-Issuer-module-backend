@@ -770,9 +770,7 @@ class Main extends Component {
 		const showMenu = this.state.showMenu;
 		return (
 			<div className="ActionsMenu">
-				<button disabled={loading} onClick={this.toggleShowMenu}>
-					{Messages.LIST.MENU.TITLE}
-				</button>
+				<button onClick={this.toggleShowMenu}>{Messages.LIST.MENU.TITLE}</button>
 				{showMenu && (
 					<div className="ActionsMenuItems">
 						<button
