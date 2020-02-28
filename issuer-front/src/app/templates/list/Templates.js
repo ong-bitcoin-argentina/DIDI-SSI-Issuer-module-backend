@@ -46,7 +46,6 @@ class Templates extends Component {
 				{this.renderDeleteDialog()}
 				{this.renderCreateDialog()}
 				{this.renderTable()}
-				{this.renderButtons(loading)}
 				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
@@ -115,15 +114,6 @@ class Templates extends Component {
 					minRows={Constants.TEMPLATES.TABLE.MIN_ROWS}
 				/>
 			</div>
-		);
-	};
-
-	// mostrar botones al pie de la tabla
-	renderButtons = loading => {
-		return (
-			<button className="LogoutButton" onClick={this.props.onLogout}>
-				{Messages.LIST.BUTTONS.EXIT}
-			</button>
 		);
 	};
 }

@@ -179,12 +179,6 @@ class Participants extends Component {
 		);
 	};
 
-	// volver a login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	// volver a listado de certificados
 	onBack = () => {
 		if (this.reqSentDialog) this.reqSentDialog.close();
@@ -279,12 +273,7 @@ class Participants extends Component {
 							{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
 						</button>
 					</ReactFileReader>
-					<button className="PartRequestButton" disabled={!this.canSendRequest(loading)} onClick={this.sendRequests}>
-						{Messages.QR.BUTTONS.REQUEST}
-					</button>
-				</div>
 
-				<div className="QrButtonsRow">
 					<button
 						className="QrDialogButton"
 						disabled={loading}
@@ -294,8 +283,11 @@ class Participants extends Component {
 					>
 						{Messages.QR.BUTTONS.QR_LOAD}
 					</button>
-					<button className="LogoutButton QrLogoutButton" onClick={this.onLogout}>
-						{Messages.EDIT.BUTTONS.EXIT}
+				</div>
+
+				<div className="QrButtonsRow">
+					<button className="PartRequestButton" disabled={!this.canSendRequest(loading)} onClick={this.sendRequests}>
+						{Messages.QR.BUTTONS.REQUEST}
 					</button>
 				</div>
 			</div>

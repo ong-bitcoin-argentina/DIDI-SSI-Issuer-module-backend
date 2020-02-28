@@ -27,12 +27,15 @@ import Delegates from "../administrative/list/Delegates";
 import DelegateService from "../../services/DelegateService";
 import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 
+import InputDialog from "../utils/dialogs/InputDialog";
+
 class Main extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
 			loading: false,
+			showMenu: false,
 			tabIndex: 1,
 			partTypes: ["tel", "mail", "personal", "address"],
 			parts: [],
@@ -662,12 +665,6 @@ class Main extends Component {
 		);
 	};
 
-	// a pantalla de login
-	onLogout = () => {
-		Cookie.set("token", "");
-		this.props.history.push(Constants.ROUTES.LOGIN);
-	};
-
 	// mostrar pantalla principal con tabs para las distintas secciones
 	render() {
 		if (!Cookie.get("token")) {
@@ -676,6 +673,9 @@ class Main extends Component {
 
 		return (
 			<Tabs selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
+				{this.renderRenameDialog()}
+				{this.renderActions(this.state.loading)}
+
 				<TabList>
 					<Tab disabled={this.state.loading && this.state.tabIndex !== 0}>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
 					<Tab disabled={this.state.loading && this.state.tabIndex !== 1}>{Messages.LIST.BUTTONS.TO_CERTIFICATES}</Tab>
@@ -693,7 +693,6 @@ class Main extends Component {
 						error={this.state.error}
 						onCreate={this.onTemplateCreate}
 						onDelete={this.onTemplateDelete}
-						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 				<TabPanel>
@@ -706,7 +705,6 @@ class Main extends Component {
 						onMultiEmmit={this.onCertificateMultiEmmit}
 						onDelete={this.onCertificateDelete}
 						error={this.state.error}
-						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 				<TabPanel>
@@ -719,7 +717,6 @@ class Main extends Component {
 						error={this.state.error}
 						onReload={this.onParticipantsReload}
 						selectedParticipants={this.state.selectedParticipants}
-						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 
@@ -735,12 +732,51 @@ class Main extends Component {
 						onDelete={this.onDelegateDelete}
 						issuerName={this.state.issuerName}
 						error={this.state.error}
-						onLogout={this.onLogout}
 					/>
 				</TabPanel>
 			</Tabs>
 		);
 	}
+
+	// muestra el dialogo de cambio de nombre para el issuer
+	renderRenameDialog = () => {
+		return (
+			<InputDialog
+				onRef={ref => (this.renameDialog = ref)}
+				title={Messages.LIST.DIALOG.ISSUER_RENAME_TITLE(this.state.issuerName)}
+				fieldNames={["name"]}
+				onAccept={this.onIssuerRename}
+			/>
+		);
+	};
+
+	toggleShowMenu = () => {
+		this.setState({ showMenu: !this.state.showMenu });
+	};
+
+	// mostrar botones al pie de la tabla
+	renderActions = loading => {
+		const showMenu = this.state.showMenu;
+		return (
+			<div className="ActionsMenu">
+				<button disabled={loading} onClick={this.toggleShowMenu}>
+					{Messages.LIST.MENU.TITLE}
+				</button>
+				{showMenu && (
+					<div className="ActionsMenuItems">
+						<button
+							disabled={loading}
+							onClick={() => {
+								if (this.renameDialog) this.renameDialog.open();
+							}}
+						>
+							{Messages.EDIT.BUTTONS.RENAME_ISSUER}
+						</button>
+					</div>
+				)}
+			</div>
+		);
+	};
 }
 
 export default withRouter(Main);

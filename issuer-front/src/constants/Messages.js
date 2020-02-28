@@ -66,6 +66,9 @@ module.exports = {
 		}
 	},
 	LIST: {
+		MENU: {
+			TITLE: "Menu"
+		},
 		DIALOG: {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
