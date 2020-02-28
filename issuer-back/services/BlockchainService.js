@@ -133,7 +133,7 @@ module.exports.getDelegateName = async function(issuerDID) {
 		let res = "";
 		for (let event of events) {
 			if (
-				event.returnValues.identity === did &&
+				event.returnValues.identity.toLowerCase() === did.toLowerCase() &&
 				event.returnValues.validTo !== 0 &&
 				event.returnValues.name.substring(0, name.length) === name
 			) {
