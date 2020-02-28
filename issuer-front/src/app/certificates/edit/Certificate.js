@@ -229,7 +229,8 @@ class Certificate extends Component {
 		const certData = this.state.cert.data.cert;
 		for (let key of Object.keys(certData)) {
 			if (!certData[key].mandatory) {
-				csv += certData[key].name + " (" + getSample(certData[key]) + "),";
+				csv += partData[key].name + " (" + getSample(certData[key]) + ")";
+				csv += partData[key].required ? "*," : ",";
 			}
 		}
 
@@ -237,7 +238,8 @@ class Certificate extends Component {
 		if (othersData) {
 			for (let key of Object.keys(othersData)) {
 				if (!othersData[key].mandatory) {
-					csv += othersData[key].name + " (" + getSample(othersData[key]) + "),";
+					csv += othersData[key].name + " (" + getSample(othersData[key]) + ")";
+					csv += othersData[key].required ? "*," : ",";
 				}
 			}
 		}
@@ -245,7 +247,8 @@ class Certificate extends Component {
 		const partData = this.state.cert.data.participant[0];
 		// for (let i = 0; i < 3; i++) {
 		for (let key of Object.keys(partData)) {
-			csv += partData[key].name + " (" + getSample(partData[key]) + "),";
+			csv += partData[key].name + " (" + getSample(partData[key]) + ")";
+			csv += partData[key].required ? "*," : ",";
 		}
 		//}
 
