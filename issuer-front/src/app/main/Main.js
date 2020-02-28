@@ -665,6 +665,12 @@ class Main extends Component {
 		);
 	};
 
+	// a pantalla de login
+	onLogout = () => {
+		Cookie.set("token", "");
+		this.props.history.push(Constants.ROUTES.LOGIN);
+	};
+
 	// mostrar pantalla principal con tabs para las distintas secciones
 	render() {
 		if (!Cookie.get("token")) {
@@ -772,6 +778,7 @@ class Main extends Component {
 						>
 							{Messages.EDIT.BUTTONS.RENAME_ISSUER}
 						</button>
+						<button onClick={this.onLogout}>{Messages.EDIT.BUTTONS.EXIT}</button>
 					</div>
 				)}
 			</div>
