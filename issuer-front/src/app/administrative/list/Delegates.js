@@ -9,6 +9,7 @@ import Cookie from "js-cookie";
 import ReactTable from "react-table-6";
 import "react-table-6/react-table.css";
 
+import Spinner from "../../utils/Spinner";
 import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
@@ -17,9 +18,7 @@ class Delegates extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			loading: false
-		};
+		this.state = {};
 	}
 
 	// generar referencia para abrir dialogo de borrado desde el padre
@@ -49,17 +48,18 @@ class Delegates extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const error = this.state.error;
-		const loading = this.state.loading;
+		const error = this.props.error || this.state.error;
+		const loading = this.props.loading;
 		return (
-			<div className="Admin">
+			<div className={loading ? "Admin Loading" : "Admin"}>
+				{Spinner.render(loading)}
 				{this.renderRenameDialog()}
 				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
 
-				{this.renderSectionButtons()}
-				{!loading && this.renderTable()}
-				{this.renderButtons()}
+				{this.renderSectionButtons(loading)}
+				{this.renderTable()}
+				{this.renderButtons(loading)}
 				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
@@ -103,13 +103,14 @@ class Delegates extends Component {
 	};
 
 	// mostrar boton de creacion
-	renderSectionButtons = () => {
+	renderSectionButtons = loading => {
 		const selected = this.props.selected;
 		//const name = this.props.issuerName;
 		return (
 			<div className="HeadButtons">
 				{selected && (
 					<button
+						disabled={loading}
 						className="CreateButton"
 						onClick={() => {
 							if (this.createDialog) this.createDialog.open();
@@ -145,11 +146,12 @@ class Delegates extends Component {
 	};
 
 	// mostrar botones al pie de la tabla
-	renderButtons = () => {
+	renderButtons = loading => {
 		return (
 			<div className="AdminButtons">
 				<button
 					className="RenameButton"
+					disabled={loading}
 					onClick={() => {
 						if (this.renameDialog) this.renameDialog.open();
 					}}

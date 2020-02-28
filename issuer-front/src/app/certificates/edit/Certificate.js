@@ -14,6 +14,7 @@ import Cookie from "js-cookie";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import Spinner from "../../utils/Spinner";
 import Select from "@material-ui/core/Select";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
@@ -479,7 +480,7 @@ class Certificate extends Component {
 	}
 
 	// agrega todos los participantes en 'parts' a la lista de participantes
-	onParticipantsAdd = (parts) => {
+	onParticipantsAdd = parts => {
 		const len = this.state.cert.data.participant.length;
 		let pos = 0;
 
@@ -647,8 +648,9 @@ class Certificate extends Component {
 		const loading = this.state.loading;
 		const error = this.state.error;
 		return (
-			<div className="Certificate">
-				{!loading && this.renderTemplateSelector()}
+			<div className={loading ? "Certificate Loading" : "Certificate"}>
+				{Spinner.render(loading)}
+				{this.renderTemplateSelector()}
 				{!loading && this.renderCert()}
 				{this.renderQrDialog()}
 				{this.renderButtons()}
@@ -661,6 +663,7 @@ class Certificate extends Component {
 	renderQrDialog = () => {
 		return (
 			<QrDialog
+				loading={this.state.loading}
 				onRef={ref => (this.qrDialog = ref)}
 				title={Messages.EDIT.DIALOG.QR.LOAD_BY_QR}
 				onDataReceived={this.onDataReceived}

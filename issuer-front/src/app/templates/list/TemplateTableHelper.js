@@ -3,7 +3,7 @@ import Messages from "../../../constants/Messages";
 
 class TemplateTableHelpers {
 	// genera las columnas de la tabla de modelos de certificados
-	static getTemplateData(template, onEdit, onDelete) {
+	static getTemplateData(template, onEdit, onDelete, isLoading) {
 		return {
 			_id: template._id,
 			name: template.name,
@@ -12,7 +12,7 @@ class TemplateTableHelpers {
 					<div
 						className="EditAction"
 						onClick={() => {
-							onEdit(template._id);
+							if (!isLoading()) onEdit(template._id);
 						}}
 					>
 						{Messages.LIST.BUTTONS.EDIT}
@@ -20,7 +20,7 @@ class TemplateTableHelpers {
 					<div
 						className="DeleteAction"
 						onClick={() => {
-							onDelete(template._id);
+							if (!isLoading()) onDelete(template._id);
 						}}
 					>
 						{Messages.LIST.BUTTONS.DELETE}

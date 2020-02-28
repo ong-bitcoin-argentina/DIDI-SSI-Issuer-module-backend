@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import "./QrDialog.scss";
 
 import Messages from "../../../constants/Messages";
-
+import Spinner from "../Spinner";
 import ConfirmationDialog from "./ConfirmationDialog";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -28,6 +27,7 @@ export default class QrDialog extends Component {
 
 		this.state = {
 			parts: [],
+			loading: false,
 			isOpen: false,
 			qrSet: false
 		};
@@ -151,13 +151,20 @@ export default class QrDialog extends Component {
 	render = () => {
 		const title = this.props.title;
 		const selected = this.props.template;
+		const loading = this.state.loading || this.props.loading;
 
 		return (
 			<div>
 				{this.renderQrLoadedDialog()}
-				<Dialog open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
+				<Dialog
+					className={loading ? "Loading QrDialog" : "QrDialog"}
+					open={this.state.isOpen}
+					onClose={this.close}
+					aria-labelledby="form-dialog-title"
+				>
 					<DialogTitle id="DialogTitle">{title}</DialogTitle>
 					<DialogContent>
+						{Spinner.render(loading)}
 						<div className="QrReq">
 							{!selected && this.renderTemplateSelector()}
 							{this.renderParticipantSelector()}

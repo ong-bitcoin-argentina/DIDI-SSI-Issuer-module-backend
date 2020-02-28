@@ -7,7 +7,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 
 class ParticipantsTableHelper {
 	// genera las columnas de la tabla de certificados
-	static getParticipantData(participant, selectedParticipants, onParticipantSelectToggle) {
+	static getParticipantData(participant, selectedParticipants, onParticipantSelectToggle, isLoading) {
 		return {
 			did: participant.did,
 			name: participant.name,
@@ -19,7 +19,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={selectedParticipants["tel"][participant.did]}
 								onChange={(_, value) => {
-									onParticipantSelectToggle(participant.did, "tel", value);
+									if (!isLoading()) onParticipantSelectToggle(participant.did, "tel", value);
 								}}
 							/>
 						</div>
@@ -34,7 +34,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={selectedParticipants["mail"][participant.did]}
 								onChange={(_, value) => {
-									onParticipantSelectToggle(participant.did, "mail", value);
+									if (!isLoading()) onParticipantSelectToggle(participant.did, "mail", value);
 								}}
 							/>
 						</div>
@@ -49,7 +49,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={selectedParticipants["personal"][participant.did]}
 								onChange={(_, value) => {
-									onParticipantSelectToggle(participant.did, "personal", value);
+									if (!isLoading()) onParticipantSelectToggle(participant.did, "personal", value);
 								}}
 							/>
 						</div>
@@ -64,7 +64,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={selectedParticipants["address"][participant.did]}
 								onChange={(_, value) => {
-									onParticipantSelectToggle(participant.did, "address", value);
+									if (!isLoading()) onParticipantSelectToggle(participant.did, "address", value);
 								}}
 							/>
 						</div>
@@ -75,7 +75,7 @@ class ParticipantsTableHelper {
 	}
 
 	// genera los headers para las columnas de la tabla de certificados
-	static getParticipantColumns(allSelectedParts, onParticipantSelectAllToggle) {
+	static getParticipantColumns(allSelectedParts, onParticipantSelectAllToggle, isLoading) {
 		return [
 			{
 				Header: Messages.LIST.TABLE.NAME,
@@ -89,7 +89,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={allSelectedParts["tel"]}
 								onChange={(_, value) => {
-									onParticipantSelectAllToggle("tel", value);
+									if (!isLoading()) onParticipantSelectAllToggle("tel", value);
 								}}
 							/>
 						</div>
@@ -105,7 +105,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={allSelectedParts["mail"]}
 								onChange={(_, value) => {
-									onParticipantSelectAllToggle("mail", value);
+									if (!isLoading()) onParticipantSelectAllToggle("mail", value);
 								}}
 							/>
 						</div>
@@ -121,7 +121,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={allSelectedParts["personal"]}
 								onChange={(_, value) => {
-									onParticipantSelectAllToggle("personal", value);
+									if (!isLoading()) onParticipantSelectAllToggle("personal", value);
 								}}
 							/>
 						</div>
@@ -137,7 +137,7 @@ class ParticipantsTableHelper {
 							<Checkbox
 								checked={allSelectedParts["address"]}
 								onChange={(_, value) => {
-									onParticipantSelectAllToggle("address", value);
+									if (!isLoading()) onParticipantSelectAllToggle("address", value);
 								}}
 							/>
 						</div>

@@ -3,7 +3,7 @@ import Messages from "../../../constants/Messages";
 
 class DelegatesTableHelpers {
 	// genera las columnas de la tabla de modelos de delegados
-	static getDelegatesData(delegate, onDelete) {
+	static getDelegatesData(delegate, onDelete, isLoading) {
 		return {
 			did: delegate.did,
 			name: delegate.name,
@@ -12,7 +12,7 @@ class DelegatesTableHelpers {
 					<div
 						className="DeleteAction"
 						onClick={() => {
-							onDelete(delegate.did);
+							if (!isLoading()) onDelete(delegate.did);
 						}}
 					>
 						{Messages.LIST.BUTTONS.DELETE}

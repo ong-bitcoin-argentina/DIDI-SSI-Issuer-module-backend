@@ -29,6 +29,10 @@
 }
 
 .Actions {
+	.DisabledAction {
+		color: $Blocked;
+	}
+
 	.DeleteAction:hover {
 		cursor: pointer;
 		color: $Delete;

@@ -82,7 +82,8 @@ class Main extends Component {
 							return TemplateTableHelper.getTemplateData(
 								template,
 								self.onTemplateEdit,
-								self.onTemplateDeleteDialogOpen
+								self.onTemplateDeleteDialogOpen,
+								() => self.state.loading
 							);
 						});
 						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
@@ -100,7 +101,11 @@ class Main extends Component {
 									token,
 									async function(delegates) {
 										delegates = delegates.map(delegate => {
-											return DelegatesTableHelper.getDelegatesData(delegate, self.onDelegateDeleteDialogOpen);
+											return DelegatesTableHelper.getDelegatesData(
+												delegate,
+												self.onDelegateDeleteDialogOpen,
+												() => self.state.loading
+											);
 										});
 										const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
 
@@ -197,13 +202,15 @@ class Main extends Component {
 			return ParticipantsTableHelper.getParticipantData(
 				participant,
 				this.state.selectedParticipants,
-				this.onParticipantSelectToggle
+				this.onParticipantSelectToggle,
+				() => this.state.loading
 			);
 		});
 
 		const participantColumns = ParticipantsTableHelper.getParticipantColumns(
 			this.state.allSelectedParticipants,
-			this.onParticipantSelectAllToggle
+			this.onParticipantSelectAllToggle,
+			() => this.state.loading
 		);
 
 		this.setState({
@@ -231,7 +238,7 @@ class Main extends Component {
 				});
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -272,7 +279,7 @@ class Main extends Component {
 				self.setState({ certificates: certificates, loading: false, error: false });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ error: err, loading: false });
 				console.log(err);
 			}
 		);
@@ -323,7 +330,8 @@ class Main extends Component {
 				this.onCertificateEmmit,
 				this.onCertificateEdit,
 				this.onCertificateDeleteDialogOpen,
-				this.onCertificateRevoke
+				this.onCertificateRevoke,
+				() => this.state.loading
 			);
 		});
 		const certColumns = CertificateTableHelper.getCertColumns(
@@ -333,7 +341,8 @@ class Main extends Component {
 			this.onEmmitedFilterChange,
 			this.onTemplateFilterChange,
 			this.onFirstNameFilterChange,
-			this.onLastNameFilterChange
+			this.onLastNameFilterChange,
+			() => this.state.loading
 		);
 
 		this.setState({
@@ -357,7 +366,7 @@ class Main extends Component {
 			cert.selected = <div></div>;
 		});
 
-		this.setState({ cert: this.state.certificates });
+		this.setState({ cert: this.state.certificates, loading: true });
 
 		const token = Cookie.get("token");
 		const self = this;
@@ -393,13 +402,13 @@ class Main extends Component {
 						</ul>
 					);
 
-					self.setState({ error: err });
+					self.setState({ error: err, loading: false });
 				} else {
 					self.componentDidMount();
 				}
 			})
 			.catch(function(err) {
-				self.setState({ error: err });
+				self.setState({ error: err, loading: false });
 			});
 	};
 
@@ -412,7 +421,7 @@ class Main extends Component {
 		cert.actions = <div></div>;
 		cert.select = <div></div>;
 
-		self.setState({ cert: self.state.certificates });
+		self.setState({ cert: self.state.certificates, loading: true });
 		CertificateService.emmit(
 			token,
 			id,
@@ -421,7 +430,7 @@ class Main extends Component {
 			},
 			function(err) {
 				console.log(err);
-				self.setState({ error: err });
+				self.setState({ error: err, loading: false });
 			}
 		);
 	};
@@ -451,7 +460,7 @@ class Main extends Component {
 				self.setState({ templates: templates, loading: false, error: false });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -479,7 +488,7 @@ class Main extends Component {
 				self.setState({ templates: templates, loading: false, error: false });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -597,13 +606,17 @@ class Main extends Component {
 			name,
 			async function(delegate) {
 				const delegates = self.state.delegates;
-				const data = DelegatesTableHelper.getDelegatesData(delegate, self.onDelegateDeleteDialogOpen);
+				const data = DelegatesTableHelper.getDelegatesData(
+					delegate,
+					self.onDelegateDeleteDialogOpen,
+					() => self.state.loading
+				);
 				delegates.push(data);
 				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
 				self.setState({ delegates: delegates, delegateColumns: delegateColumns, loading: false, error: false });
 			},
 			function(err) {
-				self.setState({ error: err });
+				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
@@ -624,7 +637,7 @@ class Main extends Component {
 				self.setState({ delegates: delegates, loading: false, error: false, selectedDelegateDid: undefined });
 			},
 			function(err) {
-				self.setState({ error: err, selectedDelegateDid: undefined });
+				self.setState({ loading: false, error: err, selectedDelegateDid: undefined });
 				console.log(err);
 			}
 		);
@@ -640,10 +653,10 @@ class Main extends Component {
 			token,
 			name,
 			async function(name) {
-				self.setState({ error: false, issuerName: name });
+				self.setState({ loading: false, error: false, issuerName: name });
 			},
 			function(err) {
-				self.setState({ error: err, selectedDelegateDid: undefined });
+				self.setState({ loading: false, error: err, selectedDelegateDid: undefined });
 				console.log(err);
 			}
 		);
@@ -713,6 +726,7 @@ class Main extends Component {
 				<TabPanel>
 					<Delegates
 						onRef={ref => (this.delegatesSection = ref)}
+						loading={this.state.loading}
 						selected={this.state.tabIndex === 3}
 						delegates={this.state.delegates}
 						columns={this.state.delegateColumns}
