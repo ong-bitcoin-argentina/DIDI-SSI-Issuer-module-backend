@@ -87,6 +87,7 @@ class CertificateTableHelper {
 	// genera los headers para las columnas de la tabla de certificados
 	static getCertColumns(
 		certificates,
+		selectedCerts,
 		allSelectedCerts,
 		onCertificateSelectAllToggle,
 		onEmmitedFilterChange,
@@ -163,6 +164,7 @@ class CertificateTableHelper {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.SELECT}</div>
+						<div>{"(" + Object.values(selectedCerts).filter(val => val).length + ")"}</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedCerts}

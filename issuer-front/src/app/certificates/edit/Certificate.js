@@ -229,8 +229,8 @@ class Certificate extends Component {
 		const certData = this.state.cert.data.cert;
 		for (let key of Object.keys(certData)) {
 			if (!certData[key].mandatory) {
-				csv += partData[key].name + " (" + getSample(certData[key]) + ")";
-				csv += partData[key].required ? "*," : ",";
+				csv += certData[key].name + " (" + getSample(certData[key]) + ")";
+				csv += certData[key].required ? "*," : ",";
 			}
 		}
 
