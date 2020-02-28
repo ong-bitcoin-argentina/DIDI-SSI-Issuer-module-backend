@@ -677,10 +677,10 @@ class Main extends Component {
 		return (
 			<Tabs selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
 				<TabList>
-					<Tab>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
-					<Tab>{Messages.LIST.BUTTONS.TO_CERTIFICATES}</Tab>
-					<Tab>{Messages.LIST.BUTTONS.TO_QR}</Tab>
-					<Tab>{Messages.LIST.BUTTONS.DELEGATES}</Tab>
+					<Tab disabled={this.state.loading && this.state.tabIndex !== 0}>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
+					<Tab disabled={this.state.loading && this.state.tabIndex !== 1}>{Messages.LIST.BUTTONS.TO_CERTIFICATES}</Tab>
+					<Tab disabled={this.state.loading && this.state.tabIndex !== 2}>{Messages.LIST.BUTTONS.TO_QR}</Tab>
+					<Tab disabled={this.state.loading && this.state.tabIndex !== 3}>{Messages.LIST.BUTTONS.DELEGATES}</Tab>
 				</TabList>
 
 				<TabPanel>
