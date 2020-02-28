@@ -5,6 +5,7 @@ import "./Template.scss";
 import Cookie from "js-cookie";
 import MaterialIcon from "material-icons-react";
 
+import Spinner from "../../utils/Spinner";
 import DataRenderer from "../../utils/DataRenderer";
 import TemplateFieldAddDialog from "../../utils/dialogs/TemplateFieldAddDialog";
 
@@ -156,7 +157,8 @@ class Template extends Component {
 		}
 		const loading = this.state.loading;
 		return (
-			<div className="Template">
+			<div className={loading ? "Loading Template" : "Template"}>
+				{Spinner.render(loading)}
 				{this.renderDialog()}
 				{!loading && this.renderTemplateType()}
 				{!loading && this.renderTemplateCategory()}

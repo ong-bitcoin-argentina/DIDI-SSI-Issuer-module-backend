@@ -8,6 +8,7 @@ import "react-table-6/react-table.css";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import Spinner from "../../utils/Spinner";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
@@ -16,9 +17,7 @@ class Templates extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			loading: true
-		};
+		this.state = {};
 	}
 
 	// generar referencia para abrirlo desde el padre
@@ -38,15 +37,17 @@ class Templates extends Component {
 
 	// mostrar pantalla de modelos de certificados
 	render() {
+		const error = this.props.error || this.state.error;
 		const loading = this.props.loading;
 		return (
-			<div className="Templates">
-				{this.renderSectionButtons()}
+			<div className={loading ? "Templates Loading" : "Templates"}>
+				{Spinner.render(loading)}
+				{this.renderSectionButtons(loading)}
 				{this.renderDeleteDialog()}
 				{this.renderCreateDialog()}
-				{!loading && this.renderTable()}
-				{this.renderButtons()}
-				<div className="errMsg">{this.props.error && this.props.error.message}</div>
+				{this.renderTable()}
+				{this.renderButtons(loading)}
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	}
@@ -77,13 +78,14 @@ class Templates extends Component {
 	};
 
 	// muestra boton de creacion de modelos de certificados
-	renderSectionButtons = () => {
+	renderSectionButtons = loading => {
 		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
 				{selected && (
 					<button
 						className="CreateButton"
+						disabled={loading}
 						onClick={() => {
 							if (this.createDialog) this.createDialog.open();
 						}}
@@ -117,7 +119,7 @@ class Templates extends Component {
 	};
 
 	// mostrar botones al pie de la tabla
-	renderButtons = () => {
+	renderButtons = loading => {
 		return (
 			<button className="LogoutButton" onClick={this.props.onLogout}>
 				{Messages.LIST.BUTTONS.EXIT}

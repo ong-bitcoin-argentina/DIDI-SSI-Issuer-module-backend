@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./TemplateFieldAddDialog.scss";
 
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
@@ -65,11 +64,6 @@ export default class TemplateFieldAddDialog extends Component {
 			type: undefined,
 			isOpen: false
 		});
-	};
-
-	// actualiza campo
-	updateField = (name, value) => {
-		// this.setState({ fields: fields });
 	};
 
 	// agregar campo al template con la info proveniente del dialogo

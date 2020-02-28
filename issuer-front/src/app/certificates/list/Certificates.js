@@ -8,6 +8,7 @@ import "react-table-6/react-table.css";
 import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
+import Spinner from "../../utils/Spinner";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
 
@@ -16,7 +17,6 @@ class Certificates extends Component {
 		super(props);
 
 		this.state = {
-			loading: false,
 			name: ""
 		};
 	}
@@ -53,15 +53,17 @@ class Certificates extends Component {
 
 	// mostrar pantalla de certificados
 	render() {
+		const error = this.props.error || this.state.error;
 		const loading = this.props.loading;
 		return (
-			<div className="Certificates">
+			<div className={loading ? "Certificates Loading" : "Certificates"}>
+				{Spinner.render(loading)}
 				{this.renderDeleteDialog()}
 				{this.renderRevocationDialog()}
-				{this.renderSectionButtons()}
-				{!loading && this.renderTable()}
-				{this.renderButtons()}
-				<div className="errMsg">{this.props.error && this.props.error.message}</div>
+				{this.renderSectionButtons(loading)}
+				{this.renderTable()}
+				{this.renderButtons(loading)}
+				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
 	}
@@ -93,12 +95,12 @@ class Certificates extends Component {
 	};
 
 	// muestra boton de creacion de certificados
-	renderSectionButtons = () => {
+	renderSectionButtons = loading => {
 		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
 				{selected && (
-					<button className="CreateButton" onClick={this.onCertificateCreate}>
+					<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
 						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
 					</button>
@@ -128,10 +130,10 @@ class Certificates extends Component {
 	};
 
 	// mostrar botones al pie de la tabla
-	renderButtons = () => {
+	renderButtons = loading => {
 		return (
 			<div className="CertButtons">
-				<button className="EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
+				<button disabled={loading} className="EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
 					{Messages.LIST.BUTTONS.EMMIT_SELECTED}
 				</button>
 				<button className="LogoutButton" onClick={this.props.onLogout}>

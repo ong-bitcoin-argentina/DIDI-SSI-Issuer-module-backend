@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./ConfirmationDialog.scss";
 
 import Messages from "../../../constants/Messages";
 

@@ -14,7 +14,8 @@ class CertificateTableHelper {
 		onCertificateEmmit,
 		onCertificateEdit,
 		onCertificateDelete,
-		onCertificateRevoke
+		onCertificateRevoke,
+		isLoading
 	) {
 		const emmited = cert.emmitedOn;
 
@@ -30,7 +31,7 @@ class CertificateTableHelper {
 						<Checkbox
 							checked={selectedCertificates[cert._id]}
 							onChange={(_, value) => {
-								onCertificateSelectToggle(cert._id, value);
+								if (!isLoading()) onCertificateSelectToggle(cert._id, value);
 							}}
 						/>
 					)}
@@ -42,7 +43,7 @@ class CertificateTableHelper {
 						<div
 							className="EmmitAction"
 							onClick={() => {
-								onCertificateEmmit(cert._id);
+								if (!isLoading()) onCertificateEmmit(cert._id);
 							}}
 						>
 							{Messages.LIST.BUTTONS.EMMIT}
@@ -52,7 +53,7 @@ class CertificateTableHelper {
 						<div
 							className="EditAction"
 							onClick={() => {
-								onCertificateEdit(cert._id);
+								if (!isLoading()) onCertificateEdit(cert._id);
 							}}
 						>
 							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
@@ -62,7 +63,7 @@ class CertificateTableHelper {
 						<div
 							className="DeleteAction"
 							onClick={() => {
-								onCertificateDelete(cert._id);
+								if (!isLoading()) onCertificateDelete(cert._id);
 							}}
 						>
 							{Messages.LIST.BUTTONS.DELETE}
@@ -72,7 +73,7 @@ class CertificateTableHelper {
 						<div
 							className="DeleteAction"
 							onClick={() => {
-								onCertificateRevoke(cert._id);
+								if (!isLoading()) onCertificateRevoke(cert._id);
 							}}
 						>
 							{Messages.LIST.BUTTONS.REVOKE}
@@ -91,7 +92,8 @@ class CertificateTableHelper {
 		onEmmitedFilterChange,
 		onTemplateFilterChange,
 		onFirstNameFilterChange,
-		onLastNameFilterChange
+		onLastNameFilterChange,
+		isLoading
 	) {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
 
@@ -165,7 +167,7 @@ class CertificateTableHelper {
 							<Checkbox
 								checked={allSelectedCerts}
 								onChange={(_, value) => {
-									onCertificateSelectAllToggle(value);
+									if (!isLoading()) onCertificateSelectAllToggle(value);
 								}}
 							/>
 						</div>

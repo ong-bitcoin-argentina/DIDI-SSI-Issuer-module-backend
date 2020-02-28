@@ -7,6 +7,7 @@ import "react-table-6/react-table.css";
 
 import ReactFileReader from "react-file-reader";
 
+import Spinner from "../utils/Spinner";
 import QrDialog from "../utils/dialogs/QrDialog";
 import ConfirmationDialog from "../utils/dialogs/ConfirmationDialog";
 
@@ -58,7 +59,9 @@ class Participants extends Component {
 	}
 
 	// retorna true si hay algun elemento en la tabla seleccionado
-	canSendRequest = () => {
+	canSendRequest = loading => {
+		if (loading) return false;
+
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
 
@@ -203,13 +206,15 @@ class Participants extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const error = this.state.error;
+		const error = this.props.error || this.state.error;
+		const loading = this.props.loading || this.state.loading;
 		return (
-			<div className="QrReq">
+			<div className={loading ? "QrReq Loading" : "QrReq"}>
+				{Spinner.render(loading)}
 				{this.renderRequestSentDialog()}
 				{this.renderQrDialog()}
 				{this.renderTable()}
-				{this.renderButtons()}
+				{this.renderButtons(loading)}
 				<div className="errMsg">{error && error.message}</div>
 			</div>
 		);
@@ -219,6 +224,7 @@ class Participants extends Component {
 	renderQrDialog = () => {
 		return (
 			<QrDialog
+				loading={this.state.loading}
 				onRef={ref => (this.qrDialog = ref)}
 				title={Messages.EDIT.DIALOG.QR.LOAD_BY_QR}
 				templates={this.props.templates}
@@ -260,18 +266,20 @@ class Participants extends Component {
 	};
 
 	// mostrar botones al pie de la tabla
-	renderButtons = () => {
+	renderButtons = loading => {
 		return (
 			<div className="QrRequestButtons">
 				<div className="PartRequestRow">
-					<button className="SampleCsv" onClick={this.createSampleCsv}>
+					<button disabled={loading} className="SampleCsv" onClick={this.createSampleCsv}>
 						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
 					</button>
 
 					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
-						<button className="LoadDidsFromCsv">{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}</button>
+						<button disabled={loading} className="LoadDidsFromCsv">
+							{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
+						</button>
 					</ReactFileReader>
-					<button className="PartRequestButton" disabled={!this.canSendRequest()} onClick={this.sendRequests}>
+					<button className="PartRequestButton" disabled={!this.canSendRequest(loading)} onClick={this.sendRequests}>
 						{Messages.QR.BUTTONS.REQUEST}
 					</button>
 				</div>
@@ -279,6 +287,7 @@ class Participants extends Component {
 				<div className="QrButtonsRow">
 					<button
 						className="QrDialogButton"
+						disabled={loading}
 						onClick={() => {
 							if (this.qrDialog) this.qrDialog.open();
 						}}
