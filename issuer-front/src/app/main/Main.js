@@ -211,6 +211,7 @@ class Main extends Component {
 		});
 
 		const participantColumns = ParticipantsTableHelper.getParticipantColumns(
+			this.state.selectedParticipants,
 			this.state.allSelectedParticipants,
 			this.onParticipantSelectAllToggle,
 			() => this.state.loading
@@ -339,6 +340,7 @@ class Main extends Component {
 		});
 		const certColumns = CertificateTableHelper.getCertColumns(
 			certificates,
+			selectedCerts,
 			allSelected,
 			this.onCertificateSelectAllToggle,
 			this.onEmmitedFilterChange,

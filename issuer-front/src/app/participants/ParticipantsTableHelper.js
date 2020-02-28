@@ -75,7 +75,7 @@ class ParticipantsTableHelper {
 	}
 
 	// genera los headers para las columnas de la tabla de certificados
-	static getParticipantColumns(allSelectedParts, onParticipantSelectAllToggle, isLoading) {
+	static getParticipantColumns(selectedParticipants, allSelectedParts, onParticipantSelectAllToggle, isLoading) {
 		return [
 			{
 				Header: Messages.LIST.TABLE.NAME,
@@ -85,6 +85,7 @@ class ParticipantsTableHelper {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.HAS_TEL}</div>
+						<div>{"(" + Object.values(selectedParticipants["tel"]).filter(val => val).length + ")"}</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["tel"]}
@@ -101,6 +102,7 @@ class ParticipantsTableHelper {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.HAS_MAIL}</div>
+						<div>{"(" + Object.values(selectedParticipants["mail"]).filter(val => val).length + ")"}</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["mail"]}
@@ -117,6 +119,7 @@ class ParticipantsTableHelper {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.HAS_PERSONAL}</div>
+						<div>{"(" + Object.values(selectedParticipants["personal"]).filter(val => val).length + ")"}</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["personal"]}
@@ -133,6 +136,7 @@ class ParticipantsTableHelper {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.HAS_ADDRESS}</div>
+						<div>{"(" + Object.values(selectedParticipants["address"]).filter(val => val).length + ")"}</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["address"]}
