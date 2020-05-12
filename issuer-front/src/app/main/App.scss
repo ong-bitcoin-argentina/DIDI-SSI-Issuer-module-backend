@@ -29,6 +29,11 @@
 }
 
 .Actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin-left: 10px;
+
 	.DisabledAction {
 		color: $Blocked;
 	}

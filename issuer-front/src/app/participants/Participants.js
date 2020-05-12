@@ -42,16 +42,16 @@ class Participants extends Component {
 		const self = this;
 		ParticipantService.getAllDids(
 			token,
-			function(dids) {
+			function (dids) {
 				self.setState({ dids: dids, error: false });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
 		);
 
-		interval = setInterval(function() {
+		interval = setInterval(function () {
 			if (self.state.requestSent) {
 				self.props.onReload();
 			}
@@ -92,9 +92,7 @@ class Participants extends Component {
 		const self = this;
 
 		for (let partId of Object.keys(requests)) {
-			const globalRequestCode = Math.random()
-				.toString(36)
-				.slice(-8);
+			const globalRequestCode = Math.random().toString(36).slice(-8);
 
 			if (self.reqSentDialog) self.reqSentDialog.open();
 
@@ -104,12 +102,12 @@ class Participants extends Component {
 				[partId],
 				requests[partId],
 				globalRequestCode,
-				function(_) {
+				function (_) {
 					self.setState({
 						requestSent: true
 					});
 				},
-				function(err) {
+				function (err) {
 					self.setState({ error: err });
 					console.log(err);
 				}
@@ -133,7 +131,7 @@ class Participants extends Component {
 	LoadDidsFromCsv = files => {
 		const self = this;
 		var reader = new FileReader();
-		reader.onload = function(e) {
+		reader.onload = function (e) {
 			const result = [];
 			const data = reader.result.split(/[\r\n,]+/);
 
@@ -158,7 +156,7 @@ class Participants extends Component {
 		ParticipantService.createNew(
 			token,
 			data,
-			function(dids) {
+			function (dids) {
 				const local = self.state.dids;
 				const acum = {};
 				for (let did of dids) acum[did.did] = did.name;
@@ -172,7 +170,7 @@ class Participants extends Component {
 				self.props.onReload();
 				self.setState({ loading: false, dids: result, error: false });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
@@ -245,7 +243,7 @@ class Participants extends Component {
 		const columns = this.props.columns ? this.props.columns : [];
 
 		return (
-			<div className="TemplateTable">
+			<div className="ParticipantsTable">
 				<ReactTable
 					sortable={false}
 					previousText={Messages.LIST.TABLE.PREV}

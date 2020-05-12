@@ -83,10 +83,6 @@
 	height: 45px;
 }
 
-.QrLogoutButton {
-	float: right;
-}
-
 .DidSelect {
 	width: 100%;
 }
@@ -117,4 +113,10 @@
 
 .DidLoaded {
 	margin-top: 50px;
+}
+
+.ParticipantsTable {
+	background-color: $TableBackground;
+	color: $TableText;
+	margin-bottom: 10px;
 }
