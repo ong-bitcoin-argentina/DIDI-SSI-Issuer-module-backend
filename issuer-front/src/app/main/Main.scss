@@ -97,6 +97,16 @@
 	}
 }
 
+.TemplateCreateButton {
+	width: 130px;
+	height: 40px;
+}
+
+.Actions {
+	display: flex;
+	flex-direction: column;
+}
+
 .CreateButtonText {
 	align-content: center;
 }
@@ -105,12 +115,6 @@
 	.CreateDelegateText {
 		margin-top: 5px !important;
 	}
-}
-
-
-.Actions {
-	display: flex;
-	flex-direction: column;
 }
 
 @media (max-width: 1150px) {
