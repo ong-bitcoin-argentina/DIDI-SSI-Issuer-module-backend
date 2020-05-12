@@ -69,16 +69,16 @@ class Certificate extends Component {
 	}
 
 	// carga modelos de certificados
-	getTemplates = function(token) {
+	getTemplates = function (token) {
 		const self = this;
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			TemplateService.getAll(
 				token,
-				function(templates) {
+				function (templates) {
 					self.setState({ templates: templates });
 					resolve();
 				},
-				function(err) {
+				function (err) {
 					reject(err);
 				}
 			);
@@ -86,20 +86,20 @@ class Certificate extends Component {
 	};
 
 	// carga certificado
-	getCert = function(token, id) {
+	getCert = function (token, id) {
 		const self = this;
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			CertificateService.get(
 				token,
 				id,
-				function(cert) {
+				function (cert) {
 					self.setState({
 						cert: cert,
 						error: false
 					});
 					resolve();
 				},
-				function(err) {
+				function (err) {
 					reject(err);
 				}
 			);
@@ -107,18 +107,18 @@ class Certificate extends Component {
 	};
 
 	// carga modelo de certificado
-	getTemplate = function(token) {
+	getTemplate = function (token) {
 		const self = this;
 
 		// si el cert fue emitido, no puedo editarlo
 		const action = this.state.cert.emmitedOn ? "viewing" : "editing";
 		const selectedTemplate = this.state.templates.find(template => template._id === this.state.cert.templateId);
 
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			TemplateService.get(
 				token,
 				selectedTemplate._id,
-				function(template) {
+				function (template) {
 					self.setState({
 						action: action,
 						selectedTemplate: selectedTemplate,
@@ -127,7 +127,7 @@ class Certificate extends Component {
 					});
 					resolve();
 				},
-				function(err) {
+				function (err) {
 					reject(err);
 				}
 			);
@@ -135,21 +135,21 @@ class Certificate extends Component {
 	};
 
 	// carga lista de participantes de los que se tiene info para el modelo de certificado
-	getParticipants = function() {
+	getParticipants = function () {
 		const self = this;
 		const token = Cookie.get("token");
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			ParticipantService.getAll(
 				token,
 				self.state.template._id,
-				function(participants) {
+				function (participants) {
 					self.setState({
 						participants: participants,
 						error: false
 					});
 					resolve();
 				},
-				function(err) {
+				function (err) {
 					reject(err);
 				}
 			);
@@ -200,7 +200,7 @@ class Certificate extends Component {
 
 	// genera csv de ejemplo para carga por csv
 	createSampleCsv = () => {
-		const getSample = function(dataElem) {
+		const getSample = function (dataElem) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
 					return "true/false";
@@ -215,7 +215,7 @@ class Certificate extends Component {
 					return "un número";
 				case Constants.TEMPLATES.TYPES.TEXT:
 					if (dataElem.name === Constants.TEMPLATES.MANDATORY_DATA.DID)
-						return "ej: did:eth:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
+						return "ej: did:ethr:0x5f6ed832a5fd0f0a58135f9695ea40af8666db31";
 					return "un texto";
 				case Constants.TEMPLATES.TYPES.PARAGRAPH:
 					return "un parrafo";
@@ -225,12 +225,14 @@ class Certificate extends Component {
 		};
 
 		let csv = "";
+		let firstLine = "";
 
 		const certData = this.state.cert.data.cert;
 		for (let key of Object.keys(certData)) {
 			if (!certData[key].mandatory) {
 				csv += certData[key].name + " (" + getSample(certData[key]) + ")";
 				csv += certData[key].required ? "*," : ",";
+				firstLine += ",";
 			}
 		}
 
@@ -240,6 +242,7 @@ class Certificate extends Component {
 				if (!othersData[key].mandatory) {
 					csv += othersData[key].name + " (" + getSample(othersData[key]) + ")";
 					csv += othersData[key].required ? "*," : ",";
+					firstLine += ",";
 				}
 			}
 		}
@@ -249,10 +252,13 @@ class Certificate extends Component {
 		for (let key of Object.keys(partData)) {
 			csv += partData[key].name + " (" + getSample(partData[key]) + ")";
 			csv += partData[key].required ? "*," : ",";
+			firstLine += ",";
 		}
 		//}
 
-		csv = csv.substring(0, csv.length - 1);
+		//csv = csv.substring(0, csv.length - 1);
+		firstLine = firstLine.substring(0, firstLine.length - 1);
+		csv += "\n" + firstLine;
 
 		const element = document.createElement("a");
 		const file = new Blob([csv], { type: "text/plain" });
@@ -263,7 +269,7 @@ class Certificate extends Component {
 	};
 
 	// validar que el valor sea un did
-	validateDID = function(value) {
+	validateDID = function (value) {
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
 		if (!value.match(regex)) {
 			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
@@ -276,10 +282,12 @@ class Certificate extends Component {
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadCertFromCsv = files => {
 		// retorna true si el dato es valido (valida segun el tipo de dato requerido en el modelo de certificado)
-		let validateValueMatchesType = function(dataElem, value) {
+		let validateValueMatchesType = function (dataElem, value) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
 					dataElem.value = value;
+					if (value === "TRUE") dataElem.value = true;
+					if (value === "FALSE") dataElem.value = true;
 					return true;
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
 					const res = dataElem.options.find(elem => elem === value + "");
@@ -316,7 +324,7 @@ class Certificate extends Component {
 		};
 
 		// asigna los datos a partir del csv, si en este hay datos validos que asignar
-		let assignElement = function(dataElem, data) {
+		let assignElement = function (dataElem, data) {
 			if (data === "" || data === " ") {
 				// if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
 			} else {
@@ -329,9 +337,16 @@ class Certificate extends Component {
 		const self = this;
 		var reader = new FileReader();
 		// iterar los campos del certificado y asignar los valores correspondiente del csv
-		reader.onload = function(e) {
+		reader.onload = function (e) {
 			const participant = [];
-			const data = reader.result.split(/[\r\n,]+/);
+
+			// remove first line (headers)
+			let data = reader.result.split(/[\r\n]+/);
+			data.shift();
+			data = data.join(",");
+
+			// get array from fields
+			data = data.split(",");
 
 			const certData = JSON.parse(JSON.stringify(self.state.cert.data.cert));
 			const othersData = JSON.parse(JSON.stringify(self.state.cert.data.others));
@@ -339,12 +354,18 @@ class Certificate extends Component {
 
 			const certDataKeys = Object.keys(certData);
 			const otherDataKeys = Object.keys(othersData);
+			const partDataKeys = Object.keys(partData);
 
-			const certDataCount = certDataKeys.length;
+			const certDataCount = certDataKeys.length - 1;
 			const otherDataCount = otherDataKeys.length;
-			const partDataCount = partData.length;
+			const partDataCount = partDataKeys.length;
 
-			let index = certDataCount + otherDataCount + partDataCount - 1;
+			if (certDataCount + otherDataCount + partDataCount > data.length) {
+				const err = Constants.CERTIFICATES.ERR.CSV_MISSING_FIELDS();
+				return self.setState({ error: err });
+			}
+
+			let index = 0;
 
 			for (let key of certDataKeys) {
 				const dataElem = certData[key];
@@ -365,8 +386,8 @@ class Certificate extends Component {
 			}
 
 			do {
-				const participantData = self.certDataFromTemplate(self.state.template, "participant");
-				for (let dataElem of participantData) {
+				const partData = self.certDataFromTemplate(self.state.template, "participant");
+				for (let dataElem of partData) {
 					if (data.length > index) {
 						const err = assignElement(dataElem, data[index]);
 						if (err) return self.setState({ error: err });
@@ -375,7 +396,7 @@ class Certificate extends Component {
 					}
 				}
 				index += certDataCount + otherDataCount - 1;
-				participant.push(participantData);
+				participant.push(partData);
 			} while (data.length > index);
 
 			self.state.cert.data.cert = certData;
@@ -413,11 +434,11 @@ class Certificate extends Component {
 		TemplateService.get(
 			token,
 			selectedTemplate._id,
-			function(template) {
+			function (template) {
 				ParticipantService.getAll(
 					token,
 					template._id,
-					function(participants) {
+					function (participants) {
 						self.setState({
 							selectedTemplate: selectedTemplate,
 							participants: participants,
@@ -428,13 +449,13 @@ class Certificate extends Component {
 							action: "creating"
 						});
 					},
-					function(err) {
+					function (err) {
 						self.setState({ error: err });
 						console.log(err);
 					}
 				);
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -450,7 +471,7 @@ class Certificate extends Component {
 		ParticipantService.get(
 			token,
 			did,
-			function(participant) {
+			function (participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
 
 				if (participant.data) {
@@ -475,7 +496,7 @@ class Certificate extends Component {
 					loading: false
 				});
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -508,11 +529,11 @@ class Certificate extends Component {
 		CertificateService.save(
 			token,
 			cert,
-			async function(_) {
+			async function (_) {
 				self.setState({ loading: false, error: false });
 				self.props.history.push(Constants.ROUTES.CERTIFICATES);
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -611,16 +632,14 @@ class Certificate extends Component {
 		const self = this;
 		self.setState({ loading: true, qr: undefined });
 
-		const code = Math.random()
-			.toString(36)
-			.slice(-8);
+		const code = Math.random().toString(36).slice(-8);
 
 		// obtener template
 		TemplateService.getQrPetition(
 			token,
 			self.state.template._id,
 			code,
-			function(qr) {
+			function (qr) {
 				self.setState({
 					requestCode: code,
 					qr: qr,
@@ -629,7 +648,7 @@ class Certificate extends Component {
 					error: false
 				});
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}

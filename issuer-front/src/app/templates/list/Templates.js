@@ -83,14 +83,14 @@ class Templates extends Component {
 			<div className="HeadButtons">
 				{selected && (
 					<button
-						className="CreateButton"
+						className="CreateButton TemplateCreateButton"
 						disabled={loading}
 						onClick={() => {
 							if (this.createDialog) this.createDialog.open();
 						}}
 					>
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
+						<div className="CreateButtonText TemplateCreateText">{Messages.LIST.BUTTONS.CREATE_TEMPLATE}</div>
 					</button>
 				)}
 			</div>

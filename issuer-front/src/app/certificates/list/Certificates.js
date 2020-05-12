@@ -102,7 +102,7 @@ class Certificates extends Component {
 				{selected && (
 					<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="CreateButtonText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
+						<div className="CreateButtonText EmmitCertText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
 					</button>
 				)}
 			</div>

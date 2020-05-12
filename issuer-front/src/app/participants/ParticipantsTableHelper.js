@@ -119,6 +119,7 @@ class ParticipantsTableHelper {
 				Header: (
 					<div>
 						<div>{Messages.LIST.TABLE.HAS_PERSONAL}</div>
+						<div>{Messages.LIST.TABLE.HAS_PERSONAL2}</div>
 						<div>{"(" + Object.values(selectedParticipants["personal"]).filter(val => val).length + ")"}</div>
 						<div className="Actions">
 							<Checkbox

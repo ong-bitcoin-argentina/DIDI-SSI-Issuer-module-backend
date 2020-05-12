@@ -16,14 +16,14 @@ router.get(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		}
+			isHead: true,
+		},
 	]),
 	Validator.checkValidationResult,
-	async function(_, res) {
+	async function (_, res) {
 		try {
 			const delegates = await DelegateService.getAll();
-			const result = delegates.map(delegate => {
+			const result = delegates.map((delegate) => {
 				return { did: delegate.did, name: delegate.name };
 			});
 			return ResponseHandler.sendRes(res, result);
@@ -42,16 +42,16 @@ router.post(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
+			isHead: true,
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
-		}
+			validate: [Constants.VALIDATION_TYPES.IS_STRING],
+		},
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const name = req.body.name;
 		const did = req.body.did;
 		try {
@@ -80,15 +80,15 @@ router.delete(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
+			isHead: true,
 		},
 		{
 			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
-		}
+			validate: [Constants.VALIDATION_TYPES.IS_STRING],
+		},
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const did = req.body.did;
 		try {
 			// revoco autorizacion en la blockchain
@@ -117,12 +117,12 @@ router.post(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
+			isHead: true,
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const name = req.body.name;
 
 		try {
@@ -148,15 +148,38 @@ router.get(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		}
+			isHead: true,
+		},
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		try {
 			// seteo el nombre en la blockchain
 			const name = await BlockchainService.getDelegateName(Constants.ISSUER_SERVER_DID);
 			return ResponseHandler.sendRes(res, name);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ *	Cambiar el nombre que se mostrara en todos los certificados que emita este issuer o sus delegados
+ */
+router.post(
+	"/didDelegationValid",
+	Validator.validate([{ name: "didDelegate", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		const didDelegate = req.body.didDelegate;
+		try {
+			// seteo el nombre en la blockchain
+			const result = await BlockchainService.validDelegate(
+				Constants.ISSUER_SERVER_DID,
+				{ from: Constants.ISSUER_SERVER_DID, key: Constants.ISSUER_SERVER_PRIVATE_KEY },
+				didDelegate
+			);
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

@@ -38,13 +38,13 @@ export default class QrDialog extends Component {
 		this.props.onRef(this);
 		const self = this;
 
-		interval = setInterval(function() {
+		interval = setInterval(function () {
 			if (self.state.qrSet) {
 				const token = Cookie.get("token");
 				ParticipantService.getNew(
 					token,
 					self.state.requestCode,
-					function(participant) {
+					function (participant) {
 						if (participant && self.state.qrSet) {
 							if (self.qrLoadedDialog) self.qrLoadedDialog.open();
 							self.close();
@@ -60,7 +60,7 @@ export default class QrDialog extends Component {
 							});
 						}
 					},
-					function(err) {
+					function (err) {
 						self.setState({ loading: false, error: err });
 						console.log(err);
 					}
@@ -102,9 +102,7 @@ export default class QrDialog extends Component {
 		const self = this;
 		self.setState({ loading: true, qr: undefined });
 
-		const code = Math.random()
-			.toString(36)
-			.slice(-8);
+		const code = Math.random().toString(36).slice(-8);
 
 		const template = self.props.template ? self.props.template : self.state.selectedTemplate;
 
@@ -113,7 +111,7 @@ export default class QrDialog extends Component {
 			token,
 			template._id,
 			code,
-			function(qr) {
+			function (qr) {
 				self.setState({
 					requestCode: code,
 					qr: qr,
@@ -122,18 +120,18 @@ export default class QrDialog extends Component {
 					error: false
 				});
 
-				setTimeout(function() {
+				setTimeout(function () {
 					// renderizar qr
 					const canvas = document.getElementById("canvas");
 					if (canvas) {
-						QRCode.toCanvas(canvas, qr, function(error) {
+						QRCode.toCanvas(canvas, qr, function (error) {
 							if (error) console.error(error);
 						});
 						self.setState({ qrSet: true });
 					}
 				}, 100);
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
@@ -273,6 +271,10 @@ export default class QrDialog extends Component {
 
 		return (
 			<div className="QrButtons">
+				<button className="CloseButton" onClick={self.close}>
+					{Messages.EDIT.BUTTONS.CANCEL}
+				</button>
+
 				{participants && participants.length > 0 && (
 					<button
 						className="QrButton"
@@ -290,9 +292,6 @@ export default class QrDialog extends Component {
 
 				<button className="QrButton" disabled={disabled} onClick={self.generateQrCode}>
 					{Messages.QR.BUTTONS.GENERATE}
-				</button>
-				<button className="CloseButton" onClick={self.close}>
-					{Messages.EDIT.BUTTONS.CANCEL}
 				</button>
 			</div>
 		);

@@ -73,14 +73,14 @@ class Main extends Component {
 		self.setState({ loading: true, tabIndex: tabIndex });
 		ParticipantService.getGlobal(
 			token,
-			async function(parts) {
+			async function (parts) {
 				const allSelectedParticipants = self.state.allSelectedParticipants;
 				const selectedParticipants = self.state.selectedParticipants;
 				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 
 				TemplateService.getAll(
 					token,
-					async function(templates) {
+					async function (templates) {
 						templates = templates.map(template => {
 							return TemplateTableHelper.getTemplateData(
 								template,
@@ -96,13 +96,13 @@ class Main extends Component {
 						});
 						CertificateService.getAll(
 							token,
-							async function(certs) {
+							async function (certs) {
 								const selectedCerts = self.state.selectedCerts;
 								self.updateSelectedCertsState(certs, selectedCerts);
 
 								DelegateService.getAll(
 									token,
-									async function(delegates) {
+									async function (delegates) {
 										delegates = delegates.map(delegate => {
 											return DelegatesTableHelper.getDelegatesData(
 												delegate,
@@ -119,25 +119,25 @@ class Main extends Component {
 											loading: false
 										});
 									},
-									function(err) {
+									function (err) {
 										self.setState({ error: err });
 										console.log(err);
 									}
 								);
 							},
-							function(err) {
+							function (err) {
 								self.setState({ error: err });
 								console.log(err);
 							}
 						);
 					},
-					function(err) {
+					function (err) {
 						self.setState({ error: err });
 						console.log(err);
 					}
 				);
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -145,12 +145,12 @@ class Main extends Component {
 
 		DelegateService.getIssuerName(
 			token,
-			function(name) {
+			function (name) {
 				self.setState({
 					issuerName: name
 				});
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -231,7 +231,7 @@ class Main extends Component {
 		self.setState({ loading: true });
 		ParticipantService.getGlobal(
 			token,
-			async function(parts) {
+			async function (parts) {
 				const allSelectedParticipants = self.state.allSelectedParticipants;
 				const selectedParticipants = self.state.selectedParticipants;
 				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
@@ -241,7 +241,7 @@ class Main extends Component {
 					loading: false
 				});
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
@@ -278,11 +278,11 @@ class Main extends Component {
 		CertificateService.delete(
 			token,
 			id,
-			async function(cert) {
+			async function (cert) {
 				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
 				self.setState({ certificates: certificates, loading: false, error: false });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err, loading: false });
 				console.log(err);
 			}
@@ -378,14 +378,14 @@ class Main extends Component {
 
 		let errors = [];
 		const promises = toEmmit.map(elem => {
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				CertificateService.emmit(
 					token,
 					elem,
-					async function(_) {
+					async function (_) {
 						resolve();
 					},
-					function(err) {
+					function (err) {
 						errors.push(err.message);
 						resolve();
 					}
@@ -394,7 +394,7 @@ class Main extends Component {
 		});
 
 		Promise.all(promises)
-			.then(function() {
+			.then(function () {
 				if (errors.length) {
 					let err = {};
 					err.message = (
@@ -412,7 +412,7 @@ class Main extends Component {
 					self.componentDidMount();
 				}
 			})
-			.catch(function(err) {
+			.catch(function (err) {
 				self.setState({ error: err, loading: false });
 			});
 	};
@@ -430,10 +430,10 @@ class Main extends Component {
 		CertificateService.emmit(
 			token,
 			id,
-			async function(_) {
+			async function (_) {
 				self.componentDidMount();
 			},
-			function(err) {
+			function (err) {
 				console.log(err);
 				self.setState({ error: err, loading: false });
 			}
@@ -454,17 +454,20 @@ class Main extends Component {
 		TemplateService.create(
 			token,
 			name,
-			async function(template) {
+			async function (template) {
 				const templates = self.state.templates;
 				const data = TemplateTableHelper.getTemplateData(
 					template,
 					self.onTemplateEdit,
-					self.onTemplateDeleteDialogOpen
+					self.onTemplateDeleteDialogOpen,
+					() => self.state.loading
 				);
 				templates.push(data);
-				self.setState({ templates: templates, loading: false, error: false });
+
+				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+				self.setState({ templates: templates, templateColumns: templateColumns, loading: false, error: false });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
@@ -488,11 +491,11 @@ class Main extends Component {
 		TemplateService.delete(
 			token,
 			id,
-			async function(template) {
+			async function (template) {
 				const templates = self.state.templates.filter(t => t._id !== template._id);
 				self.setState({ templates: templates, loading: false, error: false });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
@@ -609,7 +612,7 @@ class Main extends Component {
 			token,
 			did,
 			name,
-			async function(delegate) {
+			async function (delegate) {
 				const delegates = self.state.delegates;
 				const data = DelegatesTableHelper.getDelegatesData(
 					delegate,
@@ -620,7 +623,7 @@ class Main extends Component {
 				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
 				self.setState({ delegates: delegates, delegateColumns: delegateColumns, loading: false, error: false });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
 			}
@@ -637,11 +640,11 @@ class Main extends Component {
 		DelegateService.delete(
 			token,
 			did,
-			async function(delegate) {
+			async function (delegate) {
 				const delegates = self.state.delegates.filter(t => t.did !== delegate.did);
 				self.setState({ delegates: delegates, loading: false, error: false, selectedDelegateDid: undefined });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err, selectedDelegateDid: undefined });
 				console.log(err);
 			}
@@ -657,10 +660,10 @@ class Main extends Component {
 		DelegateService.changeIssuerName(
 			token,
 			name,
-			async function(name) {
+			async function (name) {
 				self.setState({ loading: false, error: false, issuerName: name });
 			},
-			function(err) {
+			function (err) {
 				self.setState({ loading: false, error: err, selectedDelegateDid: undefined });
 				console.log(err);
 			}

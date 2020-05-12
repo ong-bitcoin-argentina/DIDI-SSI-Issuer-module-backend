@@ -56,6 +56,11 @@ export default class ConfirmationDialog extends Component {
 					<div>{message}</div>
 				</DialogContent>
 				<DialogActions>
+					{!hideClose && (
+						<Button onClick={this.close} color="primary">
+							{Messages.LIST.DIALOG.CANCEL}
+						</Button>
+					)}
 					<Button
 						onClick={() => {
 							if (onAccept) onAccept();
@@ -65,11 +70,6 @@ export default class ConfirmationDialog extends Component {
 					>
 						{confirm}
 					</Button>
-					{!hideClose && (
-						<Button onClick={this.close} color="primary">
-							{Messages.LIST.DIALOG.CANCEL}
-						</Button>
-					)}
 				</DialogActions>
 			</Dialog>
 		);

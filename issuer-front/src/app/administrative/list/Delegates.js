@@ -97,7 +97,7 @@ class Delegates extends Component {
 						}}
 					>
 						<MaterialIcon icon={Constants.DELEGATES.ICONS.ADD_BUTTON} />
-						<div className="CreateDelegateButtonText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
+						<div className="CreateButtonText CreateDelegateText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
 				)}
 				{/*name && <div className="IssuerName">{name}</div>*/}

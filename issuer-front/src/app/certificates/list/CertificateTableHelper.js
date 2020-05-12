@@ -138,7 +138,12 @@ class CertificateTableHelper {
 				accessor: "certName"
 			},
 			{
-				Header: Messages.LIST.TABLE.EMISSION_DATE,
+				Header: (
+					<div>
+						<div>{Messages.LIST.TABLE.EMISSION_DATE}</div>
+						<div>{Messages.LIST.TABLE.EMISSION_DATE2}</div>
+					</div>
+				),
 				accessor: "createdOn"
 			},
 			{
