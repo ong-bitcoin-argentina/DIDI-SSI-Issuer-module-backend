@@ -96,6 +96,9 @@ export default class InputDialog extends Component {
 						})}
 				</DialogContent>
 				<DialogActions>
+					<Button onClick={this.close} color="primary">
+						{Messages.LIST.DIALOG.CANCEL}
+					</Button>
 					<Button
 						onClick={() => {
 							onAccept(this.state.fields);
@@ -105,9 +108,6 @@ export default class InputDialog extends Component {
 						color="primary"
 					>
 						{Messages.LIST.DIALOG.CREATE}
-					</Button>
-					<Button onClick={this.close} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
 					</Button>
 				</DialogActions>
 			</Dialog>

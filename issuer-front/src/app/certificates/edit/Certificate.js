@@ -31,7 +31,7 @@ class Certificate extends Component {
 
 		this.state = {
 			loading: false,
-			action: "viewing",
+			action: "viewing"
 		};
 	}
 
@@ -95,7 +95,7 @@ class Certificate extends Component {
 				function (cert) {
 					self.setState({
 						cert: cert,
-						error: false,
+						error: false
 					});
 					resolve();
 				},
@@ -112,7 +112,7 @@ class Certificate extends Component {
 
 		// si el cert fue emitido, no puedo editarlo
 		const action = this.state.cert.emmitedOn ? "viewing" : "editing";
-		const selectedTemplate = this.state.templates.find((template) => template._id === this.state.cert.templateId);
+		const selectedTemplate = this.state.templates.find(template => template._id === this.state.cert.templateId);
 
 		return new Promise(function (resolve, reject) {
 			TemplateService.get(
@@ -123,7 +123,7 @@ class Certificate extends Component {
 						action: action,
 						selectedTemplate: selectedTemplate,
 						template: template,
-						error: false,
+						error: false
 					});
 					resolve();
 				},
@@ -145,7 +145,7 @@ class Certificate extends Component {
 				function (participants) {
 					self.setState({
 						participants: participants,
-						error: false,
+						error: false
 					});
 					resolve();
 				},
@@ -157,37 +157,37 @@ class Certificate extends Component {
 	};
 
 	// generar certificado a partir del template seleccionado en el combo
-	certFromTemplate = (template) => {
+	certFromTemplate = template => {
 		const data = {
 			cert: this.certDataFromTemplate(template, "cert"),
 			participant: [this.certDataFromTemplate(template, "participant")],
-			others: this.certDataFromTemplate(template, "others"),
+			others: this.certDataFromTemplate(template, "others")
 		};
 
 		return {
 			templateId: template._id,
 			split: false,
 			microCredentials: [],
-			data: data,
+			data: data
 		};
 	};
 
 	// mapear data del certificado a partir del modelo
 	certDataFromTemplate = (template, field) => {
-		return template.data[field].map((data) => {
+		return template.data[field].map(data => {
 			return {
 				name: data.name,
 				type: data.type,
 				options: data.options,
 				value: data.defaultValue ? data.defaultValue : "",
 				required: data.required,
-				mandatory: data.mandatory,
+				mandatory: data.mandatory
 			};
 		});
 	};
 
 	// respuesta del qr -> actualizar participante con los datos recibidos
-	onDataReceived = (parts) => {
+	onDataReceived = parts => {
 		this.onParticipantsAdd(parts);
 	};
 
@@ -206,7 +206,7 @@ class Certificate extends Component {
 					return "true/false";
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
 					let result = "";
-					dataElem.options.forEach((elem) => (result += elem + "/"));
+					dataElem.options.forEach(elem => (result += elem + "/"));
 					result = result.substring(0, result.length - 1);
 					return result;
 				case Constants.TEMPLATES.TYPES.DATE:
@@ -280,7 +280,7 @@ class Certificate extends Component {
 
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
-	loadCertFromCsv = (files) => {
+	loadCertFromCsv = files => {
 		// retorna true si el dato es valido (valida segun el tipo de dato requerido en el modelo de certificado)
 		let validateValueMatchesType = function (dataElem, value) {
 			switch (dataElem.type) {
@@ -290,7 +290,7 @@ class Certificate extends Component {
 					if (value === "FALSE") dataElem.value = true;
 					return true;
 				case Constants.TEMPLATES.TYPES.CHECKBOX:
-					const res = dataElem.options.find((elem) => elem === value + "");
+					const res = dataElem.options.find(elem => elem === value + "");
 					if (res) {
 						dataElem.value = value;
 						return true;
@@ -356,7 +356,7 @@ class Certificate extends Component {
 			const otherDataKeys = Object.keys(othersData);
 			const partDataKeys = Object.keys(partData);
 
-			const certDataCount = certDataKeys.length;
+			const certDataCount = certDataKeys.length - 1;
 			const otherDataCount = otherDataKeys.length;
 			const partDataCount = partDataKeys.length;
 
@@ -409,7 +409,7 @@ class Certificate extends Component {
 	};
 
 	// eliminar participante
-	removeParticipant = (index) => {
+	removeParticipant = index => {
 		if (this.state.cert.data.participant.length === 1) {
 			const partData = this.state.cert.data.participant[0];
 			for (let key of Object.keys(partData)) partData[key].value = "";
@@ -425,7 +425,7 @@ class Certificate extends Component {
 	};
 
 	// borrar data local y generar nuevo cert a partir del template
-	templateSelected = (selectedTemplate) => {
+	templateSelected = selectedTemplate => {
 		const token = Cookie.get("token");
 
 		const self = this;
@@ -446,7 +446,7 @@ class Certificate extends Component {
 							error: false,
 							cert: self.certFromTemplate(template),
 							loading: false,
-							action: "creating",
+							action: "creating"
 						});
 					},
 					function (err) {
@@ -475,8 +475,8 @@ class Certificate extends Component {
 				const partToUpdate = self.state.cert.data.participant[position];
 
 				if (participant.data) {
-					participant.data.forEach((dataElem) => {
-						const dataToUpdate = partToUpdate.find((data) => {
+					participant.data.forEach(dataElem => {
+						const dataToUpdate = partToUpdate.find(data => {
 							const name = data.name.toLowerCase();
 							const mappedName = Constants.TEMPLATES.TYPE_MAPPING[data.name];
 							const elemName = dataElem.name.toLowerCase();
@@ -485,7 +485,7 @@ class Certificate extends Component {
 						if (dataToUpdate) dataToUpdate.value = dataElem.value;
 					});
 
-					const dataToUpdate = partToUpdate.find((data) => data.name.toLowerCase() === "did");
+					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === "did");
 					if (dataToUpdate) dataToUpdate.value = participant.did;
 				}
 
@@ -493,7 +493,7 @@ class Certificate extends Component {
 					participants: self.state.participants,
 					error: false,
 					action: self.state.action,
-					loading: false,
+					loading: false
 				});
 			},
 			function (err) {
@@ -504,7 +504,7 @@ class Certificate extends Component {
 	}
 
 	// agrega todos los participantes en 'parts' a la lista de participantes
-	onParticipantsAdd = (parts) => {
+	onParticipantsAdd = parts => {
 		const len = this.state.cert.data.participant.length;
 		let pos = 0;
 
@@ -548,7 +548,7 @@ class Certificate extends Component {
 	};
 
 	// borra microcredencial de la lista de microcredenciales
-	removeMicroCredential = (key) => {
+	removeMicroCredential = key => {
 		const cert = this.state.cert;
 		if (cert.microCredentials.length > 1) {
 			cert.microCredentials.splice(key, 1);
@@ -571,7 +571,7 @@ class Certificate extends Component {
 	};
 
 	// habilita o deshabilita microcredenciales
-	splitChanged = (value) => {
+	splitChanged = value => {
 		const cert = this.state.cert;
 		cert.split = value;
 		if (value === "true") {
@@ -645,7 +645,7 @@ class Certificate extends Component {
 					qr: qr,
 					loading: false,
 					qrSet: false,
-					error: false,
+					error: false
 				});
 			},
 			function (err) {
@@ -680,7 +680,7 @@ class Certificate extends Component {
 		return (
 			<QrDialog
 				loading={this.state.loading}
-				onRef={(ref) => (this.qrDialog = ref)}
+				onRef={ref => (this.qrDialog = ref)}
 				title={Messages.EDIT.DIALOG.QR.LOAD_BY_QR}
 				onDataReceived={this.onDataReceived}
 				template={this.state.template}
@@ -691,11 +691,11 @@ class Certificate extends Component {
 	};
 
 	// muestra la seccion de seleccion de microcredenciales
-	renderSplit = (cert) => {
+	renderSplit = cert => {
 		const allData = cert.data.cert
 			.concat(cert.data.participant[0])
 			.concat(cert.data.others)
-			.map((dataElem) => dataElem.name);
+			.map(dataElem => dataElem.name);
 
 		return (
 			<div className="Data">
@@ -705,7 +705,7 @@ class Certificate extends Component {
 						className="DataInput Boolean"
 						autoFocus
 						value={cert.split ? cert.split : false}
-						onChange={(event) => {
+						onChange={event => {
 							this.splitChanged(event.target.value);
 						}}
 					>
@@ -729,14 +729,14 @@ class Certificate extends Component {
 							for (let i = 0; i < cert.microCredentials.length; i++) {
 								if (i !== key) picked = picked.concat(cert.microCredentials[i].names);
 							}
-							const data = allData.filter((microCredName) => picked.indexOf(microCredName) < 0);
+							const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
 							return (
 								<div className="DataElem" key={"Microcred-" + key}>
 									<input
 										type="text"
 										className="DataInput MicroCredFieldName"
 										value={microCred.title}
-										onChange={(event) => {
+										onChange={event => {
 											this.microcredNameChanged(key, event);
 										}}
 									/>
@@ -745,10 +745,10 @@ class Certificate extends Component {
 										multiple
 										displayEmpty
 										value={microCred.names}
-										onChange={(event) => {
+										onChange={event => {
 											this.microcredFieldsSelected(key, event);
 										}}
-										renderValue={(selected) => selected.join(", ")}
+										renderValue={selected => selected.join(", ")}
 									>
 										{data.map((elem, key2) => {
 											return (
@@ -870,9 +870,9 @@ class Certificate extends Component {
 
 				<Autocomplete
 					options={templates}
-					getOptionLabel={(option) => (option ? option.name : "")}
+					getOptionLabel={option => (option ? option.name : "")}
 					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
-					renderInput={(params) => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
+					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
 					onChange={(_, value) => {
 						this.templateSelected(value);
 					}}
