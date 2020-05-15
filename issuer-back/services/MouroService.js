@@ -93,14 +93,15 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 };
 
 // recibe el caertificado y lo envia a didi-server para ser guardado
-module.exports.saveCertificate = async function(cert) {
+module.exports.saveCertificate = async function(cert, sendPush) {
 	try {
 		var response = await fetch(Constants.DIDI_API + "/issuer/issueCertificate", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				did: "did:ethr:" + Constants.ISSUER_SERVER_DID,
-				jwt: cert
+				jwt: cert,
+				sendPush: sendPush
 			})
 		});
 
