@@ -397,7 +397,7 @@ class Certificate extends Component {
 				}
 				index += certDataCount + otherDataCount;
 				participant.push(partData);
-			} while (data.length > index);
+			} while (data.length - index >= partDataCount);
 
 			self.state.cert.data.cert = certData;
 			self.state.cert.data.participant = participant;
