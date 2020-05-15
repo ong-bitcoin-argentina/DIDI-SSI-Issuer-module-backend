@@ -326,7 +326,7 @@ class Certificate extends Component {
 		// asigna los datos a partir del csv, si en este hay datos validos que asignar
 		let assignElement = function (dataElem, data) {
 			if (data === "" || data === " ") {
-				// if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
+				if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
 			} else {
 				if (!validateValueMatchesType(dataElem, data)) {
 					return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_INVALID(dataElem.name);
@@ -395,7 +395,7 @@ class Certificate extends Component {
 						index++;
 					}
 				}
-				index += certDataCount + otherDataCount - 1;
+				index += certDataCount + otherDataCount;
 				participant.push(partData);
 			} while (data.length > index);
 
