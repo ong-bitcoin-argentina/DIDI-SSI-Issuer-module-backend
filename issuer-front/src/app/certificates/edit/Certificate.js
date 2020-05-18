@@ -473,7 +473,6 @@ class Certificate extends Component {
 			did,
 			function (participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
-
 				if (participant.data) {
 					participant.data.forEach(dataElem => {
 						const dataToUpdate = partToUpdate.find(data => {
@@ -485,8 +484,8 @@ class Certificate extends Component {
 						if (dataToUpdate) dataToUpdate.value = dataElem.value;
 					});
 
-					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === "did");
-					if (dataToUpdate) dataToUpdate.value = participant.did;
+					const didDataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === "did");
+					if (didDataToUpdate) didDataToUpdate.value = participant.did;
 				}
 
 				self.setState({
