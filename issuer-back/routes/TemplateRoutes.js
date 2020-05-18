@@ -243,7 +243,7 @@ router.get(
 			// pedir todos los campos que el template requiere del participante
 			template.data.participant.forEach(element => {
 				const name = element.name;
-				if (req != "DID" && req != "EXPIRATION DATE") {
+				if (name != "DID" && name != "EXPIRATION DATE") {
 					// mapeo los campos conocidos (los de los certificados de tel, mail y data de renaper)
 					if (Constants.TYPE_MAPPING[name]) {
 						claims["user_info"][Constants.TYPE_MAPPING[name]] = null;
