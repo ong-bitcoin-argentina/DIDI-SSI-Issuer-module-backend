@@ -8,57 +8,57 @@ module.exports = {
 			GET_QR: (id, code) => {
 				return API + "/template/" + id + "/qr/" + code;
 			},
-			REQUEST: (code) => {
+			REQUEST: code => {
 				return API + "/template/request/" + code;
 			},
-			GET: (id) => {
+			GET: id => {
 				return API + "/template/" + id;
 			},
 			CREATE: API + "/template/",
-			EDIT: (id) => {
+			EDIT: id => {
 				return API + "/template/" + id;
 			},
-			DELETE: (id) => {
+			DELETE: id => {
 				return API + "/template/" + id;
-			},
+			}
 		},
 		PARTICIPANTS: {
 			POST_NEW: API + "/participant/new/",
 			GET_GLOBAL: API + "/participant/global/",
-			GET_ALL: (id) => {
+			GET_ALL: id => {
 				return API + "/participant/all/" + id;
 			},
-			GET_NEW: (id) => {
+			GET_NEW: id => {
 				return API + "/participant/new/" + id;
 			},
-			GET: (did) => {
+			GET: did => {
 				return API + "/participant/" + did;
 			},
-			GET_DIDS: API + "/participant/dids",
+			GET_DIDS: API + "/participant/dids"
 		},
 		CERTIFICATES: {
 			CREATE: API + "/cert",
-			EDIT: (id) => {
+			EDIT: id => {
 				return API + "/cert/" + id;
 			},
-			EMMIT: (id) => {
+			EMMIT: id => {
 				return API + "/cert/" + id + "/emmit";
 			},
 			GET_ALL: API + "/cert/all",
-			GET: (id) => {
+			GET: id => {
 				return API + "/cert/" + id;
 			},
-			DELETE: (id) => {
+			DELETE: id => {
 				return API + "/cert/" + id;
-			},
+			}
 		},
 		DELEGATE: {
 			CREATE: API + "/delegate",
 			DELETE: API + "/delegate",
 			GET_ALL: API + "/delegate/all",
 			GET_NAME: API + "/delegate/name",
-			CHANGE_NAME: API + "/delegate/name",
-		},
+			CHANGE_NAME: API + "/delegate/name"
+		}
 	},
 	ROUTES: {
 		LOGIN: "/login",
@@ -68,7 +68,7 @@ module.exports = {
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
 		CERTIFICATES: "/certificates",
-		EDIT_CERT: "/certificates/edit/",
+		EDIT_CERT: "/certificates/edit/"
 	},
 
 	CERT_FIELD_MANDATORY: {
@@ -76,48 +76,48 @@ module.exports = {
 		NAME: "CERTIFICADO O CURSO",
 		FIRST_NAME: "NOMBRE",
 		LAST_NAME: "APELLIDO",
-		EXPIRATION_DATE: "EXPIRATION DATE",
+		EXPIRATION_DATE: "EXPIRATION DATE"
 	},
 
 	DELEGATES: {
 		ICONS: {
-			ADD_BUTTON: "add_box",
+			ADD_BUTTON: "add_box"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
-			MIN_ROWS: 3,
-		},
+			MIN_ROWS: 3
+		}
 	},
 
 	TEMPLATES: {
 		PREVIEW_ELEMS_LENGTH: {
 			1: 2,
 			2: 4,
-			3: 6,
+			3: 6
 		},
 
 		ICONS: {
 			ADD_BUTTON: "add_box",
 			OK: "check_circle_outline",
-			MISSING: "highlight_off",
+			MISSING: "highlight_off"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
-			MIN_ROWS: 3,
+			MIN_ROWS: 3
 		},
 		EDIT: {
 			BOOLEAN: {
 				TRUE: "Si",
-				FALSE: "No",
+				FALSE: "No"
 			},
 			ICONS: {
 				REQUIRED: "check_circle_outline",
 				NOT_REQUIRED: "radio_button_unchecked",
 				ADD_OPTION: "add_circle_outline",
 				REMOVE_OPTION: "clear",
-				DELETE: "cancel_presentation",
+				DELETE: "cancel_presentation"
 			},
-			TYPING_TIMEOUT: 1000,
+			TYPING_TIMEOUT: 1000
 		},
 		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD"],
 		TYPES: {
@@ -126,7 +126,7 @@ module.exports = {
 			DATE: "Date",
 			NUMBER: "Number",
 			BOOLEAN: "Boolean",
-			CHECKBOX: "Checkbox",
+			CHECKBOX: "Checkbox"
 		},
 		TYPE_MAPPING: {
 			Email: "Email",
@@ -134,7 +134,9 @@ module.exports = {
 			Dni: "dni",
 			Nacionalidad: "nationality",
 			Nombres: "names",
+			NOMBRE: "names",
 			Apellidos: "lastNames",
+			APELLIDO: "lastNames",
 			Direccion: "streetAddress",
 			Calle: "numberStreet",
 			Piso: "floor",
@@ -143,7 +145,7 @@ module.exports = {
 			// Ciudad: "city",
 			// Municipalidad: "municipality",
 			// Provincia: "province",
-			Pais: "country",
+			Pais: "country"
 		},
 		SHARED_TYPES: {
 			Email: "Email",
@@ -160,20 +162,20 @@ module.exports = {
 			// city: "Ciudad",
 			// municipality: "Municipalidad",
 			// province: "Provincia",
-			Pais: "Pais",
+			Pais: "Pais"
 		},
 		DATA_TYPES: {
 			CERT: "cert",
 			OTHERS: "others",
-			PARTICIPANT: "participant",
+			PARTICIPANT: "participant"
 		},
 		MANDATORY_DATA: {
 			DID: "DID",
 			FULL_NAME: "NOMBRE COMPLETO",
 			PARTICIPANT_FIRST_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO",
-			NAME: "CERTIFICADO O CURSO",
-		},
+			NAME: "CERTIFICADO O CURSO"
+		}
 	},
 
 	CERTIFICATES: {
@@ -182,7 +184,7 @@ module.exports = {
 			CSV_REQUIRED_VALUE_INVALID: function (field) {
 				return {
 					err: "CSV_REQUIRED_VALUE_INVALID",
-					message: "CSV invàlido, el campo " + field + " contiene un valor incorrecto",
+					message: "CSV invàlido, el campo " + field + " contiene un valor incorrecto"
 				};
 			},
 			CSV_REQUIRED_VALUE_MISSING: function (field) {
@@ -194,33 +196,33 @@ module.exports = {
 			CSV_MISSING_FIELDS: function () {
 				return {
 					err: "CSV_MISSING_FIELDS",
-					message: "La cantidad de campos en el csv no se corresponde con la del certificado.",
+					message: "La cantidad de campos en el csv no se corresponde con la del certificado."
 				};
 			},
 			EXP_DATE_INVALID: {
 				err: "EXP_DATE_INVALID",
-				message: "La fecha de expiracion debe ser mayor a la fecha actual.",
-			},
+				message: "La fecha de expiracion debe ser mayor a la fecha actual."
+			}
 		},
 		MANDATORY_DATA: {
 			DID: "DID",
 			FIRST_NAME: "NOMBRE",
-			LAST_NAME: "APELLIDO",
+			LAST_NAME: "APELLIDO"
 		},
 		EDIT: {
 			PARTICIPANT_SELECT: "SELECCIONAR PARTICIPANTE",
 			SPLIT: "GENERAR MICROCREDENCIALES",
-			TEMPLATE_SELECT: "CERTIFICADO O CURSO",
+			TEMPLATE_SELECT: "CERTIFICADO O CURSO"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
-			MIN_ROWS: 3,
+			MIN_ROWS: 3
 		},
 		REQUEST_TYPES: {
 			mail: "Email",
 			tel: "Phone",
 			personal: "Datos Personales",
-			address: "Domicilio Legal",
-		},
-	},
+			address: "Domicilio Legal"
+		}
+	}
 };

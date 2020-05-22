@@ -326,7 +326,7 @@ class Certificate extends Component {
 		// asigna los datos a partir del csv, si en este hay datos validos que asignar
 		let assignElement = function (dataElem, data) {
 			if (data === "" || data === " ") {
-				// if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
+				if (dataElem.required) return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_MISSING(dataElem.name);
 			} else {
 				if (!validateValueMatchesType(dataElem, data)) {
 					return Constants.CERTIFICATES.ERR.CSV_REQUIRED_VALUE_INVALID(dataElem.name);
@@ -395,9 +395,9 @@ class Certificate extends Component {
 						index++;
 					}
 				}
-				index += certDataCount + otherDataCount - 1;
+				index += certDataCount + otherDataCount;
 				participant.push(partData);
-			} while (data.length > index);
+			} while (data.length - index >= partDataCount);
 
 			self.state.cert.data.cert = certData;
 			self.state.cert.data.participant = participant;
@@ -473,7 +473,6 @@ class Certificate extends Component {
 			did,
 			function (participant) {
 				const partToUpdate = self.state.cert.data.participant[position];
-
 				if (participant.data) {
 					participant.data.forEach(dataElem => {
 						const dataToUpdate = partToUpdate.find(data => {
@@ -485,8 +484,8 @@ class Certificate extends Component {
 						if (dataToUpdate) dataToUpdate.value = dataElem.value;
 					});
 
-					const dataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === "did");
-					if (dataToUpdate) dataToUpdate.value = participant.did;
+					const didDataToUpdate = partToUpdate.find(data => data.name.toLowerCase() === "did");
+					if (didDataToUpdate) didDataToUpdate.value = participant.did;
 				}
 
 				self.setState({

@@ -274,13 +274,20 @@ class Main extends Component {
 		cert.actions = <div></div>;
 		cert.select = <div></div>;
 
-		self.setState({ cert: self.state.certificates, loading: true });
+		self.setState({ certs: self.state.certificates, loading: true });
 		CertificateService.delete(
 			token,
 			id,
 			async function (cert) {
-				const certificates = self.state.certificates.filter(t => t._id !== cert._id);
-				self.setState({ certificates: certificates, loading: false, error: false });
+				const certs = self.state.certs.filter(t => t._id !== cert._id);
+
+				self.setState({
+					certs: certs,
+					loading: false,
+					error: false
+				});
+
+				self.onCertificateSelectAllToggle(false);
 			},
 			function (err) {
 				self.setState({ error: err, loading: false });
@@ -371,7 +378,7 @@ class Main extends Component {
 			cert.selected = <div></div>;
 		});
 
-		this.setState({ cert: this.state.certificates, loading: true });
+		this.setState({ certs: this.state.certificates, loading: true });
 
 		const token = Cookie.get("token");
 		const self = this;
@@ -426,7 +433,7 @@ class Main extends Component {
 		cert.actions = <div></div>;
 		cert.select = <div></div>;
 
-		self.setState({ cert: self.state.certificates, loading: true });
+		self.setState({ certs: self.state.certificates, loading: true });
 		CertificateService.emmit(
 			token,
 			id,

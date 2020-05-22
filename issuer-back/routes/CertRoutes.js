@@ -287,7 +287,7 @@ const generateFullCertificate = async function(credentials, template, cert, part
 		});
 
 		const resFull = await MouroService.createCertificate(data, expDate, did);
-		const savedFull = await MouroService.saveCertificate(resFull);
+		const savedFull = await MouroService.saveCertificate(resFull, true);
 		credentials.push(savedFull);
 
 		return Promise.resolve(credentials);
@@ -390,7 +390,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		const saveCertPromises = [];
 		for (let i = 0; i < microCredentials.length; i++) {
 			const microCred = microCredentials[i];
-			const saveCred = MouroService.saveCertificate(microCred);
+			const saveCred = MouroService.saveCertificate(microCred, false);
 			saveCertPromises.push(saveCred);
 
 			data[name].wrapped[generateCertNames[i]] = microCred;
@@ -407,7 +407,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 				credentials.push(res[i]);
 			} else {
 				// guardar macrocredencial
-				const savedFull = await MouroService.saveCertificate(res[i]);
+				const savedFull = await MouroService.saveCertificate(res[i], true);
 				credentials.push(savedFull);
 			}
 		}
