@@ -594,6 +594,14 @@ class Certificate extends Component {
 		}
 	};
 
+	updateErrorDelayed = error => {
+		const self = this;
+		// delay setState in case view is still rendering
+		setTimeout(() => {
+			self.setState({ error: error });
+		}, 2000);
+	};
+
 	// si el boton de guardar esta deshabilitado
 	// (algun campo obligatorio sin llenar o el did tiene un formato incorrecto)
 	saveDisabled = () => {
@@ -602,7 +610,11 @@ class Certificate extends Component {
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
 		if (!did.match(regex)) {
-			if (!this.state.error) this.setState({ error: { message: Constants.CERTIFICATES.ERR.INVALID_DID } });
+			if (!this.state.error) {
+				this.updateErrorDelayed({ message: Constants.CERTIFICATES.ERR.INVALID_DID });
+			} else {
+				if (this.state.error.message === Constants.CERTIFICATES.ERR.INVALID_DID) this.updateErrorDelayed(false);
+			}
 			return true;
 		}
 
@@ -615,13 +627,17 @@ class Certificate extends Component {
 			const dataElem = all[index];
 			if (dataElem.name === Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE) {
 				if (new Date(dataElem.value) < new Date()) {
-					if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.EXP_DATE_INVALID });
+					if (!this.state.error) {
+						this.updateErrorDelayed(Constants.CERTIFICATES.ERR.EXP_DATE_INVALID);
+					}
 					return true;
 				}
 			}
 
 			if (dataElem.required && !dataElem.value) {
-				if (!this.state.error) this.setState({ error: Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name) });
+				if (!this.state.error) {
+					this.updateErrorDelayed(Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name));
+				}
 				return true;
 			}
 		}
