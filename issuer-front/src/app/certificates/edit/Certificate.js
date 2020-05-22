@@ -299,11 +299,12 @@ class Certificate extends Component {
 				case Constants.TEMPLATES.TYPES.DATE:
 					try {
 						const dateParts = value.split("/");
-						const date = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
-						if (!date) return false;
+						const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+						if (!date || date === "Invalid Date") return false;
 						dataElem.value = date;
 						return true;
 					} catch (err) {
+						console.log(err);
 						return false;
 					}
 				case Constants.TEMPLATES.TYPES.NUMBER:
