@@ -300,9 +300,12 @@ class Certificate extends Component {
 					try {
 						const dateParts = value.split("/");
 						const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
-						if (!date || date === "Invalid Date") return false;
-						dataElem.value = date;
-						return true;
+						if (date instanceof Date && !isNaN(date)) {
+							dataElem.value = date;
+							return true;
+						} else {
+							return false;
+						}
 					} catch (err) {
 						console.log(err);
 						return false;
