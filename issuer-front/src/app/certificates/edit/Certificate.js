@@ -598,7 +598,9 @@ class Certificate extends Component {
 		const self = this;
 		// delay setState in case view is still rendering
 		setTimeout(() => {
-			self.setState({ error: error });
+			if (!this.state.error) {
+				self.setState({ error: error });
+			}
 		}, 2000);
 	};
 
@@ -609,7 +611,7 @@ class Certificate extends Component {
 
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		if (!did.match(regex)) {
+		if (did && !did.match(regex)) {
 			if (!this.state.error) {
 				this.updateErrorDelayed({ message: Constants.CERTIFICATES.ERR.INVALID_DID });
 			} else {

@@ -60,7 +60,7 @@ module.exports.createShareRequest = async function(claims, cb) {
 	}
 };
 
-// genera un certificado asociando la informaciòn recibida en "subject" con el did
+// genera un certificado asociando la información recibida en "subject" con el did
 module.exports.createCertificate = async function(subject, expDate, did) {
 	const vcissuer = new EthrDID({
 		address: Constants.ISSUER_SERVER_DID,

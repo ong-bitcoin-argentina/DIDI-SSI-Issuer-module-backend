@@ -35,7 +35,7 @@ router.post(
 
 /**
  *	Valida que la contraseña se corresponda con la del usuario,
- *	no genera ningùn token ni informaciòn ùtil.
+ *	no genera ningún token ni información útil.
  */
 router.post(
 	"/login",
