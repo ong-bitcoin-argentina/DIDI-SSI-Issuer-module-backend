@@ -459,7 +459,7 @@ let _doValidate = function(param, isHead) {
 	return validation;
 };
 
-// recibe una lista de paràmetros de validacion y valida que los datos recibidos en el body y header
+// recibe una lista de parámetros de validacion y valida que los datos recibidos en el body y header
 // cumplan con esos parametros
 module.exports.validate = function(params) {
 	const validations = [];

@@ -180,15 +180,15 @@ module.exports = {
 
 	CERTIFICATES: {
 		ERR: {
-			INVALID_DID: "Invalid DID",
+			INVALID_DID: "El DID ingresado es incorrecto o mal formado.",
 			CSV_REQUIRED_VALUE_INVALID: function (field) {
 				return {
 					err: "CSV_REQUIRED_VALUE_INVALID",
-					message: "CSV invàlido, el campo " + field + " contiene un valor incorrecto"
+					message: "CSV inválido, el campo " + field + " contiene un valor incorrecto"
 				};
 			},
 			CSV_REQUIRED_VALUE_MISSING: function (field) {
-				return { err: "CSV_REQUIRED_VALUE_MISSING", message: "CSV invàlido, el campo " + field + " es obligatorio" };
+				return { err: "CSV_REQUIRED_VALUE_MISSING", message: "CSV inválido, el campo " + field + " es obligatorio" };
 			},
 			MISSING_FIELD: function (field) {
 				return { err: "REQUIRED_VALUE_MISSING", message: "El campo " + field + " es obligatorio" };

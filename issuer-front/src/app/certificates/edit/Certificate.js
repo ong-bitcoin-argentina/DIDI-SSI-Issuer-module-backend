@@ -598,7 +598,9 @@ class Certificate extends Component {
 		const self = this;
 		// delay setState in case view is still rendering
 		setTimeout(() => {
-			self.setState({ error: error });
+			if (!this.state.error) {
+				self.setState({ error: error });
+			}
 		}, 2000);
 	};
 
@@ -609,7 +611,7 @@ class Certificate extends Component {
 
 		const did = this.state.cert.data.participant[0][0].value;
 		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
-		if (!did.match(regex)) {
+		if (did && !did.match(regex)) {
 			if (!this.state.error) {
 				this.updateErrorDelayed({ message: Constants.CERTIFICATES.ERR.INVALID_DID });
 			} else {
@@ -906,7 +908,7 @@ class Certificate extends Component {
 			<div>
 				<div className="AddParticipantButtons">
 					<button
-						className="AddParticipant"
+						className="CertButton AddParticipant"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						onClick={this.addParticipant}
 					>
@@ -914,7 +916,7 @@ class Certificate extends Component {
 					</button>
 
 					<button
-						className="AddParticipant"
+						className="CertButton LoadParticipant"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						onClick={() => {
 							if (this.qrDialog) this.qrDialog.open();
@@ -924,15 +926,15 @@ class Certificate extends Component {
 					</button>
 
 					<button
-						className="SampleCsv"
+						className="CertButton SampleCsv"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						onClick={this.createSampleCsv}
 					>
 						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
 					</button>
 
-					<ReactFileReader className="LoadCertFromCsv" handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
-						<button hidden={this.state.action === "viewing" || this.state.action === "editing"}>
+					<ReactFileReader handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
+						<button className="CertButton" hidden={this.state.action === "viewing" || this.state.action === "editing"}>
 							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
 						</button>
 					</ReactFileReader>
