@@ -180,7 +180,7 @@ module.exports = {
 
 	CERTIFICATES: {
 		ERR: {
-			INVALID_DID: "Invalid DID",
+			INVALID_DID: "El DID ingresado es incorrecto o mal formado.",
 			CSV_REQUIRED_VALUE_INVALID: function (field) {
 				return {
 					err: "CSV_REQUIRED_VALUE_INVALID",

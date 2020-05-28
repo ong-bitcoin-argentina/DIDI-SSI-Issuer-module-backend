@@ -908,7 +908,7 @@ class Certificate extends Component {
 			<div>
 				<div className="AddParticipantButtons">
 					<button
-						className="AddParticipant"
+						className="CertButton AddParticipant"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						onClick={this.addParticipant}
 					>
@@ -916,7 +916,7 @@ class Certificate extends Component {
 					</button>
 
 					<button
-						className="AddParticipant"
+						className="CertButton LoadParticipant"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						onClick={() => {
 							if (this.qrDialog) this.qrDialog.open();
@@ -926,15 +926,15 @@ class Certificate extends Component {
 					</button>
 
 					<button
-						className="SampleCsv"
+						className="CertButton SampleCsv"
 						hidden={this.state.action === "viewing" || this.state.action === "editing"}
 						onClick={this.createSampleCsv}
 					>
 						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
 					</button>
 
-					<ReactFileReader className="LoadCertFromCsv" handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
-						<button hidden={this.state.action === "viewing" || this.state.action === "editing"}>
+					<ReactFileReader handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
+						<button className="CertButton" hidden={this.state.action === "viewing" || this.state.action === "editing"}>
 							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
 						</button>
 					</ReactFileReader>
