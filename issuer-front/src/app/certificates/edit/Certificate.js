@@ -597,11 +597,14 @@ class Certificate extends Component {
 	updateErrorDelayed = error => {
 		const self = this;
 		// delay setState in case view is still rendering
-		setTimeout(() => {
-			if (!this.state.error) {
-				self.setState({ error: error });
-			}
-		}, 2000);
+		setTimeout(
+			() => {
+				if (!error || !this.state.error) {
+					self.setState({ error: error });
+				}
+			},
+			500
+		);
 	};
 
 	// si el boton de guardar esta deshabilitado
@@ -610,14 +613,13 @@ class Certificate extends Component {
 		if (!this.state.cert) return true;
 
 		const did = this.state.cert.data.participant[0][0].value;
-		const regex = /did:ethr:0x[0-9A-Fa-f]{40}/;
+		const regex = /^did:ethr:0x[0-9A-Za-z]{40}$/;
 		if (did && !did.match(regex)) {
-			if (!this.state.error) {
-				this.updateErrorDelayed({ message: Constants.CERTIFICATES.ERR.INVALID_DID });
-			} else {
-				if (this.state.error.message === Constants.CERTIFICATES.ERR.INVALID_DID) this.updateErrorDelayed(false);
-			}
+			if (!this.state.error) this.updateErrorDelayed({ message: Constants.CERTIFICATES.ERR.INVALID_DID });
 			return true;
+		} else {
+			if (this.state.error && this.state.error.message === Constants.CERTIFICATES.ERR.INVALID_DID)
+				this.updateErrorDelayed(false);
 		}
 
 		const cert = this.state.cert.data.cert;
@@ -633,6 +635,9 @@ class Certificate extends Component {
 						this.updateErrorDelayed(Constants.CERTIFICATES.ERR.EXP_DATE_INVALID);
 					}
 					return true;
+				} else {
+					if (this.state.error && this.state.error.message === Constants.CERTIFICATES.ERR.EXP_DATE_INVALID.message)
+						this.updateErrorDelayed(false);
 				}
 			}
 
@@ -641,6 +646,13 @@ class Certificate extends Component {
 					this.updateErrorDelayed(Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name));
 				}
 				return true;
+			} else {
+				if (
+					this.state.error &&
+					this.state.error.message === Constants.CERTIFICATES.ERR.MISSING_FIELD(dataElem.name).message
+				) {
+					this.updateErrorDelayed(false);
+				}
 			}
 		}
 
