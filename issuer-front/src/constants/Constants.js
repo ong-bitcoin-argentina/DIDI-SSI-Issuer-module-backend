@@ -93,7 +93,8 @@ module.exports = {
 		PREVIEW_ELEMS_LENGTH: {
 			1: 2,
 			2: 4,
-			3: 6
+			3: 6,
+			4: 6
 		},
 
 		ICONS: {
