@@ -182,3 +182,5 @@ Cert.getById = async function(id) {
 		return Promise.reject(err);
 	}
 };
+
+// TODO: add method to adjust getCertificate with image or template data populated

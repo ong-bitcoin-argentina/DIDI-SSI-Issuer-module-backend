@@ -1,10 +1,9 @@
-const { Schema } = require("mongoose");
-
 function rowLimit(val) {
     return (!val || ((val.length > 0) && (val.length <= 5)));
 }
 
-const cardSchema = new Schema({
+// Do it with mongoose.Schema when its become necessary separate CardLayout from Template
+const cardSchema = {
     rows: {
         type: Array,
         columns: {
@@ -18,7 +17,8 @@ const cardSchema = new Schema({
             message: "Cantidad de filas maximas superadas"
         }
     },
-});
+    backgroundImage: { type: String }
+};
 
 module.exports = {
     cardSchema

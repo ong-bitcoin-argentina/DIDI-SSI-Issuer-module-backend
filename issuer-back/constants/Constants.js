@@ -11,6 +11,7 @@ const ISSUER_SERVER_PRIVATE_KEY = process.env.ISSUER_SERVER_PRIVATE_KEY;
 
 const ADDRESS = process.env.ADDRESS;
 const PORT = process.env.PORT;
+const FULL_URL = process.env.FULL_URL;
 
 const RSA_PRIVATE_KEY = process.env.RSA_PRIVATE_KEY;
 const HASH_SALT = process.env.HASH_SALT;
@@ -139,5 +140,6 @@ module.exports = {
 	ISSUER_SERVER_PRIVATE_KEY: ISSUER_SERVER_PRIVATE_KEY,
 	MONGO_URL: MONGO_URL,
 	PORT: PORT,
-	ADDRESS: ADDRESS
+	ADDRESS: ADDRESS,
+	FULL_URL: FULL_URL
 };

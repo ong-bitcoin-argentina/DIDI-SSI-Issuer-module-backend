@@ -67,7 +67,7 @@ TemplateSchema.index({ name: 1 });
 TemplateSchema.add({cardLayout: cardSchema});
 
 // modificar modelo de certificado
-TemplateSchema.methods.edit = async function(data, previewData, previewType, category, cardLayout) {
+TemplateSchema.methods.edit = async function(data, previewData, previewType, category) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: {
