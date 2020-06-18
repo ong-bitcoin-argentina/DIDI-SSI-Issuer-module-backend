@@ -1,13 +1,11 @@
 const router = require("express").Router();
 const ParticipantService = require("../services/ParticipantService");
 const MouroService = require("../services/MouroService");
-const SemillasService = require("../services/SemillasService");
 const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
-const Validators = require("../constants/Validators");
 
 
 /**
@@ -198,32 +196,6 @@ router.post(
 			}
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
-);
-
-/**
- *	 Inicializa la data de participante con unicamente el did y nombre
- *	 Ademas, envia a semillas la informacion para registrarlo.
- */
-router.post(
-	"/new/semillas",
-	Validator.validate(Validators.PARTICIPANT_NEW),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const { name, did } = req.body;
-		try {
-			let participant;
-			participant.didi = await ParticipantService.create(name, did, [], undefined, "");
-			participant.semillas = await SemillasService.create({name, did}); 
-			return ResponseHandler.sendRes(res, participant);
-		} catch (err) {
-			let source = (participant.didi && participant.didi.id) ? 'DIDI' : 'Semillas';
-			if (source === 'DIDI') {
-				const DeletedParticipant = await ParticipantService.delete(participant.didi.id);
-			}
-			err.message = `Ocurrió un error al crear el registro en ${source}`;
 			return ResponseHandler.sendErr(res, err);
 		}
 	}
