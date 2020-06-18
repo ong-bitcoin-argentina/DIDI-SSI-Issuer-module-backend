@@ -76,6 +76,38 @@ router.get(
 );
 
 /**
+ *	retorna un certificado a partir de su id, con su template populado
+ */
+router.get(
+	"/:id/populate",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function(req, res) {
+		const id = req.params.id;
+		let cert;
+		try {
+			cert = await CertService.getByIdPopulated(id);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+
+		try {
+			// agregar data del template al certificado (tipos, valores por defecto, etc)
+			const result = CertService.addTemplateDataToCert(cert, cert.templateId);
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
  * Genera un nuevo certificado a partir de la data y el modelo de certificado
  */
 router.post(

@@ -23,7 +23,8 @@ const CertSchema = mongoose.Schema({
 	},
 	templateId: {
 		type: ObjectId,
-		required: true
+		required: true,
+		ref: 'Template'
 	},
 	split: {
 		type: Boolean,

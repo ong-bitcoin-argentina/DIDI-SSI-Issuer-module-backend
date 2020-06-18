@@ -13,6 +13,18 @@ var getById = async function(id) {
 };
 module.exports.getById = getById;
 
+// retorna un certificado populado
+module.exports.getByIdPopulated = async function(id) {
+	try {
+		let cert = await Cert.findById(id).populate({ path: 'templateId', select: 'cardLayout data' });
+		if (!cert) return Promise.reject(Messages.CERT.ERR.GET);
+		return Promise.resolve(cert);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.CERT.ERR.GET);
+	}
+};
+
 // retorna todos los certificados
 module.exports.getAll = async function() {
 	try {
