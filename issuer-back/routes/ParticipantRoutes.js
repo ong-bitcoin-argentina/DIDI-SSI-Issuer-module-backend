@@ -7,7 +7,6 @@ const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Messages = require("../constants/Messages");
 
-
 /**
  *	Retorna los dids y nombres de todos los participantes conocidos
  */
