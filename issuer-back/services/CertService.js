@@ -1,7 +1,7 @@
 const Cert = require("../models/Cert");
 const Messages = require("../constants/Messages");
 
-var getById = async function(id) {
+var getById = async function (id) {
 	try {
 		let cert = await Cert.getById(id);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.GET);
@@ -13,20 +13,8 @@ var getById = async function(id) {
 };
 module.exports.getById = getById;
 
-// retorna un certificado populado
-module.exports.getByIdPopulated = async function(id) {
-	try {
-		let cert = await Cert.findById(id).populate({ path: 'templateId', select: 'cardLayout data' });
-		if (!cert) return Promise.reject(Messages.CERT.ERR.GET);
-		return Promise.resolve(cert);
-	} catch (err) {
-		console.log(err);
-		return Promise.reject(Messages.CERT.ERR.GET);
-	}
-};
-
 // retorna todos los certificados
-module.exports.getAll = async function() {
+module.exports.getAll = async function () {
 	try {
 		let certs = await Cert.getAll();
 		if (!certs) return Promise.reject(Messages.CERT.ERR.GET);
@@ -38,7 +26,7 @@ module.exports.getAll = async function() {
 };
 
 // crea un certificado a partir del modelo
-module.exports.create = async function(data, templateId, split, microCredentials) {
+module.exports.create = async function (data, templateId, split, microCredentials) {
 	try {
 		const cert = await Cert.generate(data, templateId, split, microCredentials);
 		if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
@@ -50,7 +38,7 @@ module.exports.create = async function(data, templateId, split, microCredentials
 };
 
 // modifica un certificado no emitido
-module.exports.edit = async function(id, data, split, microCredentials) {
+module.exports.edit = async function (id, data, split, microCredentials) {
 	try {
 		let cert = await getById(id);
 		cert = await cert.edit(data, split, microCredentials);
@@ -63,7 +51,7 @@ module.exports.edit = async function(id, data, split, microCredentials) {
 };
 
 // agrega la informacion de los campos del modelo de certificado al certificaod puntual para ser mostrados
-module.exports.addTemplateDataToCert = function(cert, template) {
+module.exports.addTemplateDataToCert = function (cert, template) {
 	const data = {
 		cert: cert.data.cert.map(elem => {
 			const templateElem = template.data.cert.find(tempElem => tempElem.name === elem.name);
@@ -112,7 +100,7 @@ module.exports.addTemplateDataToCert = function(cert, template) {
 };
 
 // marcar certificado como emitido
-module.exports.emmit = async function(cert, creds) {
+module.exports.emmit = async function (cert, creds) {
 	try {
 		await cert.emmit(creds);
 		return Promise.resolve(cert);
@@ -123,7 +111,7 @@ module.exports.emmit = async function(cert, creds) {
 };
 
 // marcar certificado como borrado
-module.exports.delete = async function(id) {
+module.exports.delete = async function (id) {
 	try {
 		let cert = await getById(id);
 		cert = await cert.delete();

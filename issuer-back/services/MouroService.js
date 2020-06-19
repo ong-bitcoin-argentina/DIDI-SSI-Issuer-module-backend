@@ -159,3 +159,19 @@ module.exports.sendShareRequest = async function(did, cert) {
 		return Promise.reject(Messages.SHARE_REQ.ERR.SEND);
 	}
 };
+
+module.exports.getSkeletonForEmmit(template, wrapped = false) {
+	let result = {
+		category: Constants.CERT_CATEGORY_MAPPING[template.category],
+		preview: {
+			type: Number(template.previewType),
+			fields: template.previewData,
+			cardLayout: template.cardLayout
+		},
+		data: {}
+	};
+	if (wrapped) {
+		result.wrapped = {};
+	}
+	return result;
+}
