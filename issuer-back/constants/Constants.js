@@ -35,13 +35,14 @@ const CERT_FIELD_TYPES = {
 	Checkbox: "Checkbox"
 };
 
-const CERT_CATEGORY_TYPES = ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS"];
+const CERT_CATEGORY_TYPES = ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS", "LABORAL"];
 const CERT_CATEGORY_MAPPING = {
 	EDUCACION: "education",
 	FINANZAS: "finance",
 	VIVIENDA: "livingPlace",
 	IDENTIDAD: "identity",
-	BENEFICIOS: "benefit"
+	BENEFICIOS: "benefit",
+	LABORAL: "labor"
 };
 
 const DIDI_API = process.env.DIDI_API;
