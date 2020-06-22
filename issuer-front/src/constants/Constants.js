@@ -1,4 +1,4 @@
-const API = process.env.REACT_APP_API_URL;
+const API = window._env_.REACT_APP_API_URL;
 
 module.exports = {
 	API_ROUTES: {
