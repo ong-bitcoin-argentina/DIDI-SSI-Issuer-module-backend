@@ -44,7 +44,7 @@ class Template extends Component {
 		TemplateService.get(
 			token,
 			id,
-			async function(template) {
+			async function (template) {
 				self.setState({
 					id: id,
 					template: template,
@@ -53,7 +53,7 @@ class Template extends Component {
 					error: false
 				});
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -132,12 +132,12 @@ class Template extends Component {
 		TemplateService.save(
 			token,
 			template,
-			async function(_) {
+			async function (_) {
 				self.setState({ loading: false, error: false });
 				self.props.history.push(Constants.ROUTES.LIST);
 				// self.props.history.push(Constants.ROUTES.TEMPLATES);
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -243,11 +243,6 @@ class Template extends Component {
 					<div className="PreviewFieldItem">
 						<FormControlLabel value="3" checked={radioValue === "3"} control={<Radio />} />
 						<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 3" />
-					</div>
-
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="4" checked={radioValue === "4"} control={<Radio />} />
-						<img src={require("./Preview/4.png")} className="PreviewFieldTypeImage" alt="type 4" />
 					</div>
 				</RadioGroup>
 
