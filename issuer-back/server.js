@@ -22,6 +22,11 @@ const app = express();
 var http = require("http");
 var server = http.createServer(app);
 
+// serve all files from public dir
+const path = require('path');
+const dir = path.join(__dirname, 'public');
+app.use(express.static(dir));
+
 // sobreescribir log para agregarle el timestamp
 const log = console.log;
 console.log = function(data) {
