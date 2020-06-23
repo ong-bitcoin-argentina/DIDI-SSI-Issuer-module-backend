@@ -15,7 +15,7 @@ const resolver = new Resolver(
 );
 
 // decodifica el certificado, retornando la info (independientemente de si el certificado es valido o no)
-module.exports.decodeCertificate = async function(jwt, errMsg) {
+module.exports.decodeCertificate = async function (jwt, errMsg) {
 	try {
 		let result = await decodeJWT(jwt);
 		return Promise.resolve(result);
@@ -26,7 +26,7 @@ module.exports.decodeCertificate = async function(jwt, errMsg) {
 };
 
 // analiza la validez del certificado
-module.exports.verifyCertificate = async function(jwt, errMsg) {
+module.exports.verifyCertificate = async function (jwt, errMsg) {
 	try {
 		let result = await verifyJWT(jwt, { resolver: resolver, audience: "did:ethr:" + Constants.ISSUER_SERVER_DID });
 		return Promise.resolve(result);
@@ -38,7 +38,7 @@ module.exports.verifyCertificate = async function(jwt, errMsg) {
 
 // genera un certificado con un pedido de informacion (certificado o informacion de certificado),
 // la cual esta especificada en "claims", si el usuario accede, se ejecuta una llamada a "cb" con el resultado en el body contenido en "access_token"
-module.exports.createShareRequest = async function(claims, cb) {
+module.exports.createShareRequest = async function (claims, cb) {
 	try {
 		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
 
@@ -61,7 +61,7 @@ module.exports.createShareRequest = async function(claims, cb) {
 };
 
 // genera un certificado asociando la información recibida en "subject" con el did
-module.exports.createCertificate = async function(subject, expDate, did) {
+module.exports.createCertificate = async function (subject, expDate, did) {
 	const vcissuer = new EthrDID({
 		address: Constants.ISSUER_SERVER_DID,
 		privateKey: Constants.ISSUER_SERVER_PRIVATE_KEY
@@ -93,7 +93,7 @@ module.exports.createCertificate = async function(subject, expDate, did) {
 };
 
 // recibe el caertificado y lo envia a didi-server para ser guardado
-module.exports.saveCertificate = async function(cert, sendPush) {
+module.exports.saveCertificate = async function (cert, sendPush) {
 	try {
 		var response = await fetch(Constants.DIDI_API + "/issuer/issueCertificate", {
 			method: "POST",
@@ -114,7 +114,7 @@ module.exports.saveCertificate = async function(cert, sendPush) {
 };
 
 // recibe el caertificado y lo envia a didi-server para ser borrado
-module.exports.revokeCertificate = async function(jwt, hash, sub) {
+module.exports.revokeCertificate = async function (jwt, hash, sub) {
 	try {
 		var response = await fetch(Constants.DIDI_API + "/issuer/revokeCertificate", {
 			method: "POST",
@@ -134,7 +134,7 @@ module.exports.revokeCertificate = async function(jwt, hash, sub) {
 };
 
 // recibe el pedido y lo envia a didi-server para ser enviado al usuario
-module.exports.sendShareRequest = async function(did, cert) {
+module.exports.sendShareRequest = async function (did, cert) {
 	try {
 		const exp = ((new Date().getTime() + 600000) / 1000) | 0;
 
@@ -158,4 +158,20 @@ module.exports.sendShareRequest = async function(did, cert) {
 		console.log(err);
 		return Promise.reject(Messages.SHARE_REQ.ERR.SEND);
 	}
+};
+
+module.exports.getSkeletonForEmmit = function (template, wrapped = false) {
+	let result = {
+		category: Constants.CERT_CATEGORY_MAPPING[template.category],
+		preview: {
+			type: Number(template.previewType),
+			fields: template.previewData,
+			cardLayout: template.cardLayout
+		},
+		data: {}
+	};
+	if (wrapped) {
+		result.wrapped = {};
+	}
+	return result;
 };

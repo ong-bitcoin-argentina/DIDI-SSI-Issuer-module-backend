@@ -21,7 +21,7 @@ router.get(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(_, res) {
+	async function (_, res) {
 		try {
 			const certs = await CertService.getAll();
 			const result = certs.map(cert => {
@@ -54,7 +54,7 @@ router.get(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		let cert;
 		try {
@@ -102,7 +102,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		try {
 			const data = JSON.parse(req.body.data);
 			const templateId = req.body.templateId;
@@ -156,7 +156,7 @@ router.put(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		const data = JSON.parse(req.body.data);
 		const split = req.body.split;
@@ -184,7 +184,7 @@ router.delete(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 
 		try {
@@ -217,7 +217,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		let cert;
 		try {
@@ -257,19 +257,12 @@ router.post(
 );
 
 // crea certificado completo (sin microcredenciales)
-const generateFullCertificate = async function(credentials, template, cert, part) {
+const generateFullCertificate = async function (credentials, template, cert, part) {
 	try {
 		const allData = cert.data.cert.concat(part).concat(cert.data.others);
 		const name = cert.data.cert[0].value;
 		const data = {};
-		data[name] = {
-			category: Constants.CERT_CATEGORY_MAPPING[template.category],
-			preview: {
-				type: Number(template.previewType),
-				fields: template.previewData
-			},
-			data: {}
-		};
+		data[name] = MouroService.getSkeletonForEmmit(template);
 
 		let did, expDate;
 		allData.forEach(dataElem => {
@@ -297,9 +290,9 @@ const generateFullCertificate = async function(credentials, template, cert, part
 };
 
 // crea certificado y sus microcredenciales
-const generateCertificate = async function(credentials, template, cert, part) {
+const generateCertificate = async function (credentials, template, cert, part) {
 	// generar microcredencial
-	const generatePartialCertificate = async function(name, certData, expDate, did) {
+	const generatePartialCertificate = async function (name, certData, expDate, did) {
 		try {
 			const data = {};
 			data[name] = {
@@ -377,15 +370,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		// crear las microcredenciales
 		const microCredentials = await Promise.all(generateCertPromises);
 
-		data[name] = {
-			category: Constants.CERT_CATEGORY_MAPPING[template.category],
-			preview: {
-				type: Number(template.previewType),
-				fields: template.previewData
-			},
-			data: {},
-			wrapped: {}
-		};
+		data[name] = MouroService.getSkeletonForEmmit(template, true);
 
 		const saveCertPromises = [];
 		for (let i = 0; i < microCredentials.length; i++) {
