@@ -7,7 +7,8 @@ const defaultRows = [{ columns: 2 }, { columns: 1 }, { columns: 1 }, { columns: 
 // Para agregar mas Cards Customizadas, seguir este formato
 const sancorCard = {
 	rows: defaultRows,
-	backgroundImage: sancorImgUrl
+	backgroundImage: sancorImgUrl,
+	style: "dark"
 };
 
 const cardLayouts = {
