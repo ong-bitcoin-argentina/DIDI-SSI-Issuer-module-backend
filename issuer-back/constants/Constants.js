@@ -23,9 +23,7 @@ const SET_ATTRIBUTE = process.env.BLOCK_CHAIN_SET_ATTRIBUTE || "999999999";
 
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
 const MONGO_URL =
-	MONGO_USER && MONGO_PASSWORD ?
-	   "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL :
-	   "mongodb://" + URL;
+	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
 console.log(MONGO_URL);
 
 const USER_TYPES = { Admin: "Admin" };
@@ -45,7 +43,7 @@ const CERT_CATEGORY_MAPPING = {
 	VIVIENDA: "livingPlace",
 	IDENTIDAD: "identity",
 	BENEFICIOS: "benefit",
-	LABORAL: "labor"
+	LABORAL: "work"
 };
 
 const DIDI_API = process.env.DIDI_API;
