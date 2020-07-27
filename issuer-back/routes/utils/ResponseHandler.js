@@ -39,6 +39,20 @@ class ResponseHandler {
 			data: err
 		});
 	}
+
+	// mandar respuesta de error generica
+	static sendErrWithStatus(res, err, status = 500) {
+		if (Constants.DEBUGG)
+			console.log({
+				status: "error",
+				data: err
+			});
+		return res.status(status).json({
+			status: "error",
+			message: err.message,
+			data: err
+		});
+	}
 }
 
 module.exports = ResponseHandler;
