@@ -27,6 +27,7 @@ class App extends Component {
 						<Route path={Constants.ROUTES.DELEGATES} component={Delegates} />
 					</Switch>
 				</Router>
+				<h6 className="Version">v{Constants.VERSION}</h6>
 			</div>
 		);
 	}

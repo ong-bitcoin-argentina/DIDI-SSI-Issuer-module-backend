@@ -1,6 +1,8 @@
-const API = window._env_.REACT_APP_API_URL;
+const API = process.env.REACT_APP_API_URL;
+const VERSION = process.env.REACT_APP_VERSION;
 
 module.exports = {
+	VERSION,
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
 		TEMPLATES: {
