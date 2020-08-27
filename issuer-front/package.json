@@ -4,6 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"@material-ui/core": "^4.9.4",
+		"@material-ui/icons": "^4.9.1",
 		"@material-ui/lab": "^4.0.0-alpha.44",
 		"@material/react-tab-bar": "^0.15.0",
 		"dateformat": "^3.0.3",

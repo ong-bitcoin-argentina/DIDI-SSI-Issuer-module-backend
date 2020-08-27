@@ -1,16 +1,27 @@
 @import "../../styles/Colors.scss";
 
-.App {
-	text-align: center;
+* {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
 
-	background-color: $Background;
-	min-height: 100vh;
+body {
+	margin: 0;
+	// margin: auto;
+	// padding: 0;
+	width: 100vw;
+	overflow-x: hidden;
+}
+
+.App {
 	display: flex;
-	flex-direction: column;
+	flex-flow: column;
+	min-height: 100vh;
+	width: 100vw;
 	align-items: center;
 	justify-content: center;
-	font-size: calc(10px + 2vmin);
-	color: white;
+
+	// min-height: 100vh;
 }
 
 .errMsg {
@@ -38,13 +49,29 @@
 		color: $Blocked;
 	}
 
+	.DeleteAction {
+		cursor: pointer;
+		color: $Delete;
+		display: flex;
+		align-items: center;
+	}
+
 	.DeleteAction:hover {
 		cursor: pointer;
 		color: $Delete;
 	}
+
+	.EditAction {
+		cursor: pointer;
+		color: $secondary-color;
+		margin-right: 1em;
+		display: flex;
+		align-items: center;
+	}
+
 	.EditAction:hover {
 		cursor: pointer;
-		color: $Edit;
+		color: $secondary-color;
 	}
 	.EmmitAction:hover {
 		cursor: pointer;
