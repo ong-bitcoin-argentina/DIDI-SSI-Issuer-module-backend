@@ -1,4 +1,4 @@
-$Background: #282c34;
+$Background: #fff;
 
 $BackgroundText: #bdbfbe;
 $ButtonText: #000;
@@ -15,3 +15,65 @@ $Blocked: #bdbfbe;
 $Emmit: #4946eb;
 $Edit: #0ca120;
 $Delete: #eb4646;
+
+$primary-color: #5fcdd7;
+$secondary-color: #256EE0;
+
+$grey-1: #f4f4f6;
+$grey-2: #e9e9ee;
+$grey-3: #dddee5;
+$grey-4: #c7c8d4;
+$grey-5: #8f92a9;
+
+$black: #0b1332;
+$white: #ffffff;
+
+// Typographic Scale
+$title: 22px;
+$numbers: 24px;
+$h1: 24px;
+$h2: 20px;
+$h3: 18px;
+$h4: 16px;
+$button: 14px;
+$body: 14px;
+$label: 12px;
+$explain: 10px;
+
+// Fonts
+
+@mixin regular-text($font-size, $font-color) {
+	margin: 0;
+	font-family: "Product Sans Regular", sans-serif;
+	font-size: $font-size;
+	@if $font-color {
+		color: $font-color;
+	}
+}
+
+@mixin light-text($font-size, $font-color) {
+	margin: 0;
+	font-family: "Product Sans Light Regular", sans-serif;
+	font-size: $font-size;
+	@if $font-color {
+		color: $font-color;
+	}
+}
+
+@mixin medium-text($font-size, $font-color) {
+	margin: 0;
+	font-family: "Product Sans Medium Regular", sans-serif;
+	font-size: $font-size;
+	@if $font-color {
+		color: $font-color;
+	}
+}
+
+@mixin bold-text($font-size, $font-color) {
+	margin: 0;
+	font-family: "Product Sans Bold", sans-serif;
+	font-size: $font-size;
+	@if $font-color {
+		color: $font-color;
+	}
+}

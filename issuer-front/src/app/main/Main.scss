@@ -1,23 +1,76 @@
 @import "../../styles/Colors.scss";
 
+.MainContent {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	box-sizing: border-box;
+	.Header {
+		width: 100%;
+		background-color: $secondary-color;
+		display: flex;
+		justify-content: space-between;
+		padding: 1em;
+		box-sizing: border-box;
+
+		img {
+			height: 25px;
+		}
+
+		.Menu {
+			margin-right: 1em;
+			p {
+				margin: 0;
+			}
+		}
+	}
+}
+
+.ReactTable {
+	.rt-tbody {
+		background-color: $white;
+	}
+	.rt-thead {
+		background: $grey-3;
+	}
+	.rt-resizable-header-content {
+		@include regular-text($label, $grey-5);
+		text-transform: uppercase;
+	}
+}
+
 .rt-resizable-header {
 	text-align: center;
 }
 
 .react-tabs {
-	width: 80%;
+	width: 95%;
 	height: 100vh;
 	margin-top: 30px;
+	color: $black;
+}
+
+.react-tabs__tab {
+	@include regular-text($h4, $grey-4);
+}
+
+.react-tabs__tab-panel {
+	margin-top: 20px;
 }
 
 .react-tabs__tab-list {
-	margin: 0px !important;
-	width: max-content;
-	float: right;
+	margin-top: 20px !important;
+	width: 100%;
+	text-align: left;
+	border-bottom: 1px solid $grey-3 !important;
 }
 
 .react-tabs__tab--selected {
 	background: $TableBackground !important;
+	border-color: $grey-3 !important;
+	color: $secondary-color !important;
+	border-radius: 5px 5px 0 0;
 }
 
 .TableInputFilter {
@@ -39,7 +92,7 @@
 }
 
 .ActionsMenu {
-	position: absolute;
+	display: flex;
 	right: 5px;
 	top: 5px;
 }
@@ -52,11 +105,9 @@
 .HeadButtons {
 	display: flex;
 	flex-direction: row;
-
 	position: relative;
-	height: 0px;
-	top: 0px;
-	left: 0px;
+	margin-bottom: 1em;
+	justify-content: flex-end;
 }
 
 .CreateButton {
@@ -86,29 +137,32 @@
 	align-self: center;
 }
 
+//Butons
 .CreateButton {
-	height: 40px;
-	width: 150px;
 	display: flex;
 	align-content: center;
+	height: 40px;
+	width: auto;
+	border: none;
+	border-radius: 4px;
+	background-color: $secondary-color;
+	color: $white;
+	align-items: center;
+	padding: 0 1em 0 0.5em;
 
-	i {
-		margin-top: 7px;
+	.material-icons.md-dark {
+		color: $white;
 	}
 }
 
-.TemplateCreateButton {
-	width: 130px;
-	height: 40px;
-}
-
-.Actions {
-	display: flex;
-	flex-direction: column;
-}
+// .Actions {
+// 	display: flex;
+// 	flex-direction: column;
+// }
 
 .CreateButtonText {
 	align-content: center;
+	@include regular-text($button, $white);
 }
 
 @-moz-document url-prefix() {
@@ -117,48 +171,48 @@
 	}
 }
 
-@media (max-width: 1150px) {
-	.TemplateTable,
-	.CertificateTable,
-	.DelegatesTable,
-	.ParticipantsTable {
-		margin-top: 0px;
-	}
+// @media (max-width: 1150px) {
+// 	.TemplateTable,
+// 	.CertificateTable,
+// 	.DelegatesTable,
+// 	.ParticipantsTable {
+// 		margin-top: 0px;
+// 	}
 
-	.react-tabs {
-		width: 95%;
-		height: 100%;
-		margin-top: 30px;
-	}
-}
+// 	.react-tabs {
+// 		width: 95%;
+// 		height: 100%;
+// 		margin-top: 30px;
+// 	}
+// }
 
-@media (max-width: 950px) {
-	.HeadButtons {
-		top: -50px;
-	}
-	.react-tabs__tab-list {
-		display: flex;
-		width: 100%;
-	}
-}
+// @media (max-width: 950px) {
+// 	.HeadButtons {
+// 		top: -50px;
+// 	}
+// 	.react-tabs__tab-list {
+// 		display: flex;
+// 		width: 100%;
+// 	}
+// }
 
-@media (max-width: 820px) {
-	.HeadButtons {
-		top: -70px;
-	}
+// @media (max-width: 820px) {
+// 	.HeadButtons {
+// 		top: -70px;
+// 	}
 
-	.react-tabs {
-		margin-top: 50px;
-	}
-}
+// 	.react-tabs {
+// 		margin-top: 50px;
+// 	}
+// }
 
-@media (max-width: 600px) {
-	.react-tabs__tab-list {
-		font-size: 14px;
-	}
+// @media (max-width: 600px) {
+// 	.react-tabs__tab-list {
+// 		font-size: 14px;
+// 	}
 
-	.react-tabs {
-		font-size: 14px;
-		margin-top: 50px;
-	}
-}
+// 	.react-tabs {
+// 		font-size: 14px;
+// 		margin-top: 50px;
+// 	}
+// }

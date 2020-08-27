@@ -29,6 +29,8 @@ import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 
 import InputDialog from "../utils/dialogs/InputDialog";
 
+import logoApp from "../../images/ai-di-logo.svg";
+
 class Main extends Component {
 	constructor(props) {
 		super(props);
@@ -690,72 +692,82 @@ class Main extends Component {
 		}
 
 		return (
-			<Tabs
-				selectedIndex={this.state.tabIndex}
-				onSelect={tabIndex => this.setState({ tabIndex: tabIndex, error: false })}
-			>
-				{this.renderRenameDialog()}
-				{this.renderActions(this.state.loading)}
+			<div className="MainContent">
+				<div className="Header">
+					<img src={logoApp} alt="ai di logo" />
+					<div className="Menu">
+						<p>Menu</p>
+					</div>
+				</div>
+				<Tabs
+					selectedIndex={this.state.tabIndex}
+					onSelect={tabIndex => this.setState({ tabIndex: tabIndex, error: false })}
+				>
+					{this.renderRenameDialog()}
+					{this.renderActions(this.state.loading)}
 
-				<TabList>
-					<Tab disabled={this.state.loading && this.state.tabIndex !== 0}>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
-					<Tab disabled={this.state.loading && this.state.tabIndex !== 1}>{Messages.LIST.BUTTONS.TO_CERTIFICATES}</Tab>
-					<Tab disabled={this.state.loading && this.state.tabIndex !== 2}>{Messages.LIST.BUTTONS.TO_QR}</Tab>
-					<Tab disabled={this.state.loading && this.state.tabIndex !== 3}>{Messages.LIST.BUTTONS.DELEGATES}</Tab>
-				</TabList>
+					<TabList>
+						<Tab disabled={this.state.loading && this.state.tabIndex !== 0}>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
+						<Tab disabled={this.state.loading && this.state.tabIndex !== 1}>
+							{Messages.LIST.BUTTONS.TO_CERTIFICATES}
+						</Tab>
+						<Tab disabled={this.state.loading && this.state.tabIndex !== 2}>{Messages.LIST.BUTTONS.TO_QR}</Tab>
+						<Tab disabled={this.state.loading && this.state.tabIndex !== 3}>{Messages.LIST.BUTTONS.DELEGATES}</Tab>
+					</TabList>
 
-				<TabPanel>
-					<Templates
-						onRef={ref => (this.templatesSection = ref)}
-						selected={this.state.tabIndex === 0}
-						templates={this.state.templates}
-						columns={this.state.templateColumns}
-						loading={this.state.loading}
-						error={this.state.error}
-						onCreate={this.onTemplateCreate}
-						onDelete={this.onTemplateDelete}
-					/>
-				</TabPanel>
-				<TabPanel>
-					<Certificates
-						onRef={ref => (this.certificatesSection = ref)}
-						selected={this.state.tabIndex === 1}
-						certificates={this.state.filteredCertificates}
-						columns={this.state.certColumns}
-						loading={this.state.loading}
-						onMultiEmmit={this.onCertificateMultiEmmit}
-						onDelete={this.onCertificateDelete}
-						error={this.state.error}
-					/>
-				</TabPanel>
-				<TabPanel>
-					<Participants
-						selected={this.state.tabIndex === 2}
-						loading={this.state.loading}
-						templates={this.state.templates}
-						participants={this.state.participants}
-						columns={this.state.participantColumns}
-						error={this.state.error}
-						onReload={this.onParticipantsReload}
-						selectedParticipants={this.state.selectedParticipants}
-					/>
-				</TabPanel>
+					<TabPanel>
+						<Templates
+							onRef={ref => (this.templatesSection = ref)}
+							selected={this.state.tabIndex === 0}
+							templates={this.state.templates}
+							columns={this.state.templateColumns}
+							loading={this.state.loading}
+							error={this.state.error}
+							onCreate={this.onTemplateCreate}
+							onDelete={this.onTemplateDelete}
+						/>
+					</TabPanel>
+					<TabPanel>
+						<Certificates
+							onRef={ref => (this.certificatesSection = ref)}
+							selected={this.state.tabIndex === 1}
+							certificates={this.state.filteredCertificates}
+							columns={this.state.certColumns}
+							loading={this.state.loading}
+							onMultiEmmit={this.onCertificateMultiEmmit}
+							onDelete={this.onCertificateDelete}
+							error={this.state.error}
+						/>
+					</TabPanel>
+					<TabPanel>
+						<Participants
+							selected={this.state.tabIndex === 2}
+							loading={this.state.loading}
+							templates={this.state.templates}
+							participants={this.state.participants}
+							columns={this.state.participantColumns}
+							error={this.state.error}
+							onReload={this.onParticipantsReload}
+							selectedParticipants={this.state.selectedParticipants}
+						/>
+					</TabPanel>
 
-				<TabPanel>
-					<Delegates
-						onRef={ref => (this.delegatesSection = ref)}
-						loading={this.state.loading}
-						selected={this.state.tabIndex === 3}
-						delegates={this.state.delegates}
-						columns={this.state.delegateColumns}
-						onRename={this.onIssuerRename}
-						onCreate={this.onDelegateCreate}
-						onDelete={this.onDelegateDelete}
-						issuerName={this.state.issuerName}
-						error={this.state.error}
-					/>
-				</TabPanel>
-			</Tabs>
+					<TabPanel>
+						<Delegates
+							onRef={ref => (this.delegatesSection = ref)}
+							loading={this.state.loading}
+							selected={this.state.tabIndex === 3}
+							delegates={this.state.delegates}
+							columns={this.state.delegateColumns}
+							onRename={this.onIssuerRename}
+							onCreate={this.onDelegateCreate}
+							onDelete={this.onDelegateDelete}
+							issuerName={this.state.issuerName}
+							error={this.state.error}
+						/>
+					</TabPanel>
+				</Tabs>
+			</div>
 		);
 	}
 
