@@ -83,7 +83,7 @@ module.exports = {
 
 	DELEGATES: {
 		ICONS: {
-			ADD_BUTTON: "add_box"
+			ADD_BUTTON: "add"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
@@ -100,7 +100,7 @@ module.exports = {
 		},
 
 		ICONS: {
-			ADD_BUTTON: "add_box",
+			ADD_BUTTON: "add",
 			OK: "check_circle_outline",
 			MISSING: "highlight_off"
 		},
