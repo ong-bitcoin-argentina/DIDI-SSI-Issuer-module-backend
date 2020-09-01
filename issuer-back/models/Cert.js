@@ -24,7 +24,7 @@ const CertSchema = mongoose.Schema({
 	templateId: {
 		type: ObjectId,
 		required: true,
-		ref: 'Template'
+		ref: "Template"
 	},
 	split: {
 		type: Boolean,
@@ -62,7 +62,7 @@ const CertSchema = mongoose.Schema({
 CertSchema.index({ name: 1 });
 
 // marcar certificado como borrado en bd local
-CertSchema.methods.delete = async function() {
+CertSchema.methods.delete = async function () {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: { deleted: true }
@@ -78,7 +78,7 @@ CertSchema.methods.delete = async function() {
 };
 
 // marcar certificado como emitido en bd local
-CertSchema.methods.emmit = async function(creds) {
+CertSchema.methods.emmit = async function (creds) {
 	const now = new Date();
 
 	const updateQuery = { _id: this._id };
@@ -96,7 +96,7 @@ CertSchema.methods.emmit = async function(creds) {
 };
 
 // copiar los campos de 'data' al formato requerido por el certificado
-var copyData = function(data) {
+var copyData = function (data) {
 	return {
 		cert: data.cert
 			.map(data => {
@@ -123,7 +123,7 @@ var copyData = function(data) {
 };
 
 // modificar certificado
-CertSchema.methods.edit = async function(data, split, microCredentials) {
+CertSchema.methods.edit = async function (data, split, microCredentials) {
 	this.data = copyData(data);
 	this.split = split;
 	this.microCredentials = microCredentials;
@@ -141,7 +141,7 @@ const Cert = mongoose.model("Cert", CertSchema);
 module.exports = Cert;
 
 // crear certificado a partir de la data y el modelo de certificado
-Cert.generate = async function(data, templateId, split, microCredentials) {
+Cert.generate = async function (data, templateId, split, microCredentials) {
 	try {
 		let cert = new Cert();
 		cert.split = split;
@@ -161,10 +161,10 @@ Cert.generate = async function(data, templateId, split, microCredentials) {
 };
 
 // obtener todos los certificados
-Cert.getAll = async function() {
+Cert.getAll = async function () {
 	try {
 		const query = { deleted: false };
-		const certs = await Cert.find(query);
+		const certs = await Cert.find(query).sort({ createdOn: -1 });
 		return Promise.resolve(certs);
 	} catch (err) {
 		console.log(err);
@@ -172,8 +172,14 @@ Cert.getAll = async function() {
 	}
 };
 
+// obtener todos los certificados emitidos
+Cert.getByEmmited = async function (emmited = false) {
+	const query = { deleted: false, emmitedOn: { $exists: emmited } };
+	return await Cert.find(query).sort({ createdOn: -1 });
+};
+
 // obtener certificado por id
-Cert.getById = async function(id) {
+Cert.getById = async function (id) {
 	try {
 		const query = { _id: id, deleted: false };
 		const cert = await Cert.findOne(query);

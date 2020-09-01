@@ -138,7 +138,8 @@
 }
 
 //Butons
-.CreateButton {
+.CreateButton,
+.MuiButton-containedPrimary {
 	display: flex;
 	align-content: center;
 	height: 40px;
@@ -153,6 +154,11 @@
 	.material-icons.md-dark {
 		color: $white;
 	}
+}
+
+.DangerButton {
+	@extend .CreateButton;
+	background-color: $Delete;
 }
 
 // .Actions {

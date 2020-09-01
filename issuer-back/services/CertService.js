@@ -1,6 +1,10 @@
 const Cert = require("../models/Cert");
 const Messages = require("../constants/Messages");
 
+const isTrue = val => {
+	return val === "true";
+};
+
 var getById = async function (id) {
 	try {
 		let cert = await Cert.getById(id);
@@ -19,6 +23,16 @@ module.exports.getAll = async function () {
 		let certs = await Cert.getAll();
 		if (!certs) return Promise.reject(Messages.CERT.ERR.GET);
 		return Promise.resolve(certs);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.CERT.ERR.GET);
+	}
+};
+
+// retorna los certificados filtrados
+module.exports.getByEmmited = async function (emmited = false) {
+	try {
+		return await Cert.getByEmmited(emmited);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.CERT.ERR.GET);

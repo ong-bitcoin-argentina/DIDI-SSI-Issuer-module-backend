@@ -2,86 +2,137 @@ import React from "react";
 import Messages from "../../../constants/Messages";
 
 import Checkbox from "@material-ui/core/Checkbox";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+// import Select from "@material-ui/core/Select";
+// import MenuItem from "@material-ui/core/MenuItem";
+import TableHeadCheck from "../../components/table-head-check";
+import CustomSelect from "../../components/custom-select";
+import InputFilter from "../../components/input-filter";
+import DateRangeFilter from "../../components/date-range-filter/date-range-filter";
+
+const { LAST_NAME, NAME, CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
+const { VIEW, EMMIT, DELETE, EDIT, REVOKE } = Messages.LIST.BUTTONS;
 
 class CertificateTableHelper {
+	static baseCells = cert => ({
+		_id: cert._id,
+		certName: cert.name,
+		createdOn: cert.emmitedOn ? cert.emmitedOn.split("T")[0] : "-",
+		firstName: cert.firstName,
+		lastName: cert.lastName
+	});
+
 	// genera las columnas de la tabla de certificados
-	static getCertificatesData(
+	static getCertificatesPendingData(
 		cert,
 		selectedCertificates,
 		onCertificateSelectToggle,
 		onCertificateEmmit,
 		onCertificateEdit,
 		onCertificateDelete,
-		onCertificateRevoke,
 		isLoading
 	) {
-		const emmited = cert.emmitedOn;
-
 		return {
-			_id: cert._id,
-			certName: cert.name,
-			createdOn: emmited ? cert.emmitedOn.split("T")[0] : "-",
-			firstName: cert.firstName,
-			lastName: cert.lastName,
+			...this.baseCells(cert),
 			select: (
 				<div className="Actions">
-					{!emmited && (
-						<Checkbox
-							checked={selectedCertificates[cert._id]}
-							onChange={(_, value) => {
-								if (!isLoading()) onCertificateSelectToggle(cert._id, value);
-							}}
-						/>
-					)}
+					{/* 
+					<Checkbox
+						checked={selectedCertificates[cert._id]}
+						onChange={(_, value) => {
+							if (!isLoading()) onCertificateSelectToggle(cert._id, value);
+						}}
+					/> 
+					*/}
 				</div>
 			),
 			actions: (
 				<div className="Actions">
-					{!emmited && (
-						<div
-							className="EmmitAction"
-							onClick={() => {
-								if (!isLoading()) onCertificateEmmit(cert._id);
-							}}
-						>
-							{Messages.LIST.BUTTONS.EMMIT}
-						</div>
-					)}
-					{
-						<div
-							className="EditAction"
-							onClick={() => {
-								if (!isLoading()) onCertificateEdit(cert._id);
-							}}
-						>
-							{emmited ? Messages.LIST.BUTTONS.VIEW : Messages.LIST.BUTTONS.EDIT}
-						</div>
-					}
-					{!cert.emmitedOn && (
-						<div
-							className="DeleteAction"
-							onClick={() => {
-								if (!isLoading()) onCertificateDelete(cert._id);
-							}}
-						>
-							{Messages.LIST.BUTTONS.DELETE}
-						</div>
-					)}
-					{/*cert.emmitedOn && (
-						<div
-							className="DeleteAction"
-							onClick={() => {
-								if (!isLoading()) onCertificateRevoke(cert._id);
-							}}
-						>
-							{Messages.LIST.BUTTONS.REVOKE}
-						</div>
-						)*/}
+					<div className="EmmitAction" onClick={() => onCertificateEmmit(cert._id)}>
+						{EMMIT}
+					</div>
+
+					<div className="EditAction" onClick={() => onCertificateEdit(cert._id)}>
+						{EDIT}
+					</div>
+
+					<div className="DeleteAction" onClick={() => onCertificateDelete(cert._id)}>
+						{DELETE}
+					</div>
 				</div>
 			)
 		};
+	}
+
+	static getCertificatesEmmitedData(
+		cert,
+		selectedCertificates,
+		onCertificateSelectToggle,
+		onCertificateView,
+		onCertificateRevoke
+	) {
+		return {
+			...this.baseCells(cert),
+			select: (
+				<div className="Actions">
+					<Checkbox
+						checked={selectedCertificates[cert._id]}
+						onChange={(_, value) => onCertificateSelectToggle(cert._id, value)}
+					/>
+				</div>
+			),
+			actions: (
+				<div className="Actions">
+					<div className="EditAction" onClick={() => onCertificateView(cert._id)}>
+						{VIEW}
+					</div>
+
+					<div className="DeleteAction" onClick={() => onCertificateRevoke(cert._id)}>
+						{REVOKE}
+					</div>
+				</div>
+			)
+		};
+	}
+
+	static getCertificatesRevokedData(cert, onCertificateView) {
+		return {
+			...this.baseCells(cert),
+			revokedOn: cert.revokedOn,
+			actions: (
+				<div className="Actions">
+					<div className="EditAction" onClick={() => onCertificateView(cert._id)}>
+						{VIEW}
+					</div>
+				</div>
+			)
+		};
+	}
+
+	static getCertificatesRevokedColumns(certificates, onFilterChange) {
+		const certNames = [...new Set(certificates.map(cert => cert.certName))];
+
+		return [
+			{
+				Header: <InputFilter label={LAST_NAME} onChange={onFilterChange} />,
+				accessor: "lastName"
+			},
+			{
+				Header: <InputFilter label={NAME} onChange={onFilterChange} />,
+				accessor: "firstName"
+			},
+			{
+				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} />,
+				accessor: "certName"
+			},
+			{
+				Header: <InputFilter label={`${EMISSION_DATE} ${EMISSION_DATE2}`} onChange={onFilterChange} />,
+				accessor: "createdOn"
+			},
+			{
+				Header: <InputFilter label={`${EMISSION_DATE} ${REVOCATION}`} onChange={onFilterChange} />,
+				accessor: "revokedOn"
+			}
+		];
 	}
 
 	// genera los headers para las columnas de la tabla de certificados
@@ -90,7 +141,6 @@ class CertificateTableHelper {
 		selectedCerts,
 		allSelectedCerts,
 		onCertificateSelectAllToggle,
-		onEmmitedFilterChange,
 		onTemplateFilterChange,
 		onFirstNameFilterChange,
 		onLastNameFilterChange,
@@ -100,87 +150,93 @@ class CertificateTableHelper {
 
 		return [
 			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.LAST_NAME}</div>
-						<input type="text" className="TableInputFilter" onChange={onLastNameFilterChange} />
-					</div>
-				),
+				Header: <InputFilter label={LAST_NAME} onChange={onLastNameFilterChange} />,
 				accessor: "lastName"
 			},
 			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.NAME}</div>
-						<input type="text" className="TableInputFilter" onChange={onFirstNameFilterChange} />
-					</div>
-				),
+				Header: <InputFilter label={NAME} onChange={onFirstNameFilterChange} />,
 				accessor: "firstName"
 			},
 			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.CERT}</div>
-						<Select className="TableInputFilter Checkbox" onChange={onTemplateFilterChange}>
-							<MenuItem value={undefined} className="DataInput">
-								{""}
-							</MenuItem>
-							{certNames.map((certName, key) => {
-								return (
-									<MenuItem value={certName} key={"cert-option-" + key} className="DataInput">
-										{certName}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</div>
-				),
+				Header: <CustomSelect options={certNames} label={CERT} onChange={onTemplateFilterChange} />,
 				accessor: "certName"
 			},
 			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.EMISSION_DATE}</div>
-						<div>{Messages.LIST.TABLE.EMISSION_DATE2}</div>
-					</div>
-				),
-				accessor: "createdOn"
-			},
-			{
-				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.ACTIONS}</div>
-						<Select className="TableInputFilter Checkbox" onChange={onEmmitedFilterChange}>
-							<MenuItem value={undefined} className="DataInput">
-								{""}
-							</MenuItem>
-							<MenuItem value={"EMITIDOS"} className="DataInput">
-								{"EMITIDOS"}
-							</MenuItem>
-							<MenuItem value={"NO EMITIDOS"} className="DataInput">
-								{"NO EMITIDOS"}
-							</MenuItem>
-						</Select>
-					</div>
-				),
+				Header: "Acciones",
 				accessor: "actions"
 			},
 			{
 				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.SELECT}</div>
-						<div>{"(" + Object.values(selectedCerts).filter(val => val).length + ")"}</div>
-						<div className="Actions">
-							<Checkbox
-								checked={allSelectedCerts}
-								onChange={(_, value) => {
-									if (!isLoading()) onCertificateSelectAllToggle(value);
-								}}
-							/>
-						</div>
-					</div>
+					<TableHeadCheck selected={selectedCerts} all={allSelectedCerts} onChange={onCertificateSelectAllToggle} />
 				),
 				accessor: "select"
+			}
+		];
+	}
+
+	static getCertEmmitedColumns(
+		certificates,
+		selectedRows,
+		isAllSelected,
+		onSelectAllToggle,
+		onFilterChange,
+		onDateRangeFilterChange
+	) {
+		// TODO: refactor this to get templates names from backend
+		const certNames = [...new Set(certificates.map(cert => cert.certName))];
+
+		return [
+			{
+				Header: <InputFilter label={LAST_NAME} onChange={onFilterChange} field="lastName" />,
+				accessor: "lastName"
+			},
+			{
+				Header: <InputFilter label={NAME} onChange={onFilterChange} field="firstName" />,
+				accessor: "firstName"
+			},
+			{
+				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />,
+				accessor: "certName"
+			},
+			{
+				Header: <DateRangeFilter label={`${EMISSION_DATE} ${EMISSION_DATE2}`} onChange={onDateRangeFilterChange} />,
+				accessor: "createdOn"
+			},
+			{
+				Header: "Acciones",
+				accessor: "actions"
+			},
+			{
+				Header: <TableHeadCheck selected={selectedRows} all={isAllSelected} onChange={onSelectAllToggle} />,
+				accessor: "select"
+			}
+		];
+	}
+
+	static getCertRevokedColumns(certificates, onFilterChange) {
+		// TODO: refactor this to get templates names from backend
+		const certNames = [...new Set(certificates.map(cert => cert.certName))];
+
+		return [
+			{
+				Header: <InputFilter label={LAST_NAME} onChange={onFilterChange} field="lastName" />,
+				accessor: "lastName"
+			},
+			{
+				Header: <InputFilter label={NAME} onChange={onFilterChange} field="firstName" />,
+				accessor: "firstName"
+			},
+			{
+				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} />,
+				accessor: "certName"
+			},
+			{
+				Header: `${EMISSION_DATE} ${EMISSION_DATE2}`,
+				accessor: "createdOn"
+			},
+			{
+				Header: `${EMISSION_DATE} ${REVOCATION}`,
+				accessor: "revokedOn"
 			}
 		];
 	}

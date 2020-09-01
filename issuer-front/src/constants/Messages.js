@@ -105,6 +105,7 @@ module.exports = {
 			NEXT: "SIGUIENTE",
 			EMISSION_DATE: "FECHA DE",
 			EMISSION_DATE2: "EMISION",
+			REVOCATION: "REVOCACIÓN",
 			SELECT: "SELECCIONAR",
 			ACTIONS: "ACCIONES"
 		},
@@ -112,7 +113,9 @@ module.exports = {
 			CREATE_DELEGATE: "Crear Delegado",
 			DELEGATES: "Delegados",
 			TO_QR: "Registrar Participante",
+			TO_CERTIFICATES_PENDING: "Certificados Pendientes",
 			TO_CERTIFICATES: "Certificados",
+			TO_REVOKED_CERTIFICATES: "Certificados Revocados",
 			TO_TEMPLATES: "Templates",
 			CREATE_TEMPLATE: "Crear Modelo de Certificado",
 			CREATE_CERT: "Emitir Certificado",

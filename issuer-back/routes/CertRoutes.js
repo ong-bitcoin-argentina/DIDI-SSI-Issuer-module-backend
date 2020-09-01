@@ -8,6 +8,18 @@ const CertService = require("../services/CertService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 
+const { IS_ADMIN } = Constants.VALIDATION_TYPES;
+const { checkValidationResult } = Validator;
+
+const parseCert = cert => ({
+	_id: cert._id,
+	name: cert.data.cert[0].value,
+	createdOn: cert.createdOn,
+	emmitedOn: cert.emmitedOn,
+	firstName: cert.data.participant[0][1].value,
+	lastName: cert.data.participant[0][2].value
+});
+
 /**
  *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
  */
@@ -28,6 +40,7 @@ router.get(
 				return {
 					_id: cert._id,
 					name: cert.data.cert[0].value,
+					createdOn: cert.createdOn,
 					emmitedOn: cert.emmitedOn,
 					firstName: cert.data.participant[0][1].value,
 					lastName: cert.data.participant[0][2].value
@@ -37,6 +50,25 @@ router.get(
 		} catch (err) {
 			console.log(err);
 			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ *	lista de certificados emitidos
+ */
+router.get(
+	"/find",
+	Validator.validate([{ name: "token", validate: [IS_ADMIN], isHead: true }]),
+	checkValidationResult,
+	async function (req, res) {
+		try {
+			const { emmited } = req.query;
+			const certs = await CertService.getByEmmited(emmited);
+			const result = certs.map(parseCert);
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErrWithStatus(res, err);
 		}
 	}
 );

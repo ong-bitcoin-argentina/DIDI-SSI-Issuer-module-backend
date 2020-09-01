@@ -1,4 +1,12 @@
 import Constants from "../constants/Constants";
+const { GET_ALL, GET_EMMITED, GET_PENDING } = Constants.API_ROUTES.CERTIFICATES;
+const options = token => ({
+	method: "GET",
+	headers: {
+		"Content-Type": "application/json",
+		token: token
+	}
+});
 
 export default class CertificateService {
 	static save(token, cert, cb, errCb) {
@@ -104,7 +112,7 @@ export default class CertificateService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.CERTIFICATES.GET_ALL, data)
+		fetch(GET_ALL, data)
 			.then(data => {
 				return data.json();
 			})
@@ -116,6 +124,34 @@ export default class CertificateService {
 				}
 			})
 			.catch(err => errCb(err));
+	}
+
+	static async getEmmited(token) {
+		let result = await fetch(GET_EMMITED, options(token));
+		result = await result.json();
+		if (result.status === "success") {
+			return result.data;
+		}
+		throw result;
+	}
+
+	static async getPending(token) {
+		let result = await fetch(GET_PENDING, options(token));
+		result = await result.json();
+		if (result.status === "success") {
+			return result.data;
+		}
+		throw result;
+	}
+
+	static async getRevoked(token) {
+		// TODO: change pending for revoked endpoint
+		let result = await fetch(GET_PENDING, options(token));
+		result = await result.json();
+		if (result.status === "success") {
+			return result.data;
+		}
+		throw result;
 	}
 
 	static get(token, id, cb, errCb) {
