@@ -9,20 +9,10 @@ import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { useHistory } from "react-router-dom";
-import moment from "moment";
+import { filter, filterByDates } from "../../../services/utils";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
-
-const filter = (item, key, val) => {
-	const parsedVal = val && val.toLowerCase();
-	return !parsedVal || item[key].toLowerCase().includes(parsedVal);
-};
-
-const filterByDates = (item, from, to) => {
-	const target = moment(item.createdOn);
-	return !from || !to || (from.isBefore(target) && to.isAfter(target));
-};
 
 const CertificatesEmmited = () => {
 	const [columns, setColumns] = useState([]);
@@ -102,7 +92,6 @@ const CertificatesEmmited = () => {
 
 	useEffect(() => {
 		const { firstName, lastName, certName, start, end } = filters;
-		console.log(filteredData);
 		const result = data.filter(
 			row =>
 				filter(row, "firstName", firstName) &&

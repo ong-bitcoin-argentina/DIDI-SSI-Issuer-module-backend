@@ -7,6 +7,7 @@ import { Grid, CircularProgress } from "@material-ui/core";
 import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
+import { filter } from "../../../services/utils";
 const mock = [
 	{
 		actions: {},
@@ -36,25 +37,16 @@ const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
 const CertificatesRevoked = () => {
 	const [columns, setColumns] = useState([]);
 	const [data, setData] = useState(mock);
+	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState(mock);
 
-	const onFilterChange = (key, value) => {
-		// setFilteredCertificates({ key, value });
+	const onFilterChange = (e, key) => {
+		const val = e.target.value;
+		setFilters(prev => ({ ...prev, [key]: val }));
 	};
 
 	const handleView = id => {
 		console.log(id);
-	};
-
-	const getData = async () => {
-		// const token = Cookie.get("token");
-		// let certificates = await CertificateService.getRevoked(token);
-		let certificates = mock;
-		setData(
-			certificates.map(item => {
-				return CertificateTableHelper.getCertificatesRevokedData(item, handleView);
-			})
-		);
 	};
 
 	useEffect(() => {
@@ -66,8 +58,28 @@ const CertificatesRevoked = () => {
 	}, [data]);
 
 	useEffect(() => {
+		const getData = async () => {
+			// TODO: unccomment when api is ready
+			// const token = Cookie.get("token");
+			// let certificates = await CertificateService.getRevoked(token);
+			let certificates = mock;
+			setData(
+				certificates.map(item => {
+					return CertificateTableHelper.getCertificatesRevokedData(item, handleView);
+				})
+			);
+		};
 		getData();
 	}, []);
+
+	useEffect(() => {
+		const { firstName, lastName, certName } = filters;
+		const result = data.filter(
+			row =>
+				filter(row, "firstName", firstName) && filter(row, "lastName", lastName) && filter(row, "certName", certName)
+		);
+		setFilteredData(result);
+	}, [filters]);
 
 	return (
 		<>

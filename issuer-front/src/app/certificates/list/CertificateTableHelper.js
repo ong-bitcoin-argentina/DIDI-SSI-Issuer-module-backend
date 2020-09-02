@@ -2,8 +2,6 @@ import React from "react";
 import Messages from "../../../constants/Messages";
 
 import Checkbox from "@material-ui/core/Checkbox";
-// import Select from "@material-ui/core/Select";
-// import MenuItem from "@material-ui/core/MenuItem";
 import TableHeadCheck from "../../components/table-head-check";
 import CustomSelect from "../../components/custom-select";
 import InputFilter from "../../components/input-filter";
@@ -227,7 +225,7 @@ class CertificateTableHelper {
 				accessor: "firstName"
 			},
 			{
-				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} />,
+				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />,
 				accessor: "certName"
 			},
 			{
