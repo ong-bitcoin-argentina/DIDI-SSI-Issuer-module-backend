@@ -6,10 +6,15 @@ import TableHeadCheck from "../../components/table-head-check";
 import CustomSelect from "../../components/custom-select";
 import InputFilter from "../../components/input-filter";
 import DateRangeFilter from "../../components/date-range-filter/date-range-filter";
-import { PENDING_ACTIONS } from "../../../constants/CertificateDefinitions";
+import {
+	PENDING_ACTIONS,
+	EMMITED_ACTIONS,
+	BASE_COLUMNS,
+	EMMITED_COLUMNS
+} from "../../../constants/CertificateDefinitions";
 
-const { LAST_NAME, NAME, CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
-const { VIEW, EMMIT, DELETE, EDIT, REVOKE } = Messages.LIST.BUTTONS;
+const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
+const { VIEW } = Messages.LIST.BUTTONS;
 
 class CertificateTableHelper {
 	static baseCells = cert => ({
@@ -48,8 +53,8 @@ class CertificateTableHelper {
 			),
 			actions: (
 				<div className="Actions">
-					{ACTIONS.map(item => (
-						<div className={item.className} onClick={item.action}>
+					{ACTIONS.map((item, index) => (
+						<div className={item.className} onClick={item.action} key={index}>
 							{item.label}
 						</div>
 					))}
@@ -58,13 +63,9 @@ class CertificateTableHelper {
 		};
 	}
 
-	static getCertificatesEmmitedData(
-		cert,
-		selectedCertificates,
-		onCertificateSelectToggle,
-		onCertificateView,
-		onCertificateRevoke
-	) {
+	static getCertificatesEmmitedData(cert, selectedCertificates, onCertificateSelectToggle, onView, onRevoke) {
+		const ACTIONS = EMMITED_ACTIONS({ cert, onView, onRevoke });
+
 		return {
 			...this.baseCells(cert),
 			select: (
@@ -77,13 +78,11 @@ class CertificateTableHelper {
 			),
 			actions: (
 				<div className="Actions">
-					<div className="EditAction" onClick={() => onCertificateView(cert._id)}>
-						{VIEW}
-					</div>
-
-					<div className="DeleteAction" onClick={() => onCertificateRevoke(cert._id)}>
-						{REVOKE}
-					</div>
+					{ACTIONS.map((item, index) => (
+						<div className={item.className} onClick={item.action} key={index}>
+							{item.label}
+						</div>
+					))}
 				</div>
 			)
 		};
@@ -103,33 +102,6 @@ class CertificateTableHelper {
 		};
 	}
 
-	static getCertificatesRevokedColumns(certificates, onFilterChange) {
-		const certNames = [...new Set(certificates.map(cert => cert.certName))];
-
-		return [
-			{
-				Header: <InputFilter label={LAST_NAME} onChange={onFilterChange} />,
-				accessor: "lastName"
-			},
-			{
-				Header: <InputFilter label={NAME} onChange={onFilterChange} />,
-				accessor: "firstName"
-			},
-			{
-				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} />,
-				accessor: "certName"
-			},
-			{
-				Header: <InputFilter label={`${EMISSION_DATE} ${EMISSION_DATE2}`} onChange={onFilterChange} />,
-				accessor: "createdOn"
-			},
-			{
-				Header: <InputFilter label={`${EMISSION_DATE} ${REVOCATION}`} onChange={onFilterChange} />,
-				accessor: "revokedOn"
-			}
-		];
-	}
-
 	// genera los headers para las columnas de la tabla de certificados
 	static getCertColumns(
 		certificates,
@@ -143,15 +115,13 @@ class CertificateTableHelper {
 	) {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
 
+		const COLUMNS = EMMITED_COLUMNS({ onLastNameFilterChange, onFirstNameFilterChange });
+
 		return [
-			{
-				Header: <InputFilter label={LAST_NAME} onChange={onLastNameFilterChange} />,
-				accessor: "lastName"
-			},
-			{
-				Header: <InputFilter label={NAME} onChange={onFirstNameFilterChange} />,
-				accessor: "firstName"
-			},
+			...COLUMNS.map(item => ({
+				Header: <InputFilter label={item.label} onChange={item.action} />,
+				accessor: item.accessor
+			})),
 			{
 				Header: <CustomSelect options={certNames} label={CERT} onChange={onTemplateFilterChange} />,
 				accessor: "certName"
@@ -181,14 +151,10 @@ class CertificateTableHelper {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
 
 		return [
-			{
-				Header: <InputFilter label={LAST_NAME} onChange={onFilterChange} field="lastName" />,
-				accessor: "lastName"
-			},
-			{
-				Header: <InputFilter label={NAME} onChange={onFilterChange} field="firstName" />,
-				accessor: "firstName"
-			},
+			...BASE_COLUMNS.map(item => ({
+				Header: <InputFilter label={item.label} onChange={onFilterChange} field={item.accessor} />,
+				accessor: item.accessor
+			})),
 			{
 				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />,
 				accessor: "certName"
@@ -213,14 +179,10 @@ class CertificateTableHelper {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
 
 		return [
-			{
-				Header: <InputFilter label={LAST_NAME} onChange={onFilterChange} field="lastName" />,
-				accessor: "lastName"
-			},
-			{
-				Header: <InputFilter label={NAME} onChange={onFilterChange} field="firstName" />,
-				accessor: "firstName"
-			},
+			...BASE_COLUMNS.map(item => ({
+				Header: <InputFilter label={item.label} onChange={onFilterChange} field={item.accessor} />,
+				accessor: item.accessor
+			})),
 			{
 				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />,
 				accessor: "certName"
