@@ -6,6 +6,7 @@ import TableHeadCheck from "../../components/table-head-check";
 import CustomSelect from "../../components/custom-select";
 import InputFilter from "../../components/input-filter";
 import DateRangeFilter from "../../components/date-range-filter/date-range-filter";
+import { PENDING_ACTIONS } from "../../../constants/CertificateDefinitions";
 
 const { LAST_NAME, NAME, CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
 const { VIEW, EMMIT, DELETE, EDIT, REVOKE } = Messages.LIST.BUTTONS;
@@ -24,11 +25,13 @@ class CertificateTableHelper {
 		cert,
 		selectedCertificates,
 		onCertificateSelectToggle,
-		onCertificateEmmit,
-		onCertificateEdit,
-		onCertificateDelete,
+		onEmmit,
+		onEdit,
+		onDelete,
 		isLoading
 	) {
+		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
+
 		return {
 			...this.baseCells(cert),
 			select: (
@@ -45,17 +48,11 @@ class CertificateTableHelper {
 			),
 			actions: (
 				<div className="Actions">
-					<div className="EmmitAction" onClick={() => onCertificateEmmit(cert._id)}>
-						{EMMIT}
-					</div>
-
-					<div className="EditAction" onClick={() => onCertificateEdit(cert._id)}>
-						{EDIT}
-					</div>
-
-					<div className="DeleteAction" onClick={() => onCertificateDelete(cert._id)}>
-						{DELETE}
-					</div>
+					{ACTIONS.map(item => (
+						<div className={item.className} onClick={item.action}>
+							{item.label}
+						</div>
+					))}
 				</div>
 			)
 		};
