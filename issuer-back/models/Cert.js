@@ -179,8 +179,8 @@ Cert.getAll = async function () {
 };
 
 // obtener todos los certificados emitidos
-Cert.getByEmmited = async function (emmited = false) {
-	const query = { deleted: false, emmitedOn: { $exists: emmited } };
+Cert.findByParams = async function ({ emmited = false, revoked = false }) {
+	const query = { deleted: false, emmitedOn: { $exists: emmited }, revokedOn: { $exists: revoked } };
 	return await Cert.find(query).sort({ createdOn: -1 });
 };
 
@@ -200,5 +200,6 @@ Cert.getById = async function (id) {
 Cert.revokeById = async function (_id, revokeReason) {
 	const query = { _id };
 	const action = { $set: { revokedOn: new Date(), revokeReason } };
+	console.log({ query, action });
 	return await Cert.findOneAndUpdate(query, action);
 };

@@ -8,13 +8,14 @@ const CertService = require("../services/CertService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 
-const { IS_ADMIN } = Constants.VALIDATION_TYPES;
-const { checkValidationResult } = Validator;
+const { IS_ADMIN, IS_STRING } = Constants.VALIDATION_TYPES;
+const { checkValidationResult, validate } = Validator;
 
 const parseCert = cert => ({
 	_id: cert._id,
 	name: cert.data.cert[0].value,
 	createdOn: cert.createdOn,
+	revokedOn: cert.revokedOn,
 	emmitedOn: cert.emmitedOn,
 	firstName: cert.data.participant[0][1].value,
 	lastName: cert.data.participant[0][2].value
@@ -59,12 +60,12 @@ router.get(
  */
 router.get(
 	"/find",
-	Validator.validate([{ name: "token", validate: [IS_ADMIN], isHead: true }]),
+	validate([{ name: "token", validate: [IS_ADMIN], isHead: true }]),
 	checkValidationResult,
 	async function (req, res) {
 		try {
-			const { emmited } = req.query;
-			const certs = await CertService.getByEmmited(emmited);
+			const { emmited, revoked } = req.query;
+			const certs = await CertService.findBy({ emmited, revoked });
 			const result = certs.map(parseCert);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -284,6 +285,36 @@ router.post(
 					"): " +
 					err.message;
 			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ * revoca un certificado
+ */
+router.patch(
+	"/:id/revoke",
+	validate([
+		{
+			name: "token",
+			validate: [IS_ADMIN],
+			isHead: true
+		},
+		{
+			name: "revokeReason",
+			validate: [IS_STRING],
+			optional: true
+		}
+	]),
+	checkValidationResult,
+	async function (req, res) {
+		try {
+			const { id } = req.params;
+			const { revokeReason } = req.body;
+			const result = await CertService.revoke(id, revokeReason);
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErrWithStatus(res, err);
 		}
 	}
 );
