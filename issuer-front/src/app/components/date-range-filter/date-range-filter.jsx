@@ -4,7 +4,7 @@ import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import "./_style.scss";
 import moment from "moment";
-moment.locale("es", {
+moment.locale("es-AR", {
 	months: [
 		"Enero",
 		"Febrero",

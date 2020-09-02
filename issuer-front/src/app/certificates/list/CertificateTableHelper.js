@@ -26,15 +26,7 @@ class CertificateTableHelper {
 	});
 
 	// genera las columnas de la tabla de certificados
-	static getCertificatesPendingData(
-		cert,
-		selectedCertificates,
-		onCertificateSelectToggle,
-		onEmmit,
-		onEdit,
-		onDelete,
-		isLoading
-	) {
+	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
 		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
 
 		return {
@@ -45,7 +37,7 @@ class CertificateTableHelper {
 					<Checkbox
 						checked={selectedCertificates[cert._id]}
 						onChange={(_, value) => {
-							if (!isLoading()) onCertificateSelectToggle(cert._id, value);
+							if (!isLoading()) onSelectToggle(cert._id, value);
 						}}
 					/> 
 					*/}
@@ -63,17 +55,18 @@ class CertificateTableHelper {
 		};
 	}
 
-	static getCertificatesEmmitedData(cert, selectedCertificates, onCertificateSelectToggle, onView, onRevoke) {
+	static getCertificatesEmmitedData(cert, selectedCertificates, onSelectToggle, onView, onRevoke) {
 		const ACTIONS = EMMITED_ACTIONS({ cert, onView, onRevoke });
+
+		const onToggle = (_, value) => {
+			onSelectToggle(cert._id, value);
+		};
 
 		return {
 			...this.baseCells(cert),
 			select: (
 				<div className="Actions">
-					<Checkbox
-						checked={selectedCertificates[cert._id]}
-						onChange={(_, value) => onCertificateSelectToggle(cert._id, value)}
-					/>
+					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
 				</div>
 			),
 			actions: (
@@ -89,12 +82,16 @@ class CertificateTableHelper {
 	}
 
 	static getCertificatesRevokedData(cert, onCertificateView) {
+		const onView = () => {
+			onCertificateView(cert._id);
+		};
+
 		return {
 			...this.baseCells(cert),
 			revokedOn: cert.revokedOn,
 			actions: (
 				<div className="Actions">
-					<div className="EditAction" onClick={() => onCertificateView(cert._id)}>
+					<div className="EditAction" onClick={onView}>
 						{VIEW}
 					</div>
 				</div>
