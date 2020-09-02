@@ -24,7 +24,7 @@ const mock = [
 		emmitedOn: "2020-09-01",
 		revokedOn: "2020-09-03",
 		firstName: "Juan",
-		lastName: "Chotalarga",
+		lastName: "Caralarga",
 		select: {},
 		_id: "5f4e6559d30baf004f678c5d"
 	}
