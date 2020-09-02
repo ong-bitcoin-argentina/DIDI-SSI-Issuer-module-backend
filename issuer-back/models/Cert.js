@@ -43,6 +43,12 @@ const CertSchema = mongoose.Schema({
 	emmitedOn: {
 		type: Date
 	},
+	revokedOn: {
+		type: Date
+	},
+	revokeReason: {
+		type: String
+	},
 	jwts: [
 		{
 			data: {
@@ -190,4 +196,9 @@ Cert.getById = async function (id) {
 	}
 };
 
-// TODO: add method to adjust getCertificate with image or template data populated
+// revocar certificado por id
+Cert.revokeById = async function (_id, revokeReason) {
+	const query = { _id };
+	const action = { $set: { revokedOn: new Date(), revokeReason } };
+	return await Cert.findOneAndUpdate(query, action);
+};
