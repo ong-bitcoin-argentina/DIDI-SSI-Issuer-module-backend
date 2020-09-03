@@ -31,12 +31,15 @@
 		"react-tabs": "3.0.0",
 		"react-with-direction": "1.3.1"
 	},
+	"dockerImage": "docker.atixlabs.com/didi/didi-issuer-back",
 	"scripts": {
 		"start": "react-scripts start",
 		"local": "node ./runLocal.js",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"docker:build": "docker build -t $npm_package_dockerImage:$npm_package_version-$CI_COMMIT_SHORT_SHA .",
+    "docker:push": "docker push $npm_package_dockerImage:$npm_package_version-$CI_COMMIT_SHORT_SHA"
 	},
 	"eslintConfig": {
 		"extends": "react-app"

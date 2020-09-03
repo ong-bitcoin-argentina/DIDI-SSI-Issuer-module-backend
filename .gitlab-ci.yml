@@ -1,0 +1,3 @@
+include:
+  - local: "/issuer-front/.gitlab-ci.yml"
+#  - local: "/backend/.gitlab-ci.yml"
