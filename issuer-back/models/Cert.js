@@ -15,6 +15,15 @@ const dataElement = {
 	}
 };
 
+const revokeSchema = mongoose.Schema({
+	date: {
+		type: Date
+	},
+	reason: {
+		type: String
+	}
+});
+
 const CertSchema = mongoose.Schema({
 	data: {
 		cert: [dataElement],
@@ -43,12 +52,7 @@ const CertSchema = mongoose.Schema({
 	emmitedOn: {
 		type: Date
 	},
-	revokedOn: {
-		type: Date
-	},
-	revokeReason: {
-		type: String
-	},
+	revocation: revokeSchema,
 	jwts: [
 		{
 			data: {
@@ -178,18 +182,15 @@ Cert.getAll = async function () {
 	}
 };
 
-const exists = (field, value) => ({
-	[field]: {
-		$exists: value
-	}
-});
+// obtener certificados revocados
+Cert.getRevokeds = async function () {
+	const query = { revocation: { $exists: true } };
+	return await Cert.find(query).sort({ createdOn: -1 });
+};
 
-// obtener todos los certificados filtrando por revocados o si estan emitidos o no
-Cert.findByParams = async function ({ emmited, revoked }) {
-	const criteria = revoked
-		? exists("revokedOn", true)
-		: { $and: [exists("emmitedOn", emmited), exists("revokedOn", false)] };
-	const query = { deleted: false, ...criteria };
+// obtener certificados segun su emision
+Cert.findByEmission = async function ($exists) {
+	const query = { deleted: false, emmitedOn: { $exists } };
 	return await Cert.find(query).sort({ createdOn: -1 });
 };
 
@@ -206,9 +207,9 @@ Cert.getById = async function (id) {
 };
 
 // revocar certificado por id
-Cert.revokeById = async function (_id, revokeReason) {
+Cert.revokeById = async function (_id, reason) {
+	const revocation = { date: new Date(), reason };
 	const query = { _id, emmitedOn: { $exists: true } };
-	const action = { $set: { revokedOn: new Date(), revokeReason } };
-	const options = { returnOriginal: false };
-	return await Cert.findOneAndUpdate(query, action, options);
+	const action = { $set: { revocation } };
+	return await Cert.findOneAndUpdate(query, action, { returnOriginal: false });
 };

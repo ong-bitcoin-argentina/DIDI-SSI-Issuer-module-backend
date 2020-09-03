@@ -1,5 +1,6 @@
 const Cert = require("../models/Cert");
 const Messages = require("../constants/Messages");
+const { toDTO } = require("../constants/DTO/CertDTO");
 
 var getById = async function (id) {
 	try {
@@ -25,9 +26,14 @@ module.exports.getAll = async function () {
 	}
 };
 
-// retorna los certificados filtrados
 module.exports.findBy = async function ({ emmited, revoked }) {
-	return await Cert.findByParams({ emmited, revoked });
+	let certs;
+	if (revoked) {
+		certs = await Cert.getRevokeds();
+	} else {
+		certs = await Cert.findByEmission(emmited);
+	}
+	return toDTO(certs);
 };
 
 // crea un certificado a partir del modelo
@@ -129,8 +135,8 @@ module.exports.delete = async function (id) {
 };
 
 // revoca un certificado
-module.exports.revoke = async function (id, revokeReason) {
-	const cert = await Cert.revokeById(id, revokeReason);
+module.exports.revoke = async function (id, reason) {
+	const cert = await Cert.revokeById(id, reason);
 	if (!cert) throw Messages.CERT.ERR.REVOKE;
 	return cert;
 };

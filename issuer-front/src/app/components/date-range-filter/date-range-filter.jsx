@@ -4,6 +4,7 @@ import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import "./_style.scss";
 import moment from "moment";
+import { DATE_FORMAT } from "../../../constants/Constants";
 moment.locale("es-AR", {
 	months: [
 		"Enero",
@@ -49,7 +50,7 @@ const DateRangeFilter = ({ label, onChange }) => {
 				onFocusChange={val => setFocused(val)}
 				startDatePlaceholderText="Desde"
 				endDatePlaceholderText="Hasta"
-				displayFormat="YYYY-MM-DD"
+				displayFormat={DATE_FORMAT}
 				withPortal
 				showClearDates
 				small
