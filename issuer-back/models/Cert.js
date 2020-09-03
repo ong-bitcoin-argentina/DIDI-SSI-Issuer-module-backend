@@ -198,8 +198,8 @@ Cert.getById = async function (id) {
 
 // revocar certificado por id
 Cert.revokeById = async function (_id, revokeReason) {
-	const query = { _id };
+	const query = { _id, emmitedOn: { $exists: true } };
 	const action = { $set: { revokedOn: new Date(), revokeReason } };
-	console.log({ query, action });
-	return await Cert.findOneAndUpdate(query, action);
+	const options = { returnNewDocument: true };
+	return await Cert.findOneAndUpdate(query, action, options);
 };

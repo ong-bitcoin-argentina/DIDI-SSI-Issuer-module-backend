@@ -131,6 +131,6 @@ module.exports.delete = async function (id) {
 // revoca un certificado
 module.exports.revoke = async function (id, revokeReason) {
 	const cert = await Cert.revokeById(id, revokeReason);
-	console.log({ cert });
+	if (!cert) throw Messages.CERT.ERR.REVOKE;
 	return cert;
 };
