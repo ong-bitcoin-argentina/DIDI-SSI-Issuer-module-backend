@@ -161,31 +161,31 @@ module.exports = {
 		},
 		LENGTH_INVALID: function (field, min, max) {
 			const code = "PARAMETER_TYPE_ERROR";
-			const msgStart = "El campo " + field + " tendria que tener.";
+			const msgStart = `El campo ${field} tendria que tener.`;
 
 			if (min && !max) {
 				return {
 					code: code,
-					message: msgStart + " mas que " + min + " caracteres."
+					message: `${msgStart} mas que ${min} caracteres.`
 				};
 			}
 
 			if (!min && max) {
 				return {
 					code: code,
-					message: msgStart + " menos que " + max + " caracteres."
+					message: `${msgStart} menos que ${max} caracteres.`
 				};
 			}
 
 			if (min == max) {
 				return {
 					code: code,
-					message: msgStart + " exactamete " + max + " caracteres."
+					message: `${msgStart} exactamente ${max} caracteres.`
 				};
 			} else {
 				return {
 					code: code,
-					message: msgStart + " entre " + min + " y " + max + " caracteres."
+					message: `${msgStart} entre ${min} y ${max} caracteres.`
 				};
 			}
 		}
