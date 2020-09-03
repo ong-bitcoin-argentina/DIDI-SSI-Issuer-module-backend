@@ -49,6 +49,7 @@ module.exports = {
 			GET_ALL: API + "/cert/all",
 			GET_EMMITED: API + "/cert/find?emmited=true",
 			GET_PENDING: API + "/cert/find?emmited=false",
+			GET_REVOKED: API + "/cert/find?revoked=true",
 			GET: id => {
 				return API + "/cert/" + id;
 			},

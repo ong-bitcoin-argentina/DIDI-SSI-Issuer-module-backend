@@ -88,7 +88,7 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			revokedOn: cert.revokedOn,
+			revokedOn: cert.revokedOn.split("T")[0],
 			actions: (
 				<div className="Actions">
 					<div className="EditAction" onClick={onView}>

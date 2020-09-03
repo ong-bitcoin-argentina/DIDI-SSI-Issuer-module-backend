@@ -1,5 +1,5 @@
 import Constants from "../constants/Constants";
-const { GET_ALL, GET_EMMITED, GET_PENDING } = Constants.API_ROUTES.CERTIFICATES;
+const { GET_ALL, GET_EMMITED, GET_PENDING, GET_REVOKED } = Constants.API_ROUTES.CERTIFICATES;
 const options = token => ({
 	method: "GET",
 	headers: {
@@ -146,7 +146,7 @@ export default class CertificateService {
 
 	static async getRevoked(token) {
 		// TODO: change pending for revoked endpoint
-		let result = await fetch(GET_PENDING, options(token));
+		let result = await fetch(GET_REVOKED, options(token));
 		result = await result.json();
 		if (result.status === "success") {
 			return result.data;
