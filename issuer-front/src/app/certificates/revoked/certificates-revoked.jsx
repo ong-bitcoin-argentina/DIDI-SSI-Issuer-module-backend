@@ -8,37 +8,15 @@ import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { filter } from "../../../services/utils";
-const mock = [
-	{
-		actions: {},
-		name: "prueba",
-		emmitedOn: "2020-09-01",
-		revokedOn: "2020-09-03",
-		firstName: "adigalbeto",
-		lastName: "lay",
-		select: {},
-		_id: "5f4ec6559c70c100456da15e"
-	},
-	{
-		actions: {},
-		name: "sadasd",
-		emmitedOn: "2020-09-01",
-		revokedOn: "2020-09-03",
-		firstName: "Juan",
-		lastName: "Caralarga",
-		select: {},
-		_id: "5f4e6559d30baf004f678c5d"
-	}
-];
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
 
 const CertificatesRevoked = () => {
 	const [columns, setColumns] = useState([]);
-	const [data, setData] = useState(mock);
+	const [data, setData] = useState([]);
 	const [filters, setFilters] = useState({});
-	const [filteredData, setFilteredData] = useState(mock);
+	const [filteredData, setFilteredData] = useState([]);
 
 	const onFilterChange = (e, key) => {
 		const val = e.target.value;
@@ -60,9 +38,8 @@ const CertificatesRevoked = () => {
 	useEffect(() => {
 		const getData = async () => {
 			// TODO: unccomment when api is ready
-			// const token = Cookie.get("token");
-			// let certificates = await CertificateService.getRevoked(token);
-			let certificates = mock;
+			const token = Cookie.get("token");
+			let certificates = await CertificateService.getRevoked(token);
 			setData(
 				certificates.map(item => {
 					return CertificateTableHelper.getCertificatesRevokedData(item, handleView);

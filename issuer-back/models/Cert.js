@@ -178,9 +178,18 @@ Cert.getAll = async function () {
 	}
 };
 
-// obtener todos los certificados emitidos
-Cert.findByParams = async function ({ emmited = false, revoked = false }) {
-	const query = { deleted: false, emmitedOn: { $exists: emmited }, revokedOn: { $exists: revoked } };
+const exists = (field, value) => ({
+	[field]: {
+		$exists: value
+	}
+});
+
+// obtener todos los certificados filtrando por revocados o si estan emitidos o no
+Cert.findByParams = async function ({ emmited, revoked }) {
+	const criteria = revoked
+		? exists("revokedOn", true)
+		: { $and: [exists("emmitedOn", emmited), exists("revokedOn", false)] };
+	const query = { deleted: false, ...criteria };
 	return await Cert.find(query).sort({ createdOn: -1 });
 };
 
@@ -200,6 +209,6 @@ Cert.getById = async function (id) {
 Cert.revokeById = async function (_id, revokeReason) {
 	const query = { _id, emmitedOn: { $exists: true } };
 	const action = { $set: { revokedOn: new Date(), revokeReason } };
-	const options = { returnNewDocument: true };
+	const options = { returnOriginal: false };
 	return await Cert.findOneAndUpdate(query, action, options);
 };

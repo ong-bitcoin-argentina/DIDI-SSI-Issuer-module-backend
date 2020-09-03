@@ -3,13 +3,12 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
-const { CERT_REVOCATION } = require("../constants/Validators");
+const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators");
 
 const CertService = require("../services/CertService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 
-const { IS_ADMIN } = Constants.VALIDATION_TYPES;
 const { checkValidationResult, validate } = Validator;
 
 const parseCert = cert => ({
@@ -17,6 +16,7 @@ const parseCert = cert => ({
 	name: cert.data.cert[0].value,
 	createdOn: cert.createdOn,
 	revokedOn: cert.revokedOn,
+	revokeReason: cert.revokeReason,
 	emmitedOn: cert.emmitedOn,
 	firstName: cert.data.participant[0][1].value,
 	lastName: cert.data.participant[0][2].value
@@ -59,21 +59,16 @@ router.get(
 /**
  *	lista de certificados emitidos
  */
-router.get(
-	"/find",
-	validate([{ name: "token", validate: [IS_ADMIN], isHead: true }]),
-	checkValidationResult,
-	async function (req, res) {
-		try {
-			const { emmited, revoked } = req.query;
-			const certs = await CertService.findBy({ emmited, revoked });
-			const result = certs.map(parseCert);
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			return ResponseHandler.sendErrWithStatus(res, err);
-		}
+router.get("/find", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
+	try {
+		const { emmited, revoked } = req.query;
+		const certs = await CertService.findBy({ emmited, revoked });
+		const result = certs.map(parseCert);
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		return ResponseHandler.sendErrWithStatus(res, err);
 	}
-);
+});
 
 /**
  *	retorna un certificado a partir de su id

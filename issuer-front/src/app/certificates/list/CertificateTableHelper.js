@@ -95,7 +95,7 @@ class CertificateTableHelper {
 	static getCertificatesRevokedData(cert, onCertificateView) {
 		return {
 			...this.baseCells(cert),
-			revokedOn: cert.revokedOn,
+			revokedOn: cert.revokedOn.split("T")[0],
 			actions: (
 				<div className="Actions">
 					<div className="EditAction" onClick={() => onCertificateView(cert._id)}>
