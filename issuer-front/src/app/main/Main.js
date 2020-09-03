@@ -30,6 +30,26 @@ import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 import InputDialog from "../utils/dialogs/InputDialog";
 
 import logoApp from "../../images/ai-di-logo.svg";
+import CertificatesEmmited from "../certificates/emmited/certificates-emmited";
+import CertificatesRevoked from "../certificates/revoked/certificates-revoked";
+
+const tabs = {
+	templates: 0,
+	"certificates-pending": 1,
+	certificates: 2,
+	"certificates-revoked": 3,
+	registry: 4,
+	delegated: 5
+};
+
+const {
+	TO_CERTIFICATES,
+	TO_REVOKED_CERTIFICATES,
+	TO_QR,
+	TO_TEMPLATES,
+	DELEGATES,
+	TO_CERTIFICATES_PENDING
+} = Messages.LIST.BUTTONS;
 
 class Main extends Component {
 	constructor(props) {
@@ -66,13 +86,13 @@ class Main extends Component {
 	// cargar certificados
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
-		const active = splitPath[splitPath.length - 1];
-		let tabIndex = active === "certificates" ? 1 : 0;
+		const path = splitPath[splitPath.length - 1];
+		let tabIndex = tabs[path];
 
 		const token = Cookie.get("token");
 		const self = this;
 
-		self.setState({ loading: true, tabIndex: tabIndex });
+		self.setState({ loading: true, tabIndex });
 		ParticipantService.getGlobal(
 			token,
 			async function (parts) {
@@ -312,7 +332,6 @@ class Main extends Component {
 		let allSelectedCerts = this.state.allSelectedCerts;
 		const certs = this.state.certs;
 		const selectedCerts = this.state.selectedCerts;
-
 		certs.forEach(cert => {
 			if (!cert["emmitedOn"]) selectedCerts[cert._id] = value;
 		});
@@ -335,24 +354,25 @@ class Main extends Component {
 			allSelectedCerts: allSelected
 		});
 
-		const certificates = certs.map(certificate => {
-			return CertificateTableHelper.getCertificatesData(
+		const filteredCerts = certs.filter(item => !item.emmitedOn);
+
+		const certificates = filteredCerts.map(certificate => {
+			return CertificateTableHelper.getCertificatesPendingData(
 				certificate,
 				selectedCerts,
 				this.onCertificateSelectToggle,
 				this.onCertificateEmmit,
 				this.onCertificateEdit,
 				this.onCertificateDeleteDialogOpen,
-				this.onCertificateRevoke,
 				() => this.state.loading
 			);
 		});
+
 		const certColumns = CertificateTableHelper.getCertColumns(
 			certificates,
 			selectedCerts,
 			allSelected,
 			this.onCertificateSelectAllToggle,
-			this.onEmmitedFilterChange,
 			this.onTemplateFilterChange,
 			this.onFirstNameFilterChange,
 			this.onLastNameFilterChange,
@@ -514,53 +534,26 @@ class Main extends Component {
 	// filtro por nombre
 	onFirstNameFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(
-			filter,
-			this.state.lastNameFilter,
-			this.state.templateFilter,
-			this.state.emmitedFilter
-		);
+		this.updateFiltererCertificates(filter, this.state.lastNameFilter, this.state.templateFilter);
 		this.setState({ firstNameFilter: filter });
 	};
 
 	// filtro por apellido
 	onLastNameFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(
-			this.state.firstNameFilter,
-			filter,
-			this.state.templateFilter,
-			this.state.emmitedFilter
-		);
+		this.updateFiltererCertificates(this.state.firstNameFilter, filter, this.state.templateFilter);
 		this.setState({ lastNameFilter: filter });
 	};
 
 	// filtro por modelo de certificado
 	onTemplateFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(
-			this.state.firstNameFilter,
-			this.state.lastNameFilter,
-			filter,
-			this.state.emmitedFilter
-		);
+		this.updateFiltererCertificates(this.state.firstNameFilter, this.state.lastNameFilter, filter);
 		this.setState({ templateFilter: filter });
 	};
 
-	// filtro por estado de emision de certificado
-	onEmmitedFilterChange = event => {
-		const filter = event.target.value;
-		this.updateFiltererCertificates(
-			this.state.firstNameFilter,
-			this.state.lastNameFilter,
-			this.state.templateFilter,
-			filter
-		);
-		this.setState({ emmitedFilter: filter });
-	};
-
 	// actualizar tabla en funcion de los filtros
-	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter, emmitedFilter) => {
+	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter) => {
 		let cert = this.state.certificates;
 
 		if (firstNameFilter && firstNameFilter !== "") {
@@ -581,17 +574,7 @@ class Main extends Component {
 			});
 		}
 
-		if (emmitedFilter) {
-			if (emmitedFilter === "EMITIDOS") {
-				cert = cert.filter(certData => {
-					return certData.createdOn !== "-";
-				});
-			} else {
-				cert = cert.filter(certData => {
-					return certData.createdOn === "-";
-				});
-			}
-		}
+		// cert = cert.filter(item => item.createdOn === "-");
 
 		this.setState({ filteredCertificates: cert });
 	};
@@ -691,6 +674,9 @@ class Main extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
+		const { loading, tabIndex, error } = this.state;
+		const selectedIndex = tabIndex ?? 0;
+
 		return (
 			<div className="MainContent">
 				<div className="Header">
@@ -699,30 +685,27 @@ class Main extends Component {
 						<p>Menu</p>
 					</div>
 				</div>
-				<Tabs
-					selectedIndex={this.state.tabIndex}
-					onSelect={tabIndex => this.setState({ tabIndex: tabIndex, error: false })}
-				>
+				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
-					{this.renderActions(this.state.loading)}
+					{this.renderActions(loading)}
 
 					<TabList>
-						<Tab disabled={this.state.loading && this.state.tabIndex !== 0}>{Messages.LIST.BUTTONS.TO_TEMPLATES}</Tab>
-						<Tab disabled={this.state.loading && this.state.tabIndex !== 1}>
-							{Messages.LIST.BUTTONS.TO_CERTIFICATES}
-						</Tab>
-						<Tab disabled={this.state.loading && this.state.tabIndex !== 2}>{Messages.LIST.BUTTONS.TO_QR}</Tab>
-						<Tab disabled={this.state.loading && this.state.tabIndex !== 3}>{Messages.LIST.BUTTONS.DELEGATES}</Tab>
+						<Tab disabled={loading && tabIndex !== 0}>{TO_TEMPLATES}</Tab>
+						<Tab disabled={loading && tabIndex !== 1}>{TO_CERTIFICATES_PENDING}</Tab>
+						<Tab disabled={loading && tabIndex !== 2}>{TO_CERTIFICATES}</Tab>
+						<Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>
+						<Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>
+						<Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>
 					</TabList>
 
 					<TabPanel>
 						<Templates
 							onRef={ref => (this.templatesSection = ref)}
-							selected={this.state.tabIndex === 0}
+							selected={tabIndex === 0}
 							templates={this.state.templates}
 							columns={this.state.templateColumns}
-							loading={this.state.loading}
-							error={this.state.error}
+							loading={loading}
+							error={error}
 							onCreate={this.onTemplateCreate}
 							onDelete={this.onTemplateDelete}
 						/>
@@ -730,23 +713,29 @@ class Main extends Component {
 					<TabPanel>
 						<Certificates
 							onRef={ref => (this.certificatesSection = ref)}
-							selected={this.state.tabIndex === 1}
+							selected={tabIndex === 1}
 							certificates={this.state.filteredCertificates}
 							columns={this.state.certColumns}
-							loading={this.state.loading}
+							loading={loading}
 							onMultiEmmit={this.onCertificateMultiEmmit}
 							onDelete={this.onCertificateDelete}
-							error={this.state.error}
+							error={error}
 						/>
 					</TabPanel>
 					<TabPanel>
+						<CertificatesEmmited />
+					</TabPanel>
+					<TabPanel>
+						<CertificatesRevoked />
+					</TabPanel>
+					<TabPanel>
 						<Participants
-							selected={this.state.tabIndex === 2}
-							loading={this.state.loading}
+							selected={this.state.tabIndex === 4}
+							loading={loading}
 							templates={this.state.templates}
 							participants={this.state.participants}
 							columns={this.state.participantColumns}
-							error={this.state.error}
+							error={error}
 							onReload={this.onParticipantsReload}
 							selectedParticipants={this.state.selectedParticipants}
 						/>
@@ -755,15 +744,15 @@ class Main extends Component {
 					<TabPanel>
 						<Delegates
 							onRef={ref => (this.delegatesSection = ref)}
-							loading={this.state.loading}
-							selected={this.state.tabIndex === 3}
+							loading={loading}
+							selected={this.state.tabIndex === 5}
 							delegates={this.state.delegates}
 							columns={this.state.delegateColumns}
 							onRename={this.onIssuerRename}
 							onCreate={this.onDelegateCreate}
 							onDelete={this.onDelegateDelete}
 							issuerName={this.state.issuerName}
-							error={this.state.error}
+							error={error}
 						/>
 					</TabPanel>
 				</Tabs>

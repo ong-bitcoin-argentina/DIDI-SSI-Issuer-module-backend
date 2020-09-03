@@ -4,7 +4,7 @@ import "./styles/Index.scss";
 import App from "./app/main/App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
-require('dotenv').config();
+require("dotenv").config();
 
 ReactDOM.render(
 	<BrowserRouter>

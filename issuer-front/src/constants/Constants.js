@@ -47,6 +47,8 @@ module.exports = {
 				return API + "/cert/" + id + "/emmit";
 			},
 			GET_ALL: API + "/cert/all",
+			GET_EMMITED: API + "/cert/find?emmited=true",
+			GET_PENDING: API + "/cert/find?emmited=false",
 			GET: id => {
 				return API + "/cert/" + id;
 			},
@@ -69,7 +71,9 @@ module.exports = {
 		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
+		CERTIFICATES_PENDING: "/certificates-pending",
 		CERTIFICATES: "/certificates",
+		CERTIFICATES_REVOKED: "/certificates-revoked",
 		EDIT_CERT: "/certificates/edit/"
 	},
 
