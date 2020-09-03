@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./_style.scss";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import Messages from "../../../constants/Messages";
@@ -18,43 +18,10 @@ const CertificatesEmmited = () => {
 	const [columns, setColumns] = useState([]);
 	const [data, setData] = useState([]);
 	const [filters, setFilters] = useState({});
-	const [selected, setSelected] = useState([]);
+	const [selected, setSelected] = useState({});
 	const [allSelected, setAllSelected] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
 	const history = useHistory();
-
-	const onFilterChange = (e, key) => {
-		const val = e.target.value;
-		setFilters(prev => ({ ...prev, [key]: val }));
-	};
-
-	const onDateRangeFilterChange = ({ start, end }) => {
-		setFilters(prev => ({ ...prev, start, end }));
-	};
-
-	const handleSelectOne = (id, checked) => {
-		if (checked) {
-			setSelected([...selected, id]);
-		} else {
-			setSelected(selected.filter(item => item._id !== id));
-		}
-	};
-
-	const handleSelectAllToggle = val => {
-		setAllSelected(val);
-	};
-
-	const handleView = id => {
-		history.push(Constants.ROUTES.EDIT_CERT + id);
-	};
-
-	const handleRevokeOne = id => {
-		console.log("Revocar: " + id);
-	};
-
-	const handleRevokeSelected = () => {
-		console.log("revoke selected");
-	};
 
 	useEffect(() => {
 		if (data.length) {
@@ -102,6 +69,41 @@ const CertificatesEmmited = () => {
 		setFilteredData(result);
 	}, [filters]);
 
+	useEffect(() => {
+		const generated = {};
+		filteredData.forEach(item => (generated[item._id] = allSelected));
+		setSelected(generated);
+	}, [allSelected]);
+
+	const onFilterChange = (e, key) => {
+		const val = e.target.value;
+		setFilters(prev => ({ ...prev, [key]: val }));
+	};
+
+	const onDateRangeFilterChange = ({ start, end }) => {
+		setFilters(prev => ({ ...prev, start, end }));
+	};
+
+	const handleSelectOne = (id, checked) => {
+		setSelected({ ...selected, [id]: checked });
+	};
+
+	const handleView = id => {
+		history.push(Constants.ROUTES.EDIT_CERT + id);
+	};
+
+	const handleRevokeOne = id => {
+		console.log("Revocar: " + id);
+	};
+
+	const handleRevokeSelected = () => {
+		console.log("revoke selected");
+	};
+
+	const handleSelectAllToggle = val => {
+		setAllSelected(val);
+	};
+
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
@@ -121,7 +123,11 @@ const CertificatesEmmited = () => {
 					)}
 				</Grid>
 				<Grid item xs={12} className="flex-end">
-					<button className="DangerButton" onClick={handleRevokeSelected} disabled={!selected.length}>
+					<button
+						className="DangerButton"
+						onClick={handleRevokeSelected}
+						disabled={!Object.values(selected).some(val => val)}
+					>
 						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
 						Revocar Certificados Seleccionados
 					</button>

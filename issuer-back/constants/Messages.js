@@ -79,7 +79,7 @@ module.exports = {
 			VERIFY: { code: "CERT_VERIFY_ERROR", message: "Error al validar la credencial." }
 		},
 		CERT_FIELDS: {
-			NAME: "CERTIFICADO O CURSO",
+			NAME: "CREDENCIAL",
 			PARTICIPANT_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO"
 		}

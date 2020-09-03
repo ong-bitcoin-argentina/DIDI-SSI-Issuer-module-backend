@@ -7,5 +7,5 @@ export const filter = (item, key, val) => {
 
 export const filterByDates = (item, from, to) => {
 	const target = moment(item.createdOn);
-	return !from || !to || (from.isBefore(target) && to.isAfter(target));
+	return !from || !to || (from.isSameOrBefore(target, "day") && to.isSameOrAfter(target, "day"));
 };
