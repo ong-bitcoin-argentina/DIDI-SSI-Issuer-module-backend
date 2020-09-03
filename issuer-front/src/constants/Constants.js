@@ -232,5 +232,7 @@ module.exports = {
 			personal: "Datos Personales",
 			address: "Domicilio Legal"
 		}
-	}
+	},
+
+	DATE_FORMAT: "YYYY-MM-DD"
 };

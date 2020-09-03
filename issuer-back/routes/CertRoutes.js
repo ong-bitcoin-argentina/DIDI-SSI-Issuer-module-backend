@@ -8,62 +8,31 @@ const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators")
 const CertService = require("../services/CertService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
+const { getDID, toDTO } = require("../constants/DTO/CertDTO");
+const Cert = require("../models/Cert");
 
 const { checkValidationResult, validate } = Validator;
-
-const parseCert = cert => ({
-	_id: cert._id,
-	name: cert.data.cert[0].value,
-	createdOn: cert.createdOn,
-	revokedOn: cert.revokedOn,
-	revokeReason: cert.revokeReason,
-	emmitedOn: cert.emmitedOn,
-	firstName: cert.data.participant[0][1].value,
-	lastName: cert.data.participant[0][2].value
-});
 
 /**
  *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
  */
-router.get(
-	"/all",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (_, res) {
-		try {
-			const certs = await CertService.getAll();
-			const result = certs.map(cert => {
-				return {
-					_id: cert._id,
-					name: cert.data.cert[0].value,
-					createdOn: cert.createdOn,
-					emmitedOn: cert.emmitedOn,
-					firstName: cert.data.participant[0][1].value,
-					lastName: cert.data.participant[0][2].value
-				};
-			});
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			console.log(err);
-			return ResponseHandler.sendErr(res, err);
-		}
+router.get("/all", validate([TOKEN_VALIDATION]), checkValidationResult, async function (_, res) {
+	try {
+		const certs = await CertService.getAll();
+		const result = toDTO(certs);
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		console.log(err);
+		return ResponseHandler.sendErr(res, err);
 	}
-);
+});
 
 /**
  *	lista de certificados emitidos
  */
 router.get("/find", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
 	try {
-		const { emmited, revoked } = req.query;
-		const certs = await CertService.findBy({ emmited, revoked });
-		const result = certs.map(parseCert);
+		const result = await CertService.findBy(req.query);
 		return ResponseHandler.sendRes(res, result);
 	} catch (err) {
 		return ResponseHandler.sendErrWithStatus(res, err);
@@ -203,35 +172,24 @@ router.put(
 /**
  * Marca un certificado como borrado y lo revoca en caso de haber sido emitido (no implementado aun)
  */
-router.delete(
-	"/:id",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
+router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
+	const id = req.params.id;
+
+	try {
+		const cert = await CertService.delete(id);
+		const did = cert.data.participant[0][0].value;
+
+		const calls = [];
+		for (let jwt of cert.jwts) {
+			calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
 		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		const id = req.params.id;
 
-		try {
-			const cert = await CertService.delete(id);
-			const did = cert.data.participant[0][0].value;
-
-			const calls = [];
-			for (let jwt of cert.jwts) {
-				calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
-			}
-
-			await Promise.all(calls);
-			return ResponseHandler.sendRes(res, cert);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
+		await Promise.all(calls);
+		return ResponseHandler.sendRes(res, cert);
+	} catch (err) {
+		return ResponseHandler.sendErr(res, err);
 	}
-);
+});
 
 /**
  * permite crear un certificado y enviarlo al didi-server para ser emitido
@@ -291,9 +249,15 @@ router.post(
 router.patch("/:id/revoke", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
 	try {
 		const { id } = req.params;
-		const { revokeReason } = req.body;
-		const result = await CertService.revoke(id, revokeReason);
-		return ResponseHandler.sendRes(res, result);
+		const { reason } = req.body;
+		const cert = await CertService.revoke(id, reason);
+		const did = getDID(cert);
+
+		for (let jwt of cert.jwts) {
+			const result = await MouroService.revokeCertificate(jwt.data, jwt.hash, did);
+		}
+
+		return ResponseHandler.sendRes(res, cert);
 	} catch (err) {
 		return ResponseHandler.sendErrWithStatus(res, err);
 	}

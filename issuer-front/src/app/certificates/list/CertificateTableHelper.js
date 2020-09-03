@@ -1,5 +1,6 @@
 import React from "react";
 import Messages from "../../../constants/Messages";
+import { DATE_FORMAT } from "../../../constants/Constants";
 
 import Checkbox from "@material-ui/core/Checkbox";
 import TableHeadCheck from "../../components/table-head-check";
@@ -12,6 +13,7 @@ import {
 	BASE_COLUMNS,
 	EMMITED_COLUMNS
 } from "../../../constants/CertificateDefinitions";
+import moment from "moment";
 
 const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
 const { VIEW } = Messages.LIST.BUTTONS;
@@ -88,7 +90,7 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			revokedOn: cert.revokedOn.split("T")[0],
+			revokedOn: moment(cert.revocation.date).format(DATE_FORMAT),
 			actions: (
 				<div className="Actions">
 					<div className="EditAction" onClick={onView}>

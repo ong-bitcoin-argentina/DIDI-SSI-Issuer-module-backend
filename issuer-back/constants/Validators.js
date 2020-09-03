@@ -1,5 +1,7 @@
 const Constants = require("./Constants");
+
 const { IS_ADMIN, IS_STRING, IS_NEW_PARTICIPANTS_DATA } = Constants.VALIDATION_TYPES;
+
 const TOKEN_VALIDATION = {
 	name: "token",
 	validate: [IS_ADMIN],
