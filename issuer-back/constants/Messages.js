@@ -45,7 +45,8 @@ module.exports = {
 			CREATE: { code: "CERT_CREATE", message: "El certificado no pudo ser creado." },
 			GET: { code: "CERT_GET", message: "El certificado no pudo ser obtenido." },
 			EDIT: { code: "CERT_EDIT", message: "El certificado no pudo ser modificado." },
-			DELETE: { code: "CERT_DELETE", message: "El certificado no pudo ser borrado." }
+			DELETE: { code: "CERT_DELETE", message: "El certificado no pudo ser borrado." },
+			REVOKE: { code: "CERT_REVOKE", message: "El certificado no pudo ser revocado." }
 		}
 	},
 	PARTICIPANT: {
@@ -87,12 +88,12 @@ module.exports = {
 		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido." },
 		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
 		TEMPLATE_DATA_TYPE: {
-			INVALID_DATA_TYPE: function(data) {
+			INVALID_DATA_TYPE: function (data) {
 				return { code: "INVALID_DATA_TYPE", message: data + " no es una secion valida del certificado." };
 			}
 		},
 		TEMPLATE_DATA_VALUE: {
-			INVALID_DATA_VALUE: function(type) {
+			INVALID_DATA_VALUE: function (type) {
 				return {
 					code: "INVALID_DATA_VALUE",
 					message: "el campo " + type + " contiene un valor invalido."
@@ -109,16 +110,16 @@ module.exports = {
 				code: "INVALID_TEMPLATE_PREVIEW_DATA",
 				message: "El modelo de certificado no contiene los tipos requeridos."
 			},
-			NO_DATA: function(type) {
+			NO_DATA: function (type) {
 				return { code: "NO_DATA", message: "El campo " + type + " no contiene datos." };
 			},
-			INVALID_DATA: function(type) {
+			INVALID_DATA: function (type) {
 				return { code: "INVALID_DATA", message: "El campo " + type + " tiene un formato invalido." };
 			},
-			INVALID_TYPE: function(type) {
+			INVALID_TYPE: function (type) {
 				return { code: "INVALID_TYPE", message: "El campo " + type + " tiene un tipo de dato invalido." };
 			},
-			MISSING_CHECKBOX_OPTIONS: function(type) {
+			MISSING_CHECKBOX_OPTIONS: function (type) {
 				return {
 					code: "MISSING_CHECKBOX_OPTIONS",
 					message: "El campo " + type + " es de tipo 'checkbox' pero falta el campo 'options'."
@@ -126,19 +127,19 @@ module.exports = {
 			}
 		},
 		CERT_DATA: {
-			INVALID_MICROCRED_DATA: function(name) {
+			INVALID_MICROCRED_DATA: function (name) {
 				return {
 					code: "INVALID_MICROCRED_DATA",
 					message: "El campo " + name + " no puede ser parte de una microcredencial, no se encuentra en el certificado."
 				};
 			},
-			INVALID_TEMPLATE_ID: function(type) {
+			INVALID_TEMPLATE_ID: function (type) {
 				return { code: "INVALID_TEMPLATE_ID", message: "El campo " + type + " es invalido." };
 			},
-			EXTRA_ELEMENT: function(name) {
+			EXTRA_ELEMENT: function (name) {
 				return { code: "EXTRA_ELEMENT", message: "El campo " + name + " no se encuentra en el modelo de certificado." };
 			},
-			MISSING_ELEMENT: function(name) {
+			MISSING_ELEMENT: function (name) {
 				return { code: "MISSING_ELEMENT", message: "El campo " + name + " está faltando en el certificado." };
 			}
 		},
@@ -149,16 +150,16 @@ module.exports = {
 			code: "COMMON_PASSWORD",
 			message: "La contraseña ingresada es de uso común, por favor ingrese una mas segura."
 		},
-		DOES_NOT_EXIST: function(type) {
+		DOES_NOT_EXIST: function (type) {
 			return { code: "PARAMETER_MISSING", message: "Falta el campo: " + type };
 		},
-		STRING_FORMAT_INVALID: function(field) {
+		STRING_FORMAT_INVALID: function (field) {
 			return {
 				code: "PARAMETER_TYPE_ERROR",
 				message: "El campo " + field + " es incorrecto, se esperaba un texto."
 			};
 		},
-		LENGTH_INVALID: function(field, min, max) {
+		LENGTH_INVALID: function (field, min, max) {
 			const code = "PARAMETER_TYPE_ERROR";
 			const msgStart = "El campo " + field + " tendria que tener.";
 
