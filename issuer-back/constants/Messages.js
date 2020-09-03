@@ -89,7 +89,7 @@ module.exports = {
 		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
 		TEMPLATE_DATA_TYPE: {
 			INVALID_DATA_TYPE: function (data) {
-				return { code: "INVALID_DATA_TYPE", message: data + " no es una secion valida del certificado." };
+				return { code: "INVALID_DATA_TYPE", message: `${data} no es una sección válida del certificado.` };
 			}
 		},
 		TEMPLATE_DATA_VALUE: {
@@ -111,18 +111,18 @@ module.exports = {
 				message: "El modelo de certificado no contiene los tipos requeridos."
 			},
 			NO_DATA: function (type) {
-				return { code: "NO_DATA", message: "El campo " + type + " no contiene datos." };
+				return { code: "NO_DATA", message: `El campo ${type} no contiene datos.` };
 			},
 			INVALID_DATA: function (type) {
-				return { code: "INVALID_DATA", message: "El campo " + type + " tiene un formato invalido." };
+				return { code: "INVALID_DATA", message: `El campo ${type} tiene un formato invalido.` };
 			},
 			INVALID_TYPE: function (type) {
-				return { code: "INVALID_TYPE", message: "El campo " + type + " tiene un tipo de dato invalido." };
+				return { code: "INVALID_TYPE", message: `El campo ${type} tiene un tipo de dato invalido.` };
 			},
 			MISSING_CHECKBOX_OPTIONS: function (type) {
 				return {
 					code: "MISSING_CHECKBOX_OPTIONS",
-					message: "El campo " + type + " es de tipo 'checkbox' pero falta el campo 'options'."
+					message: `El campo ${type} es de tipo 'checkbox' pero falta el campo 'options'.`
 				};
 			}
 		},
@@ -134,13 +134,13 @@ module.exports = {
 				};
 			},
 			INVALID_TEMPLATE_ID: function (type) {
-				return { code: "INVALID_TEMPLATE_ID", message: "El campo " + type + " es invalido." };
+				return { code: "INVALID_TEMPLATE_ID", message: `El campo ${type} es inválido.` };
 			},
 			EXTRA_ELEMENT: function (name) {
-				return { code: "EXTRA_ELEMENT", message: "El campo " + name + " no se encuentra en el modelo de certificado." };
+				return { code: "EXTRA_ELEMENT", message: `El campo ${name} no se encuentra en el modelo de certificado.` };
 			},
 			MISSING_ELEMENT: function (name) {
-				return { code: "MISSING_ELEMENT", message: "El campo " + name + " está faltando en el certificado." };
+				return { code: "MISSING_ELEMENT", message: `El campo ${name} está faltando en el certificado.` };
 			}
 		},
 		REQUESTER_IS: user => {
