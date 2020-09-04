@@ -37,7 +37,6 @@ const CertificatesRevoked = () => {
 
 	useEffect(() => {
 		const getData = async () => {
-			// TODO: unccomment when api is ready
 			const token = Cookie.get("token");
 			let certificates = await CertificateService.getRevoked(token);
 			setData(

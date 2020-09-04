@@ -6,10 +6,10 @@ const Constants = require("../constants/Constants");
 const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators");
 
 const CertService = require("../services/CertService");
+const TokenService = require("../services/TokenService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 const { getDID, toDTO } = require("../constants/DTO/CertDTO");
-const Cert = require("../models/Cert");
 
 const { checkValidationResult, validate } = Validator;
 
@@ -170,14 +170,17 @@ router.put(
 );
 
 /**
- * Marca un certificado como borrado y lo revoca en caso de haber sido emitido (no implementado aun)
+ * Marca un certificado como borrado y lo revoca en caso de haber sido emitido
  */
-router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
-	const id = req.params.id;
+router.delete("/:id", validate([CERT_REVOCATION]), checkValidationResult, async function (req, res) {
+	const { id } = req.params;
+	const { reason } = req.body;
+	const { token } = req.headers;
 
 	try {
-		const cert = await CertService.delete(id);
-		const did = cert.data.participant[0][0].value;
+		const { userId } = TokenService.getTokenData(token);
+		const cert = await CertService.deleteOrRevoke(id, reason, userId);
+		const did = getDID(cert);
 
 		const calls = [];
 		for (let jwt of cert.jwts) {
@@ -244,20 +247,12 @@ router.post(
 );
 
 /**
- * revoca un certificado
+ * usar con precaucion
  */
-router.patch("/:id/revoke", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
+router.post("/updateAllDeleted", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
 	try {
-		const { id } = req.params;
-		const { reason } = req.body;
-		const cert = await CertService.revoke(id, reason);
-		const did = getDID(cert);
-
-		for (let jwt of cert.jwts) {
-			const result = await MouroService.revokeCertificate(jwt.data, jwt.hash, did);
-		}
-
-		return ResponseHandler.sendRes(res, cert);
+		const result = await CertService.updateAllDeleted();
+		return ResponseHandler.sendRes(res, result);
 	} catch (err) {
 		return ResponseHandler.sendErrWithStatus(res, err);
 	}

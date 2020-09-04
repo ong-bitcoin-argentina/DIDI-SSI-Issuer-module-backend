@@ -21,6 +21,10 @@ const revokeSchema = mongoose.Schema({
 	},
 	reason: {
 		type: String
+	},
+	userId: {
+		type: ObjectId,
+		ref: "User"
 	}
 });
 
@@ -73,17 +77,30 @@ CertSchema.index({ name: 1 });
 
 // marcar certificado como borrado en bd local
 CertSchema.methods.delete = async function () {
-	const updateQuery = { _id: this._id };
-	const updateAction = {
-		$set: { deleted: true }
+	this.deleted = true;
+
+	try {
+		await this.save();
+		return this;
+	} catch (err) {
+		throw err;
+	}
+};
+
+// revoca un certificado
+CertSchema.methods.revoke = async function (reason, userId) {
+	this.deleted = false;
+	this.revocation = {
+		date: new Date(),
+		reason,
+		userId
 	};
 
 	try {
-		await Cert.findOneAndUpdate(updateQuery, updateAction);
-		this.deleted = true;
-		return Promise.resolve(this);
+		await this.save();
+		return this;
 	} catch (err) {
-		return Promise.reject(err);
+		throw err;
 	}
 };
 
@@ -189,8 +206,8 @@ Cert.getRevokeds = async function () {
 };
 
 // obtener certificados segun su emision
-Cert.findByEmission = async function ($exists) {
-	const query = { deleted: false, emmitedOn: { $exists } };
+Cert.findByEmission = async function (emmited) {
+	const query = { deleted: false, emmitedOn: { $exists: emmited }, revocation: { $exists: false } };
 	return await Cert.find(query).sort({ createdOn: -1 });
 };
 
@@ -206,10 +223,13 @@ Cert.getById = async function (id) {
 	}
 };
 
-// revocar certificado por id
-Cert.revokeById = async function (_id, reason) {
-	const revocation = { date: new Date(), reason };
-	const query = { _id, emmitedOn: { $exists: true } };
-	const action = { $set: { revocation } };
-	return await Cert.findOneAndUpdate(query, action, { returnOriginal: false });
+Cert.updateAllDeleted = async function () {
+	const query = { deleted: true, emmitedOn: { $exists: true } };
+	return await Cert.find(query, (err, certs) => {
+		certs.forEach(async cert => {
+			cert.deleted = false;
+			cert.revocation = { date: cert.emmitedOn };
+			await cert.save();
+		});
+	});
 };
