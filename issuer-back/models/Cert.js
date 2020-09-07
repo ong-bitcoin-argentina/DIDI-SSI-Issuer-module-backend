@@ -17,10 +17,12 @@ const dataElement = {
 
 const revokeSchema = mongoose.Schema({
 	date: {
-		type: Date
+		type: Date,
+		required: true
 	},
 	reason: {
-		type: String
+		type: String,
+		enum: ["EXPIRATION", "UNLINKING", "DATA_MODIFICATION", "REPLACEMENT", "OTHER"]
 	},
 	userId: {
 		type: ObjectId,
@@ -192,7 +194,7 @@ Cert.getAll = async function () {
 // obtener certificados revocados
 Cert.getRevokeds = async function () {
 	const query = { revocation: { $exists: true } };
-	return await Cert.find(query).sort({ createdOn: -1 });
+	return await Cert.find(query).sort({ "revocation.date": -1 });
 };
 
 // obtener certificados segun su emision
