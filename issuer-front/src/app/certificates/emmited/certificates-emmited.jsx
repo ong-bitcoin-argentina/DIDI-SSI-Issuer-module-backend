@@ -1,15 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import "./_style.scss";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import { Grid, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@material-ui/core";
+import ReactTable from "react-table-6";
 import Messages from "../../../constants/Messages";
 import Constants from "../../../constants/Constants";
-import ReactTable from "react-table-6";
-import { Grid, CircularProgress } from "@material-ui/core";
+import { REVOCATION_REASONS } from "../../../constants/CertificateDefinitions";
 import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
+import Notification from "../../components/notification";
+import Select from "../../components/select";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -20,7 +23,12 @@ const CertificatesEmmited = () => {
 	const [filters, setFilters] = useState({});
 	const [selected, setSelected] = useState({});
 	const [allSelected, setAllSelected] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
+	const [activeCert, setActiveCert] = useState({});
+	const [revokeReason, setRevokeReason] = useState("");
+	const [revokeSuccess, setRevokeSuccess] = useState(false);
+	const [revokeFail, setRevokeFail] = useState(false);
 	const history = useHistory();
 
 	useEffect(() => {
@@ -39,21 +47,6 @@ const CertificatesEmmited = () => {
 	}, [data]);
 
 	useEffect(() => {
-		const getData = async () => {
-			const token = Cookie.get("token");
-			let certificates = await CertificateService.getEmmited(token);
-			setData(
-				certificates.map(item => {
-					return CertificateTableHelper.getCertificatesEmmitedData(
-						item,
-						selected,
-						handleSelectOne,
-						handleView,
-						handleRevokeOne
-					);
-				})
-			);
-		};
 		getData();
 	}, []);
 
@@ -75,6 +68,22 @@ const CertificatesEmmited = () => {
 		setSelected(generated);
 	}, [allSelected]);
 
+	const getData = async () => {
+		const token = Cookie.get("token");
+		let certificates = await CertificateService.getEmmited(token);
+		setData(
+			certificates.map(item => {
+				return CertificateTableHelper.getCertificatesEmmitedData(
+					item,
+					selected,
+					handleSelectOne,
+					handleView,
+					handleRevokeOne
+				);
+			})
+		);
+	};
+
 	const onFilterChange = (e, key) => {
 		const val = e.target.value;
 		setFilters(prev => ({ ...prev, [key]: val }));
@@ -92,8 +101,28 @@ const CertificatesEmmited = () => {
 		history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
 
-	const handleRevokeOne = id => {
-		console.log("Revocar: " + id);
+	const handleRevokeOne = cert => {
+		setActiveCert(cert);
+		toggleModal();
+	};
+
+	const handleRevokeConfirm = () => {
+		const token = Cookie.get("token");
+		const result = CertificateService.revoke(token, activeCert._id, revokeReason, onRevokeSuccess, onRevokeFail);
+		toggleModal();
+	};
+
+	const onRevokeSuccess = requestData => {
+		setRevokeSuccess(true);
+		getData();
+	};
+
+	const onRevokeFail = errorData => {
+		setRevokeFail(true);
+	};
+
+	const toggleModal = () => {
+		setModalOpen(!modalOpen);
 	};
 
 	const handleRevokeSelected = () => {
@@ -133,6 +162,37 @@ const CertificatesEmmited = () => {
 					</button>
 				</Grid>
 			</Grid>
+
+			<Dialog open={modalOpen} onClose={toggleModal}>
+				<DialogTitle id="form-dialog-title">
+					Estás por revocar la credencial de {activeCert.firstName} {activeCert.lastName}
+				</DialogTitle>
+				<DialogContent style={{ margin: "10px 0 25px" }}>
+					<Select
+						label="Razón de revocación"
+						value={revokeReason}
+						list={REVOCATION_REASONS}
+						onChange={e => setRevokeReason(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={toggleModal} color="primary">
+						Cancelar
+					</Button>
+					<Button onClick={handleRevokeConfirm} color="secondary" variant="contained" disabled={!revokeReason}>
+						Revocar
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			<Notification open={revokeSuccess} message="La credencial se revocó exitosamente." />
+
+			<Notification
+				open={revokeFail}
+				severity="error"
+				message="Ocurrió un error la revocar la credencial."
+				time={3000}
+			/>
 		</>
 	);
 };

@@ -29,7 +29,7 @@ export const EMMITED_ACTIONS = ({ cert, onView, onRevoke }) => [
 	},
 	{
 		className: "DeleteAction",
-		action: () => onRevoke(cert._id),
+		action: () => onRevoke(cert),
 		label: REVOKE
 	}
 ];
@@ -55,5 +55,28 @@ export const EMMITED_COLUMNS = ({ onLastNameFilterChange, onFirstNameFilterChang
 		label: NAME,
 		action: e => onFirstNameFilterChange(e),
 		accessor: "firstName"
+	}
+];
+
+export const REVOCATION_REASONS = [
+	{
+		value: "EXPIRATION",
+		label: "Expiración"
+	},
+	{
+		value: "UNLINKING",
+		label: "Desvinculación"
+	},
+	{
+		value: "DATA_MODIFICATION",
+		label: "Modificación de datos"
+	},
+	{
+		value: "REPLACEMENT",
+		label: "Reemplazo"
+	},
+	{
+		value: "OTHER",
+		label: "Otro"
 	}
 ];
