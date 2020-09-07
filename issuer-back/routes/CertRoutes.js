@@ -181,12 +181,7 @@ router.delete("/:id", validate([CERT_REVOCATION]), checkValidationResult, async 
 		const { userId } = TokenService.getTokenData(token);
 		const cert = await CertService.deleteOrRevoke(id, reason, userId);
 		const did = getDID(cert);
-
-		const calls = [];
-		for (let jwt of cert.jwts) {
-			calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
-		}
-
+		const calls = cert.jwts.map(jwt => MouroService.revokeCertificate(jwt.data, jwt.hash, did));
 		await Promise.all(calls);
 		return ResponseHandler.sendRes(res, cert);
 	} catch (err) {
