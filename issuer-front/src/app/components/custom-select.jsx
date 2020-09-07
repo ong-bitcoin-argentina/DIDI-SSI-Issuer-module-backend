@@ -11,8 +11,8 @@ const CustomSelect = ({ onChange, options, label, field }) => {
 	};
 
 	return (
-		<div>
-			<div>{label}</div>
+		<div className="CustomSelect">
+			<div className="HeaderText">{label}</div>
 			<Select className="TableInputFilter Checkbox" onChange={handleChange} value={value}>
 				<MenuItem value={undefined} className="DataInput">
 					{""}

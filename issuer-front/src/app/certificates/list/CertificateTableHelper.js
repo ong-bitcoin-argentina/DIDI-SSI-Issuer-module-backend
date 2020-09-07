@@ -116,15 +116,27 @@ class CertificateTableHelper {
 
 		return [
 			...COLUMNS.map(item => ({
-				Header: <InputFilter label={item.label} onChange={item.action} />,
+				Header: (
+					<div className="SelectionTable">
+						<InputFilter label={item.label} onChange={item.action} />
+					</div>
+				),
 				accessor: item.accessor
 			})),
 			{
-				Header: <CustomSelect options={certNames} label={CERT} onChange={onTemplateFilterChange} />,
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect options={certNames} label={CERT} onChange={onTemplateFilterChange} />
+					</div>
+				),
 				accessor: "certName"
 			},
 			{
-				Header: "Acciones",
+				Header: (
+					<div className="HeaderText">
+						<p>Acciones</p>
+					</div>
+				),
 				accessor: "actions"
 			},
 			{
@@ -153,7 +165,11 @@ class CertificateTableHelper {
 				accessor: item.accessor
 			})),
 			{
-				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />,
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />
+					</div>
+				),
 				accessor: "certName"
 			},
 			{
@@ -177,11 +193,19 @@ class CertificateTableHelper {
 
 		return [
 			...BASE_COLUMNS.map(item => ({
-				Header: <InputFilter label={item.label} onChange={onFilterChange} field={item.accessor} />,
+				Header: (
+					<div className="SelectionTable">
+						<InputFilter label={item.label} onChange={onFilterChange} field={item.accessor} />
+					</div>
+				),
 				accessor: item.accessor
 			})),
 			{
-				Header: <CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />,
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect options={certNames} label={CERT} onChange={onFilterChange} field="certName" />
+					</div>
+				),
 				accessor: "certName"
 			},
 			{

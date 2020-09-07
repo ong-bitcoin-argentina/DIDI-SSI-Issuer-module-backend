@@ -262,18 +262,18 @@ class Participants extends Component {
 		return (
 			<div className="QrRequestButtons">
 				<div className="PartRequestRow">
-					<button disabled={loading} className="SampleCsv" onClick={this.createSampleCsv}>
+					<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
 						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
 					</button>
 
 					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
-						<button disabled={loading} className="LoadDidsFromCsv">
+						<button disabled={loading} className="CreateButton LoadDidsFromCsv">
 							{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
 						</button>
 					</ReactFileReader>
 
 					<button
-						className="QrDialogButton"
+						className="CreateButton QrDialogButton"
 						disabled={loading}
 						onClick={() => {
 							if (this.qrDialog) this.qrDialog.open();

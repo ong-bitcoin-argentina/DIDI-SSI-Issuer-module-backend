@@ -133,8 +133,8 @@ class Certificates extends Component {
 	renderButtons = loading => {
 		return (
 			<div className="CertButtons">
-				<button disabled={loading} className="EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
-					{Messages.LIST.BUTTONS.EMMIT_SELECTED}
+				<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
+					<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
 				</button>
 			</div>
 		);

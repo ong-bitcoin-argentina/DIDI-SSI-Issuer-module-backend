@@ -18,8 +18,8 @@ class TemplateTableHelpers {
 							if (!isLoading()) onEdit(template._id);
 						}}
 					>
-						<EditIcon fontSize="small" />
-						{Messages.LIST.BUTTONS.EDIT}
+						<EditIcon fontSize="medium" />
+						{/* {Messages.LIST.BUTTONS.EDIT} */}
 					</div>
 					<div
 						className="DeleteAction"
@@ -27,8 +27,8 @@ class TemplateTableHelpers {
 							if (!isLoading()) onDelete(template._id);
 						}}
 					>
-						<DeleteIcon fontSize="small" />
-						{Messages.LIST.BUTTONS.DELETE}
+						<DeleteIcon fontSize="medium" />
+						{/* {Messages.LIST.BUTTONS.DELETE} */}
 					</div>
 				</div>
 			)
