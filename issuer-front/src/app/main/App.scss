@@ -42,7 +42,7 @@ body {
 .Actions {
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: flex-end;
 	margin-left: 10px;
 
 	.DisabledAction {
