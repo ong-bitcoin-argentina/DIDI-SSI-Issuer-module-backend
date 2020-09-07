@@ -78,13 +78,8 @@ CertSchema.index({ name: 1 });
 // marcar certificado como borrado en bd local
 CertSchema.methods.delete = async function () {
 	this.deleted = true;
-
-	try {
-		await this.save();
-		return this;
-	} catch (err) {
-		throw err;
-	}
+	await this.save();
+	return this;
 };
 
 // revoca un certificado
@@ -95,13 +90,8 @@ CertSchema.methods.revoke = async function (reason, userId) {
 		reason,
 		userId
 	};
-
-	try {
-		await this.save();
-		return this;
-	} catch (err) {
-		throw err;
-	}
+	await this.save();
+	return this;
 };
 
 // marcar certificado como emitido en bd local
@@ -225,11 +215,13 @@ Cert.getById = async function (id) {
 
 Cert.updateAllDeleted = async function () {
 	const query = { deleted: true, emmitedOn: { $exists: true } };
-	return await Cert.find(query, (err, certs) => {
-		certs.forEach(async cert => {
+	const promises = [];
+	await Cert.find(query, (err, certs) => {
+		for (const cert of certs) {
 			cert.deleted = false;
 			cert.revocation = { date: cert.emmitedOn };
-			await cert.save();
-		});
+			promises.push(cert.save());
+		}
 	});
+	return await Promise.all(promises);
 };
