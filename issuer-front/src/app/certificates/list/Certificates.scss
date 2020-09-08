@@ -12,15 +12,12 @@
 }
 
 .EmmitSelectedButton {
-	width: 100px;
+	background-color: $primary-color;
+	padding: 0 1em;
 }
 
 .CertificateTable {
 	background-color: $TableBackground;
 	color: $TableText;
 	margin-bottom: 10px;
-}
-
-.EmmitCertText {
-	margin-top: 5px;
 }

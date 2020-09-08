@@ -1,6 +1,8 @@
-const API = window._env_.REACT_APP_API_URL;
+const API = process.env.REACT_APP_API_URL;
+const VERSION = process.env.REACT_APP_VERSION;
 
 module.exports = {
+	VERSION,
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
 		TEMPLATES: {
@@ -45,6 +47,9 @@ module.exports = {
 				return API + "/cert/" + id + "/emmit";
 			},
 			GET_ALL: API + "/cert/all",
+			GET_EMMITED: API + "/cert/find?emmited=true",
+			GET_PENDING: API + "/cert/find?emmited=false",
+			GET_REVOKED: API + "/cert/find?revoked=true",
 			GET: id => {
 				return API + "/cert/" + id;
 			},
@@ -67,7 +72,9 @@ module.exports = {
 		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
+		CERTIFICATES_PENDING: "/certificates-pending",
 		CERTIFICATES: "/certificates",
+		CERTIFICATES_REVOKED: "/certificates-revoked",
 		EDIT_CERT: "/certificates/edit/"
 	},
 
@@ -81,7 +88,7 @@ module.exports = {
 
 	DELEGATES: {
 		ICONS: {
-			ADD_BUTTON: "add_box"
+			ADD_BUTTON: "add"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
@@ -98,7 +105,7 @@ module.exports = {
 		},
 
 		ICONS: {
-			ADD_BUTTON: "add_box",
+			ADD_BUTTON: "add",
 			OK: "check_circle_outline",
 			MISSING: "highlight_off"
 		},
@@ -225,5 +232,7 @@ module.exports = {
 			personal: "Datos Personales",
 			address: "Domicilio Legal"
 		}
-	}
+	},
+
+	DATE_FORMAT: "YYYY-MM-DD"
 };

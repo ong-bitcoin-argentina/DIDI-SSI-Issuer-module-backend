@@ -1,15 +1,28 @@
 const Constants = require("./Constants");
 
+const { IS_ADMIN, IS_STRING, IS_NEW_PARTICIPANTS_DATA } = Constants.VALIDATION_TYPES;
+
+const TOKEN_VALIDATION = {
+	name: "token",
+	validate: [IS_ADMIN],
+	isHead: true
+};
+
 module.exports = {
-    PARTICIPANT_NEW: [
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		},
+	TOKEN_VALIDATION,
+	PARTICIPANT_NEW: [
+		TOKEN_VALIDATION,
 		{
 			name: "data",
-			validate: [Constants.VALIDATION_TYPES.IS_NEW_PARTICIPANTS_DATA]
+			validate: [IS_NEW_PARTICIPANTS_DATA]
 		}
 	],
-}
+	CERT_REVOCATION: [
+		TOKEN_VALIDATION,
+		{
+			name: "revokeReason",
+			validate: [IS_STRING],
+			optional: true
+		}
+	]
+};

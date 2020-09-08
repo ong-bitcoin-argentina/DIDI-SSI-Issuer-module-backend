@@ -1,5 +1,7 @@
 const Cert = require("../models/Cert");
+const TokenService = require("./TokenService");
 const Messages = require("../constants/Messages");
+const { toDTO } = require("../constants/DTO/CertDTO");
 
 var getById = async function (id) {
 	try {
@@ -23,6 +25,16 @@ module.exports.getAll = async function () {
 		console.log(err);
 		return Promise.reject(Messages.CERT.ERR.GET);
 	}
+};
+
+module.exports.findBy = async function ({ emmited, revoked }) {
+	let certs;
+	if (revoked) {
+		certs = await Cert.getRevokeds();
+	} else {
+		certs = await Cert.findByEmission(emmited);
+	}
+	return toDTO(certs);
 };
 
 // crea un certificado a partir del modelo
@@ -110,15 +122,26 @@ module.exports.emmit = async function (cert, creds) {
 	}
 };
 
-// marcar certificado como borrado
-module.exports.delete = async function (id) {
+// marcar certificado como borrado o lo revoca dependiendo su emisión
+module.exports.deleteOrRevoke = async function (id, reason, userId) {
 	try {
 		let cert = await getById(id);
-		cert = await cert.delete();
-		if (!cert) return Promise.reject(Messages.CERT.ERR.DELETE);
-		return Promise.resolve(cert);
+		if (cert.emmitedOn) {
+			cert = await cert.revoke(reason, userId);
+		} else {
+			cert = await cert.delete();
+		}
+		if (!cert) throw Messages.CERT.ERR.DELETE;
+		return cert;
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.CERT.ERR.DELETE);
+		throw Messages.CERT.ERR.DELETE;
 	}
+};
+
+// revoca un certificado
+module.exports.updateAllDeleted = async function () {
+	const result = await Cert.updateAllDeleted();
+	if (!result) throw "Error al actualizar todos";
+	return result;
 };

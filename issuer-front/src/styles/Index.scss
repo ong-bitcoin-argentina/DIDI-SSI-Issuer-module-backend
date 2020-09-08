@@ -1,9 +1,36 @@
 @import "./Colors.scss";
 
+@font-face {
+	font-family: "Product Sans Regular";
+	font-style: normal;
+	font-weight: normal;
+	src: local("Product Sans Regular"), url("../fonts/ProductSans-Regular.woff") format("woff");
+}
+
+@font-face {
+	font-family: "Product Sans Light Regular";
+	font-style: normal;
+	font-weight: normal;
+	src: local("Product Sans Light Regular"), url("../fonts/ProductSans-Light.woff") format("woff");
+}
+
+@font-face {
+	font-family: "Product Sans Medium Regular";
+	font-style: normal;
+	font-weight: normal;
+	src: local("Product Sans Medium Regular"), url("../fonts/ProductSans-Medium.woff") format("woff");
+}
+
+@font-face {
+	font-family: "Product Sans Bold";
+	font-style: normal;
+	font-weight: normal;
+	src: local("Product Sans Bold"), url("../fonts/ProductSans-Bold.woff") format("woff");
+}
+
 body {
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-		"Droid Sans", "Helvetica Neue", sans-serif;
+	font-family: "Product Sans Regular";
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -14,8 +41,6 @@ code {
 
 button {
 	color: $ButtonText;
-	width: 75px;
-	height: 30px;
 }
 
 .BackgroundText {

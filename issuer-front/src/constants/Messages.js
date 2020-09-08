@@ -1,6 +1,7 @@
 module.exports = {
 	LOGIN: {
-		WELCOME: "BIENVENIDO AL EMISOR DE CERTIFICADOS WEB",
+		WELCOME: "Bienvenido al",
+		WELCOME_2: "Emisor de Certificados Web",
 		BUTTONS: {
 			ENTER: "Ingresar"
 		}
@@ -96,7 +97,7 @@ module.exports = {
 			HAS_PERSONAL: "DATOS",
 			HAS_PERSONAL2: "PERSONALES",
 			HAS_ADDRESS: "DOMICILIO",
-			TEMPLATE: "MODELO DE CERTIFICADO",
+			TEMPLATE: "Modelo de Certificado",
 			CERT: "CERTIFICADO",
 			LAST_NAME: "APELLIDO",
 			NAME: "NOMBRE",
@@ -104,17 +105,20 @@ module.exports = {
 			NEXT: "SIGUIENTE",
 			EMISSION_DATE: "FECHA DE",
 			EMISSION_DATE2: "EMISION",
+			REVOCATION: "REVOCACIÓN",
 			SELECT: "SELECCIONAR",
 			ACTIONS: "ACCIONES"
 		},
 		BUTTONS: {
-			CREATE_DELEGATE: "CREAR DELEGADO",
-			DELEGATES: "DELEGADOS",
-			TO_QR: "REGISTRAR PARTICIPANTE",
-			TO_CERTIFICATES: "CERTIFICADOS",
-			TO_TEMPLATES: "TEMPLATES",
-			CREATE_TEMPLATE: "CREAR MODELO DE CERTIFICADO",
-			CREATE_CERT: "EMITIR CERTIFICADO",
+			CREATE_DELEGATE: "Crear Delegado",
+			DELEGATES: "Delegados",
+			TO_QR: "Registrar Participante",
+			TO_CERTIFICATES_PENDING: "Certificados Pendientes",
+			TO_CERTIFICATES: "Certificados",
+			TO_REVOKED_CERTIFICATES: "Certificados Revocados",
+			TO_TEMPLATES: "Templates",
+			CREATE_TEMPLATE: "Crear Modelo de Certificado",
+			CREATE_CERT: "Emitir Certificado",
 			EMMIT_SELECTED: "Emitir Seleccionados",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
