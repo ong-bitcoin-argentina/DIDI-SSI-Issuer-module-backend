@@ -9,7 +9,7 @@ const InputFilter = ({ label, onChange, field }) => {
 		<div className="InputFilter">
 			<div className="HeaderText">{label}</div>
 			<div className="InputContainer">
-				<input type="text" className="TableInputFilter effect-3" onChange={handleChange} placeholder="Filter by" />
+				<input type="text" className="TableInputFilter effect-3" onChange={handleChange} placeholder="Filtrar" />
 				<span class="focus-border"></span>
 			</div>
 		</div>
