@@ -6,9 +6,12 @@ const InputFilter = ({ label, onChange, field }) => {
 	};
 
 	return (
-		<div>
-			<div>{label}</div>
-			<input type="text" className="TableInputFilter" onChange={handleChange} />
+		<div className="InputFilter">
+			<div className="HeaderText">{label}</div>
+			<div className="InputContainer">
+				<input type="text" className="TableInputFilter effect-3" onChange={handleChange} placeholder="Filter by" />
+				<span class="focus-border"></span>
+			</div>
 		</div>
 	);
 };

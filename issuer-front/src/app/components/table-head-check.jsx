@@ -9,9 +9,11 @@ const TableHeadCheck = ({ all, selected, onChange }) => {
 	useEffect(() => onChange(checked), [checked]);
 
 	return (
-		<div>
-			<div>{SELECT}</div>
-			<div>{Object.values(selected).filter(val => val).length}</div>
+		<div className="SelectorHeader">
+			<div className="HeaderText">
+				<p>{SELECT}</p>
+				<p>{Object.values(selected).filter(val => val).length}</p>
+			</div>
 			<div className="Actions">
 				<Checkbox checked={checked} onChange={(e, val) => setChecked(val)} />
 			</div>

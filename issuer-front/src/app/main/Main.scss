@@ -8,7 +8,7 @@
 	box-sizing: border-box;
 	.Header {
 		width: 100%;
-		background-color: $secondary-color;
+		background-color: $primary-color;
 		display: flex;
 		justify-content: space-between;
 		padding: 1em;
@@ -27,6 +27,101 @@
 	}
 }
 
+.MuiInput-underline:after {
+	border-bottom: 2px solid $primary-color !important;
+}
+
+.ContentTable {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	padding: 0 10px;
+}
+
+.InputFilter {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 1em;
+
+	.HeaderText {
+		padding: 10px;
+	}
+
+	.InputContainer {
+		position: relative;
+		width: 90%;
+		margin-top: 2px;
+		.TableInputFilter {
+			width: 100%;
+			height: 45px;
+			outline: none;
+			border: none;
+			background-color: transparent;
+		}
+
+		.effect-3 {
+			border: 0;
+			padding: 7px 0;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+			margin-top: -2px;
+		}
+
+		.effect-3 ~ .focus-border {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			z-index: 99;
+		}
+		.effect-3 ~ .focus-border:before,
+		.effect-3 ~ .focus-border:after {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 0;
+			height: 100%;
+			background-color: $primary-color;
+			transition: 0.4s;
+		}
+		.effect-3 ~ .focus-border:after {
+			left: auto;
+			right: 0;
+		}
+		.effect-3:focus ~ .focus-border:before,
+		.effect-3:focus ~ .focus-border:after {
+			width: 50%;
+			transition: 0.4s;
+		}
+	}
+}
+
+.SelectorHeader {
+	display: flex;
+	justify-content: space-between;
+	.HeaderText {
+		display: flex;
+		padding: 10px;
+		p {
+			margin: 0;
+			margin-right: 5px;
+		}
+	}
+}
+
+.CustomSelect {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	.HeaderText {
+		padding: 10px;
+	}
+}
+
 .ReactTable {
 	.rt-tbody {
 		background-color: $white;
@@ -37,6 +132,9 @@
 	.rt-resizable-header-content {
 		@include regular-text($label, $grey-5);
 		text-transform: uppercase;
+	}
+	.pagination-bottom {
+		background-color: $white;
 	}
 }
 
@@ -69,13 +167,12 @@
 .react-tabs__tab--selected {
 	background: $TableBackground !important;
 	border-color: $grey-3 !important;
-	color: $secondary-color !important;
+	color: $primary-color !important;
 	border-radius: 5px 5px 0 0;
 }
 
-.TableInputFilter {
-	width: 100%;
-	height: 30px;
+.MuiCheckbox-colorSecondary.Mui-checked {
+	color: $primary-color !important;
 }
 
 .MuiInputBase-root.MuiInput-root.MuiInput-underline.TableInputFilter.Checkbox {
@@ -108,14 +205,6 @@
 	position: relative;
 	margin-bottom: 1em;
 	justify-content: flex-end;
-}
-
-.CreateButton {
-	width: 150px;
-	margin-bottom: 0px;
-	align-self: flex-end;
-	display: flex;
-	flex-direction: row;
 }
 
 .SectionButtons {
@@ -160,11 +249,6 @@
 	@extend .CreateButton;
 	background-color: $Delete;
 }
-
-// .Actions {
-// 	display: flex;
-// 	flex-direction: column;
-// }
 
 .CreateButtonText {
 	align-content: center;

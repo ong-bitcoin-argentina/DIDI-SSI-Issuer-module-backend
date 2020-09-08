@@ -12,11 +12,10 @@
 }
 
 .QrRequestButtons {
-	flex-direction: column;
+	flex-direction: row;
 	margin-top: 5px;
 	display: flex;
-	margin-left: auto;
-	margin-right: auto;
+	align-items: center;
 }
 
 .QrButtons {
@@ -61,26 +60,38 @@
 	margin-bottom: 20px;
 }
 
-.QrDialogButton {
-	margin-left: 10px;
-}
-
 .PartRequestRow {
 	display: flex;
+
+	.SampleCsv,
+	.LoadDidsFromCsv {
+		padding: 0 1em;
+	}
+
+	.QrDialogButton {
+		padding: 0 1em;
+		margin-left: 10px;
+	}
 }
 
 .QrButtonsRow {
 	align-self: center;
-	margin-top: 10px;
 	display: flex;
+	margin-left: 10px;
 }
 
 .PartRequestButton {
 	float: left;
-}
-
-.LoadDidsFromCsv {
-	height: 45px;
+	display: flex;
+	align-content: center;
+	height: 40px;
+	width: auto;
+	border: none;
+	border-radius: 4px;
+	background-color: $grey-4;
+	color: $white;
+	align-items: center;
+	padding: 0 1em;
 }
 
 .DidSelect {
