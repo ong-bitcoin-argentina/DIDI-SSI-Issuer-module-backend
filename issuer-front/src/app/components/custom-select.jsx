@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Select, MenuItem } from "@material-ui/core";
 
 const CustomSelect = ({ onChange, options, label, field }) => {
