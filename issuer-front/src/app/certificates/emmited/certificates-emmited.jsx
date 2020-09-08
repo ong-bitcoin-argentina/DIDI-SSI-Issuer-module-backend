@@ -12,7 +12,7 @@ import Cookie from "js-cookie";
 import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
 import Notification from "../../components/notification";
-import Select from "../../components/select";
+import FormSelect from "../../components/form-select";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -168,7 +168,7 @@ const CertificatesEmmited = () => {
 					Estás por revocar la credencial de {activeCert.firstName} {activeCert.lastName}
 				</DialogTitle>
 				<DialogContent style={{ margin: "10px 0 25px" }}>
-					<Select
+					<FormSelect
 						label="Razón de revocación"
 						value={revokeReason}
 						list={REVOCATION_REASONS}
