@@ -8,6 +8,8 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import './_Style.scss';
+import '../../../styles/GeneralStyles.scss';
 
 export default class InputDialog extends Component {
 	constructor(props) {
@@ -74,7 +76,7 @@ export default class InputDialog extends Component {
 		const fieldNames = this.props.fieldNames;
 
 		return (
-			<Dialog open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
+			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
 					{fieldNames.length &&
@@ -96,10 +98,11 @@ export default class InputDialog extends Component {
 						})}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.close} color="primary">
+					<Button className="CloseModalButton" onClick={this.close} color="primary">
 						{Messages.LIST.DIALOG.CANCEL}
 					</Button>
 					<Button
+						className="CreateModalButton"
 						onClick={() => {
 							onAccept(this.state.fields);
 							this.close();

@@ -3,23 +3,124 @@
 .Template {
 	display: flex;
 	flex-direction: column;
+	width: 100%;
+	.DataTitle {
+		font-size: 1.5em;
+		color: $black;
+	}
+	.Header {
+		width: 100%;
+		background-color: $primary-color;
+		display: flex;
+		justify-content: space-between;
+		padding: 1em;
+		box-sizing: border-box;
+
+		img {
+			height: 25px;
+		}
+
+		.Menu {
+			margin-right: 1em;
+			p {
+				margin: 0;
+			}
+		}
+	}
+	.Template-Type {
+		padding: 0 2em;
+		.errorMessage {
+			margin: 1em auto !important;
+			color: $black;
+			margin-top: 1em;
+			background-color: #ffeaeb;
+			padding: 1em 2em;
+			display: inline-block;
+			border-radius: 5px;
+			border-left: 5px solid $Delete;
+		}
+	}
+	.Template-Content {
+		width: 100%;
+		.TemplateSectionContent {
+			display: flex;
+			flex-direction: row;
+			padding: 2em;
+			flex-wrap: wrap;
+			justify-content: space-between;
+		}
+		.DataTitle {
+			font-size: 1.5em;
+			color: $black;
+			width: 100%;
+		}
+		.Data {
+			margin: 1em 0;
+			width: 50%;
+			display: flex;
+			flex-direction: column;
+			.DataName {
+				color: $BackgroundText;
+				display: flex;
+				flex-direction: row;
+			}
+			.options {
+				display: flex;
+				justify-content: flex-start;
+				.DataElem {
+					width: 30%;
+					display: flex;
+					flex-direction: column;
+					margin: 1em 0;
+				}
+
+				.DataRequired {
+					width: 30%;
+					color: $BackgroundText;
+					display: flex;
+					flex-direction: row;
+					margin: 1em 0;
+					align-items: center;
+				}
+
+				.DataDelete {
+					width: 30%;
+					display: flex;
+					flex-direction: row;
+					margin: 1em 0;
+					color: $Delete;
+					align-items: center;
+				}
+			}
+			.DataInput {
+				border: transparent;
+				border-bottom: 1px solid #000;
+			}
+		}
+	}
+}
+
+.PreviewFieldsSelect,
+.CategoriesPicker,
+.DataInput {
+	background-color: transparent !important;
 }
 
 .AddButton {
-	padding-top: 1px;
 	display: flex;
-	flex-direction: row;
-	width: 150px;
-	float: center;
+	align-content: center;
+	height: 40px;
+	width: auto;
+	border-radius: 4px;
+	background-color: #fff;
+	border:1px solid #256EE0;
+	align-items: center;
+	padding: 0 1em 0 0.5em;
+	.material-icons, .AddButtonText {
+		color: #256EE0;
+	}
 }
 
-.AddButtonText {
-	padding-top: 4px;
-}
-
-#AddOptionIcon {
-	margin-top: 25px;
-}
 
 #Options {
 	display: flex;
@@ -37,51 +138,8 @@
 	margin-bottom: 20px;
 }
 
-.Data {
-	display: flex;
-	flex-direction: column;
-}
-
-.DataTitle {
-	color: $BackgroundText;
-}
-
-.DataName {
-	color: $BackgroundText;
-	align-self: flex-start;
-}
-
-.DataElem {
-	display: flex;
-	flex-direction: row;
-	margin-bottom: 10px;
-}
-
-.DataRequired {
-	color: $BackgroundText;
-	display: flex;
-	flex-direction: row;
-	font-size: 18px;
-}
-
-.DataDelete {
-	display: flex;
-	flex-direction: row;
-	font-size: 18px;
-	color: $Delete;
-}
-
-.material-icons {
-	margin-right: 5px;
-	margin-left: 5px;
-}
-
 .DialogTypeDropdown {
 	width: 165px;
-}
-
-.TemplateSectionContent {
-	margin-bottom: 20px;
 }
 
 .PreviewFieldsSelect {
@@ -89,9 +147,17 @@
 	width: 505px;
 }
 
+.templateTypeCard {
+	display: flex;
+	justify-content: center;
+	.MuiRadio-root {
+		color: $primary-color !important;
+	}
+}
 .PreviewFieldItem {
 	width: 30%;
 	box-sizing: border-box;
+	padding: 0 2em 1em 2em;
 }
 
 .PreviewFieldTypeImage {

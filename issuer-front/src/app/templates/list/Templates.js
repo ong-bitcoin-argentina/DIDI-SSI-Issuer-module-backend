@@ -54,12 +54,12 @@ class Templates extends Component {
 	// muestra el dialogo de creacion
 	renderCreateDialog = () => {
 		return (
-			<InputDialog
-				onRef={ref => (this.createDialog = ref)}
-				title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
-				fieldNames={["name"]}
-				onAccept={this.props.onCreate}
-			/>
+				<InputDialog
+					onRef={ref => (this.createDialog = ref)}
+					title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
+					fieldNames={["name"]}
+					onAccept={this.props.onCreate}
+				/>
 		);
 	};
 

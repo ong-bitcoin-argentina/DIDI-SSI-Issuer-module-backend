@@ -8,6 +8,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import "./_Style.scss";
+import "../../../styles/GeneralStyles.scss";
+
 export default class ConfirmationDialog extends Component {
 	constructor(props) {
 		super(props);
@@ -50,18 +53,22 @@ export default class ConfirmationDialog extends Component {
 		const hideClose = this.props.hideClose;
 
 		return (
-			<Dialog open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
+			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
-					<div>{message}</div>
+					<div className="DeleteMessage">
+						<span class="material-icons">delete_outline</span>
+						{message}
+					</div>
 				</DialogContent>
 				<DialogActions>
 					{!hideClose && (
-						<Button onClick={this.close} color="primary">
+						<Button className="CloseModalButton" onClick={this.close} color="primary">
 							{Messages.LIST.DIALOG.CANCEL}
 						</Button>
 					)}
 					<Button
+						className="CreateModalButton"
 						onClick={() => {
 							if (onAccept) onAccept();
 							this.close();
