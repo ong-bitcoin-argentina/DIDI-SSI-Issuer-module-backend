@@ -18,6 +18,7 @@ import TemplateService from "../../../services/TemplateService";
 import ParticipantService from "../../../services/ParticipantService";
 import Cookie from "js-cookie";
 
+
 var QRCode = require("qrcode");
 
 let interval;

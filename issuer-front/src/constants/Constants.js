@@ -80,7 +80,7 @@ module.exports = {
 
 	CERT_FIELD_MANDATORY: {
 		DID: "DID",
-		NAME: "CREDENCIAL",
+		NAME: "Certificado o Curso",
 		FIRST_NAME: "NOMBRE",
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"

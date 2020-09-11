@@ -8,14 +8,14 @@ module.exports = {
 	},
 	EDIT: {
 		DATA: {
-			PREVIEW: "CAMPOS A PREVISUALIZAR",
-			CATEGORIES: "CATEGORIA DEL CERTIFICADO",
-			CERT: "DATOS DEL CERTIFICADO",
-			PART: "DATOS DEL PARTICIPANTE",
-			OTHER: "OTROS DATOS",
+			PREVIEW: "Campos a Previsualizar",
+			CATEGORIES: "Categoría del Certificado",
+			CERT: "Datos del Certificado",
+			PART: "Datos del Participante",
+			OTHER: "Otros Datos",
 
-			MICRO_CRED_NAME: "NOMBRE DE LA MICRO",
-			MICRO_CRED_FIELDS: "CAMPOS DE LA MICRO"
+			MICRO_CRED_NAME: "Nombre de la Micro",
+			MICRO_CRED_FIELDS: "Campos de la Micro"
 		},
 		DIALOG: {
 			QR: {
@@ -74,7 +74,7 @@ module.exports = {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
 			},
-			DELETE_CONFIRMATION: "Esta seguro?",
+			DELETE_CONFIRMATION: "¿Esta seguro que desea eliminar el certificado?",
 			DELETE_CERT_TITLE: "Borrar Certificado",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
 			DELETE_DELEGATE_TITLE: "Borrar Delegado",
