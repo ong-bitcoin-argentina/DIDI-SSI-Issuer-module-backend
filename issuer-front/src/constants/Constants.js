@@ -1,6 +1,8 @@
 const API = process.env.REACT_APP_API_URL;
+const VERSION = process.env.REACT_APP_VERSION;
 
 module.exports = {
+	VERSION,
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
 		TEMPLATES: {
@@ -45,6 +47,9 @@ module.exports = {
 				return API + "/cert/" + id + "/emmit";
 			},
 			GET_ALL: API + "/cert/all",
+			GET_EMMITED: API + "/cert/find?emmited=true",
+			GET_PENDING: API + "/cert/find?emmited=false",
+			GET_REVOKED: API + "/cert/find?revoked=true",
 			GET: id => {
 				return API + "/cert/" + id;
 			},
@@ -67,13 +72,15 @@ module.exports = {
 		LIST: "/list",
 		TEMPLATES: "/templates",
 		EDIT_TEMPLATE: "/templates/edit/",
+		CERTIFICATES_PENDING: "/certificates-pending",
 		CERTIFICATES: "/certificates",
+		CERTIFICATES_REVOKED: "/certificates-revoked",
 		EDIT_CERT: "/certificates/edit/"
 	},
 
 	CERT_FIELD_MANDATORY: {
 		DID: "DID",
-		NAME: "CERTIFICADO O CURSO",
+		NAME: "CREDENCIAL",
 		FIRST_NAME: "NOMBRE",
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"
@@ -81,7 +88,7 @@ module.exports = {
 
 	DELEGATES: {
 		ICONS: {
-			ADD_BUTTON: "add_box"
+			ADD_BUTTON: "add"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
@@ -93,11 +100,12 @@ module.exports = {
 		PREVIEW_ELEMS_LENGTH: {
 			1: 2,
 			2: 4,
-			3: 6
+			3: 6,
+			4: 6
 		},
 
 		ICONS: {
-			ADD_BUTTON: "add_box",
+			ADD_BUTTON: "add",
 			OK: "check_circle_outline",
 			MISSING: "highlight_off"
 		},
@@ -119,7 +127,7 @@ module.exports = {
 			},
 			TYPING_TIMEOUT: 1000
 		},
-		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD"],
+		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS", "LABORAL"],
 		TYPES: {
 			TEXT: "Text",
 			PARAGRAPH: "Paragraph",
@@ -174,7 +182,7 @@ module.exports = {
 			FULL_NAME: "NOMBRE COMPLETO",
 			PARTICIPANT_FIRST_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO",
-			NAME: "CERTIFICADO O CURSO"
+			NAME: "CREDENCIAL"
 		}
 	},
 
@@ -212,7 +220,7 @@ module.exports = {
 		EDIT: {
 			PARTICIPANT_SELECT: "SELECCIONAR PARTICIPANTE",
 			SPLIT: "GENERAR MICROCREDENCIALES",
-			TEMPLATE_SELECT: "CERTIFICADO O CURSO"
+			TEMPLATE_SELECT: "CREDENCIAL"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
@@ -224,5 +232,7 @@ module.exports = {
 			personal: "Datos Personales",
 			address: "Domicilio Legal"
 		}
-	}
+	},
+
+	DATE_FORMAT: "YYYY-MM-DD"
 };

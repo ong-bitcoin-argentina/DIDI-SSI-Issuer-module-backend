@@ -22,6 +22,9 @@ router.post(
 	]),
 	Validator.checkValidationResult,
 	async function(req, res) {
+		if (!process.env.ENABLE_INSECURE_ENDPOINTS) {
+			return ResponseHandler.sendErrWithStatus(res, new Error('Disabled endpoint'), 404);
+		}
 		const name = req.body.name;
 		const password = req.body.password;
 		try {

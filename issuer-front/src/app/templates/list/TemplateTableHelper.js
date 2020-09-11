@@ -1,4 +1,7 @@
 import React from "react";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+
 import Messages from "../../../constants/Messages";
 
 class TemplateTableHelpers {
@@ -15,7 +18,8 @@ class TemplateTableHelpers {
 							if (!isLoading()) onEdit(template._id);
 						}}
 					>
-						{Messages.LIST.BUTTONS.EDIT}
+						<EditIcon fontSize="medium" />
+						{/* {Messages.LIST.BUTTONS.EDIT} */}
 					</div>
 					<div
 						className="DeleteAction"
@@ -23,7 +27,8 @@ class TemplateTableHelpers {
 							if (!isLoading()) onDelete(template._id);
 						}}
 					>
-						{Messages.LIST.BUTTONS.DELETE}
+						<DeleteIcon fontSize="medium" />
+						{/* {Messages.LIST.BUTTONS.DELETE} */}
 					</div>
 				</div>
 			)

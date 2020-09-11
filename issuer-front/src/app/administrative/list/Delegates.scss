@@ -4,16 +4,13 @@
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	margin: 20px 0;
 }
 
 .DelegatesTable {
 	background-color: $TableBackground;
 	color: $TableText;
 	margin-bottom: 10px;
-}
-
-.CreateDelegateText {
-	margin-top: 10px;
 }
 
 .RenameButton {

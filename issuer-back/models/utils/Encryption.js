@@ -1,6 +1,6 @@
 const NodeRSA = require("node-rsa");
 const Constants = require("../../constants/Constants");
-const key = new NodeRSA(Constants.RSA_PRIVATE_KEY);
+const key = new NodeRSA([Constants.RSA_PRIVATE_KEY, 'pkcs1']);
 
 // clase utilitaria para encriptar utilizando el algoritmo "rsa"
 class Encrypt {

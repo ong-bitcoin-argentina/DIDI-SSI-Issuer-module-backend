@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -20,6 +21,11 @@ var numCPUs = require("os").cpus().length;
 const app = express();
 var http = require("http");
 var server = http.createServer(app);
+
+// serve all files from public dir
+const path = require('path');
+const dir = path.join(__dirname, 'public');
+app.use(express.static(dir));
 
 // sobreescribir log para agregarle el timestamp
 const log = console.log;

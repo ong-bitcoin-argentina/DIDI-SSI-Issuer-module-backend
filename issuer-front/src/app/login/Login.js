@@ -8,6 +8,8 @@ import UserService from "../../services/UserService";
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
 
+import logoApp from "../../images/ai-di-logo.svg";
+
 class Login extends Component {
 	constructor(props) {
 		super(props);
@@ -25,11 +27,11 @@ class Login extends Component {
 		UserService.login(
 			this.state.name,
 			this.state.password,
-			async function(token) {
+			async function (token) {
 				Cookie.set("token", token);
 				self.setState({});
 			},
-			function(err) {
+			function (err) {
 				self.setState({ error: err });
 				console.log(err);
 			}
@@ -52,16 +54,24 @@ class Login extends Component {
 
 		return (
 			<div className="Login">
-				<h1 className="BackgroundText">{Messages.LOGIN.WELCOME}</h1>
-				<form onSubmit={this.onLogin}>
-					<input className="LoginInput" type="text" onChange={this.updateName}></input>
-					<input className="LoginInput" type="password" onChange={this.updatePass} autoComplete="on"></input>
-					<button className="LoginButton" type="submit" value="Submit">
-						{Messages.LOGIN.BUTTONS.ENTER}
-					</button>
-				</form>
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
-				{/*this.state.token*/}
+				<div className="LeftContainer">
+					<div className="Content">
+						<p className="LoginSubtitle">{Messages.LOGIN.WELCOME}</p>
+						<h1 className="LoginTitle">{Messages.LOGIN.WELCOME_2}</h1>
+						<form onSubmit={this.onLogin} className="LoginForm">
+							<input className="LoginInput" type="text" onChange={this.updateName}></input>
+							<input className="LoginInput" type="password" onChange={this.updatePass} autoComplete="on"></input>
+							<button className="LoginButton" type="submit" value="Submit">
+								{Messages.LOGIN.BUTTONS.ENTER}
+							</button>
+						</form>
+						<div className="errMsg">{this.state.error && this.state.error.message}</div>
+						{/*this.state.token*/}
+					</div>
+				</div>
+				<div className="RightContainer">
+					<img src={logoApp} alt="ai di logo" />
+				</div>
 			</div>
 		);
 	}

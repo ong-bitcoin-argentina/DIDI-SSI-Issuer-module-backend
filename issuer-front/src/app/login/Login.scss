@@ -1,17 +1,79 @@
 @import "../../styles/Colors.scss";
 
-.LoginInput {
+.Login {
 	display: flex;
-	flex-direction: column;
-	margin: auto;
+	justify-content: space-between;
+	width: 100%;
+	height: 100vh;
+	background-color: $primary-color;
 
-	width: 300px;
-	height: 30px;
-	margin-top: 0px;
-	margin-bottom: 10px;
-}
+	.RightContainer {
+		width: 50%;
+		background-color: $primary-color;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 2em;
 
-.LoginButton {
-	width: 75px;
-	height: 30px;
+		img {
+			width: 200px;
+		}
+	}
+
+	.LeftContainer {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 2em;
+		width: 50%;
+		background-color: $white;
+
+		.Content {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 250px;
+			.LoginSubtitle {
+				@include regular-text($body, $grey-5);
+				text-transform: uppercase;
+				letter-spacing: 2px;
+				margin-bottom: 0.5em;
+			}
+
+			.LoginTitle {
+				@include light-text($h1, $secondary-color);
+			}
+
+			.LoginForm {
+				margin-top: 1em;
+				width: 50%;
+				align-items: center;
+				display: flex;
+				flex-direction: column;
+
+				.LoginInput {
+					@include regular-text($button, $black);
+					margin: 0 0 10px 0;
+					padding: 2px 10px;
+					width: 300px;
+					height: 30px;
+					border-radius: 4px;
+					border: 1px solid $grey-3;
+				}
+
+				.LoginButton {
+					@include regular-text($button, $white);
+					border: none;
+					border-radius: 4px;
+					background-color: $secondary-color;
+					color: $white;
+					width: 320px;
+					height: 40px;
+				}
+			}
+		}
+	}
 }

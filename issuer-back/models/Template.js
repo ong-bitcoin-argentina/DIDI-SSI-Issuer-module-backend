@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Constants = require("../constants/Constants");
+const { cardSchema } = require("./dataTypes/CardSchema");
+const { getCardLayout } = require("./utils/Card");
 
 // Modelo de certificado a partir del cual se podran generar certificados particulares
 // define la data que tendra que agregarse a los mismos y la forma en que esta se mostrara en la app
@@ -40,6 +42,7 @@ const TemplateSchema = mongoose.Schema({
 	},
 	previewData: [{ type: String }],
 	previewType: { type: String },
+	backgroundImage: String,
 	category: {
 		type: String,
 		enum: Constants.CERT_CATEGORY_TYPES
@@ -61,6 +64,8 @@ const TemplateSchema = mongoose.Schema({
 
 TemplateSchema.index({ name: 1 });
 
+TemplateSchema.add({cardLayout: cardSchema});
+
 // modificar modelo de certificado
 TemplateSchema.methods.edit = async function(data, previewData, previewType, category) {
 	const updateQuery = { _id: this._id };
@@ -69,6 +74,7 @@ TemplateSchema.methods.edit = async function(data, previewData, previewType, cat
 			category: category,
 			previewData: previewData,
 			previewType: previewType,
+			cardLayout: getCardLayout(previewType),
 			data: data
 		}
 	};
@@ -116,6 +122,8 @@ Template.generate = async function(name) {
 	template.name = name;
 	template.previewType = "1";
 	template.previewData = [Constants.CERT_FIELD_MANDATORY.FIRST_NAME, Constants.CERT_FIELD_MANDATORY.LAST_NAME];
+	template.cardLayout = getCardLayout(template.previewType);
+
 	template.category = Constants.CERT_CATEGORY_TYPES[0];
 	template.data = {
 		cert: [

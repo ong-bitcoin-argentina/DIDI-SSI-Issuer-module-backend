@@ -10,7 +10,7 @@ class ParticipantsTableHelper {
 	static getParticipantData(participant, selectedParticipants, onParticipantSelectToggle, isLoading) {
 		return {
 			did: participant.did,
-			name: participant.name,
+			name: <div className="ContentTable">{participant.name}</div>,
 			tel: (
 				<div>
 					{participant.tel && <MaterialIcon color="green" icon={Constants.TEMPLATES.ICONS.OK} />}
@@ -78,14 +78,22 @@ class ParticipantsTableHelper {
 	static getParticipantColumns(selectedParticipants, allSelectedParts, onParticipantSelectAllToggle, isLoading) {
 		return [
 			{
-				Header: Messages.LIST.TABLE.NAME,
-				accessor: "name"
+				Header: (
+					<div className="SelectionTable">
+						<div className="HeaderText">
+							<p>{Messages.LIST.TABLE.NAME}</p>
+						</div>
+					</div>
+				),
+				accessor: "name",
 			},
 			{
 				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.HAS_TEL}</div>
-						<div>{"(" + Object.values(selectedParticipants["tel"]).filter(val => val).length + ")"}</div>
+					<div className="SelectorHeader">
+						<div className="HeaderText">
+							<p>{Messages.LIST.TABLE.HAS_TEL}</p>
+							<p>{"(" + Object.values(selectedParticipants["tel"]).filter(val => val).length + ")"}</p>
+						</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["tel"]}
@@ -100,9 +108,11 @@ class ParticipantsTableHelper {
 			},
 			{
 				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.HAS_MAIL}</div>
-						<div>{"(" + Object.values(selectedParticipants["mail"]).filter(val => val).length + ")"}</div>
+					<div className="SelectorHeader">
+						<div className="HeaderText">
+							<p>{Messages.LIST.TABLE.HAS_MAIL}</p>
+							<p>{"(" + Object.values(selectedParticipants["mail"]).filter(val => val).length + ")"}</p>
+						</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["mail"]}
@@ -117,10 +127,12 @@ class ParticipantsTableHelper {
 			},
 			{
 				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.HAS_PERSONAL}</div>
-						<div>{Messages.LIST.TABLE.HAS_PERSONAL2}</div>
-						<div>{"(" + Object.values(selectedParticipants["personal"]).filter(val => val).length + ")"}</div>
+					<div className="SelectorHeader">
+						<div className="HeaderText">
+							<p>{Messages.LIST.TABLE.HAS_PERSONAL}</p>
+							<p>{Messages.LIST.TABLE.HAS_PERSONAL2}</p>
+							<p>{"(" + Object.values(selectedParticipants["personal"]).filter(val => val).length + ")"}</p>
+						</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["personal"]}
@@ -135,9 +147,11 @@ class ParticipantsTableHelper {
 			},
 			{
 				Header: (
-					<div>
-						<div>{Messages.LIST.TABLE.HAS_ADDRESS}</div>
-						<div>{"(" + Object.values(selectedParticipants["address"]).filter(val => val).length + ")"}</div>
+					<div className="SelectorHeader">
+						<div className="HeaderText">
+							<p>{Messages.LIST.TABLE.HAS_ADDRESS}</p>
+							<p>{"(" + Object.values(selectedParticipants["address"]).filter(val => val).length + ")"}</p>
+						</div>
 						<div className="Actions">
 							<Checkbox
 								checked={allSelectedParts["address"]}

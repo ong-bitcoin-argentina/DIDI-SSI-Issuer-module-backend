@@ -3,43 +3,41 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
+const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators");
 
 const CertService = require("../services/CertService");
+const TokenService = require("../services/TokenService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
+const { getDID, toDTO } = require("../constants/DTO/CertDTO");
+
+const { checkValidationResult, validate } = Validator;
 
 /**
  *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
  */
-router.get(
-	"/all",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(_, res) {
-		try {
-			const certs = await CertService.getAll();
-			const result = certs.map(cert => {
-				return {
-					_id: cert._id,
-					name: cert.data.cert[0].value,
-					emmitedOn: cert.emmitedOn,
-					firstName: cert.data.participant[0][1].value,
-					lastName: cert.data.participant[0][2].value
-				};
-			});
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			console.log(err);
-			return ResponseHandler.sendErr(res, err);
-		}
+router.get("/all", validate([TOKEN_VALIDATION]), checkValidationResult, async function (_, res) {
+	try {
+		const certs = await CertService.getAll();
+		const result = toDTO(certs);
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		console.log(err);
+		return ResponseHandler.sendErr(res, err);
 	}
-);
+});
+
+/**
+ *	lista de certificados emitidos
+ */
+router.get("/find", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
+	try {
+		const result = await CertService.findBy(req.query);
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		return ResponseHandler.sendErrWithStatus(res, err);
+	}
+});
 
 /**
  *	retorna un certificado a partir de su id
@@ -54,7 +52,7 @@ router.get(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		let cert;
 		try {
@@ -102,7 +100,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		try {
 			const data = JSON.parse(req.body.data);
 			const templateId = req.body.templateId;
@@ -156,7 +154,7 @@ router.put(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		const data = JSON.parse(req.body.data);
 		const split = req.body.split;
@@ -172,37 +170,24 @@ router.put(
 );
 
 /**
- * Marca un certificado como borrado y lo revoca en caso de haber sido emitido (no implementado aun)
+ * Marca un certificado como borrado y lo revoca en caso de haber sido emitido
  */
-router.delete(
-	"/:id",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function(req, res) {
-		const id = req.params.id;
+router.delete("/:id", validate([CERT_REVOCATION]), checkValidationResult, async function (req, res) {
+	const { id } = req.params;
+	const { reason } = req.body;
+	const { token } = req.headers;
 
-		try {
-			const cert = await CertService.delete(id);
-			const did = cert.data.participant[0][0].value;
-
-			const calls = [];
-			for (let jwt of cert.jwts) {
-				calls.push(MouroService.revokeCertificate(jwt.data, jwt.hash, did));
-			}
-
-			await Promise.all(calls);
-			return ResponseHandler.sendRes(res, cert);
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
+	try {
+		const { userId } = TokenService.getTokenData(token);
+		const cert = await CertService.deleteOrRevoke(id, reason, userId);
+		const did = getDID(cert);
+		const calls = cert.jwts.map(jwt => MouroService.revokeCertificate(jwt.data, jwt.hash, did));
+		await Promise.all(calls);
+		return ResponseHandler.sendRes(res, cert);
+	} catch (err) {
+		return ResponseHandler.sendErr(res, err);
 	}
-);
+});
 
 /**
  * permite crear un certificado y enviarlo al didi-server para ser emitido
@@ -217,7 +202,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		let cert;
 		try {
@@ -256,20 +241,25 @@ router.post(
 	}
 );
 
+/**
+ * usar con precaucion
+ */
+router.post("/updateAllDeleted", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
+	try {
+		const result = await CertService.updateAllDeleted();
+		return ResponseHandler.sendRes(res, result);
+	} catch (err) {
+		return ResponseHandler.sendErrWithStatus(res, err);
+	}
+});
+
 // crea certificado completo (sin microcredenciales)
-const generateFullCertificate = async function(credentials, template, cert, part) {
+const generateFullCertificate = async function (credentials, template, cert, part) {
 	try {
 		const allData = cert.data.cert.concat(part).concat(cert.data.others);
 		const name = cert.data.cert[0].value;
 		const data = {};
-		data[name] = {
-			category: Constants.CERT_CATEGORY_MAPPING[template.category],
-			preview: {
-				type: Number(template.previewType),
-				fields: template.previewData
-			},
-			data: {}
-		};
+		data[name] = MouroService.getSkeletonForEmmit(template);
 
 		let did, expDate;
 		allData.forEach(dataElem => {
@@ -297,9 +287,9 @@ const generateFullCertificate = async function(credentials, template, cert, part
 };
 
 // crea certificado y sus microcredenciales
-const generateCertificate = async function(credentials, template, cert, part) {
+const generateCertificate = async function (credentials, template, cert, part) {
 	// generar microcredencial
-	const generatePartialCertificate = async function(name, certData, expDate, did) {
+	const generatePartialCertificate = async function (name, certData, expDate, did) {
 		try {
 			const data = {};
 			data[name] = {
@@ -377,15 +367,7 @@ const generateCertificate = async function(credentials, template, cert, part) {
 		// crear las microcredenciales
 		const microCredentials = await Promise.all(generateCertPromises);
 
-		data[name] = {
-			category: Constants.CERT_CATEGORY_MAPPING[template.category],
-			preview: {
-				type: Number(template.previewType),
-				fields: template.previewData
-			},
-			data: {},
-			wrapped: {}
-		};
+		data[name] = MouroService.getSkeletonForEmmit(template, true);
 
 		const saveCertPromises = [];
 		for (let i = 0; i < microCredentials.length; i++) {
