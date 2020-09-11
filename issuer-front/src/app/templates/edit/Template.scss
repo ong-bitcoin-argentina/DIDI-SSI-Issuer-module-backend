@@ -3,7 +3,8 @@
 .Template {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
+	padding: 4em 3em 0 2em;
+	position: relative;
 	.DataTitle {
 		font-size: 1.5em;
 		color: $black;
@@ -15,7 +16,9 @@
 		justify-content: space-between;
 		padding: 1em;
 		box-sizing: border-box;
-
+		position: absolute;
+		top: 0;
+		left: 0;
 		img {
 			height: 25px;
 		}
@@ -56,7 +59,7 @@
 		}
 		.Data {
 			margin: 1em 0;
-			width: 50%;
+			width: 100%;
 			display: flex;
 			flex-direction: column;
 			.DataName {
@@ -67,15 +70,16 @@
 			.options {
 				display: flex;
 				justify-content: flex-start;
+				width: 30%;
 				.DataElem {
-					width: 30%;
+					width: 100%;
 					display: flex;
 					flex-direction: column;
 					margin: 1em 0;
 				}
 
 				.DataRequired {
-					width: 30%;
+					width: 100%;
 					color: $BackgroundText;
 					display: flex;
 					flex-direction: row;
@@ -84,7 +88,7 @@
 				}
 
 				.DataDelete {
-					width: 30%;
+					width: 100%;
 					display: flex;
 					flex-direction: row;
 					margin: 1em 0;
@@ -98,12 +102,37 @@
 			}
 		}
 	}
+	.TemplateButtons {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+		.BackButton .CloseButton {
+			background: white!important;
+			border:1px solid #dddee5!important;
+			box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.0523656)!important;
+			color: #333333!important;
+			&:hover {
+				opacity: 0.8!important;
+			}
+		}
+		 .SaveButton {
+			background: #256EE0!important;
+			color: white!important;
+			&:hover {
+				opacity: 0.8!important;
+			}
+		}
+	}
 }
 
 .PreviewFieldsSelect,
 .CategoriesPicker,
 .DataInput {
 	background-color: transparent !important;
+}
+
+.react-datepicker-wrapper {
+	width: 100%!important;
 }
 
 .AddButton {
@@ -113,14 +142,14 @@
 	width: auto;
 	border-radius: 4px;
 	background-color: #fff;
-	border:1px solid #256EE0;
+	border: 1px solid #256ee0;
 	align-items: center;
 	padding: 0 1em 0 0.5em;
-	.material-icons, .AddButtonText {
-		color: #256EE0;
+	.material-icons,
+	.AddButtonText {
+		color: #256ee0;
 	}
 }
-
 
 #Options {
 	display: flex;
@@ -136,6 +165,9 @@
 #Types {
 	margin-top: 20px;
 	margin-bottom: 20px;
+	.MuiInputBase-root {
+		width: 100%;
+	}
 }
 
 .DialogTypeDropdown {

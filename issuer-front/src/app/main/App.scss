@@ -20,12 +20,12 @@ body {
 	width: 100vw;
 	align-items: center;
 	justify-content: center;
+	box-sizing: border-box;
 
 	// min-height: 100vh;
 }
 
 .errMsg {
-	font-size: 20px;
 	color: $black;
 	margin-top: 1em;
 	background-color: #FFEAEB;

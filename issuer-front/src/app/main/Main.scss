@@ -205,6 +205,13 @@
 	position: relative;
 	margin-bottom: 1em;
 	justify-content: flex-end;
+	.CreateButton {
+		display: flex;
+		align-items: center;
+		.CreateButtonText, .CreateDelegateText {
+			margin-top: 0!important;
+		}
+	}
 }
 
 .SectionButtons {
@@ -250,13 +257,13 @@
 }
 
 .CreateButtonText {
-	align-content: center;
+	display: flex;
+	align-items: center;
 	@include regular-text($button, $white);
 }
 
 @-moz-document url-prefix() {
 	.CreateDelegateText {
-		margin-top: 5px !important;
 	}
 }
 

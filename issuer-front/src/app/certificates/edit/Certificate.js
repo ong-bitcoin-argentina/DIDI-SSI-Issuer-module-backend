@@ -21,6 +21,7 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
+import logoApp from "../../../images/ai-di-logo.svg";
 
 import QrDialog from "../../utils/dialogs/QrDialog";
 
@@ -698,6 +699,12 @@ class Certificate extends Component {
 		const error = this.state.error;
 		return (
 			<div className={loading ? "Certificate Loading" : "Certificate"}>
+				<div className="Header">
+					<img src={logoApp} alt="ai di logo" />
+					<div className="Menu">
+						<p>Menu</p>
+					</div>
+				</div>
 				{Spinner.render(loading)}
 				{this.renderTemplateSelector()}
 				{!loading && this.renderCert()}
@@ -852,7 +859,6 @@ class Certificate extends Component {
 						</div>
 					);
 				})}
-				<div>{"(* requerido)"}</div>
 			</div>
 		);
 	};
@@ -900,7 +906,7 @@ class Certificate extends Component {
 		return (
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
-
+				<h2>Agregar Participantes</h2>
 				<Autocomplete
 					options={templates}
 					getOptionLabel={option => (option ? option.name : "")}
@@ -917,7 +923,7 @@ class Certificate extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {
 		return (
-			<div>
+			<div className="AddParticipants">
 				<div className="AddParticipantButtons">
 					<button
 						className="CertButton AddParticipant"

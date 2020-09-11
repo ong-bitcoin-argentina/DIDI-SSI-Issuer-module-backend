@@ -98,7 +98,7 @@ export default class InputDialog extends Component {
 						})}
 				</DialogContent>
 				<DialogActions>
-					<Button className="CloseModalButton" onClick={this.close} color="primary">
+					<Button className="CloseButton" onClick={this.close} color="primary">
 						{Messages.LIST.DIALOG.CANCEL}
 					</Button>
 					<Button
