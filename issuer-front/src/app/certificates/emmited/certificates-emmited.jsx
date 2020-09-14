@@ -4,7 +4,7 @@ import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import { Grid, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@material-ui/core";
 import ReactTable from "react-table-6";
 import Messages from "../../../constants/Messages";
-import Constants from "../../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../../constants/Constants";
 import { REVOCATION_REASONS } from "../../../constants/CertificateDefinitions";
 import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
@@ -13,6 +13,8 @@ import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
 import Notification from "../../components/notification";
 import FormSelect from "../../components/form-select";
+import KeyValue from "../../components/key-value";
+import moment from "moment";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -29,6 +31,7 @@ const CertificatesEmmited = () => {
 	const [revokeReason, setRevokeReason] = useState("");
 	const [revokeSuccess, setRevokeSuccess] = useState(false);
 	const [revokeFail, setRevokeFail] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const history = useHistory();
 
 	useEffect(() => {
@@ -70,7 +73,9 @@ const CertificatesEmmited = () => {
 
 	const getData = async () => {
 		const token = Cookie.get("token");
+		setLoading(true);
 		let certificates = await CertificateService.getEmmited(token);
+		setLoading(false);
 		setData(
 			certificates.map(item => {
 				return CertificateTableHelper.getCertificatesEmmitedData(
@@ -103,12 +108,14 @@ const CertificatesEmmited = () => {
 
 	const handleRevokeOne = cert => {
 		setActiveCert(cert);
-		toggleModal();
+		setModalOpen(true);
 	};
 
 	const handleRevokeConfirm = () => {
 		const token = Cookie.get("token");
 		const result = CertificateService.revoke(token, activeCert._id, revokeReason, onRevokeSuccess, onRevokeFail);
+		setActiveCert(null);
+		setRevokeReason("");
 		toggleModal();
 	};
 
@@ -137,7 +144,7 @@ const CertificatesEmmited = () => {
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				<Grid item xs={12} style={{ textAlign: "center" }}>
-					{filteredData ? (
+					{!loading ? (
 						<ReactTable
 							sortable={false}
 							previousText={PREV}
@@ -165,9 +172,19 @@ const CertificatesEmmited = () => {
 
 			<Dialog open={modalOpen} onClose={toggleModal}>
 				<DialogTitle id="form-dialog-title">
-					Estás por revocar la credencial de {activeCert.firstName} {activeCert.lastName}
+					<div>Estás por revocar la siguiente credencial:</div>
+					<div style={{ marginTop: 10 }}>
+						{activeCert && (
+							<>
+								<KeyValue field={"Nombre y Apellido"} value={`${activeCert.firstName} ${activeCert.lastName}`} />
+								<KeyValue field={"Certificado"} value={activeCert.name} />
+								<KeyValue field={"Fecha de creación"} value={moment(activeCert.createdOn).format(DATE_FORMAT)} />
+								<KeyValue field={"Fecha de emisión"} value={moment(activeCert.emmitedOn).format(DATE_FORMAT)} />
+							</>
+						)}
+					</div>
 				</DialogTitle>
-				<DialogContent style={{ margin: "10px 0 25px" }}>
+				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<FormSelect
 						label="Razón de revocación"
 						value={revokeReason}
@@ -185,7 +202,7 @@ const CertificatesEmmited = () => {
 				</DialogActions>
 			</Dialog>
 
-			<Notification open={revokeSuccess} message="La credencial se revocó exitosamente." />
+			<Notification open={revokeSuccess} message="La credencial se revocó con éxito." />
 
 			<Notification
 				open={revokeFail}
