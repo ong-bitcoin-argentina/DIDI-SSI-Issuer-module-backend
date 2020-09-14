@@ -5,6 +5,11 @@
 	flex-direction: column;
 	padding: 4em 3em 0 2em;
 	position: relative;
+	width: 95%;
+	.container {
+		margin: 0 auto;
+		max-width: 700px;
+	}
 	.DataTitle {
 		font-size: 1.5em;
 		color: $black;
@@ -21,10 +26,11 @@
 		left: 0;
 		img {
 			height: 25px;
+			margin: 0 5em;
 		}
 
 		.Menu {
-			margin-right: 1em;
+			margin: 0 5em;
 			p {
 				margin: 0;
 			}
@@ -208,3 +214,49 @@
 	background-color: $InputBackground;
 	width: 505px;
 }
+
+
+@media only screen and (max-width: 600px) {
+	.Template {
+		.container {
+			max-width: 100%;
+			.Template-Type {
+				.MuiInputBase-root {
+					width: 300px;
+				}
+			}
+			.Template-Content {
+				.TemplateSectionContent {
+					.Data {
+						.DataElem {
+							.options {
+								width: 100%;
+							}
+						}
+					}
+				}
+			}
+			.TemplateButtons {
+				display: flex;
+				padding: 1em;
+				.SaveButton {
+					margin-right: 0;
+				}
+			}
+			.templateTypeCard {
+				flex-direction: column;
+				.PreviewFieldItem {
+					width: 100%;
+				}
+			}
+			.SectionButtons {
+				.AddButton {
+					margin:0 auto;
+					width: 100%;
+					display: flex;
+					justify-content: center;
+				}
+			}
+		}
+	}
+  }

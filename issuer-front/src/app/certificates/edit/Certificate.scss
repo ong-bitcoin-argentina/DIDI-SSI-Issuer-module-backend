@@ -9,6 +9,10 @@
 	top: 0;
 	left: 0;
 	right: 0;
+	.container {
+		margin: 0 auto;
+		max-width: 700px;
+	}
 }
 .DataTitle {
 	font-size: 1.5em;
@@ -47,10 +51,11 @@
 	left: 0;
 	img {
 		height: 25px;
+		margin: 0 5em;
 	}
 
 	.Menu {
-		margin-right: 1em;
+		margin: 0 5em;
 		p {
 			margin: 0;
 		}
@@ -97,7 +102,7 @@
 }
 
 .TemplateSelector {
-	margin-top: 30px;
+	margin-top: 0.5em;
 	display: flex;
 	flex-direction: column;
 }
@@ -196,3 +201,27 @@
 		}
 	}
 }
+
+@media only screen and (max-width: 600px) {
+	.Certificate {
+		.container {
+			max-width: 100%;
+			.TemplateSelector {
+				.MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd {
+					width: 300px;
+				}
+			}
+		}
+		.AddParticipants {
+			.AddParticipantButtons {
+				flex-direction: column;
+				.CertButton  {
+					margin: 1em 0;
+					width: 100%;
+					display: flex;
+					justify-content: center;
+				}
+			}
+		}
+	}
+  }

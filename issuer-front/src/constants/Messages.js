@@ -1,7 +1,7 @@
 module.exports = {
 	LOGIN: {
 		WELCOME: "Bienvenido al",
-		WELCOME_2: "Emisor de Certificados Web",
+		WELCOME_2: "Emisor de Credenciales Web",
 		BUTTONS: {
 			ENTER: "Ingresar"
 		}
@@ -9,8 +9,8 @@ module.exports = {
 	EDIT: {
 		DATA: {
 			PREVIEW: "Campos a Previsualizar",
-			CATEGORIES: "Categoría del Certificado",
-			CERT: "Datos del Certificado",
+			CATEGORIES: "Categoría de la Credencial",
+			CERT: "Datos de la Credencial",
 			PART: "Datos del Participante",
 			OTHER: "Otros Datos",
 
@@ -74,11 +74,11 @@ module.exports = {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
 			},
-			DELETE_CONFIRMATION: "¿Esta seguro que desea eliminar el certificado?",
-			DELETE_CERT_TITLE: "Borrar Certificado",
+			DELETE_CONFIRMATION: "¿Esta seguro que desea eliminar el Credencial?",
+			DELETE_CERT_TITLE: "Borrar Credencial",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
 			DELETE_DELEGATE_TITLE: "Borrar Delegado",
-			REVOKE_CERT_TITLE: "Revocar Certificado",
+			REVOKE_CERT_TITLE: "Revocar Credencial",
 			REVOKE_CONFIRMATION: "Esta seguro?",
 			REVOKE: "Revocar",
 			DELETE: "Borrar",
@@ -97,8 +97,8 @@ module.exports = {
 			HAS_PERSONAL: "DATOS",
 			HAS_PERSONAL2: "PERSONALES",
 			HAS_ADDRESS: "DOMICILIO",
-			TEMPLATE: "Modelo de Certificado",
-			CERT: "CERTIFICADO",
+			TEMPLATE: "Modelo de Credencial",
+			CERT: "Credencial",
 			LAST_NAME: "APELLIDO",
 			NAME: "NOMBRE",
 			PREV: "ANTERIOR",
@@ -113,12 +113,12 @@ module.exports = {
 			CREATE_DELEGATE: "Crear Delegado",
 			DELEGATES: "Delegados",
 			TO_QR: "Registrar Participante",
-			TO_CERTIFICATES_PENDING: "Certificados Pendientes",
-			TO_CERTIFICATES: "Certificados",
-			TO_REVOKED_CERTIFICATES: "Certificados Revocados",
+			TO_CERTIFICATES_PENDING: "Credenciales Pendientes",
+			TO_CERTIFICATES: "Credenciales",
+			TO_REVOKED_CERTIFICATES: "Credenciales Revocados",
 			TO_TEMPLATES: "Templates",
-			CREATE_TEMPLATE: "Crear Modelo de Certificado",
-			CREATE_CERT: "Emitir Certificado",
+			CREATE_TEMPLATE: "Crear Modelo de Credencial",
+			CREATE_CERT: "Emitir Credencial",
 			EMMIT_SELECTED: "Emitir Seleccionados",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
@@ -133,16 +133,16 @@ module.exports = {
 			return "USUARIO '" + name + "' CARGADO CON ÉXITO";
 		},
 		DID_SELECT: "DID",
-		CERTIFICATE_SELECT: "CERTIFICADO A PEDIR",
-		TEMPLATE_SELECT: "MODELO DE CERTIFICADO",
+		CERTIFICATE_SELECT: "Credencial A PEDIR",
+		TEMPLATE_SELECT: "MODELO DE Credencial",
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
-		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de certificado para el que se pediran los datos:",
+		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de Credencial para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
-		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de certificado:",
-		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de certificado actual",
+		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
+		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de Credencial actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
-			REQUEST: "Pedir certificados",
+			REQUEST: "Pedir Credenciales",
 			QR_LOAD: "Cargar por Qr",
 			GENERATE: "Generar Qr"
 		}

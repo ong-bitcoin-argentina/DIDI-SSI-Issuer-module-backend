@@ -73,7 +73,7 @@ class Participants extends Component {
 		return false;
 	};
 
-	// manda los pedidos correspondientes a los participantes/certificados seleccionados
+	// manda los pedidos correspondientes a los participantes/credenciales seleccionados
 	sendRequests = () => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
@@ -177,7 +177,7 @@ class Participants extends Component {
 		);
 	};
 
-	// volver a listado de certificados
+	// volver a listado de credenciales
 	onBack = () => {
 		if (this.reqSentDialog) this.reqSentDialog.close();
 
@@ -212,7 +212,7 @@ class Participants extends Component {
 		);
 	}
 
-	// muestra el dialogo de carga de participantes por qr para modelo de certificado
+	// muestra el dialogo de carga de participantes por qr para modelo de credencial
 	renderQrDialog = () => {
 		return (
 			<QrDialog
