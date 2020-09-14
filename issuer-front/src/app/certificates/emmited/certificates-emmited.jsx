@@ -158,7 +158,7 @@ const CertificatesEmmited = () => {
 						disabled={!Object.values(selected).some(val => val)}
 					>
 						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-						Revocar Certificados Seleccionados
+						Revocar Credencial Seleccionados
 					</button>
 				</Grid>
 			</Grid>

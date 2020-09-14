@@ -34,7 +34,7 @@ class Template extends Component {
 		};
 	}
 
-	// cargar modelo de certificado
+	// cargar modelo de credencial
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
@@ -102,7 +102,7 @@ class Template extends Component {
 		}
 	};
 
-	// seleccionar los campos a mostrarse por defecto en el certificado
+	// seleccionar los campos a mostrarse por defecto en el credencial
 	onPreviewFieldsSelected = event => {
 		const template = this.state.template;
 		template.previewData = event.target.value;
@@ -145,7 +145,7 @@ class Template extends Component {
 		);
 	};
 
-	// mostrar pantalla de edicion de modelos de certificados
+	// mostrar pantalla de edicion de modelos de credenciales
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -159,13 +159,16 @@ class Template extends Component {
 						<p>Menu</p>
 					</div>
 				</div>
-				{Spinner.render(loading)}
-				{this.renderDialog()}
-				{!loading && this.renderTemplateType()}
-				{!loading && this.renderTemplateCategory()}
-				{!loading && this.renderTemplate()}
-				{this.renderButtons()}
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+
+					{Spinner.render(loading)}
+					{this.renderDialog()}
+					<div className="container">
+					{!loading && this.renderTemplateType()}
+					{!loading && this.renderTemplateCategory()}
+					{!loading && this.renderTemplate()}
+					{this.renderButtons()}
+					<div className="errMsg">{this.state.error && this.state.error.message}</div>
+				</div>
 			</div>
 		);
 	}
@@ -182,7 +185,7 @@ class Template extends Component {
 	};
 
 	// mostrar controles para definir la categoria del modelo
-	// (como se categorizara al certificado en la app Android)
+	// (como se categorizara al credencial en la app Android)
 	renderTemplateCategory = () => {
 		const template = this.state.template;
 		const categories = Constants.TEMPLATES.CATEGORIES;
@@ -281,7 +284,7 @@ class Template extends Component {
 	};
 
 	// mostrar la lista de campos con sus valores por defecto categorizados en:
-	// Datos del certificado
+	// Datos de la credencial
 	// Datos del participante
 	// Otros datos
 	renderTemplate = () => {
@@ -308,14 +311,14 @@ class Template extends Component {
 					return (
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
-							
-								<div className="DataElem">
-									{DataRenderer.renderData(dataElem, type, true, this.setDefaultValue, true)}
-									<div className="options">
+
+							<div className="DataElem">
+								{DataRenderer.renderData(dataElem, type, true, this.setDefaultValue, true)}
+								<div className="options">
 									{DataRenderer.renderRequired(dataElem, type, this.toggleRequired, true)}
 									{DataRenderer.renderDelete(dataElem, type, this.deleteField, true)}
-									</div>
 								</div>
+							</div>
 						</div>
 					);
 				})}
@@ -325,7 +328,7 @@ class Template extends Component {
 	};
 
 	// mostrar controles para agregar un campo nuevo en la seccion elegida
-	// (Datos del certificado, Datos del participante, Otros datos)
+	// (Datos de la credencial, Datos del participante, Otros datos)
 	renderSectionButtons = type => {
 		return (
 			<div className="SectionButtons">
@@ -335,8 +338,8 @@ class Template extends Component {
 						if (this.templateFieldAddDialog) this.templateFieldAddDialog.open(type);
 					}}
 				>
-						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
+					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+					<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
 				</button>
 			</div>
 		);

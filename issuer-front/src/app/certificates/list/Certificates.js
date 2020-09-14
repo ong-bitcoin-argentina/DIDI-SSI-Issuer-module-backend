@@ -51,7 +51,7 @@ class Certificates extends Component {
 		if (this.revokeDialog) this.revokeDialog.open();
 	};
 
-	// mostrar pantalla de certificados
+	// mostrar pantalla de credencial
 	render() {
 		const error = this.props.error || this.state.error;
 		const loading = this.props.loading;
@@ -94,7 +94,7 @@ class Certificates extends Component {
 		);
 	};
 
-	// muestra boton de creacion de certificados
+	// muestra boton de creacion de credencial
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
 		return (
@@ -109,7 +109,7 @@ class Certificates extends Component {
 		);
 	};
 
-	// muestra tabla de certificados
+	// muestra tabla de credencial
 	renderTable = () => {
 		const certificates = this.props.certificates;
 		const columns = this.props.columns ? this.props.columns : [];

@@ -43,7 +43,7 @@ class Certificate extends Component {
 		}
 	}
 
-	// cargar templates, certificado, etc
+	// cargar templates, credencial, etc
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
@@ -69,7 +69,7 @@ class Certificate extends Component {
 		})();
 	}
 
-	// carga modelos de certificados
+	// carga modelos de credencial
 	getTemplates = function (token) {
 		const self = this;
 		return new Promise(function (resolve, reject) {
@@ -86,7 +86,7 @@ class Certificate extends Component {
 		});
 	};
 
-	// carga certificado
+	// carga credencial
 	getCert = function (token, id) {
 		const self = this;
 		return new Promise(function (resolve, reject) {
@@ -107,7 +107,7 @@ class Certificate extends Component {
 		});
 	};
 
-	// carga modelo de certificado
+	// carga modelo de credencial
 	getTemplate = function (token) {
 		const self = this;
 
@@ -135,7 +135,7 @@ class Certificate extends Component {
 		});
 	};
 
-	// carga lista de participantes de los que se tiene info para el modelo de certificado
+	// carga lista de participantes de los que se tiene info para el modelo de credencial
 	getParticipants = function () {
 		const self = this;
 		const token = Cookie.get("token");
@@ -157,7 +157,7 @@ class Certificate extends Component {
 		});
 	};
 
-	// generar certificado a partir del template seleccionado en el combo
+	// generar credencial a partir del template seleccionado en el combo
 	certFromTemplate = template => {
 		const data = {
 			cert: this.certDataFromTemplate(template, "cert"),
@@ -173,7 +173,7 @@ class Certificate extends Component {
 		};
 	};
 
-	// mapear data del certificado a partir del modelo
+	// mapear data de la credencial a partir del modelo
 	certDataFromTemplate = (template, field) => {
 		return template.data[field].map(data => {
 			return {
@@ -282,7 +282,7 @@ class Certificate extends Component {
 	// agregar info de participante con los datos provenientes de un csv
 	// (este csv tiene que tener los datos ordenados de la misma forma que el template)
 	loadCertFromCsv = files => {
-		// retorna true si el dato es valido (valida segun el tipo de dato requerido en el modelo de certificado)
+		// retorna true si el dato es valido (valida segun el tipo de dato requerido en el modelo de credencial)
 		let validateValueMatchesType = function (dataElem, value) {
 			switch (dataElem.type) {
 				case Constants.TEMPLATES.TYPES.BOOLEAN:
@@ -341,7 +341,7 @@ class Certificate extends Component {
 
 		const self = this;
 		var reader = new FileReader();
-		// iterar los campos del certificado y asignar los valores correspondiente del csv
+		// iterar los campos de la credencial y asignar los valores correspondiente del csv
 		reader.onload = function (e) {
 			const participant = [];
 
@@ -523,7 +523,7 @@ class Certificate extends Component {
 		if (len >= pos) this.state.cert.data.participant.splice(pos, len - pos);
 	};
 
-	// guardar cert y volver a listado de certificados
+	// guardar cert y volver a listado de credencial
 	onSave = () => {
 		const token = Cookie.get("token");
 		const cert = this.state.cert;
@@ -586,7 +586,7 @@ class Certificate extends Component {
 		this.setState({ cert: cert });
 	};
 
-	// volver a listado de certificados
+	// volver a listado de credencial
 	onBack = () => {
 		if (this.state.loading && this.state.error) {
 			this.setState({ loading: false, error: false });
@@ -598,14 +598,11 @@ class Certificate extends Component {
 	updateErrorDelayed = error => {
 		const self = this;
 		// delay setState in case view is still rendering
-		setTimeout(
-			() => {
-				if (!error || !this.state.error) {
-					self.setState({ error: error });
-				}
-			},
-			500
-		);
+		setTimeout(() => {
+			if (!error || !this.state.error) {
+				self.setState({ error: error });
+			}
+		}, 500);
 	};
 
 	// si el boton de guardar esta deshabilitado
@@ -689,7 +686,7 @@ class Certificate extends Component {
 		);
 	};
 
-	// mostrar pantalla de edicion de certificados
+	// mostrar pantalla de edicion de credencial
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
@@ -706,11 +703,13 @@ class Certificate extends Component {
 					</div>
 				</div>
 				{Spinner.render(loading)}
-				{this.renderTemplateSelector()}
-				{!loading && this.renderCert()}
-				{this.renderQrDialog()}
-				{this.renderButtons()}
-				<div className="errMsg">{error && error.message}</div>
+				<div className="container">
+					{this.renderTemplateSelector()}
+					{!loading && this.renderCert()}
+					{this.renderQrDialog()}
+					{this.renderButtons()}
+					<div className="errMsg">{error && error.message}</div>
+				</div>
 			</div>
 		);
 	}
@@ -826,7 +825,7 @@ class Certificate extends Component {
 		);
 	};
 
-	// muestra la seccion de data del certificado
+	// muestra la seccion de data de la credencial
 	renderCert = () => {
 		const cert = this.state.cert;
 		if (!cert) return <div></div>;
@@ -863,7 +862,7 @@ class Certificate extends Component {
 		);
 	};
 
-	// muestra datos del certificado
+	// muestra datos de la credencial
 	renderSection = (cert, data, type) => {
 		const self = this;
 
@@ -896,7 +895,7 @@ class Certificate extends Component {
 		);
 	};
 
-	// mostrar selector de modelos de certificados
+	// mostrar selector de modelos de credencial
 	renderTemplateSelector = () => {
 		const templates = this.state.templates;
 		if (!templates) {
@@ -906,7 +905,7 @@ class Certificate extends Component {
 		return (
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
-				<h2>Agregar Participantes</h2>
+				<h2>Editar Credencial</h2>
 				<Autocomplete
 					options={templates}
 					getOptionLabel={option => (option ? option.name : "")}

@@ -35,7 +35,7 @@ class Templates extends Component {
 		if (this.deleteDialog) this.deleteDialog.open();
 	};
 
-	// mostrar pantalla de modelos de certificados
+	// mostrar pantalla de modelos de credenciales
 	render() {
 		const error = this.props.error || this.state.error;
 		const loading = this.props.loading;
@@ -76,7 +76,7 @@ class Templates extends Component {
 		);
 	};
 
-	// muestra boton de creacion de modelos de certificados
+	// muestra boton de creacion de modelos de credenciales
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
 		return (
@@ -97,7 +97,7 @@ class Templates extends Component {
 		);
 	};
 
-	// muestra tabla de modelos de certificados
+	// muestra tabla de modelos de credenciales
 	renderTable = () => {
 		const templates = this.props.templates;
 		const columns = this.props.columns ? this.props.columns : [];

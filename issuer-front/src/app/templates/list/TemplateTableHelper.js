@@ -5,7 +5,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Messages from "../../../constants/Messages";
 
 class TemplateTableHelpers {
-	// genera las columnas de la tabla de modelos de certificados
+	// genera las columnas de la tabla de modelos de credenciales
 	static getTemplateData(template, onEdit, onDelete, isLoading) {
 		return {
 			_id: template._id,
@@ -35,7 +35,7 @@ class TemplateTableHelpers {
 		};
 	}
 
-	// genera los headers para las columnas de la tabla de modelos de certificados
+	// genera los headers para las columnas de la tabla de modelos de credenciales
 	static getTemplateColumns() {
 		return [
 			{

@@ -97,7 +97,7 @@ export default class QrDialog extends Component {
 		});
 	};
 
-	// muestra qr para carga de datos de participante para un modelo de certificado en particular
+	// muestra qr para carga de datos de participante para un modelo de credencial en particular
 	generateQrCode = () => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -221,7 +221,7 @@ export default class QrDialog extends Component {
 		);
 	};
 
-	// mostrar selector de modelos de certificado para el qr
+	// mostrar selector de modelos de credencial para el qr
 	renderTemplateSelector = () => {
 		const template = this.props.template;
 		const templates = this.props.templates;

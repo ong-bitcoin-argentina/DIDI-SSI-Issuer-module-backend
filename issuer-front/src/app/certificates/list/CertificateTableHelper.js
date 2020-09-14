@@ -27,7 +27,7 @@ class CertificateTableHelper {
 		lastName: cert.lastName
 	});
 
-	// genera las columnas de la tabla de certificados
+	// genera las columnas de la tabla de credencial
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
 		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
 
@@ -101,7 +101,7 @@ class CertificateTableHelper {
 		};
 	}
 
-	// genera los headers para las columnas de la tabla de certificados
+	// genera los headers para las columnas de la tabla de credencial
 	static getCertColumns(
 		certificates,
 		selectedCerts,
