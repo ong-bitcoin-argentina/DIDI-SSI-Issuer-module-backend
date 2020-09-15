@@ -205,9 +205,9 @@ class Participants extends Component {
 				{Spinner.render(loading)}
 				{this.renderRequestSentDialog()}
 				{this.renderQrDialog()}
-				{this.renderTable()}
 				{this.renderButtons(loading)}
-				<div className="errMsg">{error && error.message}</div>
+				{this.renderTable()}
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}
@@ -260,7 +260,7 @@ class Participants extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
-			<div className="QrRequestButtons">
+			<div className="QrRequestButtons my-2">
 				<div className="PartRequestRow">
 					<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
 						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}

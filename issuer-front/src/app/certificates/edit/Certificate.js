@@ -11,7 +11,7 @@ import DataRenderer from "../../utils/DataRenderer";
 
 import Cookie from "js-cookie";
 
-import Constants from "../../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
 
 import Spinner from "../../utils/Spinner";
@@ -22,6 +22,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
 import logoApp from "../../../images/ai-di-logo.svg";
+import moment from "moment";
 
 import QrDialog from "../../utils/dialogs/QrDialog";
 
@@ -535,7 +536,7 @@ class Certificate extends Component {
 			cert,
 			async function (_) {
 				self.setState({ loading: false, error: false });
-				self.props.history.push(Constants.ROUTES.CERTIFICATES);
+				self.props.history.push(Constants.ROUTES.CERTIFICATES_PENDING);
 			},
 			function (err) {
 				self.setState({ error: err });
@@ -692,8 +693,8 @@ class Certificate extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const loading = this.state.loading;
-		const error = this.state.error;
+		const { loading, error, cert } = this.state;
+
 		return (
 			<div className={loading ? "Certificate Loading" : "Certificate"}>
 				<div className="Header">
@@ -706,9 +707,12 @@ class Certificate extends Component {
 				<div className="container">
 					{this.renderTemplateSelector()}
 					{!loading && this.renderCert()}
+					{cert?.revocation && (
+						<div class="errMsg">Esta Credencial fue revocada el {moment(cert.revocation.date).format(DATE_FORMAT)}</div>
+					)}
 					{this.renderQrDialog()}
 					{this.renderButtons()}
-					<div className="errMsg">{error && error.message}</div>
+					{error && <div className="errMsg">{error.message}</div>}
 				</div>
 			</div>
 		);

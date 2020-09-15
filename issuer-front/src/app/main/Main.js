@@ -32,6 +32,7 @@ import InputDialog from "../utils/dialogs/InputDialog";
 import logoApp from "../../images/ai-di-logo.svg";
 import CertificatesEmmited from "../certificates/emmited/certificates-emmited";
 import CertificatesRevoked from "../certificates/revoked/certificates-revoked";
+import { Menu, MenuItem, Button } from "@material-ui/core";
 
 const tabs = {
 	templates: 0,
@@ -74,6 +75,7 @@ class Main extends Component {
 				address: {}
 			},
 			allSelectedCerts: false,
+			anchorEl: null,
 			selectedCerts: {},
 			certificates: [],
 			filteredCertificates: [],
@@ -337,6 +339,14 @@ class Main extends Component {
 		});
 		allSelectedCerts = value;
 		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+	};
+
+	onMenuOpen = event => {
+		this.setState({ anchorEl: event.currentTarget });
+	};
+
+	onMenuClose = () => {
+		this.setState({ anchorEl: null });
 	};
 
 	// actualizar seleccion de credenciales a emitir
@@ -674,16 +684,26 @@ class Main extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const { loading, tabIndex, error } = this.state;
+		const { loading, tabIndex, error, anchorEl } = this.state;
 		const selectedIndex = tabIndex ?? 0;
 
 		return (
 			<div className="MainContent">
 				<div className="Header">
 					<img src={logoApp} alt="ai di logo" />
-					<div className="Menu">
-						<p>Menu</p>
-					</div>
+					<Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.onMenuOpen}>
+						Menu
+					</Button>
+					<Menu id="simple-menu" keepMounted anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
+						<MenuItem
+							onClick={() => {
+								if (this.renameDialog) this.renameDialog.open();
+							}}
+						>
+							{Messages.EDIT.BUTTONS.RENAME_ISSUER}
+						</MenuItem>
+						<MenuItem onClick={this.onLogout}>{Messages.EDIT.BUTTONS.EXIT}</MenuItem>
+					</Menu>
 				</div>
 				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
@@ -782,7 +802,7 @@ class Main extends Component {
 		return (
 			<div className="ActionsMenu">
 				<button onClick={this.toggleShowMenu}>{Messages.LIST.MENU.TITLE}</button>
-				{showMenu && (
+				{false && (
 					<div className="ActionsMenuItems">
 						<button
 							disabled={loading}

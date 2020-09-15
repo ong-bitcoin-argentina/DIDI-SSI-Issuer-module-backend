@@ -1,10 +1,9 @@
 @import "../../../styles/Colors.scss";
 
-
 .Certificate {
 	display: flex;
 	flex-direction: column;
-	padding: 4em 3em 0 2em;
+	padding: 4em 3em 4em 2em;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -36,7 +35,6 @@
 		width: 100%;
 		float: left;
 	}
-
 }
 
 .Header {
@@ -114,10 +112,10 @@
 
 .ParticipantContent {
 	box-sizing: border-box;
-	border:2px solid $primary-color;
+	border: 2px solid $primary-color;
 	display: flex;
 	flex-direction: column;
-	padding:0 4em;
+	padding: 0 4em;
 	margin-top: 1em;
 	.CertSectionContent {
 		.Data {
@@ -186,8 +184,8 @@
 .AddParticipants {
 	.AddParticipantButtons {
 		.CertButton {
-			background: #256EE0!important;
-			color: white!important;
+			background: #256ee0 !important;
+			color: white !important;
 			display: flex;
 			align-content: center;
 			width: auto;
@@ -196,7 +194,7 @@
 			padding: 1em 2em;
 			border: transparent;
 			&:hover {
-				opacity: 0.8!important;
+				opacity: 0.8 !important;
 			}
 		}
 	}
@@ -215,7 +213,7 @@
 		.AddParticipants {
 			.AddParticipantButtons {
 				flex-direction: column;
-				.CertButton  {
+				.CertButton {
 					margin: 1em 0;
 					width: 100%;
 					display: flex;
@@ -224,4 +222,4 @@
 			}
 		}
 	}
-  }
+}
