@@ -65,7 +65,7 @@ class Login extends Component {
 								{Messages.LOGIN.BUTTONS.ENTER}
 							</button>
 						</form>
-						<div className="errMsg">{this.state.error && this.state.error.message}</div>
+						{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
 						{/*this.state.token*/}
 					</div>
 				</div>

@@ -107,6 +107,7 @@ module.exports.addTemplateDataToCert = function (cert, template) {
 		microCredentials: cert.microCredentials,
 		templateId: cert.templateId,
 		emmitedOn: cert.emmitedOn,
+		revocation: cert.revocation,
 		data: data
 	};
 };

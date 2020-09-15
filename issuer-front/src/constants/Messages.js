@@ -115,7 +115,7 @@ module.exports = {
 			TO_QR: "Registrar Participante",
 			TO_CERTIFICATES_PENDING: "Credenciales Pendientes",
 			TO_CERTIFICATES: "Credenciales",
-			TO_REVOKED_CERTIFICATES: "Credenciales Revocados",
+			TO_REVOKED_CERTIFICATES: "Credenciales Revocadas",
 			TO_TEMPLATES: "Templates",
 			CREATE_TEMPLATE: "Crear Modelo de Credencial",
 			CREATE_CERT: "Emitir Credencial",

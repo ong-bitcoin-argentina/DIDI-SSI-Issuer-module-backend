@@ -143,6 +143,16 @@ const CertificatesEmmited = () => {
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
+				<Grid item xs={12} className="flex-end">
+					<button
+						className="DangerButton"
+						onClick={handleRevokeSelected}
+						disabled={!Object.values(selected).some(val => val)}
+					>
+						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
+						Revocar Credenciales Seleccionadas
+					</button>
+				</Grid>
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable
@@ -158,16 +168,6 @@ const CertificatesEmmited = () => {
 						<CircularProgress />
 					)}
 				</Grid>
-				<Grid item xs={12} className="flex-end">
-					<button
-						className="DangerButton"
-						onClick={handleRevokeSelected}
-						disabled={!Object.values(selected).some(val => val)}
-					>
-						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-						Revocar Credencial Seleccionados
-					</button>
-				</Grid>
 			</Grid>
 
 			<Dialog open={modalOpen} onClose={toggleModal}>
@@ -176,6 +176,7 @@ const CertificatesEmmited = () => {
 					<div style={{ marginTop: 10 }}>
 						{activeCert && (
 							<>
+								<KeyValue field={"DID"} value={activeCert.did} />
 								<KeyValue field={"Nombre y Apellido"} value={`${activeCert.firstName} ${activeCert.lastName}`} />
 								<KeyValue field={"Certificado"} value={activeCert.name} />
 								<KeyValue field={"Fecha de creación"} value={moment(activeCert.createdOn).format(DATE_FORMAT)} />

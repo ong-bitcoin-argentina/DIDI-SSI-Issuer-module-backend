@@ -28,10 +28,10 @@ body {
 .errMsg {
 	color: $black;
 	margin-top: 1em;
-	background-color: #FFEAEB;
+	background-color: #ffeaeb;
 	padding: 1em 2em;
 	border-radius: 5px;
-	border-left: 5px solid #FF2D3B;
+	border-left: 5px solid #ff2d3b;
 	display: inline-block;
 }
 
@@ -78,9 +78,13 @@ body {
 		cursor: pointer;
 		color: $secondary-color;
 	}
-	.EmmitAction:hover {
-		cursor: pointer;
-		color: $Emmit;
+	.EmmitAction {
+		display: flex;
+		margin-right: 1em;
+		&:hover {
+			cursor: pointer;
+			color: $Emmit;
+		}
 	}
 }
 
@@ -90,4 +94,13 @@ body {
 	position: fixed;
 	bottom: 0;
 	right: 35px;
+}
+
+.mr-2 {
+	margin-right: 1rem;
+}
+
+.my-2 {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }

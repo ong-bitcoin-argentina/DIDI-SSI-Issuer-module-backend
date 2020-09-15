@@ -160,14 +160,14 @@ class Template extends Component {
 					</div>
 				</div>
 
-					{Spinner.render(loading)}
-					{this.renderDialog()}
-					<div className="container">
+				{Spinner.render(loading)}
+				{this.renderDialog()}
+				<div className="container">
 					{!loading && this.renderTemplateType()}
 					{!loading && this.renderTemplateCategory()}
 					{!loading && this.renderTemplate()}
 					{this.renderButtons()}
-					<div className="errMsg">{this.state.error && this.state.error.message}</div>
+					{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
 				</div>
 			</div>
 		);
