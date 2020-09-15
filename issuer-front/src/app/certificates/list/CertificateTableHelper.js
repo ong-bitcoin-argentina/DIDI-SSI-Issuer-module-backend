@@ -26,7 +26,7 @@ class CertificateTableHelper {
 	static baseCells = cert => ({
 		_id: cert._id,
 		certName: cert.name,
-		createdOn: moment(cert.emmitedOn).format(DATE_FORMAT),
+		createdOn: cert.emmitedOn ? moment(cert.emmitedOn).format(DATE_FORMAT) : "-",
 		firstName: cert.firstName,
 		lastName: cert.lastName
 	});
