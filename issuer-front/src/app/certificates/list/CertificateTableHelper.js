@@ -53,7 +53,9 @@ class CertificateTableHelper {
 				<div className="Actions">
 					{ACTIONS.map((item, index) => (
 						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip title={item.label}>{item.iconComponent}</Tooltip>
+							<Tooltip arrow title={item.label} placement="top">
+								{item.iconComponent}
+							</Tooltip>
 						</div>
 					))}
 				</div>
@@ -79,7 +81,9 @@ class CertificateTableHelper {
 				<div className="Actions">
 					{ACTIONS.map((item, index) => (
 						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip title={item.label}>{item.iconComponent}</Tooltip>
+							<Tooltip title={item.label} placement="top" arrow>
+								{item.iconComponent}
+							</Tooltip>
 						</div>
 					))}
 				</div>
@@ -102,7 +106,9 @@ class CertificateTableHelper {
 				<div className="Actions">
 					{ACTIONS.map((item, index) => (
 						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip title={item.label}>{item.iconComponent}</Tooltip>
+							<Tooltip title={item.label} placement="top" arrow>
+								{item.iconComponent}
+							</Tooltip>
 						</div>
 					))}
 				</div>
