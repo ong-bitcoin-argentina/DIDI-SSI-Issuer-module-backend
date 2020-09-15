@@ -349,6 +349,10 @@ class Main extends Component {
 		this.setState({ anchorEl: null });
 	};
 
+	onRenameModalOpen = () => {
+		if (this.renameDialog) this.renameDialog.open();
+	};
+
 	// actualizar seleccion de credenciales a emitir
 	updateSelectedCertsState = (certs, selectedCerts) => {
 		let allSelected = true;
@@ -691,17 +695,11 @@ class Main extends Component {
 			<div className="MainContent">
 				<div className="Header">
 					<img src={logoApp} alt="ai di logo" />
-					<Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.onMenuOpen}>
+					<Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.onMenuOpen} style={{ color: "white" }}>
 						Menu
 					</Button>
 					<Menu id="simple-menu" keepMounted anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
-						<MenuItem
-							onClick={() => {
-								if (this.renameDialog) this.renameDialog.open();
-							}}
-						>
-							{Messages.EDIT.BUTTONS.RENAME_ISSUER}
-						</MenuItem>
+						<MenuItem onClick={this.onRenameModalOpen}>{Messages.EDIT.BUTTONS.RENAME_ISSUER}</MenuItem>
 						<MenuItem onClick={this.onLogout}>{Messages.EDIT.BUTTONS.EXIT}</MenuItem>
 					</Menu>
 				</div>
