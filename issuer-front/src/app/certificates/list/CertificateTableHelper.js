@@ -3,10 +3,10 @@ import Messages from "../../../constants/Messages";
 import { DATE_FORMAT } from "../../../constants/Constants";
 
 import Checkbox from "@material-ui/core/Checkbox";
-import TableHeadCheck from "../../components/table-head-check";
-import CustomSelect from "../../components/custom-select";
-import InputFilter from "../../components/input-filter";
-import DateRangeFilter from "../../components/date-range-filter/date-range-filter";
+import TableHeadCheck from "../../components/TableHeadCheck";
+import CustomSelect from "../../components/CustomSelect";
+import InputFilter from "../../components/InputFilter";
+import DateRangeFilter from "../../components/DateRangeFilter/DateRangeFilter";
 
 import {
 	PENDING_ACTIONS,
@@ -93,10 +93,6 @@ class CertificateTableHelper {
 
 	static getCertificatesRevokedData(cert, onView) {
 		const ACTIONS = REVOKED_ACTIONS({ cert, onView });
-
-		const onViewClick = () => {
-			onView(cert._id);
-		};
 
 		return {
 			...this.baseCells(cert),
