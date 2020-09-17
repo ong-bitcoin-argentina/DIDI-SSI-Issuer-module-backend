@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import "./_style.scss";
-import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
-import { Grid, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@material-ui/core";
+import { Grid, CircularProgress } from "@material-ui/core";
 import ReactTable from "react-table-6";
 import Messages from "../../../constants/Messages";
-import Constants, { DATE_FORMAT } from "../../../constants/Constants";
-import { REVOCATION_REASONS } from "../../../constants/CertificateDefinitions";
+import Constants from "../../../constants/Constants";
 import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
-import Notification from "../../components/notification";
-import FormSelect from "../../components/form-select";
-import KeyValue from "../../components/key-value";
-import moment from "moment";
+import Notification from "../../components/Notification";
+import RevocationModal from "../../components/RevocationModal";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -28,7 +24,6 @@ const CertificatesEmmited = () => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
 	const [activeCert, setActiveCert] = useState({});
-	const [revokeReason, setRevokeReason] = useState("");
 	const [revokeSuccess, setRevokeSuccess] = useState(false);
 	const [revokeFail, setRevokeFail] = useState(false);
 	const [loading, setLoading] = useState(true);
@@ -47,6 +42,7 @@ const CertificatesEmmited = () => {
 			setColumns(localColumns);
 		}
 		setFilteredData(data);
+		setLoading(false);
 	}, [data]);
 
 	useEffect(() => {
@@ -71,11 +67,18 @@ const CertificatesEmmited = () => {
 		setSelected(generated);
 	}, [allSelected]);
 
+	useEffect(() => {
+		if (revokeSuccess || revokeFail) {
+			setActiveCert(null);
+			toggleModal();
+		}
+	}, [revokeSuccess, revokeFail]);
+
 	const getData = async () => {
-		const token = Cookie.get("token");
 		setLoading(true);
+		const token = Cookie.get("token");
 		let certificates = await CertificateService.getEmmited(token);
-		setLoading(false);
+
 		setData(
 			certificates.map(item => {
 				return CertificateTableHelper.getCertificatesEmmitedData(
@@ -111,15 +114,7 @@ const CertificatesEmmited = () => {
 		setModalOpen(true);
 	};
 
-	const handleRevokeConfirm = () => {
-		const token = Cookie.get("token");
-		const result = CertificateService.revoke(token, activeCert._id, revokeReason, onRevokeSuccess, onRevokeFail);
-		setActiveCert(null);
-		setRevokeReason("");
-		toggleModal();
-	};
-
-	const onRevokeSuccess = requestData => {
+	const onRevokeSuccess = () => {
 		setRevokeSuccess(true);
 		getData();
 	};
@@ -128,13 +123,25 @@ const CertificatesEmmited = () => {
 		setRevokeFail(true);
 	};
 
+	const onCloseRevokeSuccess = (e, reason) => {
+		if (reason !== "clickaway") {
+			setRevokeSuccess(false);
+		}
+	};
+
+	const onCloseRevokeFail = (e, reason) => {
+		if (reason !== "clickaway") {
+			setRevokeFail(false);
+		}
+	};
+
 	const toggleModal = () => {
 		setModalOpen(!modalOpen);
 	};
 
-	const handleRevokeSelected = () => {
-		console.log("revoke selected");
-	};
+	// const handleRevokeSelected = () => {
+	// 	console.log("revoke selected");
+	// };
 
 	const handleSelectAllToggle = val => {
 		setAllSelected(val);
@@ -144,6 +151,8 @@ const CertificatesEmmited = () => {
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				<Grid item xs={12} className="flex-end">
+					{/*
+					TODO: use when multiple revoke is available 
 					<button
 						className="DangerButton"
 						onClick={handleRevokeSelected}
@@ -151,7 +160,8 @@ const CertificatesEmmited = () => {
 					>
 						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
 						Revocar Credenciales Seleccionadas
-					</button>
+					</button> 
+					*/}
 				</Grid>
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
@@ -170,46 +180,22 @@ const CertificatesEmmited = () => {
 				</Grid>
 			</Grid>
 
-			<Dialog open={modalOpen} onClose={toggleModal}>
-				<DialogTitle id="form-dialog-title">
-					<div>Estás por revocar la siguiente credencial:</div>
-					<div style={{ marginTop: 10 }}>
-						{activeCert && (
-							<>
-								<KeyValue field={"DID"} value={activeCert.did} />
-								<KeyValue field={"Nombre y Apellido"} value={`${activeCert.firstName} ${activeCert.lastName}`} />
-								<KeyValue field={"Certificado"} value={activeCert.name} />
-								<KeyValue field={"Fecha de creación"} value={moment(activeCert.createdOn).format(DATE_FORMAT)} />
-								<KeyValue field={"Fecha de emisión"} value={moment(activeCert.emmitedOn).format(DATE_FORMAT)} />
-							</>
-						)}
-					</div>
-				</DialogTitle>
-				<DialogContent style={{ margin: "0px 0 25px" }}>
-					<FormSelect
-						label="Razón de revocación"
-						value={revokeReason}
-						list={REVOCATION_REASONS}
-						onChange={e => setRevokeReason(e.target.value)}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={toggleModal} color="primary">
-						Cancelar
-					</Button>
-					<Button onClick={handleRevokeConfirm} color="secondary" variant="contained" disabled={!revokeReason}>
-						Revocar
-					</Button>
-				</DialogActions>
-			</Dialog>
+			<RevocationModal
+				cert={activeCert}
+				onSuccess={onRevokeSuccess}
+				onFail={onRevokeFail}
+				open={modalOpen}
+				toggleModal={toggleModal}
+			/>
 
-			<Notification open={revokeSuccess} message="La credencial se revocó con éxito." />
+			<Notification open={revokeSuccess} message="La credencial se revocó con éxito." onClose={onCloseRevokeSuccess} />
 
 			<Notification
 				open={revokeFail}
 				severity="error"
 				message="Ocurrió un error la revocar la credencial."
-				time={3000}
+				time={3500}
+				onClose={onCloseRevokeFail}
 			/>
 		</>
 	);

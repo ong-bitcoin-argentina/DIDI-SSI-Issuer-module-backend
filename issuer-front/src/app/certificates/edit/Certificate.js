@@ -25,6 +25,7 @@ import logoApp from "../../../images/ai-di-logo.svg";
 import moment from "moment";
 
 import QrDialog from "../../utils/dialogs/QrDialog";
+import Header from "../../components/Header";
 
 let interval;
 class Certificate extends Component {
@@ -697,12 +698,7 @@ class Certificate extends Component {
 
 		return (
 			<div className={loading ? "Certificate Loading" : "Certificate"}>
-				<div className="Header">
-					<img src={logoApp} alt="ai di logo" />
-					<div className="Menu">
-						<p>Menu</p>
-					</div>
-				</div>
+				<Header />
 				{Spinner.render(loading)}
 				<div className="container">
 					{this.renderTemplateSelector()}

@@ -29,10 +29,9 @@ import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 
 import InputDialog from "../utils/dialogs/InputDialog";
 
-import logoApp from "../../images/ai-di-logo.svg";
-import CertificatesEmmited from "../certificates/emmited/certificates-emmited";
-import CertificatesRevoked from "../certificates/revoked/certificates-revoked";
-import { Menu, MenuItem, Button } from "@material-ui/core";
+import CertificatesEmmited from "../certificates/emmited/CertificatesEmmited";
+import CertificatesRevoked from "../certificates/revoked/CertificatesRevoked";
+import Header from "../components/Header";
 
 const tabs = {
 	templates: 0,
@@ -339,14 +338,6 @@ class Main extends Component {
 		});
 		allSelectedCerts = value;
 		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
-	};
-
-	onMenuOpen = event => {
-		this.setState({ anchorEl: event.currentTarget });
-	};
-
-	onMenuClose = () => {
-		this.setState({ anchorEl: null });
 	};
 
 	onRenameModalOpen = () => {
@@ -693,16 +684,7 @@ class Main extends Component {
 
 		return (
 			<div className="MainContent">
-				<div className="Header">
-					<img src={logoApp} alt="ai di logo" />
-					<Button aria-controls="simple-menu" aria-haspopup="true" onClick={this.onMenuOpen} style={{ color: "white" }}>
-						Menu
-					</Button>
-					<Menu id="simple-menu" keepMounted anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.onMenuClose}>
-						<MenuItem onClick={this.onRenameModalOpen}>{Messages.EDIT.BUTTONS.RENAME_ISSUER}</MenuItem>
-						<MenuItem onClick={this.onLogout}>{Messages.EDIT.BUTTONS.EXIT}</MenuItem>
-					</Menu>
-				</div>
+				<Header onRenameModalOpen={this.onRenameModalOpen} />
 				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
 					{this.renderActions(loading)}

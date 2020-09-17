@@ -21,6 +21,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import logoApp from "../../../images/ai-di-logo.svg";
+import Header from "../../components/Header";
 
 class Template extends Component {
 	constructor(props) {
@@ -153,12 +154,7 @@ class Template extends Component {
 		const loading = this.state.loading;
 		return (
 			<div className={loading ? "Loading Template" : "Template"}>
-				<div className="Header">
-					<img src={logoApp} alt="ai di logo" />
-					<div className="Menu">
-						<p>Menu</p>
-					</div>
-				</div>
+				<Header />
 
 				{Spinner.render(loading)}
 				{this.renderDialog()}
