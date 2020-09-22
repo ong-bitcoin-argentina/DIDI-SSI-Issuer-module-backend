@@ -43,13 +43,13 @@ module.exports = {
 			}
 		},
 		BUTTONS: {
-			LOAD_DIDS_FROM_CSV: "Cargar Dids por CSV",
+			LOAD_DIDS_FROM_CSV: "Cargar DIDs por CSV",
 			ADD_MICRO_CRED_LABEL: "Agregar Micro",
 			REMOVE_MICRO_CRED_LABEL: "Quitar Micro",
 			ADD_MICRO_CRED: "+",
 			REMOVE_MICRO_CRED: "-",
 			REMOVE_PARTICIPANTS: "X",
-			SAMPLE_PART_FROM_CSV: "Generar CSV",
+			SAMPLE_PART_FROM_CSV: "Descargar Modelo Carga CSV",
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
@@ -112,7 +112,7 @@ module.exports = {
 		BUTTONS: {
 			CREATE_DELEGATE: "Crear Delegado",
 			DELEGATES: "Delegados",
-			TO_QR: "Registrar Participante",
+			TO_QR: "Registro de DIDs",
 			TO_CERTIFICATES_PENDING: "Credenciales Pendientes",
 			TO_CERTIFICATES: "Credenciales",
 			TO_REVOKED_CERTIFICATES: "Credenciales Revocadas",
@@ -142,8 +142,8 @@ module.exports = {
 		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de Credencial actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
-			REQUEST: "Pedir Credenciales",
-			QR_LOAD: "Cargar por Qr",
+			REQUEST: "Solicitar Credenciales",
+			QR_LOAD: "Cargar DID por QR",
 			GENERATE: "Generar Qr"
 		}
 	}

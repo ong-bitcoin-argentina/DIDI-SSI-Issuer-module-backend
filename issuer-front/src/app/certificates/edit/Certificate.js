@@ -701,11 +701,11 @@ class Certificate extends Component {
 				<Header />
 				{Spinner.render(loading)}
 				<div className="container">
-					{this.renderTemplateSelector()}
-					{!loading && this.renderCert()}
 					{cert?.revocation && (
 						<div class="errMsg">Esta Credencial fue revocada el {moment(cert.revocation.date).format(DATE_FORMAT)}</div>
 					)}
+					{this.renderTemplateSelector()}
+					{!loading && this.renderCert()}
 					{this.renderQrDialog()}
 					{this.renderButtons()}
 					{error && <div className="errMsg">{error.message}</div>}

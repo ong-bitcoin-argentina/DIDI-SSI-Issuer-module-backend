@@ -9,7 +9,7 @@ const CertService = require("../services/CertService");
 const TokenService = require("../services/TokenService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
-const { getDID, toDTO } = require("../constants/DTO/CertDTO");
+const { getDID, toDTO } = require("./utils/CertDTO");
 
 const { checkValidationResult, validate } = Validator;
 
