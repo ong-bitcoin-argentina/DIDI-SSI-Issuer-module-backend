@@ -19,6 +19,8 @@
 	"dependencies": {
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
+		"applicationinsights": "^2.0.0-beta.200831.2",
+		"applicationinsights-native-metrics": "0.0.5",
 		"bcrypt": "5.0.0",
 		"body-parser": "1.19.0",
 		"cors": "2.8.5",
