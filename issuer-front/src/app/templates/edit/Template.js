@@ -153,15 +153,15 @@ class Template extends Component {
 		}
 		const loading = this.state.loading;
 		return (
-			<div className={loading ? "Loading Template" : "Template"}>
+			<div className={`${loading && "Loading"} Template mb-2`}>
 				<Header />
 
 				{Spinner.render(loading)}
 				{this.renderDialog()}
 				<div className="container">
-					{!loading && this.renderTemplateType()}
 					{!loading && this.renderTemplateCategory()}
 					{!loading && this.renderTemplate()}
+					{!loading && this.renderTemplateType()}
 					{this.renderButtons()}
 					{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
 				</div>
@@ -224,7 +224,7 @@ class Template extends Component {
 		const missing = Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[radioValue] - this.state.template.previewData.length;
 
 		return (
-			<div className="Template-Type">
+			<div className="Template-Type mb-2">
 				<h2 className="DataTitle">{Messages.EDIT.DATA.PREVIEW}</h2>
 				<div className="templateTypeCard">
 					<RadioGroup
@@ -271,10 +271,12 @@ class Template extends Component {
 						})}
 					</Select>
 				</div>
-				<div className="errorMessage">
-					{missing > 0 && <div>Seleccione {missing} mas</div>}
-					{missing < 0 && <div>Agrego de mas, quite {-1 * missing}</div>}
-				</div>
+				{missing !== 0 && (
+					<div className="errorMessage">
+						{missing > 0 && <div>Seleccione {missing} mas</div>}
+						{missing < 0 && <div>Agrego de mas, quite {-1 * missing}</div>}
+					</div>
+				)}
 			</div>
 		);
 	};

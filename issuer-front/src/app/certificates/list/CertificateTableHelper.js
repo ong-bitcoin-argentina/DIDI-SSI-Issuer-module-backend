@@ -37,18 +37,6 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			select: (
-				<div className="Actions">
-					{/* 
-					<Checkbox
-						checked={selectedCertificates[cert._id]}
-						onChange={(_, value) => {
-							if (!isLoading()) onSelectToggle(cert._id, value);
-						}}
-					/> 
-					*/}
-				</div>
-			),
 			actions: (
 				<div className="Actions">
 					{ACTIONS.map((item, index) => (
@@ -151,12 +139,6 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "actions"
-			},
-			{
-				Header: (
-					<TableHeadCheck selected={selectedCerts} all={allSelectedCerts} onChange={onCertificateSelectAllToggle} />
-				),
-				accessor: "select"
 			}
 		];
 	}
