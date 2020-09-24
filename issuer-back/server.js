@@ -59,7 +59,7 @@ mongoose
 		console.log(Messages.INDEX.ERR.CONNECTION + err.message);
 	});
 
-app.get("/", (_, res) => res.send(Messages.INDEX.MSG.HELLO_WORLD));
+app.get("/", (_, res) => res.send(`${Messages.INDEX.MSG.HELLO_WORLD} v${process.env.VERSION}`));
 
 // loggear llamadas
 app.use(function(req, _, next) {
