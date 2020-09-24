@@ -3,7 +3,10 @@ FROM node:10-alpine as deps
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY . .
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY package*.json ./
 
 # Update and install some node dependencies
 RUN apk update && apk upgrade && \
@@ -16,16 +19,13 @@ RUN apk update && apk upgrade && \
     g++ \
     && npm ci
 
-
 # This stage just builds the app to check it can be build without any errors
 FROM deps
 
 WORKDIR /usr/src/app
-RUN npm run build
 
-FROM deps
+COPY . .
 
-WORKDIR /usr/src/app
 RUN npm install http-server-spa -g
 
 EXPOSE 8088
