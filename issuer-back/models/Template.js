@@ -64,10 +64,10 @@ const TemplateSchema = mongoose.Schema({
 
 TemplateSchema.index({ name: 1 });
 
-TemplateSchema.add({cardLayout: cardSchema});
+TemplateSchema.add({ cardLayout: cardSchema });
 
 // modificar modelo de certificado
-TemplateSchema.methods.edit = async function(data, previewData, previewType, category) {
+TemplateSchema.methods.edit = async function (data, previewData, previewType, category) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: {
@@ -89,7 +89,7 @@ TemplateSchema.methods.edit = async function(data, previewData, previewType, cat
 };
 
 // marcare modelo de certificado como borrado
-TemplateSchema.methods.delete = async function() {
+TemplateSchema.methods.delete = async function () {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: { deleted: true }
@@ -108,7 +108,7 @@ const Template = mongoose.model("Template", TemplateSchema);
 module.exports = Template;
 
 // crear modelo de certificado "vacio" (con los campos por defecto)
-Template.generate = async function(name) {
+Template.generate = async function (name) {
 	try {
 		const query = { name: name, deleted: false };
 		const template = await Template.findOne(query);
@@ -181,10 +181,10 @@ Template.generate = async function(name) {
 };
 
 // obtener todos los modelos de certificados
-Template.getAll = async function() {
+Template.getAll = async function () {
 	try {
 		const query = { deleted: false };
-		const template = await Template.find(query);
+		const template = await Template.find(query).sort({ createdOn: -1 });
 		return Promise.resolve(template);
 	} catch (err) {
 		console.log(err);
@@ -193,7 +193,7 @@ Template.getAll = async function() {
 };
 
 // obtener modelo de certificado a partir de su id
-Template.getById = async function(id) {
+Template.getById = async function (id) {
 	try {
 		const query = { _id: id, deleted: false };
 		const template = await Template.findOne(query);

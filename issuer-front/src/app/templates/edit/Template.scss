@@ -113,19 +113,19 @@
 		flex-direction: row-reverse;
 		justify-content: space-between;
 		.BackButton .CloseButton {
-			background: white!important;
-			border:1px solid #dddee5!important;
-			box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.0523656)!important;
-			color: #333333!important;
+			background: white !important;
+			border: 1px solid #dddee5 !important;
+			box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.0523656) !important;
+			color: #333333 !important;
 			&:hover {
-				opacity: 0.8!important;
+				opacity: 0.8 !important;
 			}
 		}
-		 .SaveButton {
-			background: #256EE0!important;
-			color: white!important;
+		.SaveButton {
+			background: #256ee0 !important;
+			color: white !important;
 			&:hover {
-				opacity: 0.8!important;
+				opacity: 0.8 !important;
 			}
 		}
 	}
@@ -138,7 +138,7 @@
 }
 
 .react-datepicker-wrapper {
-	width: 100%!important;
+	width: 100% !important;
 }
 
 .AddButton {
@@ -215,7 +215,6 @@
 	width: 505px;
 }
 
-
 @media only screen and (max-width: 600px) {
 	.Template {
 		.container {
@@ -251,7 +250,7 @@
 			}
 			.SectionButtons {
 				.AddButton {
-					margin:0 auto;
+					margin: 0 auto;
 					width: 100%;
 					display: flex;
 					justify-content: center;
@@ -259,4 +258,4 @@
 			}
 		}
 	}
-  }
+}

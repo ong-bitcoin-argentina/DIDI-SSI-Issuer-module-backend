@@ -1,7 +1,6 @@
 const Cert = require("../models/Cert");
-const TokenService = require("./TokenService");
 const Messages = require("../constants/Messages");
-const { toDTO } = require("../constants/DTO/CertDTO");
+const { toDTO } = require("../routes/utils/CertDTO");
 
 var getById = async function (id) {
 	try {
