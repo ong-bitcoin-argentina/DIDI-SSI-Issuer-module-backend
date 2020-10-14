@@ -20,14 +20,19 @@ body {
 	width: 100vw;
 	align-items: center;
 	justify-content: center;
+	box-sizing: border-box;
 
 	// min-height: 100vh;
 }
 
 .errMsg {
-	height: 80px;
-	font-size: 20px;
-	margin-top: 30px;
+	color: $black;
+	margin-top: 1em;
+	background-color: #ffeaeb;
+	padding: 1em 2em;
+	border-radius: 5px;
+	border-left: 5px solid #ff2d3b;
+	display: inline-block;
 }
 
 .MuiInput-root {
@@ -73,9 +78,11 @@ body {
 		cursor: pointer;
 		color: $secondary-color;
 	}
-	.EmmitAction:hover {
+	.EmmitAction {
+		display: flex;
+		margin-right: 1em;
 		cursor: pointer;
-		color: $Emmit;
+		color: $Edit;
 	}
 }
 
@@ -85,4 +92,13 @@ body {
 	position: fixed;
 	bottom: 0;
 	right: 35px;
+}
+
+.mr-2 {
+	margin-right: 1rem;
+}
+
+.my-2 {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }

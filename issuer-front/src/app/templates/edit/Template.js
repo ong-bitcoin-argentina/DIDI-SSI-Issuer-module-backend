@@ -20,6 +20,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
+import logoApp from "../../../images/ai-di-logo.svg";
+import Header from "../../components/Header";
 
 class Template extends Component {
 	constructor(props) {
@@ -33,7 +35,7 @@ class Template extends Component {
 		};
 	}
 
-	// cargar modelo de certificado
+	// cargar modelo de credencial
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const id = splitPath[splitPath.length - 1];
@@ -101,7 +103,7 @@ class Template extends Component {
 		}
 	};
 
-	// seleccionar los campos a mostrarse por defecto en el certificado
+	// seleccionar los campos a mostrarse por defecto en el credencial
 	onPreviewFieldsSelected = event => {
 		const template = this.state.template;
 		template.previewData = event.target.value;
@@ -144,21 +146,25 @@ class Template extends Component {
 		);
 	};
 
-	// mostrar pantalla de edicion de modelos de certificados
+	// mostrar pantalla de edicion de modelos de credenciales
 	render() {
 		if (!Cookie.get("token")) {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 		const loading = this.state.loading;
 		return (
-			<div className={loading ? "Loading Template" : "Template"}>
+			<div className={`${loading && "Loading"} Template mb-2`}>
+				<Header />
+
 				{Spinner.render(loading)}
 				{this.renderDialog()}
-				{!loading && this.renderTemplateType()}
-				{!loading && this.renderTemplateCategory()}
-				{!loading && this.renderTemplate()}
-				{this.renderButtons()}
-				<div className="errMsg">{this.state.error && this.state.error.message}</div>
+				<div className="container">
+					{!loading && this.renderTemplateCategory()}
+					{!loading && this.renderTemplate()}
+					{!loading && this.renderTemplateType()}
+					{this.renderButtons()}
+					{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
+				</div>
 			</div>
 		);
 	}
@@ -175,12 +181,12 @@ class Template extends Component {
 	};
 
 	// mostrar controles para definir la categoria del modelo
-	// (como se categorizara al certificado en la app Android)
+	// (como se categorizara al credencial en la app Android)
 	renderTemplateCategory = () => {
 		const template = this.state.template;
 		const categories = Constants.TEMPLATES.CATEGORIES;
 		return (
-			<div>
+			<div className="Template-Type">
 				<h2 className="DataTitle">{Messages.EDIT.DATA.CATEGORIES}</h2>
 				<Select
 					className="CategoriesPicker"
@@ -218,60 +224,65 @@ class Template extends Component {
 		const missing = Constants.TEMPLATES.PREVIEW_ELEMS_LENGTH[radioValue] - this.state.template.previewData.length;
 
 		return (
-			<div className="Template-Type">
+			<div className="Template-Type mb-2">
 				<h2 className="DataTitle">{Messages.EDIT.DATA.PREVIEW}</h2>
+				<div className="templateTypeCard">
+					<RadioGroup
+						className="PreviewFieldTypePicker"
+						aria-label="gender"
+						name="gender1"
+						value={radioValue}
+						onChange={event => {
+							this.setState({ radioValue: event.target.value });
+						}}
+					>
+						<div className="PreviewFieldItem">
+							<FormControlLabel value="1" checked={radioValue === "1"} control={<Radio />} />
+							<img src={require("./Preview/1.png")} className="PreviewFieldTypeImage" alt="type 1" />
+						</div>
 
-				<RadioGroup
-					className="PreviewFieldTypePicker"
-					aria-label="gender"
-					name="gender1"
-					value={radioValue}
-					onChange={event => {
-						this.setState({ radioValue: event.target.value });
-					}}
-				>
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="1" checked={radioValue === "1"} control={<Radio />} />
-						<img src={require("./Preview/1.png")} className="PreviewFieldTypeImage" alt="type 1" />
+						<div className="PreviewFieldItem">
+							<FormControlLabel value="2" checked={radioValue === "2"} control={<Radio />} />
+							<img src={require("./Preview/2.png")} className="PreviewFieldTypeImage" alt="type 2" />
+						</div>
+
+						<div className="PreviewFieldItem">
+							<FormControlLabel value="3" checked={radioValue === "3"} control={<Radio />} />
+							<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 3" />
+						</div>
+					</RadioGroup>
+				</div>
+				<div className="selectContainer">
+					<Select
+						className="PreviewFieldsSelect"
+						multiple
+						displayEmpty
+						value={this.state.template.previewData}
+						onChange={this.onPreviewFieldsSelected}
+						renderValue={selected => selected.join(", ")}
+					>
+						{templateElements.map((elem, key) => {
+							return (
+								<MenuItem key={"PreviewFields-" + key} value={elem}>
+									<Checkbox checked={this.state.template.previewData.indexOf(elem) > -1} />
+									<ListItemText primary={elem} />
+								</MenuItem>
+							);
+						})}
+					</Select>
+				</div>
+				{missing !== 0 && (
+					<div className="errorMessage">
+						{missing > 0 && <div>Seleccione {missing} mas</div>}
+						{missing < 0 && <div>Agrego de mas, quite {-1 * missing}</div>}
 					</div>
-
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="2" checked={radioValue === "2"} control={<Radio />} />
-						<img src={require("./Preview/2.png")} className="PreviewFieldTypeImage" alt="type 2" />
-					</div>
-
-					<div className="PreviewFieldItem">
-						<FormControlLabel value="3" checked={radioValue === "3"} control={<Radio />} />
-						<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 3" />
-					</div>
-				</RadioGroup>
-
-				<Select
-					className="PreviewFieldsSelect"
-					multiple
-					displayEmpty
-					value={this.state.template.previewData}
-					onChange={this.onPreviewFieldsSelected}
-					renderValue={selected => selected.join(", ")}
-				>
-					{templateElements.map((elem, key) => {
-						return (
-							<MenuItem key={"PreviewFields-" + key} value={elem}>
-								<Checkbox checked={this.state.template.previewData.indexOf(elem) > -1} />
-								<ListItemText primary={elem} />
-							</MenuItem>
-						);
-					})}
-				</Select>
-
-				{missing > 0 && <div>Seleccione {missing} mas</div>}
-				{missing < 0 && <div>Agrego de mas, quite {-1 * missing}</div>}
+				)}
 			</div>
 		);
 	};
 
 	// mostrar la lista de campos con sus valores por defecto categorizados en:
-	// Datos del certificado
+	// Datos de la credencial
 	// Datos del participante
 	// Otros datos
 	renderTemplate = () => {
@@ -298,10 +309,13 @@ class Template extends Component {
 					return (
 						<div className="Data" key={"template-elem-" + index}>
 							<div className="DataName">{dataElem.name}</div>
+
 							<div className="DataElem">
 								{DataRenderer.renderData(dataElem, type, true, this.setDefaultValue, true)}
-								{DataRenderer.renderRequired(dataElem, type, this.toggleRequired, true)}
-								{DataRenderer.renderDelete(dataElem, type, this.deleteField, true)}
+								<div className="options">
+									{DataRenderer.renderRequired(dataElem, type, this.toggleRequired, true)}
+									{DataRenderer.renderDelete(dataElem, type, this.deleteField, true)}
+								</div>
 							</div>
 						</div>
 					);
@@ -312,7 +326,7 @@ class Template extends Component {
 	};
 
 	// mostrar controles para agregar un campo nuevo en la seccion elegida
-	// (Datos del certificado, Datos del participante, Otros datos)
+	// (Datos de la credencial, Datos del participante, Otros datos)
 	renderSectionButtons = type => {
 		return (
 			<div className="SectionButtons">
@@ -322,10 +336,8 @@ class Template extends Component {
 						if (this.templateFieldAddDialog) this.templateFieldAddDialog.open(type);
 					}}
 				>
-					<div className="AddButton">
-						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
-					</div>
+					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+					<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
 				</button>
 			</div>
 		);

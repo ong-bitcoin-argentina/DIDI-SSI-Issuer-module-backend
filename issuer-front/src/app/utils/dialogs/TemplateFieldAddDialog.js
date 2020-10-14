@@ -15,6 +15,9 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 
+import './_Style.scss';
+import '../../../styles/GeneralStyles.scss';
+
 export default class TemplateFieldAddDialog extends Component {
 	constructor(props) {
 		super(props);

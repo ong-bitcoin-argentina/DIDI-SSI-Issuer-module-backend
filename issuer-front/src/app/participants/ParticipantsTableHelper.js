@@ -6,7 +6,7 @@ import MaterialIcon from "material-icons-react";
 import Checkbox from "@material-ui/core/Checkbox";
 
 class ParticipantsTableHelper {
-	// genera las columnas de la tabla de certificados
+	// genera las columnas de la tabla de credenciales
 	static getParticipantData(participant, selectedParticipants, onParticipantSelectToggle, isLoading) {
 		return {
 			did: participant.did,
@@ -74,7 +74,7 @@ class ParticipantsTableHelper {
 		};
 	}
 
-	// genera los headers para las columnas de la tabla de certificados
+	// genera los headers para las columnas de la tabla de credenciales
 	static getParticipantColumns(selectedParticipants, allSelectedParts, onParticipantSelectAllToggle, isLoading) {
 		return [
 			{

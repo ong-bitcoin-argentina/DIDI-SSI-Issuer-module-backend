@@ -8,7 +8,7 @@ const TokenService = require("../../services/TokenService");
 const UserService = require("../../services/UserService");
 
 // ejecuta validaciones generadas por "validate"
-module.exports.checkValidationResult = function(req, res, next) {
+module.exports.checkValidationResult = function (req, res, next) {
 	const result = validationResult(req);
 	if (result.isEmpty()) {
 		return next();
@@ -18,7 +18,7 @@ module.exports.checkValidationResult = function(req, res, next) {
 };
 
 // obtiene usuario del token
-let _getUserFromToken = async function(token) {
+let _getUserFromToken = async function (token) {
 	try {
 		const data = TokenService.getTokenData(token);
 		console.log(data);
@@ -34,23 +34,20 @@ let _getUserFromToken = async function(token) {
 };
 
 // ejecuta validacion para un parametro en particular
-let _doValidate = function(param, isHead) {
+let _doValidate = function (param, isHead) {
 	// inicializa validacion y valida existencia en caso de no ser opcional
-	let createValidation = function(name, isHead, isOptional) {
+	let createValidation = function (name, isHead, isOptional) {
 		let section = isHead ? header(name) : body(name);
 		if (isOptional) {
 			return section.optional();
 		} else {
-			return section
-				.not()
-				.isEmpty()
-				.withMessage(Messages.VALIDATION.DOES_NOT_EXIST(name));
+			return section.not().isEmpty().withMessage(Messages.VALIDATION.DOES_NOT_EXIST(name));
 		}
 	};
 
 	// valida que el token corresponda a un usuario administrador
-	let validateTokenCorrespondsToAdmin = function(validation) {
-		return validation.custom(async function(token) {
+	let validateTokenCorrespondsToAdmin = function (validation) {
+		return validation.custom(async function (token) {
 			try {
 				const user = await _getUserFromToken(token);
 				if (user.type !== Constants.USER_TYPES.Admin) return Promise.reject(Messages.VALIDATION.NOT_ADMIN);
@@ -62,8 +59,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// obtiene usuario del token y verifica que sea valido
-	let validateToken = function(validation) {
-		return validation.custom(async function(token, { req }) {
+	let validateToken = function (validation) {
+		return validation.custom(async function (token, { req }) {
 			try {
 				const user = await _getUserFromToken(token);
 				if (req.params.userId && req.params.userId != user._id) {
@@ -77,13 +74,13 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// valida que el campo sea un string
-	let validateIsString = function(validation, param) {
+	let validateIsString = function (validation, param) {
 		return validation.isString().withMessage(Messages.VALIDATION.STRING_FORMAT_INVALID(param.name));
 	};
 
 	// valida que el campo sea un array
-	let validateIsArray = function(validation, param) {
-		return validation.custom(async function(value) {
+	let validateIsArray = function (validation, param) {
+		return validation.custom(async function (value) {
 			if (Array.isArray(value)) {
 				return Promise.resolve(value);
 			} else {
@@ -93,8 +90,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// valida que el campo sea un boolean
-	let validateIsBoolean = function(validation, param) {
-		return validation.custom(async function(value) {
+	let validateIsBoolean = function (validation, param) {
+		return validation.custom(async function (value) {
 			if (value === "true" || value === true || value === "false" || value === false) {
 				return Promise.resolve(value);
 			} else {
@@ -104,15 +101,12 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// valida que el campo no este en la lista de contraseñas comunes
-	let validatePasswordIsNotCommon = function(validation) {
-		return validation
-			.not()
-			.isIn(Constants.COMMON_PASSWORDS)
-			.withMessage(Messages.VALIDATION.COMMON_PASSWORD);
+	let validatePasswordIsNotCommon = function (validation) {
+		return validation.not().isIn(Constants.COMMON_PASSWORDS).withMessage(Messages.VALIDATION.COMMON_PASSWORD);
 	};
 
 	// valida que los tipos de datos sean los correctos
-	let validateTemplateData = function(validation, param) {
+	let validateTemplateData = function (validation, param) {
 		return validation.custom(data => {
 			try {
 				if (!data) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.NO_DATA(param.name));
@@ -151,7 +145,7 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// valida que los tipos de datos sean validos
-	let validateTemplateDataType = function(validation) {
+	let validateTemplateDataType = function (validation) {
 		return validation.custom(data => {
 			try {
 				if (Object.values(Constants.DATA_TYPES).indexOf(data) < 0)
@@ -165,7 +159,7 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// valida que los valores se correspondan al tipo
-	let validateValueMatchesType = async function(type, value, err) {
+	let validateValueMatchesType = async function (type, value, err) {
 		switch (type) {
 			case Constants.CERT_FIELD_TYPES.Boolean:
 				if (value !== "true" && value !== "false") return Promise.reject(err);
@@ -189,7 +183,7 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// valida que los valores sean validos
-	let validateValueTypes = function(validation, param) {
+	let validateValueTypes = function (validation, param) {
 		return validation.custom(async (value, { req }) => {
 			try {
 				let data;
@@ -226,13 +220,13 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// validar seccion del certificado comparandola con la del modelo
-	let _doValidateValueInTemplate = async function(dataSection, templateDataSection) {
+	let _doValidateValueInTemplate = async function (dataSection, templateDataSection) {
 		try {
 			for (let elem of dataSection) {
 				const template = templateDataSection.find(template => template.name === elem.name);
 				if (!template) {
 					// el campo no esta en el template
-					return Promise.reject(Messages.VALIDATION.EXTRA_ELEMENT(elem.name));
+					return Promise.reject(Messages.VALIDATION.CERT_DATA.EXTRA_ELEMENT(elem.name));
 				}
 				const err = Messages.VALIDATION.TEMPLATE_DATA_VALUE.INVALID_DATA_VALUE(elem.name);
 
@@ -257,8 +251,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// validar valor dentro del modelo de certificado
-	let validatePartValueInTemplate = function(validation, param) {
-		return validation.custom(async function(value, { req }) {
+	let validatePartValueInTemplate = function (validation, param) {
+		return validation.custom(async function (value, { req }) {
 			try {
 				const templateId = req.body.templateId;
 				let template = await TemplateService.getById(templateId);
@@ -281,8 +275,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// validar data dentro del modelo
-	let validateValueInTemplate = function(validation, param) {
-		return validation.custom(async function(value, { req }) {
+	let validateValueInTemplate = function (validation, param) {
+		return validation.custom(async function (value, { req }) {
 			try {
 				const templateId = req.body.templateId;
 				let template = await TemplateService.getById(templateId);
@@ -320,8 +314,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// validar campos a previsualizar del certificado
-	let validateTemplatePreviewData = function(validation, param) {
-		return validation.custom(async function(value, { req }) {
+	let validateTemplatePreviewData = function (validation, param) {
+		return validation.custom(async function (value, { req }) {
 			const preview = req.body.preview;
 			const type = req.body.type;
 
@@ -355,8 +349,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// validar microcredenciales
-	let validateTemplateMicroCredData = function(validation, param) {
-		return validation.custom(async function(value, { req }) {
+	let validateTemplateMicroCredData = function (validation, param) {
+		return validation.custom(async function (value, { req }) {
 			let data;
 
 			if (!req.body.split) return Promise.resolve(value);
@@ -385,8 +379,8 @@ let _doValidate = function(param, isHead) {
 	};
 
 	// validar data nueva de participante
-	let validateNewParticipantsData = function(validation, param) {
-		return validation.custom(async function(value, { req }) {
+	let validateNewParticipantsData = function (validation, param) {
+		return validation.custom(async function (value, { req }) {
 			try {
 				const data = req.body.data;
 				for (let dataElem of data) {
@@ -461,7 +455,7 @@ let _doValidate = function(param, isHead) {
 
 // recibe una lista de parámetros de validacion y valida que los datos recibidos en el body y header
 // cumplan con esos parametros
-module.exports.validate = function(params) {
+module.exports.validate = function (params) {
 	const validations = [];
 	params.forEach(param => {
 		validation = _doValidate(param, param.isHead);

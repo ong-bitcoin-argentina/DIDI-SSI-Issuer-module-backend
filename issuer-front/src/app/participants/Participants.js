@@ -73,7 +73,7 @@ class Participants extends Component {
 		return false;
 	};
 
-	// manda los pedidos correspondientes a los participantes/certificados seleccionados
+	// manda los pedidos correspondientes a los participantes/credenciales seleccionados
 	sendRequests = () => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
@@ -177,7 +177,7 @@ class Participants extends Component {
 		);
 	};
 
-	// volver a listado de certificados
+	// volver a listado de credenciales
 	onBack = () => {
 		if (this.reqSentDialog) this.reqSentDialog.close();
 
@@ -205,14 +205,14 @@ class Participants extends Component {
 				{Spinner.render(loading)}
 				{this.renderRequestSentDialog()}
 				{this.renderQrDialog()}
-				{this.renderTable()}
 				{this.renderButtons(loading)}
-				<div className="errMsg">{error && error.message}</div>
+				{this.renderTable()}
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}
 
-	// muestra el dialogo de carga de participantes por qr para modelo de certificado
+	// muestra el dialogo de carga de participantes por qr para modelo de credencial
 	renderQrDialog = () => {
 		return (
 			<QrDialog
@@ -260,7 +260,7 @@ class Participants extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
-			<div className="QrRequestButtons">
+			<div className="QrRequestButtons my-2">
 				<div className="PartRequestRow">
 					<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
 						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}

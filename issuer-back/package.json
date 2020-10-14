@@ -35,6 +35,7 @@
 		"graphql": "14.6.0",
 		"graphql-tag": "2.10.3",
 		"jsonwebtoken": "8.5.1",
+		"lodash.pick": "4.4.0",
 		"mongoose": "5.9.2",
 		"node-fetch": "2.6.0",
 		"node-pre-gyp": "0.14.0",

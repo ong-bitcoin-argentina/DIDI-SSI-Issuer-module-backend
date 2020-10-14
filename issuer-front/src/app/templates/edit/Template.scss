@@ -3,22 +3,158 @@
 .Template {
 	display: flex;
 	flex-direction: column;
+	padding: 4em 3em 0 2em;
+	position: relative;
+	width: 95%;
+	.container {
+		margin: 0 auto;
+		max-width: 700px;
+	}
+	.DataTitle {
+		font-size: 1.5em;
+		color: $black;
+	}
+	.Header {
+		width: 100%;
+		background-color: $primary-color;
+		display: flex;
+		justify-content: space-between;
+		padding: 1em;
+		box-sizing: border-box;
+		position: absolute;
+		top: 0;
+		left: 0;
+		img {
+			height: 25px;
+			margin: 0 5em;
+		}
+
+		.Menu {
+			margin: 0 5em;
+			p {
+				margin: 0;
+			}
+		}
+	}
+	.Template-Type {
+		padding: 0 2em;
+		.errorMessage {
+			margin: 1em auto !important;
+			color: $black;
+			margin-top: 1em;
+			background-color: #ffeaeb;
+			padding: 1em 2em;
+			display: inline-block;
+			border-radius: 5px;
+			border-left: 5px solid $Delete;
+		}
+	}
+	.Template-Content {
+		width: 100%;
+		.TemplateSectionContent {
+			display: flex;
+			flex-direction: row;
+			padding: 2em;
+			flex-wrap: wrap;
+			justify-content: space-between;
+		}
+		.DataTitle {
+			font-size: 1.5em;
+			color: $black;
+			width: 100%;
+		}
+		.Data {
+			margin: 1em 0;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			.DataName {
+				color: $BackgroundText;
+				display: flex;
+				flex-direction: row;
+			}
+			.options {
+				display: flex;
+				justify-content: flex-start;
+				width: 30%;
+				.DataElem {
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					margin: 1em 0;
+				}
+
+				.DataRequired {
+					width: 100%;
+					color: $BackgroundText;
+					display: flex;
+					flex-direction: row;
+					margin: 1em 0;
+					align-items: center;
+				}
+
+				.DataDelete {
+					width: 100%;
+					display: flex;
+					flex-direction: row;
+					margin: 1em 0;
+					color: $Delete;
+					align-items: center;
+				}
+			}
+			.DataInput {
+				border: transparent;
+				border-bottom: 1px solid #000;
+			}
+		}
+	}
+	.TemplateButtons {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+		.BackButton .CloseButton {
+			background: white !important;
+			border: 1px solid #dddee5 !important;
+			box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.0523656) !important;
+			color: #333333 !important;
+			&:hover {
+				opacity: 0.8 !important;
+			}
+		}
+		.SaveButton {
+			background: #256ee0 !important;
+			color: white !important;
+			&:hover {
+				opacity: 0.8 !important;
+			}
+		}
+	}
+}
+
+.PreviewFieldsSelect,
+.CategoriesPicker,
+.DataInput {
+	background-color: transparent !important;
+}
+
+.react-datepicker-wrapper {
+	width: 100% !important;
 }
 
 .AddButton {
-	padding-top: 1px;
 	display: flex;
-	flex-direction: row;
-	width: 150px;
-	float: center;
-}
-
-.AddButtonText {
-	padding-top: 4px;
-}
-
-#AddOptionIcon {
-	margin-top: 25px;
+	align-content: center;
+	height: 40px;
+	width: auto;
+	border-radius: 4px;
+	background-color: #fff;
+	border: 1px solid #256ee0;
+	align-items: center;
+	padding: 0 1em 0 0.5em;
+	.material-icons,
+	.AddButtonText {
+		color: #256ee0;
+	}
 }
 
 #Options {
@@ -35,53 +171,13 @@
 #Types {
 	margin-top: 20px;
 	margin-bottom: 20px;
-}
-
-.Data {
-	display: flex;
-	flex-direction: column;
-}
-
-.DataTitle {
-	color: $BackgroundText;
-}
-
-.DataName {
-	color: $BackgroundText;
-	align-self: flex-start;
-}
-
-.DataElem {
-	display: flex;
-	flex-direction: row;
-	margin-bottom: 10px;
-}
-
-.DataRequired {
-	color: $BackgroundText;
-	display: flex;
-	flex-direction: row;
-	font-size: 18px;
-}
-
-.DataDelete {
-	display: flex;
-	flex-direction: row;
-	font-size: 18px;
-	color: $Delete;
-}
-
-.material-icons {
-	margin-right: 5px;
-	margin-left: 5px;
+	.MuiInputBase-root {
+		width: 100%;
+	}
 }
 
 .DialogTypeDropdown {
 	width: 165px;
-}
-
-.TemplateSectionContent {
-	margin-bottom: 20px;
 }
 
 .PreviewFieldsSelect {
@@ -89,9 +185,17 @@
 	width: 505px;
 }
 
+.templateTypeCard {
+	display: flex;
+	justify-content: center;
+	.MuiRadio-root {
+		color: $primary-color !important;
+	}
+}
 .PreviewFieldItem {
 	width: 30%;
 	box-sizing: border-box;
+	padding: 0 2em 1em 2em;
 }
 
 .PreviewFieldTypeImage {
@@ -109,4 +213,49 @@
 .CategoriesPicker {
 	background-color: $InputBackground;
 	width: 505px;
+}
+
+@media only screen and (max-width: 600px) {
+	.Template {
+		.container {
+			max-width: 100%;
+			.Template-Type {
+				.MuiInputBase-root {
+					width: 300px;
+				}
+			}
+			.Template-Content {
+				.TemplateSectionContent {
+					.Data {
+						.DataElem {
+							.options {
+								width: 100%;
+							}
+						}
+					}
+				}
+			}
+			.TemplateButtons {
+				display: flex;
+				padding: 1em;
+				.SaveButton {
+					margin-right: 0;
+				}
+			}
+			.templateTypeCard {
+				flex-direction: column;
+				.PreviewFieldItem {
+					width: 100%;
+				}
+			}
+			.SectionButtons {
+				.AddButton {
+					margin: 0 auto;
+					width: 100%;
+					display: flex;
+					justify-content: center;
+				}
+			}
+		}
+	}
 }

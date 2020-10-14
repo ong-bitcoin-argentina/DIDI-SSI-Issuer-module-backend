@@ -38,7 +38,7 @@ const DateRangeFilter = ({ label, onChange }) => {
 	}, [start, end]);
 
 	return (
-		<>
+		<div className="DateContainer">
 			<div>{label}</div>
 			<DateRangePicker
 				startDate={start}
@@ -57,7 +57,7 @@ const DateRangeFilter = ({ label, onChange }) => {
 				hideKeyboardShortcutsPanel
 				isOutsideRange={() => false}
 			/>
-		</>
+		</div>
 	);
 };
 

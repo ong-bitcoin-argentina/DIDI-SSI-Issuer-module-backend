@@ -29,9 +29,9 @@ import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 
 import InputDialog from "../utils/dialogs/InputDialog";
 
-import logoApp from "../../images/ai-di-logo.svg";
-import CertificatesEmmited from "../certificates/emmited/certificates-emmited";
-import CertificatesRevoked from "../certificates/revoked/certificates-revoked";
+import CertificatesEmmited from "../certificates/emmited/CertificatesEmmited";
+import CertificatesRevoked from "../certificates/revoked/CertificatesRevoked";
+import Header from "../components/Header";
 
 const tabs = {
 	templates: 0,
@@ -74,6 +74,7 @@ class Main extends Component {
 				address: {}
 			},
 			allSelectedCerts: false,
+			anchorEl: null,
 			selectedCerts: {},
 			certificates: [],
 			filteredCertificates: [],
@@ -83,7 +84,7 @@ class Main extends Component {
 		};
 	}
 
-	// cargar certificados
+	// cargar credenciales
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const path = splitPath[splitPath.length - 1];
@@ -179,7 +180,7 @@ class Main extends Component {
 		);
 	}
 
-	// seleccionar certificado a pedir para el participante
+	// seleccionar credencial a pedir para el participante
 	onParticipantSelectToggle = (id, type, value) => {
 		const allSelectedParticipants = this.state.allSelectedParticipants;
 		const selectedParticipants = this.state.selectedParticipants;
@@ -187,7 +188,7 @@ class Main extends Component {
 		this.updateSelectedParticipantsState(this.state.parts, selectedParticipants, allSelectedParticipants);
 	};
 
-	// seleccionar certificado a pedir para todos los participantes
+	// seleccionar credencial a pedir para todos los participantes
 	onParticipantSelectAllToggle = (type, value) => {
 		const parts = this.state.parts;
 		const allSelectedParticipants = this.state.allSelectedParticipants;
@@ -200,7 +201,7 @@ class Main extends Component {
 		this.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 	};
 
-	// actualizar seleccion de certificados a pedir para participantes
+	// actualizar seleccion de credenciales a pedir para participantes
 	updateSelectedParticipantsState = (parts, selectedParts, allSelectedParticipants) => {
 		const types = this.state.partTypes;
 		parts.forEach(part => {
@@ -270,7 +271,7 @@ class Main extends Component {
 		);
 	};
 
-	// abrir dialogo de confirmacion para revocacion de certificados
+	// abrir dialogo de confirmacion para revocacion de credenciales
 	onCertificateRevoke = id => {
 		if (this.certificatesSection) {
 			this.setState({ selectedCertId: id });
@@ -278,7 +279,7 @@ class Main extends Component {
 		}
 	};
 
-	// abrir dialogo de confirmacion para borrado de certificados
+	// abrir dialogo de confirmacion para borrado de credenciales
 	onCertificateDeleteDialogOpen = id => {
 		if (this.certificatesSection) {
 			this.setState({ selectedCertId: id });
@@ -286,7 +287,7 @@ class Main extends Component {
 		}
 	};
 
-	// borrar certificados
+	// borrar credenciales
 	onCertificateDelete = () => {
 		const id = this.state.selectedCertId;
 		const token = Cookie.get("token");
@@ -318,7 +319,7 @@ class Main extends Component {
 		);
 	};
 
-	// selecciionar certificados para emision multiple
+	// selecciionar credenciales para emision multiple
 	onCertificateSelectToggle = (certId, value) => {
 		const certs = this.state.certs;
 		const allSelectedCerts = this.state.allSelectedCerts;
@@ -327,7 +328,7 @@ class Main extends Component {
 		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
 	};
 
-	// seleccionar todos los certificados para emitirlos
+	// seleccionar todos los credenciales para emitirlos
 	onCertificateSelectAllToggle = value => {
 		let allSelectedCerts = this.state.allSelectedCerts;
 		const certs = this.state.certs;
@@ -339,7 +340,11 @@ class Main extends Component {
 		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
 	};
 
-	// actualizar seleccion de certificados a emitir
+	onRenameModalOpen = () => {
+		if (this.renameDialog) this.renameDialog.open();
+	};
+
+	// actualizar seleccion de credenciales a emitir
 	updateSelectedCertsState = (certs, selectedCerts) => {
 		let allSelected = true;
 		certs.forEach(cert => {
@@ -387,7 +392,7 @@ class Main extends Component {
 		});
 	};
 
-	// emitir certificados marcados para emision multiple
+	// emitir credenciales marcados para emision multiple
 	onCertificateMultiEmmit = () => {
 		const keys = Object.keys(this.state.selectedCerts);
 		const toEmmit = keys.filter(key => this.state.selectedCerts[key]);
@@ -446,7 +451,7 @@ class Main extends Component {
 			});
 	};
 
-	// emitir certificados
+	// emitir credenciales
 	onCertificateEmmit = id => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -545,7 +550,7 @@ class Main extends Component {
 		this.setState({ lastNameFilter: filter });
 	};
 
-	// filtro por modelo de certificado
+	// filtro por modelo de credencial
 	onTemplateFilterChange = event => {
 		const filter = event.target.value;
 		this.updateFiltererCertificates(this.state.firstNameFilter, this.state.lastNameFilter, filter);
@@ -643,7 +648,7 @@ class Main extends Component {
 		);
 	};
 
-	// renombrar issuer (nombre que aparecera en los certificados emitidos)
+	// renombrar issuer (nombre que aparecera en los credenciales emitidos)
 	onIssuerRename = data => {
 		const name = data.name;
 		const token = Cookie.get("token");
@@ -674,17 +679,12 @@ class Main extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const { loading, tabIndex, error } = this.state;
+		const { loading, tabIndex, error, anchorEl } = this.state;
 		const selectedIndex = tabIndex ?? 0;
 
 		return (
 			<div className="MainContent">
-				<div className="Header">
-					<img src={logoApp} alt="ai di logo" />
-					<div className="Menu">
-						<p>Menu</p>
-					</div>
-				</div>
+				<Header onRenameModalOpen={this.onRenameModalOpen} />
 				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
 					{this.renderActions(loading)}
@@ -782,7 +782,7 @@ class Main extends Component {
 		return (
 			<div className="ActionsMenu">
 				<button onClick={this.toggleShowMenu}>{Messages.LIST.MENU.TITLE}</button>
-				{showMenu && (
+				{false && (
 					<div className="ActionsMenuItems">
 						<button
 							disabled={loading}

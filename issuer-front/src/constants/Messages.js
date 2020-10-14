@@ -1,21 +1,21 @@
 module.exports = {
 	LOGIN: {
 		WELCOME: "Bienvenido al",
-		WELCOME_2: "Emisor de Certificados Web",
+		WELCOME_2: "Emisor de Credenciales Web",
 		BUTTONS: {
 			ENTER: "Ingresar"
 		}
 	},
 	EDIT: {
 		DATA: {
-			PREVIEW: "CAMPOS A PREVISUALIZAR",
-			CATEGORIES: "CATEGORIA DEL CERTIFICADO",
-			CERT: "DATOS DEL CERTIFICADO",
-			PART: "DATOS DEL PARTICIPANTE",
-			OTHER: "OTROS DATOS",
+			PREVIEW: "Campos a Previsualizar",
+			CATEGORIES: "Categoría de la Credencial",
+			CERT: "Datos de la Credencial",
+			PART: "Datos del Participante",
+			OTHER: "Otros Datos",
 
-			MICRO_CRED_NAME: "NOMBRE DE LA MICRO",
-			MICRO_CRED_FIELDS: "CAMPOS DE LA MICRO"
+			MICRO_CRED_NAME: "Nombre de la Micro",
+			MICRO_CRED_FIELDS: "Campos de la Micro"
 		},
 		DIALOG: {
 			QR: {
@@ -43,13 +43,13 @@ module.exports = {
 			}
 		},
 		BUTTONS: {
-			LOAD_DIDS_FROM_CSV: "Cargar Dids por CSV",
+			LOAD_DIDS_FROM_CSV: "Cargar DIDs por CSV",
 			ADD_MICRO_CRED_LABEL: "Agregar Micro",
 			REMOVE_MICRO_CRED_LABEL: "Quitar Micro",
 			ADD_MICRO_CRED: "+",
 			REMOVE_MICRO_CRED: "-",
 			REMOVE_PARTICIPANTS: "X",
-			SAMPLE_PART_FROM_CSV: "Generar CSV",
+			SAMPLE_PART_FROM_CSV: "Descargar Modelo Carga CSV",
 			SAMPLE_CERT_FROM_CSV: "Generar CSV",
 			LOAD_CERT_FROM_CSV: "Cargar con CSV",
 			ADD_PARTICIPANTS: "Nuevo Participante",
@@ -74,11 +74,11 @@ module.exports = {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
 			},
-			DELETE_CONFIRMATION: "Esta seguro?",
-			DELETE_CERT_TITLE: "Borrar Certificado",
+			DELETE_CONFIRMATION: "¿Esta seguro que desea eliminar el Credencial?",
+			DELETE_CERT_TITLE: "Borrar Credencial",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
 			DELETE_DELEGATE_TITLE: "Borrar Delegado",
-			REVOKE_CERT_TITLE: "Revocar Certificado",
+			REVOKE_CERT_TITLE: "Revocar Credencial",
 			REVOKE_CONFIRMATION: "Esta seguro?",
 			REVOKE: "Revocar",
 			DELETE: "Borrar",
@@ -97,8 +97,8 @@ module.exports = {
 			HAS_PERSONAL: "DATOS",
 			HAS_PERSONAL2: "PERSONALES",
 			HAS_ADDRESS: "DOMICILIO",
-			TEMPLATE: "Modelo de Certificado",
-			CERT: "CERTIFICADO",
+			TEMPLATE: "Modelo de Credencial",
+			CERT: "Credencial",
 			LAST_NAME: "APELLIDO",
 			NAME: "NOMBRE",
 			PREV: "ANTERIOR",
@@ -112,13 +112,13 @@ module.exports = {
 		BUTTONS: {
 			CREATE_DELEGATE: "Crear Delegado",
 			DELEGATES: "Delegados",
-			TO_QR: "Registrar Participante",
-			TO_CERTIFICATES_PENDING: "Certificados Pendientes",
-			TO_CERTIFICATES: "Certificados",
-			TO_REVOKED_CERTIFICATES: "Certificados Revocados",
+			TO_QR: "Registro de DIDs",
+			TO_CERTIFICATES_PENDING: "Credenciales Pendientes",
+			TO_CERTIFICATES: "Credenciales",
+			TO_REVOKED_CERTIFICATES: "Credenciales Revocadas",
 			TO_TEMPLATES: "Templates",
-			CREATE_TEMPLATE: "Crear Modelo de Certificado",
-			CREATE_CERT: "Emitir Certificado",
+			CREATE_TEMPLATE: "Crear Modelo de Credencial",
+			CREATE_CERT: "Emitir Credencial",
 			EMMIT_SELECTED: "Emitir Seleccionados",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
@@ -133,17 +133,17 @@ module.exports = {
 			return "USUARIO '" + name + "' CARGADO CON ÉXITO";
 		},
 		DID_SELECT: "DID",
-		CERTIFICATE_SELECT: "CERTIFICADO A PEDIR",
-		TEMPLATE_SELECT: "MODELO DE CERTIFICADO",
+		CERTIFICATE_SELECT: "Credencial A PEDIR",
+		TEMPLATE_SELECT: "MODELO DE Credencial",
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
-		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de certificado para el que se pediran los datos:",
+		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de Credencial para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
-		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de certificado:",
-		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de certificado actual",
+		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
+		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de Credencial actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
-			REQUEST: "Pedir certificados",
-			QR_LOAD: "Cargar por Qr",
+			REQUEST: "Solicitar Credenciales",
+			QR_LOAD: "Cargar DID por QR",
 			GENERATE: "Generar Qr"
 		}
 	}

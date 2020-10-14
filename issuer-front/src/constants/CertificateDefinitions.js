@@ -1,4 +1,7 @@
+import React from "react";
+
 import Messages from "./Messages";
+import { Edit, Delete, AssignmentTurnedIn, Visibility, AssignmentLate } from "@material-ui/icons";
 
 const { LAST_NAME, NAME } = Messages.LIST.TABLE;
 const { EMMIT, DELETE, EDIT, VIEW, REVOKE } = Messages.LIST.BUTTONS;
@@ -7,17 +10,20 @@ export const PENDING_ACTIONS = ({ cert, onEmmit, onEdit, onDelete }) => [
 	{
 		className: "EmmitAction",
 		action: () => onEmmit(cert._id),
-		label: EMMIT
+		label: EMMIT,
+		iconComponent: <AssignmentTurnedIn fontSize="medium" />
 	},
 	{
 		className: "EditAction",
 		action: () => onEdit(cert._id),
-		label: EDIT
+		label: EDIT,
+		iconComponent: <Edit fontSize="medium" />
 	},
 	{
 		className: "DeleteAction",
 		action: () => onDelete(cert._id),
-		label: DELETE
+		label: DELETE,
+		iconComponent: <Delete fontSize="medium" />
 	}
 ];
 
@@ -25,12 +31,23 @@ export const EMMITED_ACTIONS = ({ cert, onView, onRevoke }) => [
 	{
 		className: "EditAction",
 		action: () => onView(cert._id),
+		iconComponent: <Visibility fontSize="medium" />,
 		label: VIEW
 	},
 	{
 		className: "DeleteAction",
 		action: () => onRevoke(cert),
+		iconComponent: <AssignmentLate fontSize="medium" />,
 		label: REVOKE
+	}
+];
+
+export const REVOKED_ACTIONS = ({ cert, onView }) => [
+	{
+		className: "EditAction",
+		action: () => onView(cert._id),
+		iconComponent: <Visibility fontSize="medium" />,
+		label: VIEW
 	}
 ];
 
@@ -58,25 +75,15 @@ export const EMMITED_COLUMNS = ({ onLastNameFilterChange, onFirstNameFilterChang
 	}
 ];
 
-export const REVOCATION_REASONS = [
-	{
-		value: "EXPIRATION",
-		label: "Expiración"
-	},
-	{
-		value: "UNLINKING",
-		label: "Desvinculación"
-	},
-	{
-		value: "DATA_MODIFICATION",
-		label: "Modificación de datos"
-	},
-	{
-		value: "REPLACEMENT",
-		label: "Reemplazo"
-	},
-	{
-		value: "OTHER",
-		label: "Otro"
-	}
-];
+export const REVOCATION_REASONS_PLAIN = {
+	EXPIRATION: "Expiración",
+	UNLINKING: "Desvinculación",
+	DATA_MODIFICATION: "Modificación de datos",
+	REPLACEMENT: "Reemplazo",
+	OTHER: "Otro"
+};
+
+export const REVOCATION_REASONS = Object.keys(REVOCATION_REASONS_PLAIN).map(key => ({
+	label: REVOCATION_REASONS_PLAIN[key],
+	value: key
+}));

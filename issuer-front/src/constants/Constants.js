@@ -80,7 +80,7 @@ module.exports = {
 
 	CERT_FIELD_MANDATORY: {
 		DID: "DID",
-		NAME: "CERTIFICADO O CURSO",
+		NAME: "Credencial o Curso",
 		FIRST_NAME: "NOMBRE",
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"
@@ -182,7 +182,7 @@ module.exports = {
 			FULL_NAME: "NOMBRE COMPLETO",
 			PARTICIPANT_FIRST_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO",
-			NAME: "CERTIFICADO O CURSO"
+      NAME: "CREDENCIAL"
 		}
 	},
 
@@ -204,7 +204,7 @@ module.exports = {
 			CSV_MISSING_FIELDS: function () {
 				return {
 					err: "CSV_MISSING_FIELDS",
-					message: "La cantidad de campos en el csv no se corresponde con la del certificado."
+					message: "La cantidad de campos en el csv no se corresponde con la de la Credencial."
 				};
 			},
 			EXP_DATE_INVALID: {
@@ -220,7 +220,7 @@ module.exports = {
 		EDIT: {
 			PARTICIPANT_SELECT: "SELECCIONAR PARTICIPANTE",
 			SPLIT: "GENERAR MICROCREDENCIALES",
-			TEMPLATE_SELECT: "CERTIFICADO O CURSO"
+      TEMPLATE_SELECT: "CREDENCIAL"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,

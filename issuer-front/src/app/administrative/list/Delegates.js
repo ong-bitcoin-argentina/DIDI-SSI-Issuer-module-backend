@@ -52,7 +52,7 @@ class Delegates extends Component {
 
 				{this.renderSectionButtons(loading)}
 				{this.renderTable()}
-				<div className="errMsg">{error && error.message}</div>
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}

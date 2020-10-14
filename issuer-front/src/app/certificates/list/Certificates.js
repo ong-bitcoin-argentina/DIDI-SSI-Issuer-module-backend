@@ -51,7 +51,7 @@ class Certificates extends Component {
 		if (this.revokeDialog) this.revokeDialog.open();
 	};
 
-	// mostrar pantalla de certificados
+	// mostrar pantalla de credencial
 	render() {
 		const error = this.props.error || this.state.error;
 		const loading = this.props.loading;
@@ -62,8 +62,7 @@ class Certificates extends Component {
 				{this.renderRevocationDialog()}
 				{this.renderSectionButtons(loading)}
 				{this.renderTable()}
-				{this.renderButtons(loading)}
-				<div className="errMsg">{error && error.message}</div>
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}
@@ -94,11 +93,12 @@ class Certificates extends Component {
 		);
 	};
 
-	// muestra boton de creacion de certificados
+	// muestra boton de creacion de credencial
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
+				{this.renderButtons(loading)}
 				{selected && (
 					<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
@@ -109,7 +109,7 @@ class Certificates extends Component {
 		);
 	};
 
-	// muestra tabla de certificados
+	// muestra tabla de credencial
 	renderTable = () => {
 		const certificates = this.props.certificates;
 		const columns = this.props.columns ? this.props.columns : [];
@@ -132,7 +132,7 @@ class Certificates extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
-			<div className="CertButtons">
+			<div className="CertButtons mr-2">
 				<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
 					<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
 				</button>
