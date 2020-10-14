@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { loggerManager } = require('./services/logger');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -26,9 +27,6 @@ var server = http.createServer(app);
 const path = require('path');
 const dir = path.join(__dirname, 'public');
 app.use(express.static(dir));
-
-const { logger } = require('./services/logger');
-logger.start();
 
 // sobreescribir log para agregarle el timestamp
 const log = console.log;
@@ -68,10 +66,6 @@ app.use(function(req, _, next) {
 		process.stdout.write("body: ");
 		console.log(req.body);
 	}
-	logger.defaultClient.trackEvent({name: "request", properties: {
-		method: req.method,
-		url: req.originalUrl,
-	}});
 	next();
 });
 
@@ -80,11 +74,6 @@ app.use(cors());
 // loggear errores
 app.use(function(error, req, _, next) {
 	console.log(error);
-	logger.defaultClient.trackEvent({name: "error", properties: {
-		value: "error",
-		method: req.method,
-		url: req.originalUrl,
-	}});
 	next();
 });
 
