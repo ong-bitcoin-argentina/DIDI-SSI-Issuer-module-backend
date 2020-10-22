@@ -35,8 +35,17 @@ class CertificateTableHelper {
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
 		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
 
+    const onToggle = (_, value) => {
+			onSelectToggle(cert._id, value);
+		};
+
 		return {
-			...this.baseCells(cert),
+      ...this.baseCells(cert),
+      select: (
+				<div className="Actions">
+					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
+				</div>
+			),
 			actions: (
 				<div className="Actions">
 					{ACTIONS.map((item, index) => (
@@ -139,6 +148,10 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "actions"
+      },
+      {
+				Header: <TableHeadCheck selected={selectedCerts} all={allSelectedCerts} onChange={onCertificateSelectAllToggle} />,
+				accessor: "select"
 			}
 		];
 	}
