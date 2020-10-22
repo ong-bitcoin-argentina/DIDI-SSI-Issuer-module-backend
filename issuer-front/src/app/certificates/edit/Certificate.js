@@ -905,7 +905,7 @@ class Certificate extends Component {
 		return (
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
-				<h2>Editar Credencial</h2>
+				<h2>Crear Credencial</h2>
 				<Autocomplete
 					options={templates}
 					getOptionLabel={option => (option ? option.name : "")}

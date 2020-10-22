@@ -118,7 +118,7 @@ module.exports = {
 			TO_REVOKED_CERTIFICATES: "Credenciales Revocadas",
 			TO_TEMPLATES: "Templates",
 			CREATE_TEMPLATE: "Crear Modelo de Credencial",
-			CREATE_CERT: "Emitir Credencial",
+			CREATE_CERT: "Crear Credencial",
 			EMMIT_SELECTED: "Emitir Seleccionados",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
