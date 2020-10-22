@@ -112,7 +112,7 @@ class Certificates extends Component {
 	// muestra tabla de credencial
 	renderTable = () => {
 		const certificates = this.props.certificates;
-    const columns = this.props.columns ?? [];
+		const columns = this.props.columns ?? [];
 
 		return (
 			<div className="CertificateTable">
