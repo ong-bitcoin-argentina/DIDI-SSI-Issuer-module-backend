@@ -34,7 +34,7 @@ import CertificatesRevoked from "../certificates/revoked/CertificatesRevoked";
 import Header from "../components/Header";
 
 const TABS = {
-  list: 0,
+	list: 0,
 	templates: 0,
 	"certificates-pending": 1,
 	certificates: 2,
@@ -88,7 +88,7 @@ class Main extends Component {
 	// cargar credenciales
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
-    const path = splitPath[splitPath.length - 1];
+		const path = splitPath[splitPath.length - 1];
 		let tabIndex = TABS[path];
 
 		const token = Cookie.get("token");
@@ -444,7 +444,7 @@ class Main extends Component {
 
 					self.setState({ error: err, loading: false });
 				} else {
-          self.setState({ tabIndex: 2, error: false, loading: false  });
+					self.setState({ tabIndex: 2, error: false, loading: false });
 				}
 			})
 			.catch(function (err) {
@@ -466,7 +466,7 @@ class Main extends Component {
 			token,
 			id,
 			async function (_) {
-        self.setState({ tabIndex: 2, error: false, loading: false  });
+				self.setState({ tabIndex: 2, error: false, loading: false });
 			},
 			function (err) {
 				console.log(err);
