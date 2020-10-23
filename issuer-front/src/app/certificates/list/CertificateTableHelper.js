@@ -71,7 +71,7 @@ class CertificateTableHelper {
 			...this.baseCells(cert),
 			select: (
 				<div className="Actions">
-					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
+					<Checkbox checked={selectedCertificates[cert._id] || false} onChange={onToggle} />
 				</div>
 			),
 			actions: (

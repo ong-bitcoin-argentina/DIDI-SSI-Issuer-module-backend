@@ -11,6 +11,7 @@ import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
 import Notification from "../../components/Notification";
 import RevocationModal from "../../components/RevocationModal";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -40,14 +41,18 @@ const CertificatesEmmited = () => {
 				onDateRangeFilterChange
 			);
 			setColumns(localColumns);
+			setFilteredData(data);
+			setLoading(false);
 		}
-		setFilteredData(data);
-		setLoading(false);
 	}, [data]);
 
 	useEffect(() => {
 		getData();
 	}, []);
+
+	useEffect(() => {
+		updateCertificates(filteredData, selected);
+	}, [selected]);
 
 	useEffect(() => {
 		const { firstName, lastName, certName, start, end } = filters;
@@ -77,19 +82,8 @@ const CertificatesEmmited = () => {
 	const getData = async () => {
 		setLoading(true);
 		const token = Cookie.get("token");
-		let certificates = await CertificateService.getEmmited(token);
-
-		setData(
-			certificates.map(item => {
-				return CertificateTableHelper.getCertificatesEmmitedData(
-					item,
-					selected,
-					handleSelectOne,
-					handleView,
-					handleRevokeOne
-				);
-			})
-		);
+		const certificates = await CertificateService.getEmmited(token);
+		updateCertificates(certificates, selected);
 	};
 
 	const onFilterChange = (e, key) => {
@@ -102,7 +96,20 @@ const CertificatesEmmited = () => {
 	};
 
 	const handleSelectOne = (id, checked) => {
-		setSelected({ ...selected, [id]: checked });
+		setSelected(selected => ({ ...selected, [id]: checked }));
+	};
+
+	const updateCertificates = (certs, selectedCerts) => {
+		const data = certs.map(item => {
+			return CertificateTableHelper.getCertificatesEmmitedData(
+				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn },
+				selectedCerts,
+				handleSelectOne,
+				handleView,
+				handleRevokeOne
+			);
+		});
+		setData(data);
 	};
 
 	const handleView = id => {
@@ -139,9 +146,13 @@ const CertificatesEmmited = () => {
 		setModalOpen(!modalOpen);
 	};
 
-	// const handleRevokeSelected = () => {
-	// 	console.log("revoke selected");
-	// };
+	const handleRevokeSelected = () => {
+		const keysToRevoke = Object.keys(selected).filter(key => selected[key]);
+		if (keysToRevoke.length === 0) return;
+
+		const certsToRevoke = data.filter(t => keysToRevoke.indexOf(t._id) > -1);
+		console.log(certsToRevoke, "certsToRevoke");
+	};
 
 	const handleSelectAllToggle = val => {
 		setAllSelected(val);
@@ -151,8 +162,6 @@ const CertificatesEmmited = () => {
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				<Grid item xs={12} className="flex-end">
-					{/*
-					TODO: use when multiple revoke is available 
 					<button
 						className="DangerButton"
 						onClick={handleRevokeSelected}
@@ -160,8 +169,7 @@ const CertificatesEmmited = () => {
 					>
 						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
 						Revocar Credenciales Seleccionadas
-					</button> 
-					*/}
+					</button>
 				</Grid>
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
