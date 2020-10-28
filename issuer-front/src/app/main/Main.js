@@ -322,28 +322,75 @@ class Main extends Component {
 
 	// selecciionar credenciales para emision multiple
 	onCertificateSelectToggle = (certId, value) => {
-		const certs = this.state.certs;
-		const allSelectedCerts = this.state.allSelectedCerts;
 		const selectedCerts = this.state.selectedCerts;
 		selectedCerts[certId] = value;
-		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+		this.updateFilterData(selectedCerts);
 	};
 
 	// seleccionar todos los credenciales para emitirlos
 	onCertificateSelectAllToggle = value => {
 		let allSelectedCerts = this.state.allSelectedCerts;
-		const certs = this.state.certs;
+		const certs = this.state.filteredCertificates;
 		const selectedCerts = this.state.selectedCerts;
 		certs.forEach(cert => {
 			if (!cert["emmitedOn"]) selectedCerts[cert._id] = value;
 		});
 		allSelectedCerts = value;
-		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+		this.updateFilterData(selectedCerts, allSelectedCerts);
 	};
 
 	onRenameModalOpen = () => {
 		if (this.renameDialog) this.renameDialog.open();
 	};
+
+	updateFilterData = selectedCerts => {
+		let allSelected = true;
+		const { filteredCertificates, certificates } = this.state;
+		filteredCertificates.forEach(cert => {
+			if (!selectedCerts[cert._id]) {
+				selectedCerts[cert._id] = false;
+				allSelected = false;
+			}
+		});
+
+		this.setState({
+			selectedCerts: selectedCerts,
+			allSelectedCerts: allSelected
+		});
+
+		const certificatesData = this.certificatesMapedToTable(filteredCertificates, selectedCerts);
+		const certColumns = this.updateColumns(certificates, selectedCerts, allSelected);
+
+		this.setState({
+			filteredCertificates: certificatesData,
+			certColumns: certColumns
+		});
+	};
+
+	updateColumns = (certificates, selectedCerts, allSelected) =>
+		CertificateTableHelper.getCertColumns(
+			certificates,
+			selectedCerts,
+			allSelected,
+			this.onCertificateSelectAllToggle,
+			this.onTemplateFilterChange,
+			this.onFirstNameFilterChange,
+			this.onLastNameFilterChange,
+			() => this.state.loading
+		);
+
+	certificatesMapedToTable = (certs, selectedCerts) =>
+		certs.map(certificate => {
+			return CertificateTableHelper.getCertificatesPendingData(
+				{ ...certificate, name: certificate.certName || certificate.name },
+				selectedCerts,
+				this.onCertificateSelectToggle,
+				this.onCertificateEmmit,
+				this.onCertificateEdit,
+				this.onCertificateDeleteDialogOpen,
+				() => this.state.loading
+			);
+		});
 
 	// actualizar seleccion de credenciales a emitir
 	updateSelectedCertsState = (certs, selectedCerts) => {
@@ -362,28 +409,8 @@ class Main extends Component {
 
 		const filteredCerts = certs.filter(item => !item.emmitedOn);
 
-		const certificates = filteredCerts.map(certificate => {
-			return CertificateTableHelper.getCertificatesPendingData(
-				certificate,
-				selectedCerts,
-				this.onCertificateSelectToggle,
-				this.onCertificateEmmit,
-				this.onCertificateEdit,
-				this.onCertificateDeleteDialogOpen,
-				() => this.state.loading
-			);
-		});
-
-		const certColumns = CertificateTableHelper.getCertColumns(
-			certificates,
-			selectedCerts,
-			allSelected,
-			this.onCertificateSelectAllToggle,
-			this.onTemplateFilterChange,
-			this.onFirstNameFilterChange,
-			this.onLastNameFilterChange,
-			() => this.state.loading
-		);
+		const certificates = this.certificatesMapedToTable(filteredCerts, selectedCerts);
+		const certColumns = this.updateColumns(certificates, selectedCerts, allSelected);
 
 		this.setState({
 			certs: certs,
@@ -582,7 +609,7 @@ class Main extends Component {
 
 		// cert = cert.filter(item => item.createdOn === "-");
 
-		this.setState({ filteredCertificates: cert });
+		this.setState({ filteredCertificates: cert }, () => this.updateFilterData(this.state.selectedCerts));
 	};
 
 	// a pantalla de edicion

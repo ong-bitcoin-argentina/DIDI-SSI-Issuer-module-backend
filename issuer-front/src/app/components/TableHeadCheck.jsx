@@ -6,7 +6,13 @@ const { SELECT } = Messages.LIST.TABLE;
 const TableHeadCheck = ({ all, selected, onChange }) => {
 	const [checked, setChecked] = useState(all);
 
-	useEffect(() => onChange(checked), [checked]);
+	useEffect(() => {
+		onChange(checked);
+	}, [checked]);
+
+	useEffect(() => {
+		setChecked(all);
+	}, [all]);
 
 	return (
 		<div className="SelectorHeader">
