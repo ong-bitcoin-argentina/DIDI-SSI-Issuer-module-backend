@@ -10,8 +10,9 @@ import Cookie from "js-cookie";
 import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
 import Notification from "../../components/Notification";
-import RevocationModal from "../../components/RevocationModal";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import RevocationSingleModal from "../../components/RevocationSingleModal";
+import RevocationAllModal from "../../components/RevocationAllModal";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -25,6 +26,8 @@ const CertificatesEmmited = () => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
 	const [activeCert, setActiveCert] = useState({});
+	const [certsToRevoke, setCertsToRevoke] = useState([]);
+	const [modalRevokeAllOpen, setModalRevokeAllOpen] = useState(false);
 	const [revokeSuccess, setRevokeSuccess] = useState(false);
 	const [revokeFail, setRevokeFail] = useState(false);
 	const [loading, setLoading] = useState(true);
@@ -32,15 +35,7 @@ const CertificatesEmmited = () => {
 
 	useEffect(() => {
 		if (data.length) {
-			const localColumns = CertificateTableHelper.getCertEmmitedColumns(
-				data,
-				selected,
-				allSelected,
-				handleSelectAllToggle,
-				onFilterChange,
-				onDateRangeFilterChange
-			);
-			setColumns(localColumns);
+			updateColumns(selected);
 			setFilteredData(data);
 			setLoading(false);
 		}
@@ -51,7 +46,7 @@ const CertificatesEmmited = () => {
 	}, []);
 
 	useEffect(() => {
-		updateCertificates(filteredData, selected);
+		updateFilterData(filteredData, selected);
 	}, [selected]);
 
 	useEffect(() => {
@@ -63,7 +58,7 @@ const CertificatesEmmited = () => {
 				filter(row, "certName", certName) &&
 				filterByDates(row, start, end)
 		);
-		setFilteredData(result);
+		updateFilterData(result, selected);
 	}, [filters]);
 
 	useEffect(() => {
@@ -75,7 +70,9 @@ const CertificatesEmmited = () => {
 	useEffect(() => {
 		if (revokeSuccess || revokeFail) {
 			setActiveCert(null);
-			toggleModal();
+			setCertsToRevoke([]);
+			setModalOpen(false);
+			setModalRevokeAllOpen(false);
 		}
 	}, [revokeSuccess, revokeFail]);
 
@@ -83,7 +80,7 @@ const CertificatesEmmited = () => {
 		setLoading(true);
 		const token = Cookie.get("token");
 		const certificates = await CertificateService.getEmmited(token);
-		updateCertificates(certificates, selected);
+		updateCertificates(certificates, selected, setData);
 	};
 
 	const onFilterChange = (e, key) => {
@@ -99,8 +96,25 @@ const CertificatesEmmited = () => {
 		setSelected(selected => ({ ...selected, [id]: checked }));
 	};
 
-	const updateCertificates = (certs, selectedCerts) => {
-		const data = certs.map(item => {
+	const updateFilterData = (certs, selectedCerts) => {
+		updateCertificates(certs, selectedCerts, setFilteredData);
+		updateColumns(selectedCerts);
+	};
+
+	const updateColumns = selectedCerts => {
+		const localColumns = CertificateTableHelper.getCertEmmitedColumns(
+			data,
+			selectedCerts,
+			allSelected,
+			handleSelectAllToggle,
+			onFilterChange,
+			onDateRangeFilterChange
+		);
+		setColumns(localColumns);
+	};
+
+	const updateCertificates = (certs, selectedCerts, updateState) => {
+		const data_ = certs.map(item => {
 			return CertificateTableHelper.getCertificatesEmmitedData(
 				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn },
 				selectedCerts,
@@ -109,7 +123,7 @@ const CertificatesEmmited = () => {
 				handleRevokeOne
 			);
 		});
-		setData(data);
+		updateState(data_);
 	};
 
 	const handleView = id => {
@@ -125,6 +139,42 @@ const CertificatesEmmited = () => {
 		setRevokeSuccess(true);
 		getData();
 	};
+
+	const catchError = async (previousFunction, handleFail) => {
+		try {
+			await previousFunction();
+		} catch (_) {
+			handleFail();
+			onRevokeFail();
+		}
+	};
+
+	const handleSubmit = (revokeReason, onSuccess, handleFail) =>
+		catchError(async () => {
+			const token = Cookie.get("token");
+			await CertificateService.revoke(token, activeCert._id, revokeReason);
+			setActiveCert({});
+			onSuccess();
+		}, handleFail);
+
+	const handleSubmitAll = (revokeReason, onSuccess, handleFail) =>
+		catchError(async () => {
+			const token = Cookie.get("token");
+			for (const cert of certsToRevoke) {
+				await CertificateService.revoke(token, cert._id, revokeReason, () => {});
+				const certsRemoved = certsToRevoke.map(c => {
+					if (c._id === cert._id) {
+						c.revoked = true;
+					}
+					return c;
+				});
+				setCertsToRevoke(certsRemoved);
+			}
+			setCertsToRevoke([]);
+			setSelected({});
+			onSuccess();
+			onRevokeSuccess();
+		}, handleFail);
 
 	const onRevokeFail = errorData => {
 		setRevokeFail(true);
@@ -142,16 +192,13 @@ const CertificatesEmmited = () => {
 		}
 	};
 
-	const toggleModal = () => {
-		setModalOpen(!modalOpen);
-	};
-
 	const handleRevokeSelected = () => {
 		const keysToRevoke = Object.keys(selected).filter(key => selected[key]);
 		if (keysToRevoke.length === 0) return;
 
 		const certsToRevoke = data.filter(t => keysToRevoke.indexOf(t._id) > -1);
-		console.log(certsToRevoke, "certsToRevoke");
+		setCertsToRevoke(certsToRevoke);
+		setModalRevokeAllOpen(true);
 	};
 
 	const handleSelectAllToggle = val => {
@@ -188,12 +235,19 @@ const CertificatesEmmited = () => {
 				</Grid>
 			</Grid>
 
-			<RevocationModal
-				cert={activeCert}
+			<RevocationSingleModal
+				activeCert={activeCert}
 				onSuccess={onRevokeSuccess}
-				onFail={onRevokeFail}
 				open={modalOpen}
-				toggleModal={toggleModal}
+				handleSubmit={handleSubmit}
+				toggleModal={() => setModalOpen(false)}
+			/>
+
+			<RevocationAllModal
+				certs={certsToRevoke}
+				open={modalRevokeAllOpen}
+				handleSubmit={handleSubmitAll}
+				toggleModal={() => setModalRevokeAllOpen(false)}
 			/>
 
 			<Notification open={revokeSuccess} message="La credencial se revocó con éxito." onClose={onCloseRevokeSuccess} />

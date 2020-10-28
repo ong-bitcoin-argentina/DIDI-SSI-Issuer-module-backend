@@ -194,18 +194,7 @@ export default class CertificateService {
 			.catch(err => errCb(err));
 	}
 
-	static revoke(token, id, reason, cb, errCb) {
-		fetch(DELETE(id), options(token, "DELETE", { reason }))
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	static revoke(token, id, reason) {
+		return fetch(DELETE(id), options(token, "DELETE", { reason }));
 	}
 }
