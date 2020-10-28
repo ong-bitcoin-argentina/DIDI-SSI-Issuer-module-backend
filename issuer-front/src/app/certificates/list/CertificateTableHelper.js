@@ -28,7 +28,8 @@ class CertificateTableHelper {
 		certName: cert.name,
 		createdOn: cert.emmitedOn ? moment(cert.emmitedOn).format(DATE_FORMAT) : "-",
 		firstName: cert.firstName,
-		lastName: cert.lastName
+		lastName: cert.lastName,
+		did: cert.did
 	});
 
 	// genera las columnas de la tabla de credencial
