@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 const RevocationSingleModal = props => {
 	const { activeCert } = props;
 	return (
-		<RevocationModal {...props}>
+		<RevocationModal {...props} title="Estás por revocar la siguiente credencial:">
 			{activeCert && (
 				<>
 					<KeyValue field={"DID"} value={activeCert.did} />

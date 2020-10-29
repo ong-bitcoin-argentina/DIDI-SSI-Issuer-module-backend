@@ -4,7 +4,7 @@ import { REVOCATION_REASONS } from "../../constants/CertificateDefinitions";
 import FormSelect from "./FormSelect";
 import PropTypes from "prop-types";
 
-const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, children }) => {
+const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, title, children }) => {
 	const [revokeReason, setRevokeReason] = useState("");
 	const [loading, setLoading] = useState(false);
 
@@ -27,7 +27,7 @@ const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, 
 	return (
 		<Dialog open={open} onClose={onClose}>
 			<DialogTitle id="form-dialog-title">
-				<div>Estás por revocar la siguiente credencial:</div>
+				<div>{title}</div>
 			</DialogTitle>
 			<DialogContent style={{ margin: "0px 0 25px" }}>
 				<div style={{ marginBottom: 25 }}>{children}</div>
