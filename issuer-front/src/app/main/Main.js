@@ -472,11 +472,28 @@ class Main extends Component {
 					self.setState({ error: err, loading: false });
 				} else {
 					self.setState({ tabIndex: 2, error: false, loading: false });
+					self.getCertificates();
 				}
 			})
 			.catch(function (err) {
 				self.setState({ error: err, loading: false });
 			});
+	};
+
+	getCertificates = () => {
+		const token = Cookie.get("token");
+		const self = this;
+		CertificateService.getAll(
+			token,
+			async function (certs) {
+				self.updateSelectedCertsState(certs, {});
+				self.setState({ lastNameFilter: "", firstNameFilter: "" });
+			},
+			function (err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
 	};
 
 	// emitir credenciales
@@ -487,13 +504,13 @@ class Main extends Component {
 		const cert = self.state.certificates.find(t => t._id === id);
 		cert.actions = <div></div>;
 		cert.select = <div></div>;
-
 		self.setState({ certs: self.state.certificates, loading: true });
 		CertificateService.emmit(
 			token,
 			id,
 			async function (_) {
 				self.setState({ tabIndex: 2, error: false, loading: false });
+				self.getCertificates();
 			},
 			function (err) {
 				console.log(err);
@@ -595,7 +612,7 @@ class Main extends Component {
 			});
 		}
 
-		if (lastNameFilter && firstNameFilter !== "") {
+		if (lastNameFilter && lastNameFilter !== "") {
 			cert = cert.filter(certData => {
 				return certData.lastName.toLowerCase().includes(lastNameFilter.toLowerCase());
 			});

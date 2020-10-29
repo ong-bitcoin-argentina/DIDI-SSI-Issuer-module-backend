@@ -7,7 +7,7 @@ const RevocationAllModal = props => {
 	const { certs } = props;
 
 	return (
-		<RevocationModal {...props} onSuccess={() => {}}>
+		<RevocationModal {...props} onSuccess={() => {}} title="Estás por revocar la siguientes credenciales:">
 			{certs.map(cert => (
 				<Typography key={cert._id} className={cert.revoked ? "green" : ""}>
 					- {cert.certName} - {`${cert.firstName} ${cert.lastName}`}
