@@ -138,6 +138,7 @@ const CertificatesEmmited = () => {
 	const onRevokeSuccess = () => {
 		setRevokeSuccess(true);
 		getData();
+		setFilters({});
 	};
 
 	const catchError = async (previousFunction, handleFail) => {
