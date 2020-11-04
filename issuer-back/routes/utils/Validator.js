@@ -51,7 +51,7 @@ let _doValidate = function (param, isHead) {
 		return validation.custom(async function (token, role) {
 			try {
 				const user = await _getUserFromToken(token);
-				if (!ALLOWED_ROLES[role].includes(user.type)) {
+				if (!Constants.ALLOWED_ROLES[role].includes(user.type)) {
 					return Promise.reject(Messages.VALIDATION.ROLES[role]);
 				}
 				return Promise.resolve(user);
