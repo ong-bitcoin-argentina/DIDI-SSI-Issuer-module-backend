@@ -19,8 +19,7 @@ export default class UserService {
 			})
 			.then(data => {
 				if (data.status === "success") {
-					const token = data.data.token;
-					return cb(token);
+					return cb(data.data);
 				} else {
 					errCb(data.data);
 				}
