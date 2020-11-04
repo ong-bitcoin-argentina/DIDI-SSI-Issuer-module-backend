@@ -15,15 +15,15 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
-		},
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			isHead: true
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (_, res) {
 		try {
 			const delegates = await DelegateService.getAll();
-			const result = delegates.map((delegate) => {
+			const result = delegates.map(delegate => {
 				return { did: delegate.did, name: delegate.name };
 			});
 			return ResponseHandler.sendRes(res, result);
@@ -42,13 +42,13 @@ router.post(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
+			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING],
-		},
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
@@ -80,12 +80,12 @@ router.delete(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
+			isHead: true
 		},
 		{
 			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING],
-		},
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
@@ -117,9 +117,9 @@ router.post(
 		{
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
+			isHead: true
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
@@ -147,9 +147,9 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
-		},
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			isHead: true
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {

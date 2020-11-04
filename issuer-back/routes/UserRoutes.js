@@ -21,9 +21,9 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		if (!process.env.ENABLE_INSECURE_ENDPOINTS) {
-			return ResponseHandler.sendErrWithStatus(res, new Error('Disabled endpoint'), 404);
+			return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 404);
 		}
 		const name = req.body.name;
 		const password = req.body.password;
@@ -48,15 +48,19 @@ router.post(
 			name: "password",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING, Constants.VALIDATION_TYPES.IS_PASSWORD],
 			length: { min: Constants.PASSWORD_MIN_LENGTH }
+		},
+		{
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const name = req.body.name;
 		const password = req.body.password;
 		try {
-			const token = await UserService.login(name, password);
-			return ResponseHandler.sendRes(res, token);
+			const user = await UserService.login(name, password);
+			return ResponseHandler.sendRes(res, user);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
