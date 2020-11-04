@@ -48,10 +48,6 @@ router.post(
 			name: "password",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING, Constants.VALIDATION_TYPES.IS_PASSWORD],
 			length: { min: Constants.PASSWORD_MIN_LENGTH }
-		},
-		{
-			name: "type",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
