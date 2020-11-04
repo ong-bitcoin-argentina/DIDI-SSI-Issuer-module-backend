@@ -29,7 +29,7 @@ const UserSchema = mongoose.Schema({
 UserSchema.index({ name: 1 });
 
 // verifica la clave
-UserSchema.methods.comparePassword = async function(candidatePassword) {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
 	try {
 		const result = Hashing.validateHash(candidatePassword, this.password);
 		return Promise.resolve(result);
@@ -40,7 +40,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
 };
 
 // actualiza la clave
-UserSchema.methods.updatePassword = async function(password) {
+UserSchema.methods.updatePassword = async function (password) {
 	const hashData = await Hashing.saltedHash(password);
 
 	const updateQuery = { _id: this._id };
@@ -61,7 +61,7 @@ const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
 // crea un nuevo usuario
-User.generate = async function(name, pass) {
+User.generate = async function (name, pass) {
 	let user;
 	try {
 		const query = { name: name, deleted: false };

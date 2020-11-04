@@ -27,8 +27,9 @@ class Login extends Component {
 		UserService.login(
 			this.state.name,
 			this.state.password,
-			async function (token) {
-				Cookie.set("token", token);
+			async function (user) {
+				Cookie.set("token", user.token);
+				Cookie.set("role", user.type);
 				self.setState({});
 			},
 			function (err) {

@@ -1,6 +1,6 @@
 import React from "react";
 import Messages from "../../../constants/Messages";
-import { DATE_FORMAT } from "../../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../../constants/Constants";
 
 import Checkbox from "@material-ui/core/Checkbox";
 import TableHeadCheck from "../../components/TableHeadCheck";
@@ -18,6 +18,9 @@ import {
 } from "../../../constants/CertificateDefinitions";
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
+import Cookie from "js-cookie";
+
+const { Observer } = Constants.ROLES;
 
 const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
 const { VIEW } = Messages.LIST.BUTTONS;
@@ -34,7 +37,8 @@ class CertificateTableHelper {
 
 	// genera las columnas de la tabla de credencial
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
-		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
+		const role = Cookie.get("role");
+		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete, enabled: role === Observer });
 
 		const onToggle = (_, value) => {
 			onSelectToggle(cert._id, value);
@@ -42,27 +46,31 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			select: (
+			select: role !== Observer && (
 				<div className="Actions">
 					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
 				</div>
 			),
 			actions: (
 				<div className="Actions">
-					{ACTIONS.map((item, index) => (
-						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip arrow title={item.label} placement="top">
-								{item.iconComponent}
-							</Tooltip>
-						</div>
-					))}
+					{ACTIONS.map(
+						(item, index) =>
+							item.enabled && (
+								<div className={item.className} onClick={item.action} key={index}>
+									<Tooltip arrow title={item.label} placement="top">
+										{item.iconComponent}
+									</Tooltip>
+								</div>
+							)
+					)}
 				</div>
 			)
 		};
 	}
 
 	static getCertificatesEmmitedData(cert, selectedCertificates, onSelectToggle, onView, onRevoke) {
-		const ACTIONS = EMMITED_ACTIONS({ cert, onView, onRevoke });
+		const role = Cookie.get("role");
+		const ACTIONS = EMMITED_ACTIONS({ cert, onView, onRevoke, enabled: role === Observer });
 
 		const onToggle = (_, value) => {
 			onSelectToggle(cert._id, value);
@@ -70,20 +78,23 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			select: (
+			select: role !== Observer && (
 				<div className="Actions">
 					<Checkbox checked={selectedCertificates[cert._id] || false} onChange={onToggle} />
 				</div>
 			),
 			actions: (
 				<div className="Actions">
-					{ACTIONS.map((item, index) => (
-						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip title={item.label} placement="top" arrow>
-								{item.iconComponent}
-							</Tooltip>
-						</div>
-					))}
+					{ACTIONS.map(
+						(item, index) =>
+							item.enabled && (
+								<div className={item.className} onClick={item.action} key={index}>
+									<Tooltip title={item.label} placement="top" arrow>
+										{item.iconComponent}
+									</Tooltip>
+								</div>
+							)
+					)}
 				</div>
 			)
 		};
@@ -122,10 +133,11 @@ class CertificateTableHelper {
 		isLoading
 	) {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
+		const role = Cookie.get("role");
 
 		const COLUMNS = EMMITED_COLUMNS({ onLastNameFilterChange, onFirstNameFilterChange });
 
-		return [
+		const LIST_COLUMNS = [
 			...COLUMNS.map(item => ({
 				Header: (
 					<div className="SelectionTable">
@@ -149,14 +161,19 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "actions"
-			},
-			{
-				Header: (
-					<TableHeadCheck selected={selectedCerts} all={allSelectedCerts} onChange={onCertificateSelectAllToggle} />
-				),
-				accessor: "select"
 			}
 		];
+
+		const select = {
+			Header: (
+				<TableHeadCheck selected={selectedCerts} all={allSelectedCerts} onChange={onCertificateSelectAllToggle} />
+			),
+			accessor: "select"
+		};
+
+		if (role !== Observer) LIST_COLUMNS.push(select);
+
+		return LIST_COLUMNS;
 	}
 
 	static getCertEmmitedColumns(
@@ -169,8 +186,9 @@ class CertificateTableHelper {
 	) {
 		// TODO: refactor this to get templates names from backend
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
+		const role = Cookie.get("role");
 
-		return [
+		const LIST_COLUMNS = [
 			...BASE_COLUMNS.map(item => ({
 				Header: <InputFilter label={item.label} onChange={onFilterChange} field={item.accessor} />,
 				accessor: item.accessor
@@ -190,12 +208,17 @@ class CertificateTableHelper {
 			{
 				Header: "Acciones",
 				accessor: "actions"
-			},
-			{
-				Header: <TableHeadCheck selected={selectedRows} all={isAllSelected} onChange={onSelectAllToggle} />,
-				accessor: "select"
 			}
 		];
+
+		const select = {
+			Header: <TableHeadCheck selected={selectedRows} all={isAllSelected} onChange={onSelectAllToggle} />,
+			accessor: "select"
+		};
+
+		if (role !== Observer) LIST_COLUMNS.push(select);
+
+		return LIST_COLUMNS;
 	}
 
 	static getCertRevokedColumns(certificates, onFilterChange) {

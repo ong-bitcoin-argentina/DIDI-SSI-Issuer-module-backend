@@ -86,7 +86,11 @@ module.exports = {
 	},
 	VALIDATION: {
 		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido." },
-		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
+		ROLES: {
+			Admin: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
+			Manager: { code: "NOT_MANAGER", message: "Esta operacion requiere privilegios de gestor." },
+			Manager: { code: "NOT_OBSERVER", message: "Esta operacion requiere privilegios de visualizador." }
+		},
 		TEMPLATE_DATA_TYPE: {
 			INVALID_DATA_TYPE: function (data) {
 				return { code: "INVALID_DATA_TYPE", message: `${data} no es una sección válida del certificado.` };

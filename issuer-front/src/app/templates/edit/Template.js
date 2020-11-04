@@ -345,11 +345,14 @@ class Template extends Component {
 
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {
+		const role = Cookie.get("role");
 		return (
 			<div className="TemplateButtons">
-				<button className="SaveButton" onClick={this.onSave}>
-					{Messages.EDIT.BUTTONS.SAVE}
-				</button>
+				{role !== Constants.ROLES.Observer && (
+					<button className="SaveButton" onClick={this.onSave}>
+						{Messages.EDIT.BUTTONS.SAVE}
+					</button>
+				)}
 				<button className="BackButton" onClick={this.onBack}>
 					{Messages.EDIT.BUTTONS.BACK}
 				</button>

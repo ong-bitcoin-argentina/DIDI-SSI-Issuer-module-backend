@@ -921,6 +921,7 @@ class Certificate extends Component {
 
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {
+		const role = Cookie.get("role");
 		return (
 			<div className="AddParticipants">
 				<div className="AddParticipantButtons">
@@ -958,14 +959,16 @@ class Certificate extends Component {
 				</div>
 
 				<div className="CertificateButtons">
-					<button
-						hidden={this.state.action === "viewing"}
-						className="SaveButton"
-						disabled={this.saveDisabled()}
-						onClick={this.onSave}
-					>
-						{Messages.EDIT.BUTTONS.SAVE}
-					</button>
+					{role !== Constants.ROLES.Observer && (
+						<button
+							hidden={this.state.action === "viewing"}
+							className="SaveButton"
+							disabled={this.saveDisabled()}
+							onClick={this.onSave}
+						>
+							{Messages.EDIT.BUTTONS.SAVE}
+						</button>
+					)}
 					<button className="BackButton" onClick={this.onBack}>
 						{Messages.EDIT.BUTTONS.BACK}
 					</button>
