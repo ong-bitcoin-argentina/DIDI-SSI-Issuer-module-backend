@@ -7,6 +7,7 @@ const Messages = require("../constants/Messages");
 const TokenService = require("./TokenService");
 
 const { toDTO } = require("../routes/utils/UserDTO");
+const Constants = require("../constants/Constants");
 
 // compara las contraseñas y retorna el resultado
 module.exports.login = async function (name, password) {
@@ -44,9 +45,10 @@ module.exports.getById = async function (userId) {
 };
 
 // crear usuario para loguearse en el issuer
-module.exports.create = async function (name, password) {
+module.exports.create = async function (name, password, type) {
 	try {
-		const user = await User.generate(name, password);
+		if (!Constants.USER_TYPES[type]) return Promise.reject(Messages.USER.ERR.TYPE);
+		const user = await User.generate(name, password, type);
 		if (!user) return Promise.reject(Messages.USER.ERR.CREATE);
 		return Promise.resolve(user);
 	} catch (err) {
