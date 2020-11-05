@@ -54,3 +54,15 @@ module.exports.create = async function (name, password) {
 		return Promise.reject(Messages.USER.ERR.CREATE);
 	}
 };
+
+// retorna todos los usuarios
+module.exports.getAll = async function () {
+	try {
+		let users = await User.getAll();
+		if (!users) return Promise.reject(Messages.USER.ERR.GET);
+		return Promise.resolve(users);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.GET);
+	}
+};
