@@ -100,3 +100,15 @@ User.generate = async function (name, pass) {
 		return Promise.reject(err);
 	}
 };
+
+// obtener todos los usuarios
+User.getAll = async function () {
+	try {
+		const query = { deleted: false };
+		const users = await User.find(query).sort({ createdOn: -1 });
+		return Promise.resolve(users);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};

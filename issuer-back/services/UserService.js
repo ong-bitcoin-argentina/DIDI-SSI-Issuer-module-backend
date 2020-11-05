@@ -67,3 +67,15 @@ module.exports.delete = async function (id) {
 		return Promise.reject(Messages.USER.ERR.DELETE);
 	}
 };
+
+// retorna todos los usuarios
+module.exports.getAll = async function () {
+	try {
+		let users = await User.getAll();
+		if (!users) return Promise.reject(Messages.USER.ERR.GET);
+		return Promise.resolve(users);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.GET);
+	}
+};

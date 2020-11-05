@@ -47,8 +47,8 @@ let _doValidate = function (param, isHead) {
 	};
 
 	// valida que el token corresponda al rol del usuario
-	let valiteTokenRole = function (validation) {
-		return validation.custom(async function (token, role) {
+	let validateTokenRole = function (validation, role) {
+		return validation.custom(async function (token) {
 			try {
 				const user = await _getUserFromToken(token);
 				if (!Constants.ALLOWED_ROLES[role].includes(user.type)) {
@@ -406,13 +406,13 @@ let _doValidate = function (param, isHead) {
 					validation = validateToken(validation);
 					break;
 				case Constants.VALIDATION_TYPES.IS_ADMIN:
-					validation = valiteTokenRole(validation, Admin);
+					validation = validateTokenRole(validation, Admin);
 					break;
 				case Constants.VALIDATION_TYPES.IS_MANAGER:
-					validation = valiteTokenRole(validation, Manager);
+					validation = validateTokenRole(validation, Manager);
 					break;
 				case Constants.VALIDATION_TYPES.IS_OBSERVER:
-					validation = valiteTokenRole(validation, Observer);
+					validation = validateTokenRole(validation, Observer);
 					break;
 				case Constants.VALIDATION_TYPES.IS_PASSWORD:
 					validation = validatePasswordIsNotCommon(validation);
