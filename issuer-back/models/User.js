@@ -57,6 +57,22 @@ UserSchema.methods.updatePassword = async function (password) {
 	}
 };
 
+// marca usuario como borrado
+UserSchema.methods.delete = async function () {
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: { deleted: true }
+	};
+
+	try {
+		await User.findOneAndUpdate(updateQuery, updateAction);
+		this.deleted = true;
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 

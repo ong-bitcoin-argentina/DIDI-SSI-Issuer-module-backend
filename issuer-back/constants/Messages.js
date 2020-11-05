@@ -36,7 +36,8 @@ module.exports = {
 			CREATE: { code: "USER_CREATE", message: "El usuario no pudo ser creado." },
 			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido." },
 			SET_NAME: { code: "DELEGATE_SET_NAME", message: "El delegado no pudo ser verificado." },
-			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." }
+			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." },
+			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." }
 		}
 	},
 	CERT: {

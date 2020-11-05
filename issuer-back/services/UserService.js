@@ -55,6 +55,19 @@ module.exports.create = async function (name, password) {
 	}
 };
 
+// marca un usuario como borrado
+module.exports.delete = async function (id) {
+	try {
+		let user = await User.findOne({ _id: ObjectId(id), deleted: false });
+		user = await user.delete();
+		if (!user) return Promise.reject(Messages.USER.ERR.DELETE);
+		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.DELETE);
+	}
+};
+
 // retorna todos los usuarios
 module.exports.getAll = async function () {
 	try {
