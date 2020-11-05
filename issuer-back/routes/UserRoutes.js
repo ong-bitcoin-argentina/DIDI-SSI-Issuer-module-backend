@@ -5,6 +5,7 @@ const UserService = require("../services/UserService");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
+const UserDTO = require("./utils/UserDTO");
 
 /**
  *	Genera un usuario para el issuer
@@ -68,6 +69,55 @@ router.post(
 			const user = await UserService.login(name, password);
 			return ResponseHandler.sendRes(res, user);
 		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ *	Marca un usuario como borrado
+ */
+router.delete(
+	"/:id",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		const id = req.params.id;
+		try {
+			const user = await UserService.delete(id);
+			return ResponseHandler.sendRes(res, UserDTO.toDTO(user));
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/*
+ *	retorna la lista de todos los usuarios
+ */
+router.get(
+	"/all",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		try {
+			const users = await UserService.getAll();
+			const result = users.map(user => UserDTO.toDTO(user));
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			console.log(err);
 			return ResponseHandler.sendErr(res, err);
 		}
 	}

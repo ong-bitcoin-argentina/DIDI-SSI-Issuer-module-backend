@@ -57,6 +57,22 @@ UserSchema.methods.updatePassword = async function (password) {
 	}
 };
 
+// marca usuario como borrado
+UserSchema.methods.delete = async function () {
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: { deleted: true }
+	};
+
+	try {
+		await User.findOneAndUpdate(updateQuery, updateAction);
+		this.deleted = true;
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
@@ -77,6 +93,18 @@ User.generate = async function (name, pass, type) {
 
 		user = await user.save();
 		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+// obtener todos los usuarios
+User.getAll = async function () {
+	try {
+		const query = { deleted: false };
+		const users = await User.find(query).sort({ createdOn: -1 });
+		return Promise.resolve(users);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

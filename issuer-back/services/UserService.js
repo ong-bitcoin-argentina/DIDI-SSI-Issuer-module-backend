@@ -56,3 +56,28 @@ module.exports.create = async function (name, password, type) {
 		return Promise.reject(Messages.USER.ERR.CREATE);
 	}
 };
+
+// marca un usuario como borrado
+module.exports.delete = async function (id) {
+	try {
+		let user = await User.findOne({ _id: ObjectId(id), deleted: false });
+		user = await user.delete();
+		if (!user) return Promise.reject(Messages.USER.ERR.DELETE);
+		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.DELETE);
+	}
+};
+
+// retorna todos los usuarios
+module.exports.getAll = async function () {
+	try {
+		let users = await User.getAll();
+		if (!users) return Promise.reject(Messages.USER.ERR.GET);
+		return Promise.resolve(users);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.GET);
+	}
+};
