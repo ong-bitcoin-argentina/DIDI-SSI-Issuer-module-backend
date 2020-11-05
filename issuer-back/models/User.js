@@ -77,7 +77,7 @@ const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
 // crea un nuevo usuario
-User.generate = async function (name, pass) {
+User.generate = async function (name, pass, type) {
 	let user;
 	try {
 		const query = { name: name, deleted: false };
@@ -89,9 +89,7 @@ User.generate = async function (name, pass) {
 		user.name = name;
 		user.deleted = false;
 		user.createdOn = new Date();
-
-		// TODO user types
-		user.type = Constants.USER_TYPES.Admin;
+		user.type = type;
 
 		user = await user.save();
 		return Promise.resolve(user);
