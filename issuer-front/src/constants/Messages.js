@@ -125,7 +125,8 @@ module.exports = {
 			EDIT: "Editar",
 			DELETE: "Borrar",
 			REVOKE: "Revocar",
-			EXIT: "Salir"
+			EXIT: "Salir",
+			USERS: "Usuarios"
 		}
 	},
 	QR: {
