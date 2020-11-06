@@ -4,89 +4,61 @@ import React, { useEffect, useState } from "react";
 import ReactTable from "react-table-6";
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
+import UserService from "../../services/UserService";
 import CreateUserModal from "../components/CreateUserModal";
-import Spinner from "../utils/Spinner";
+import Cookie from "js-cookie";
 import { getUserColumns, getUserData } from "./user-table-helper";
-
-const MOCK_DATA = [
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	},
-	{
-		name: "Uriel",
-		type: "Admin",
-		onCreated: new Date()
-	}
-];
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
 	const [users, setUsers] = useState([]);
 	const [error, setError] = useState("");
 	const [modalOpen, setModalOpen] = useState(false);
-
-	const getUsersData = async () => {
-		setLoading(true);
-		setUsers(MOCK_DATA);
-		setLoading(false);
-	};
+	const [openEdit, setOpenEdit] = useState(false);
+	const [userEdit, setUserEdit] = useState({});
 
 	useEffect(() => {
 		setError("");
 		getUsersData();
 	}, []);
 
-	const onDelete = user => {
+	const getUsersData = async () => {
+		const token = Cookie.get("token");
+		setLoading(true);
 		try {
+			const users_ = await UserService.getAll(token);
+			setUsers(users_);
+		} catch (error) {
+			setError(error.message);
+		}
+		setLoading(false);
+	};
+
+	const createUser = async user => {
+		try {
+			const token = Cookie.get("token");
+			await UserService.create(token, user);
+			await getUsersData();
+		} catch (error) {
+			setError(error.message);
+		}
+	};
+
+	const onDelete = async user => {
+		try {
+			const token = Cookie.get("token");
 			console.log(user);
-			//delete
-			getUsersData();
+			await UserService.delete(token, user._id);
+			await getUsersData();
 			setError("");
 		} catch (error) {
 			setError(error.message);
 		}
+	};
+
+	const onEdit = user => {
+		setUserEdit(user);
+		setOpenEdit(true);
 	};
 
 	return (
@@ -106,13 +78,20 @@ const UserList = () => {
 					sortable={false}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
-					data={users.map(user => getUserData(user, onDelete))}
+					data={users.map(user => getUserData(user, onDelete, onEdit))}
 					columns={getUserColumns}
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 				/>
 			)}
 			{error && <div className="errMsg">{error}</div>}
-			<CreateUserModal open={modalOpen} close={() => setModalOpen(false)} onSuccess={getUsersData} />
+			<CreateUserModal title="Crear" open={modalOpen} close={() => setModalOpen(false)} onSubmit={createUser} />
+			<CreateUserModal
+				title="Editar"
+				open={openEdit}
+				userData={userEdit}
+				close={() => setOpenEdit(false)}
+				onSubmit={() => {}}
+			/>
 		</>
 	);
 };

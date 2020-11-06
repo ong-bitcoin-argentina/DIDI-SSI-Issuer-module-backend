@@ -2,7 +2,7 @@ import React from "react";
 import { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
-import { AssignmentLate } from "@material-ui/icons";
+import { AssignmentLate, Edit } from "@material-ui/icons";
 
 const COLUMNS_NAME = [
 	{
@@ -32,14 +32,19 @@ export const getUserColumns = COLUMNS_NAME.map(({ name, title }) => ({
 	accessor: name
 }));
 
-export const getUserData = (user, onDelete) => {
+export const getUserData = (user, onDelete, onEdit) => {
 	return {
 		...user,
 		onCreated: (
-			<div style={{ textAlign: "center" }}>{user.onCreated ? moment(user.emmitedOn).format(DATE_FORMAT) : "-"}</div>
+			<div style={{ textAlign: "center" }}>{user.onCreated ? moment(user.onCreated).format(DATE_FORMAT) : "-"}</div>
 		),
 		actions: (
 			<div className="Actions">
+				<div className="EditAction" onClick={() => onEdit(user)}>
+					<Tooltip title="Editar" placement="top" arrow>
+						<Edit fontSize="medium" />
+					</Tooltip>
+				</div>
 				<div className="DeleteAction" onClick={() => onDelete(user)}>
 					<Tooltip title="Borrar" placement="top" arrow>
 						<AssignmentLate fontSize="medium" />
