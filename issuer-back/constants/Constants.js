@@ -27,7 +27,12 @@ const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
 console.log(MONGO_URL);
 
-const USER_TYPES = { Admin: "Admin" };
+const USER_TYPES = { Admin: "Admin", Manager: "Manager", Observer: "Observer" };
+const ALLOWED_ROLES = {
+	Admin: ["Admin"],
+	Manager: ["Admin", "Manager"],
+	Observer: ["Admin", "Manager", "Observer"]
+};
 const CERT_FIELD_TYPES = {
 	Text: "Text",
 	Paragraph: "Paragraph",
@@ -57,6 +62,8 @@ module.exports = {
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ARRAY: "isArray",
 		IS_ADMIN: "isAdmin",
+		IS_MANAGER: "isManager",
+		IS_OBSERVER: "isObserver",
 		IS_STRING: "isString",
 		IS_BOOLEAN: "isBoolean",
 		IS_PASSWORD: "isPassword",
@@ -109,6 +116,8 @@ module.exports = {
 
 	CERT_CATEGORY_MAPPING: CERT_CATEGORY_MAPPING,
 	CERT_CATEGORY_TYPES: CERT_CATEGORY_TYPES,
+
+	ALLOWED_ROLES: ALLOWED_ROLES,
 
 	CERT_FIELD_TYPES: CERT_FIELD_TYPES,
 	CERT_FIELD_MANDATORY: {

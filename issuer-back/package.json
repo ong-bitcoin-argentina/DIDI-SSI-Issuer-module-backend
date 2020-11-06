@@ -38,7 +38,7 @@
 		"jsonwebtoken": "8.5.1",
 		"lodash.pick": "4.4.0",
 		"mongoose": "5.9.2",
-		"node-fetch": "2.6.0",
+		"node-fetch": "2.6.1",
 		"node-pre-gyp": "0.14.0",
 		"node-rsa": "1.0.7",
 		"nodemon": "2.0.2",

@@ -6,6 +6,7 @@ const { header, body, validationResult } = require("express-validator");
 const TemplateService = require("../../services/TemplateService");
 const TokenService = require("../../services/TokenService");
 const UserService = require("../../services/UserService");
+const { USER_TYPES } = require("../../constants/Constants");
 
 // ejecuta validaciones generadas por "validate"
 module.exports.checkValidationResult = function (req, res, next) {
@@ -45,12 +46,14 @@ let _doValidate = function (param, isHead) {
 		}
 	};
 
-	// valida que el token corresponda a un usuario administrador
-	let validateTokenCorrespondsToAdmin = function (validation) {
+	// valida que el token corresponda al rol del usuario
+	let validateTokenRole = function (validation, role) {
 		return validation.custom(async function (token) {
 			try {
 				const user = await _getUserFromToken(token);
-				if (user.type !== Constants.USER_TYPES.Admin) return Promise.reject(Messages.VALIDATION.NOT_ADMIN);
+				if (!Constants.ALLOWED_ROLES[role].includes(user.type)) {
+					return Promise.reject(Messages.VALIDATION.ROLES[role]);
+				}
 				return Promise.resolve(user);
 			} catch (err) {
 				return Promise.reject(err);
@@ -396,13 +399,20 @@ let _doValidate = function (param, isHead) {
 	let validation = createValidation(param.name, isHead, param.optional);
 
 	if (param.validate && param.validate.length) {
+		const { Admin, Manager, Observer } = Constants.USER_TYPES;
 		param.validate.forEach(validationType => {
 			switch (validationType) {
 				case Constants.TOKEN_MATCHES_USER_ID:
 					validation = validateToken(validation);
 					break;
 				case Constants.VALIDATION_TYPES.IS_ADMIN:
-					validation = validateTokenCorrespondsToAdmin(validation);
+					validation = validateTokenRole(validation, Admin);
+					break;
+				case Constants.VALIDATION_TYPES.IS_MANAGER:
+					validation = validateTokenRole(validation, Manager);
+					break;
+				case Constants.VALIDATION_TYPES.IS_OBSERVER:
+					validation = validateTokenRole(validation, Observer);
 					break;
 				case Constants.VALIDATION_TYPES.IS_PASSWORD:
 					validation = validatePasswordIsNotCommon(validation);

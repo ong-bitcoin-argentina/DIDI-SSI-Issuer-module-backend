@@ -29,7 +29,7 @@ const UserSchema = mongoose.Schema({
 UserSchema.index({ name: 1 });
 
 // verifica la clave
-UserSchema.methods.comparePassword = async function(candidatePassword) {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
 	try {
 		const result = Hashing.validateHash(candidatePassword, this.password);
 		return Promise.resolve(result);
@@ -40,7 +40,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
 };
 
 // actualiza la clave
-UserSchema.methods.updatePassword = async function(password) {
+UserSchema.methods.updatePassword = async function (password) {
 	const hashData = await Hashing.saltedHash(password);
 
 	const updateQuery = { _id: this._id };
@@ -57,11 +57,27 @@ UserSchema.methods.updatePassword = async function(password) {
 	}
 };
 
+// marca usuario como borrado
+UserSchema.methods.delete = async function () {
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: { deleted: true }
+	};
+
+	try {
+		await User.findOneAndUpdate(updateQuery, updateAction);
+		this.deleted = true;
+		return Promise.resolve(this);
+	} catch (err) {
+		return Promise.reject(err);
+	}
+};
+
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
 // crea un nuevo usuario
-User.generate = async function(name, pass) {
+User.generate = async function (name, pass, type) {
 	let user;
 	try {
 		const query = { name: name, deleted: false };
@@ -73,12 +89,22 @@ User.generate = async function(name, pass) {
 		user.name = name;
 		user.deleted = false;
 		user.createdOn = new Date();
-
-		// TODO user types
-		user.type = Constants.USER_TYPES.Admin;
+		user.type = type;
 
 		user = await user.save();
 		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+// obtener todos los usuarios
+User.getAll = async function () {
+	try {
+		const query = { deleted: false };
+		const users = await User.find(query).sort({ createdOn: -1 });
+		return Promise.resolve(users);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

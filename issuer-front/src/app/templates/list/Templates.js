@@ -79,9 +79,10 @@ class Templates extends Component {
 	// muestra boton de creacion de modelos de credenciales
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
+		const role = this.props.role;
 		return (
 			<div className="HeadButtons">
-				{selected && (
+				{selected && role !== Constants.ROLES.Observer && (
 					<button
 						className="CreateButton TemplateCreateButton"
 						disabled={loading}

@@ -12,6 +12,7 @@ import Spinner from "../../utils/Spinner";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
 
+const { Observer } = Constants.ROLES;
 class Certificates extends Component {
 	constructor(props) {
 		super(props);
@@ -96,16 +97,19 @@ class Certificates extends Component {
 	// muestra boton de creacion de credencial
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
+		const role = this.props.role;
 		return (
-			<div className="HeadButtons">
-				{this.renderButtons(loading)}
-				{selected && (
-					<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
-						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="CreateButtonText EmmitCertText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
-					</button>
-				)}
-			</div>
+			role !== Constants.ROLES.Observer && (
+				<div className="HeadButtons">
+					{this.renderButtons(loading)}
+					{selected && (
+						<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
+							<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+							<div className="CreateButtonText EmmitCertText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
+						</button>
+					)}
+				</div>
+			)
 		);
 	};
 

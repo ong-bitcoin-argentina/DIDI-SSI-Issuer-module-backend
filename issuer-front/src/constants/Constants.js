@@ -182,7 +182,7 @@ module.exports = {
 			FULL_NAME: "NOMBRE COMPLETO",
 			PARTICIPANT_FIRST_NAME: "NOMBRE",
 			PARTICIPANT_LAST_NAME: "APELLIDO",
-      NAME: "CREDENCIAL"
+			NAME: "CREDENCIAL"
 		}
 	},
 
@@ -220,7 +220,7 @@ module.exports = {
 		EDIT: {
 			PARTICIPANT_SELECT: "SELECCIONAR PARTICIPANTE",
 			SPLIT: "GENERAR MICROCREDENCIALES",
-      TEMPLATE_SELECT: "CREDENCIAL"
+			TEMPLATE_SELECT: "CREDENCIAL"
 		},
 		TABLE: {
 			PAGE_SIZE: 10,
@@ -234,5 +234,10 @@ module.exports = {
 		}
 	},
 
-	DATE_FORMAT: "YYYY-MM-DD"
+	DATE_FORMAT: "YYYY-MM-DD",
+	ROLES: {
+		Admin: "Admin",
+		Manager: "Manager",
+		Observer: "Observer"
+	}
 };

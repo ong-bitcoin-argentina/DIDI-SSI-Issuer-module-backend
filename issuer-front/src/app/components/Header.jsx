@@ -11,6 +11,7 @@ const { RENAME_ISSUER, EXIT } = Messages.EDIT.BUTTONS;
 const Header = ({ onRenameModalOpen }) => {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const history = useHistory();
+	const role = Cookie.get("role");
 
 	const onMenuOpen = event => {
 		setAnchorEl(event.currentTarget);
@@ -22,6 +23,7 @@ const Header = ({ onRenameModalOpen }) => {
 
 	const onLogout = () => {
 		Cookie.set("token", "");
+		Cookie.set("role", "");
 		history.push(Constants.ROUTES.LOGIN);
 	};
 
@@ -32,7 +34,7 @@ const Header = ({ onRenameModalOpen }) => {
 				Menu
 			</Button>
 			<Menu id="simple-menu" keepMounted anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onMenuClose}>
-				<MenuItem onClick={onRenameModalOpen}>{RENAME_ISSUER}</MenuItem>
+				{role === Constants.ROLES.Admin && <MenuItem onClick={onRenameModalOpen}>{RENAME_ISSUER}</MenuItem>}
 				<MenuItem onClick={onLogout}>{EXIT}</MenuItem>
 			</Menu>
 		</div>

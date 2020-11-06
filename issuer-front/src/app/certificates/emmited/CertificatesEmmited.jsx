@@ -206,19 +206,24 @@ const CertificatesEmmited = () => {
 		setAllSelected(val);
 	};
 
+	const role = Cookie.get("role");
+	const { Observer } = Constants.ROLES;
+
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
-				<Grid item xs={12} className="flex-end">
-					<button
-						className="DangerButton"
-						onClick={handleRevokeSelected}
-						disabled={!Object.values(selected).some(val => val)}
-					>
-						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-						Revocar Credenciales Seleccionadas
-					</button>
-				</Grid>
+				{role !== Observer && (
+					<Grid item xs={12} className="flex-end">
+						<button
+							className="DangerButton"
+							onClick={handleRevokeSelected}
+							disabled={!Object.values(selected).some(val => val)}
+						>
+							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
+							Revocar Credenciales Seleccionadas
+						</button>
+					</Grid>
+				)}
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable

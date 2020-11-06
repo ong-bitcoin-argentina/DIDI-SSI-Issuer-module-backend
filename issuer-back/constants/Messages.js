@@ -36,7 +36,9 @@ module.exports = {
 			CREATE: { code: "USER_CREATE", message: "El usuario no pudo ser creado." },
 			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido." },
 			SET_NAME: { code: "DELEGATE_SET_NAME", message: "El delegado no pudo ser verificado." },
-			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." }
+			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." },
+			TYPE: { code: "INVALID_TYPE", message: "El tipo elegido para el usuario no es valido." },
+			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." }
 		}
 	},
 	CERT: {
@@ -86,7 +88,11 @@ module.exports = {
 	},
 	VALIDATION: {
 		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido." },
-		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
+		ROLES: {
+			Admin: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
+			Manager: { code: "NOT_MANAGER", message: "Esta operacion requiere privilegios de gestor." },
+			Manager: { code: "NOT_OBSERVER", message: "Esta operacion requiere privilegios de visualizador." }
+		},
 		TEMPLATE_DATA_TYPE: {
 			INVALID_DATA_TYPE: function (data) {
 				return { code: "INVALID_DATA_TYPE", message: `${data} no es una sección válida del certificado.` };

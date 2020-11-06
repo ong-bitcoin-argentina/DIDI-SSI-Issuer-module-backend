@@ -16,7 +16,7 @@ const { checkValidationResult, validate } = Validator;
 /**
  *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
  */
-router.get("/all", validate([TOKEN_VALIDATION]), checkValidationResult, async function (_, res) {
+router.get("/all", validate([TOKEN_VALIDATION.Observer]), checkValidationResult, async function (_, res) {
 	try {
 		const certs = await CertService.getAll();
 		const result = toDTO(certs);
@@ -30,7 +30,7 @@ router.get("/all", validate([TOKEN_VALIDATION]), checkValidationResult, async fu
 /**
  *	lista de certificados emitidos
  */
-router.get("/find", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
+router.get("/find", validate([TOKEN_VALIDATION.Observer]), checkValidationResult, async function (req, res) {
 	try {
 		const result = await CertService.findBy(req.query);
 		return ResponseHandler.sendRes(res, result);
@@ -47,7 +47,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
@@ -81,7 +81,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		},
 		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -135,7 +135,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		},
 		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -197,7 +197,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		}
 	]),
@@ -244,7 +244,10 @@ router.post(
 /**
  * usar con precaucion
  */
-router.post("/updateAllDeleted", validate([TOKEN_VALIDATION]), checkValidationResult, async function (req, res) {
+router.post("/updateAllDeleted", validate([TOKEN_VALIDATION.Manager]), checkValidationResult, async function (
+	req,
+	res
+) {
 	try {
 		const result = await CertService.updateAllDeleted();
 		return ResponseHandler.sendRes(res, result);

@@ -54,6 +54,8 @@ const {
 	USERS
 } = Messages.LIST.BUTTONS;
 
+const { Admin, Observer } = Constants.ROLES;
+
 class Main extends Component {
 	constructor(props) {
 		super(props);
@@ -717,6 +719,7 @@ class Main extends Component {
 	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
+		Cookie.set("role", "");
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
@@ -728,6 +731,7 @@ class Main extends Component {
 
 		const { loading, tabIndex, error, anchorEl } = this.state;
 		const selectedIndex = tabIndex ?? 0;
+		const role = Cookie.get("role");
 
 		return (
 			<div className="MainContent">
@@ -741,8 +745,8 @@ class Main extends Component {
 						<Tab disabled={loading && tabIndex !== 1}>{TO_CERTIFICATES_PENDING}</Tab>
 						<Tab disabled={loading && tabIndex !== 2}>{TO_CERTIFICATES}</Tab>
 						<Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>
-						<Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>
-						<Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>
+						{role !== Observer && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
+						{role === Admin && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
 						<Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>
 					</TabList>
 
@@ -756,6 +760,7 @@ class Main extends Component {
 							error={error}
 							onCreate={this.onTemplateCreate}
 							onDelete={this.onTemplateDelete}
+							role={role}
 						/>
 					</TabPanel>
 					<TabPanel>
@@ -768,6 +773,7 @@ class Main extends Component {
 							onMultiEmmit={this.onCertificateMultiEmmit}
 							onDelete={this.onCertificateDelete}
 							error={error}
+							role={role}
 						/>
 					</TabPanel>
 					<TabPanel>
@@ -776,33 +782,36 @@ class Main extends Component {
 					<TabPanel>
 						<CertificatesRevoked />
 					</TabPanel>
-					<TabPanel>
-						<Participants
-							selected={this.state.tabIndex === 4}
-							loading={loading}
-							templates={this.state.templates}
-							participants={this.state.participants}
-							columns={this.state.participantColumns}
-							error={error}
-							onReload={this.onParticipantsReload}
-							selectedParticipants={this.state.selectedParticipants}
-						/>
-					</TabPanel>
-
-					<TabPanel>
-						<Delegates
-							onRef={ref => (this.delegatesSection = ref)}
-							loading={loading}
-							selected={this.state.tabIndex === 5}
-							delegates={this.state.delegates}
-							columns={this.state.delegateColumns}
-							onRename={this.onIssuerRename}
-							onCreate={this.onDelegateCreate}
-							onDelete={this.onDelegateDelete}
-							issuerName={this.state.issuerName}
-							error={error}
-						/>
-					</TabPanel>
+					{role !== Observer && (
+						<TabPanel>
+							<Participants
+								selected={this.state.tabIndex === 4}
+								loading={loading}
+								templates={this.state.templates}
+								participants={this.state.participants}
+								columns={this.state.participantColumns}
+								error={error}
+								onReload={this.onParticipantsReload}
+								selectedParticipants={this.state.selectedParticipants}
+							/>
+						</TabPanel>
+					)}
+					{role === Admin && (
+						<TabPanel>
+							<Delegates
+								onRef={ref => (this.delegatesSection = ref)}
+								loading={loading}
+								selected={this.state.tabIndex === 5}
+								delegates={this.state.delegates}
+								columns={this.state.delegateColumns}
+								onRename={this.onIssuerRename}
+								onCreate={this.onDelegateCreate}
+								onDelete={this.onDelegateDelete}
+								issuerName={this.state.issuerName}
+								error={error}
+							/>
+						</TabPanel>
+					)}
 					<TabPanel>
 						<UserList />
 					</TabPanel>

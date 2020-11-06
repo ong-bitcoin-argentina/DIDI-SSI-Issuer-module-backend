@@ -6,39 +6,58 @@ import { Edit, Delete, AssignmentTurnedIn, Visibility, AssignmentLate } from "@m
 const { LAST_NAME, NAME } = Messages.LIST.TABLE;
 const { EMMIT, DELETE, EDIT, VIEW, REVOKE } = Messages.LIST.BUTTONS;
 
-export const PENDING_ACTIONS = ({ cert, onEmmit, onEdit, onDelete }) => [
+export const PENDING_ACTIONS = ({ cert, onEmmit, onEdit, onDelete, enabled }) => [
+	{
+		className: "EditAction",
+		action: () => onEdit(cert._id),
+		label: VIEW,
+		enabled: enabled,
+		iconComponent: <Visibility fontSize="medium" />
+	},
 	{
 		className: "EmmitAction",
 		action: () => onEmmit(cert._id),
 		label: EMMIT,
+		enabled: !enabled,
 		iconComponent: <AssignmentTurnedIn fontSize="medium" />
 	},
 	{
 		className: "EditAction",
 		action: () => onEdit(cert._id),
 		label: EDIT,
+		enabled: !enabled,
 		iconComponent: <Edit fontSize="medium" />
 	},
 	{
 		className: "DeleteAction",
 		action: () => onDelete(cert._id),
 		label: DELETE,
+		enabled: !enabled,
 		iconComponent: <Delete fontSize="medium" />
 	}
 ];
 
-export const EMMITED_ACTIONS = ({ cert, onView, onRevoke }) => [
+export const EMMITED_ACTIONS = ({ cert, onView, onRevoke, enabled }) => [
 	{
 		className: "EditAction",
 		action: () => onView(cert._id),
 		iconComponent: <Visibility fontSize="medium" />,
-		label: VIEW
+		label: VIEW,
+		enabled: enabled
+	},
+	{
+		className: "EditAction",
+		action: () => onView(cert._id),
+		iconComponent: <Visibility fontSize="medium" />,
+		label: VIEW,
+		enabled: !enabled
 	},
 	{
 		className: "DeleteAction",
 		action: () => onRevoke(cert),
 		iconComponent: <AssignmentLate fontSize="medium" />,
-		label: REVOKE
+		label: REVOKE,
+		enabled: !enabled
 	}
 ];
 

@@ -15,13 +15,13 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
 
-	async function(_, res) {
+	async function (_, res) {
 		try {
 			const partDids = await ParticipantService.getAllDids();
 			const result = [];
@@ -42,14 +42,14 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(_, res) {
+	async function (_, res) {
 		// retorna true si en names hay algun nombre correspondiente a uno de los campos de partData
-		const containsData = function(partData, names) {
+		const containsData = function (partData, names) {
 			return partData.data.find(data => names.indexOf(data.name) >= 0) !== undefined;
 		};
 
@@ -98,12 +98,12 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const templateId = req.params.templateId;
 		try {
 			const participants = await ParticipantService.getAllByTemplateId(templateId);
@@ -126,12 +126,12 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const requestCode = req.params.requestCode;
 		try {
 			const participant = await ParticipantService.getByRequestCode(requestCode);
@@ -150,12 +150,12 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const did = req.params.did;
 		try {
 			const participant = await ParticipantService.getByDid(did);
@@ -175,7 +175,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		},
 		{
@@ -184,7 +184,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const data = req.body.data;
 		// const dids = data.map(dataElem => dataElem.did);
 		try {
@@ -208,7 +208,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -219,7 +219,7 @@ router.put(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		const name = req.body.name;
 		const templateId = req.body.templateId;
@@ -242,12 +242,12 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 
 		try {
@@ -268,7 +268,7 @@ router.post(
 	"/:requestCode",
 	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const requestCode = req.params.requestCode;
 		const jwt = req.body.access_token;
 
@@ -310,7 +310,7 @@ router.post(
 	"/:templateId/:requestCode",
 	Validator.validate([{ name: "access_token", validate: [Constants.VALIDATION_TYPES.IS_STRING] }]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const requestCode = req.params.requestCode;
 		const templateId = req.params.templateId;
 		const jwt = req.body.access_token;
