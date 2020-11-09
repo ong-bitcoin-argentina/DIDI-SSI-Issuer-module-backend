@@ -27,7 +27,7 @@ export default class UserService {
 			.catch(err => errCb(err));
 	}
 
-	static getAll(token) {
+	static async getAll(token) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -36,7 +36,8 @@ export default class UserService {
 			}
 		};
 
-		return fetch(Constants.API_ROUTES.USER.GET_ALL, data);
+		const data_ = await fetch(Constants.API_ROUTES.USER.GET_ALL, data);
+		return data_.json();
 	}
 
 	static create(token, body) {
