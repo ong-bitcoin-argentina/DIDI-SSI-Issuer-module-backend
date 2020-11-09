@@ -75,7 +75,7 @@ class Delegates extends Component {
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
 				title={Messages.LIST.DIALOG.DELETE_DELEGATE_TITLE}
-				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION("el Delegado")}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
 			/>

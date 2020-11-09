@@ -74,7 +74,7 @@ module.exports = {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
 			},
-			DELETE_CONFIRMATION: "¿Esta seguro que desea eliminar el Credencial?",
+			DELETE_CONFIRMATION: title => `¿Está seguro que desea eliminar ${title}?`,
 			DELETE_CERT_TITLE: "Borrar Credencial",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
 			DELETE_DELEGATE_TITLE: "Borrar Delegado",
