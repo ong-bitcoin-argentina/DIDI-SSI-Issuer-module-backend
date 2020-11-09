@@ -11,6 +11,7 @@ import Messages from "../../../constants/Messages";
 import Spinner from "../../utils/Spinner";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 
 const { Observer } = Constants.ROLES;
 class Certificates extends Component {
@@ -136,11 +137,19 @@ class Certificates extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
-			<div className="CertButtons mr-2">
-				<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
-					<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
-				</button>
-			</div>
+			<>
+				<div className="CertButtons mr-2">
+					<button className="DangerButton" onClick={this.props.onDeleteSelects}>
+						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
+						Eliminar Credenciales Seleccionadas
+					</button>
+				</div>
+				<div className="CertButtons mr-2">
+					<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
+						<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
+					</button>
+				</div>
+			</>
 		);
 	};
 }
