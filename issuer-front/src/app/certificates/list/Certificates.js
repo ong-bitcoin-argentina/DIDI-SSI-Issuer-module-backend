@@ -74,7 +74,7 @@ class Certificates extends Component {
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
 				title={Messages.LIST.DIALOG.DELETE_CERT_TITLE}
-				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION("la Credencial")}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
 			/>

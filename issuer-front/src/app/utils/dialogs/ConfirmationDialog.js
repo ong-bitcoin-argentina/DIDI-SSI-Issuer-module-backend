@@ -57,13 +57,15 @@ export default class ConfirmationDialog extends Component {
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
 					<div className="DeleteMessage">
-						<span class="material-icons">delete_outline</span>
+						<span class="material-icons" style={{ marginBottom: "25px" }}>
+							delete_outline
+						</span>
 						{message}
 					</div>
 				</DialogContent>
 				<DialogActions>
 					{!hideClose && (
-						<Button className="CloseModalButton" onClick={this.close} color="primary">
+						<Button className="CloseModalButton" onClick={this.close} color="secondary">
 							{Messages.LIST.DIALOG.CANCEL}
 						</Button>
 					)}
@@ -74,6 +76,7 @@ export default class ConfirmationDialog extends Component {
 							this.close();
 						}}
 						color="primary"
+						variant="contained"
 					>
 						{confirm}
 					</Button>
