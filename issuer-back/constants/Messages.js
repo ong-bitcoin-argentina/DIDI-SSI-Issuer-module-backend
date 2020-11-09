@@ -38,7 +38,8 @@ module.exports = {
 			SET_NAME: { code: "DELEGATE_SET_NAME", message: "El delegado no pudo ser verificado." },
 			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." },
 			TYPE: { code: "INVALID_TYPE", message: "El tipo elegido para el usuario no es valido." },
-			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." }
+			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." },
+			EDIT: { code: "USER_EDIT", message: "El modelo de usuario no pudo ser editado." }
 		}
 	},
 	CERT: {

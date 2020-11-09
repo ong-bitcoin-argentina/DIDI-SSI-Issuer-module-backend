@@ -81,3 +81,17 @@ module.exports.getAll = async function () {
 		return Promise.reject(Messages.USER.ERR.GET);
 	}
 };
+
+// Edita un usuario y lo retorna
+module.exports.edit = async function (id, name, password, type) {
+	try {
+		if (!Constants.USER_TYPES[type]) return Promise.reject(Messages.USER.ERR.TYPE);
+		let user = await this.getById(id);
+		user = await user.edit(name, password, type);
+		if (!user) return Promise.reject(Messages.USER.ERR.EDIT);
+		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.EDIT);
+	}
+};
