@@ -32,6 +32,7 @@ import InputDialog from "../utils/dialogs/InputDialog";
 import CertificatesEmmited from "../certificates/emmited/CertificatesEmmited";
 import CertificatesRevoked from "../certificates/revoked/CertificatesRevoked";
 import Header from "../components/Header";
+import UserList from "../users/user-list";
 
 const TABS = {
 	list: 0,
@@ -49,7 +50,8 @@ const {
 	TO_QR,
 	TO_TEMPLATES,
 	DELEGATES,
-	TO_CERTIFICATES_PENDING
+	TO_CERTIFICATES_PENDING,
+	USERS
 } = Messages.LIST.BUTTONS;
 
 const { Admin, Observer } = Constants.ROLES;
@@ -745,6 +747,7 @@ class Main extends Component {
 						<Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>
 						{role !== Observer && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
 						{role === Admin && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
+						{role === Admin && <Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>}
 					</TabList>
 
 					<TabPanel>
@@ -794,20 +797,25 @@ class Main extends Component {
 						</TabPanel>
 					)}
 					{role === Admin && (
-						<TabPanel>
-							<Delegates
-								onRef={ref => (this.delegatesSection = ref)}
-								loading={loading}
-								selected={this.state.tabIndex === 5}
-								delegates={this.state.delegates}
-								columns={this.state.delegateColumns}
-								onRename={this.onIssuerRename}
-								onCreate={this.onDelegateCreate}
-								onDelete={this.onDelegateDelete}
-								issuerName={this.state.issuerName}
-								error={error}
-							/>
-						</TabPanel>
+						<>
+							<TabPanel>
+								<Delegates
+									onRef={ref => (this.delegatesSection = ref)}
+									loading={loading}
+									selected={this.state.tabIndex === 5}
+									delegates={this.state.delegates}
+									columns={this.state.delegateColumns}
+									onRename={this.onIssuerRename}
+									onCreate={this.onDelegateCreate}
+									onDelete={this.onDelegateDelete}
+									issuerName={this.state.issuerName}
+									error={error}
+								/>
+							</TabPanel>
+							<TabPanel>
+								<UserList />
+							</TabPanel>
+						</>
 					)}
 				</Tabs>
 			</div>

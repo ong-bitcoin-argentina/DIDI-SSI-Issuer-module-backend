@@ -5,6 +5,12 @@ module.exports = {
 	VERSION,
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
+		USER: {
+			GET_ALL: API + "/user/all",
+			DELETE: id => API + "/user/" + id,
+			CREATE: API + "/user",
+			EDIT: id => API + "/user/" + id
+		},
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
 			GET_QR: (id, code) => {
