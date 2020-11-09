@@ -171,7 +171,7 @@ export default class CertificateService {
 			.catch(err => errCb(err));
 	}
 
-	static delete(token, id, cb, errCb) {
+	static delete(token, id) {
 		const options = {
 			method: "DELETE",
 			headers: {
@@ -180,18 +180,7 @@ export default class CertificateService {
 			}
 		};
 
-		fetch(DELETE(id), options)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+		return fetch(DELETE(id), options);
 	}
 
 	static revoke(token, id, reason) {

@@ -293,7 +293,7 @@ class Main extends Component {
 	};
 
 	// borrar credenciales
-	onCertificateDelete = () => {
+	onCertificateDelete = async () => {
 		const id = this.state.selectedCertId;
 		const token = Cookie.get("token");
 		const self = this;
@@ -303,25 +303,64 @@ class Main extends Component {
 		cert.select = <div></div>;
 
 		self.setState({ certs: self.state.certificates, loading: true });
-		CertificateService.delete(
-			token,
-			id,
-			async function (cert) {
-				const certs = self.state.certs.filter(t => t._id !== cert._id);
 
-				self.setState({
-					certs: certs,
-					loading: false,
-					error: false
-				});
+		try {
+			await CertificateService.delete(token, id);
+			const certs = self.state.certs.filter(t => t._id !== cert._id);
+			self.setState({
+				certs: certs,
+				loading: false,
+				error: false
+			});
+			self.updateSelectedCertsState(certs, {});
+			self.onCertificateSelectAllToggle(false);
+		} catch (error) {
+			self.setState({ error: error, loading: false });
+		}
+	};
 
-				self.onCertificateSelectAllToggle(false);
-			},
-			function (err) {
-				self.setState({ error: err, loading: false });
-				console.log(err);
+	onDeleteSelects = async () => {
+		const token = Cookie.get("token");
+		const keys = Object.keys(this.state.selectedCerts);
+		const selectedCerts = keys.filter(key => this.state.selectedCerts[key]);
+
+		if (selectedCerts.length === 0) return;
+
+		const certs = this.state.certificates.filter(t => selectedCerts.indexOf(t._id) > -1);
+		certs.forEach(cert => {
+			cert.actions = <div></div>;
+			cert.selected = <div></div>;
+		});
+
+		this.setState({ certs: this.state.certificates, loading: true });
+
+		const self = this;
+		let errors = [];
+
+		for (const id of selectedCerts) {
+			try {
+				await CertificateService.delete(token, id);
+			} catch (error) {
+				errors.push(error.message);
 			}
-		);
+		}
+		if (errors.length) {
+			let err = {};
+			err.message = (
+				<ul>
+					{errors.map((error, key) => (
+						<li key={"err-" + key} className="errorList">
+							{error}
+						</li>
+					))}
+				</ul>
+			);
+			self.setState({ error: err, loading: false });
+		} else {
+			self.getCertificates();
+			self.setState({ error: false, tabIndex: 0 });
+			self.setState({ tabIndex: 1 });
+		}
 	};
 
 	// selecciionar credenciales para emision multiple
@@ -491,7 +530,7 @@ class Main extends Component {
 			token,
 			async function (certs) {
 				self.updateSelectedCertsState(certs, {});
-				self.setState({ lastNameFilter: "", firstNameFilter: "" });
+				self.setState({ lastNameFilter: "", firstNameFilter: "", loading: false });
 			},
 			function (err) {
 				self.setState({ error: err });
@@ -774,6 +813,7 @@ class Main extends Component {
 							onDelete={this.onCertificateDelete}
 							error={error}
 							role={role}
+							onDeleteSelects={this.onDeleteSelects}
 						/>
 					</TabPanel>
 					<TabPanel>
