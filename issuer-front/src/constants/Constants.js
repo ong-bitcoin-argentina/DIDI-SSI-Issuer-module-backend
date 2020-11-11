@@ -11,6 +11,11 @@ module.exports = {
 			CREATE: API + "/user",
 			EDIT: id => API + "/user/" + id
 		},
+		REGISTER: {
+			CREATE: API + "/register",
+			GET_ALL: API + "/register/all",
+			GET_ALL_BLOCKCHAINS: API + "/register/all/blockchain"
+		},
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
 			GET_QR: (id, code) => {

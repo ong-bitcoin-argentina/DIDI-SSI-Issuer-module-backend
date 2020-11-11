@@ -20,6 +20,14 @@ module.exports = {
 			}
 		}
 	},
+	REGISTER: {
+		ERR: {
+			CREATE: { code: "REGISTER_CREATE", message: "El registro no pudo ser creado." },
+			BLOCKCHAIN: { code: "NOT_EXIST_BLOCKCHAIN", message: "No existe la blockchain elegida." },
+			GET: { code: "REGISTER_GET", message: "El registro no pudo ser obtenido." },
+			DID_EXISTS: { code: "DID_EXISTS", message: "Ya existe un registro con ese did." }
+		}
+	},
 	DELEGATE: {
 		ERR: {
 			SET_NAME: { code: "SET_NAME", message: "No se pudo actualizar el nombre del emisor." },

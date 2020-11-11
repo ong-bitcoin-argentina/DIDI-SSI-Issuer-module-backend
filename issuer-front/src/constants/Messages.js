@@ -126,7 +126,8 @@ module.exports = {
 			DELETE: "Borrar",
 			REVOKE: "Revocar",
 			EXIT: "Salir",
-			USERS: "Usuarios"
+			USERS: "Usuarios",
+			CONFIG: "Configuracion"
 		}
 	},
 	QR: {

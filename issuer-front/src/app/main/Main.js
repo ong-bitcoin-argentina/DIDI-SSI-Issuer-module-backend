@@ -52,7 +52,8 @@ const {
 	TO_TEMPLATES,
 	DELEGATES,
 	TO_CERTIFICATES_PENDING,
-	USERS
+	USERS,
+	CONFIG
 } = Messages.LIST.BUTTONS;
 
 const { Admin, Observer } = Constants.ROLES;
@@ -749,7 +750,7 @@ class Main extends Component {
 						{role !== Observer && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
 						{role === Admin && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
 						{role === Admin && <Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>}
-						{role === Admin && <Tab disabled={loading && tabIndex !== 7}>"CONFIGURACION"</Tab>}
+						{role === Admin && <Tab disabled={loading && tabIndex !== 7}>{CONFIG}</Tab>}
 					</TabList>
 
 					<TabPanel>
