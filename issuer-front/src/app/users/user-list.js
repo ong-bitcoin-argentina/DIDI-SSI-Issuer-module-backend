@@ -46,6 +46,16 @@ const UserList = () => {
 		}
 	};
 
+	const editUser = async user => {
+		try {
+			const token = Cookie.get("token");
+			await UserService.edit(token, user);
+			await getUsersData();
+		} catch (error) {
+			setError(error.message);
+		}
+	};
+
 	const deleteUser = async () => {
 		try {
 			const token = Cookie.get("token");
@@ -98,7 +108,7 @@ const UserList = () => {
 				open={openEdit}
 				userData={userSelected}
 				close={() => setOpenEdit(false)}
-				onSubmit={() => {}}
+				onSubmit={editUser}
 			/>
 			<UserDeleteModal open={openDelete} setOpen={setOpenDelete} onAccept={deleteUser} />
 		</>

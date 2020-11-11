@@ -57,6 +57,23 @@ export default class UserService {
 		return fetch(Constants.API_ROUTES.USER.CREATE, data);
 	}
 
+	static edit(token, body) {
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name: body.name,
+				type: body.type,
+				password: body.password
+			})
+		};
+
+		return fetch(Constants.API_ROUTES.USER.EDIT(body._id), data);
+	}
+
 	static delete(token, id) {
 		const data = {
 			method: "DELETE",
