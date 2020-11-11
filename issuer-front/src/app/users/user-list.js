@@ -8,6 +8,7 @@ import UserService from "../../services/UserService";
 import CreateUserModal from "../components/CreateUserModal";
 import Cookie from "js-cookie";
 import { getUserColumns, getUserData } from "./user-table-helper";
+import UserDeleteModal from "./user-delete-modal";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -15,7 +16,8 @@ const UserList = () => {
 	const [error, setError] = useState("");
 	const [modalOpen, setModalOpen] = useState(false);
 	const [openEdit, setOpenEdit] = useState(false);
-	const [userEdit, setUserEdit] = useState({});
+	const [userSelected, setUserSelected] = useState({});
+	const [openDelete, setOpenDelete] = useState(false);
 
 	useEffect(() => {
 		setError("");
@@ -44,20 +46,26 @@ const UserList = () => {
 		}
 	};
 
-	const onDelete = async user => {
+	const deleteUser = async () => {
 		try {
 			const token = Cookie.get("token");
-			console.log(user);
-			await UserService.delete(token, user._id);
+			await UserService.delete(token, userSelected._id);
 			await getUsersData();
 			setError("");
+			setUserSelected({});
+			setOpenDelete(false);
 		} catch (error) {
 			setError(error.message);
 		}
 	};
 
+	const onDelete = user => {
+		setOpenDelete(true);
+		setUserSelected(user);
+	};
+
 	const onEdit = user => {
-		setUserEdit(user);
+		setUserSelected(user);
 		setOpenEdit(true);
 	};
 
@@ -88,10 +96,11 @@ const UserList = () => {
 			<CreateUserModal
 				title="Editar"
 				open={openEdit}
-				userData={userEdit}
+				userData={userSelected}
 				close={() => setOpenEdit(false)}
 				onSubmit={() => {}}
 			/>
+			<UserDeleteModal open={openDelete} setOpen={setOpenDelete} onAccept={deleteUser} />
 		</>
 	);
 };
