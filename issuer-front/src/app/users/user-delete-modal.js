@@ -22,7 +22,7 @@ const UserDeleteModal = ({ open, setOpen, onAccept }) => {
 				<Button className="CloseModalButton" onClick={handleClose} color="secondary">
 					{Messages.LIST.DIALOG.CANCEL}
 				</Button>
-				<Button className="CreateModalButton" onClick={() => onAccept()} color="primary" variant="contained">
+				<Button className="CreateModalButton" onClick={onAccept} color="primary" variant="contained">
 					Borrar
 				</Button>
 			</DialogActions>
