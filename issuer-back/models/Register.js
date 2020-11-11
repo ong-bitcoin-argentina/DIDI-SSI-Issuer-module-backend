@@ -24,6 +24,9 @@ const RegisterSchema = mongoose.Schema({
 	createdOn: {
 		type: Date,
 		default: Date.now()
+	},
+	expireOn: {
+		type: Date
 	}
 });
 
@@ -33,7 +36,7 @@ const Register = mongoose.model("Register", RegisterSchema);
 module.exports = Register;
 
 // crea un nuevo registro
-Register.generate = async function (did, key, name) {
+Register.generate = async function (did, key, name, expireOn) {
 	let register;
 	try {
 		register = new Register();
@@ -43,6 +46,7 @@ Register.generate = async function (did, key, name) {
 		register.did = did;
 		register.deleted = false;
 		register.createdOn = new Date();
+		register.expireOn = expireOn;
 
 		register = await register.save();
 		return Promise.resolve(register);

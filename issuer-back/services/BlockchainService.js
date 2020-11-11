@@ -14,6 +14,8 @@ var Web3 = require("web3");
 const provider = new Web3.providers.HttpProvider(Constants.BLOCKCHAIN.BLOCK_CHAIN_URL);
 const web3 = new Web3(provider);
 
+const fetch = require("node-fetch");
+
 // obtiene el contrato (ethr-did-registry)
 const getContract = function (credentials) {
 	return new web3.eth.Contract(DidRegistryContract.abi, Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT, {
@@ -167,8 +169,9 @@ module.exports.newRegister = async function (did, key, name) {
 		if (byDIDExist) return Promise.reject(Messages.REGISTER.ERR.DID_EXISTS);
 
 		// enviar la data al issuer
+		const data = await sendDidToIssuer(did, name);
 
-		const register = await Register.generate(did, key, name);
+		const register = await Register.generate(did, key, name, data.expireOn);
 		if (!register) return Promise.reject(Messages.REGISTER.ERR.CREATE);
 		return Promise.resolve(register);
 	} catch (err) {
@@ -186,5 +189,24 @@ module.exports.getAll = async function () {
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.REGISTER.ERR.GET);
+	}
+};
+
+const sendDidToIssuer = async function (did, name) {
+	try {
+		const response = await fetch(Constants.DIDI_API + "/issuer", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				did,
+				name
+			})
+		});
+
+		const jsonResp = await response.json();
+		return jsonResp.status === "error" ? Promise.reject(jsonResp) : Promise.resolve(jsonResp.data);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
 	}
 };

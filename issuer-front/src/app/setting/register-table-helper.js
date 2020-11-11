@@ -24,7 +24,7 @@ const COLUMNS_NAME = [
 	},
 	{
 		title: "Fecha de Expiración",
-		name: "onExpirated"
+		name: "expireOn"
 	},
 	{
 		title: "Acciones",
@@ -45,7 +45,7 @@ export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => (
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
 export const getRegisterData = (register, onView) => {
-	const { did, createdOn, expiratedOn } = register;
+	const { did, createdOn, expireOn } = register;
 	const partsOfDid = did.split(":");
 	const blockchain = partsOfDid[2];
 	const keyDid = partsOfDid[3];
@@ -54,7 +54,7 @@ export const getRegisterData = (register, onView) => {
 		did: <div>{keyDid}</div>,
 		blockchain: <div style={{ textTransform: "uppercase" }}>{blockchain}</div>,
 		onCreated: <div style={{ textAlign: "center" }}>{formatDate(createdOn)}</div>,
-		onExpirated: <div style={{ textAlign: "center" }}>{formatDate(expiratedOn)}</div>,
+		expireOn: <div style={{ textAlign: "center" }}>{formatDate(expireOn)}</div>,
 		actions: (
 			<div className="Actions">
 				<div className="EditAction" onClick={() => onView(register)}>

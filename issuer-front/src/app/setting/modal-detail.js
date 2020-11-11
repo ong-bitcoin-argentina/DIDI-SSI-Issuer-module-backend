@@ -7,11 +7,11 @@ import moment from "moment";
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
 const ModalDetail = ({ modalOpen, setModalOpen, register }) => {
-	const { did, name, createdOn, expiredOn } = register;
+	const { did, name, createdOn, expireOn } = register;
 	const blockchain = did?.split(":")[2];
 	const didKey = did?.split(":")[3];
 	const createdOn_ = formatDate(createdOn);
-	const expiredOn_ = formatDate(expiredOn);
+	const expireOn_ = formatDate(expireOn);
 
 	return (
 		<Dialog open={modalOpen}>
@@ -24,7 +24,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register }) => {
 					<KeyValue field="Blockchain" value={blockchain} />
 					<KeyValue field="Nombre" value={name} />
 					<KeyValue field="Fecha de Registro" value={createdOn_} />
-					<KeyValue field="Fecha de Expiración" value={expiredOn_} />
+					<KeyValue field="Fecha de Expiración" value={expireOn_} />
 				</Grid>
 			</DialogContent>
 			<DialogActions>
