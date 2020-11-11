@@ -27,7 +27,7 @@ const UserList = () => {
 		setLoading(true);
 		try {
 			const users_ = await UserService.getAll(token);
-			setUsers(users_);
+			setUsers(users_.data);
 		} catch (error) {
 			setError(error.message);
 		}
