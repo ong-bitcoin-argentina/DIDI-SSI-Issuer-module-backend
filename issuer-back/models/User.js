@@ -73,6 +73,26 @@ UserSchema.methods.delete = async function () {
 	}
 };
 
+// edita un usuario
+UserSchema.methods.edit = async function (name, pass, type) {
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: {
+			name: name,
+			password: await Hashing.saltedHash(pass),
+			type: type
+		}
+	};
+
+	try {
+		const user = await User.findOneAndUpdate(updateQuery, updateAction);
+		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 

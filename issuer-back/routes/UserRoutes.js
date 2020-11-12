@@ -120,4 +120,42 @@ router.get(
 	}
 );
 
+/*
+ *	edita un usuario
+ */
+router.put(
+	"/:id",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		},
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "password",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING, Constants.VALIDATION_TYPES.IS_PASSWORD],
+			length: { min: Constants.PASSWORD_MIN_LENGTH }
+		},
+		{
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		const name = req.body.name;
+		const password = req.body.password;
+		const type = req.body.type;
+		const id = req.params.id;
+
+		try {
+			await UserService.edit(id, name, password, type);
+			return ResponseHandler.sendRes(res, {});
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
 module.exports = router;
