@@ -27,7 +27,7 @@ export default class UserService {
 			.catch(err => errCb(err));
 	}
 
-	static getAll(token) {
+	static async getAll(token) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -36,7 +36,8 @@ export default class UserService {
 			}
 		};
 
-		return fetch(Constants.API_ROUTES.USER.GET_ALL, data);
+		const data_ = await fetch(Constants.API_ROUTES.USER.GET_ALL, data);
+		return data_.json();
 	}
 
 	static create(token, body) {
@@ -54,6 +55,23 @@ export default class UserService {
 		};
 
 		return fetch(Constants.API_ROUTES.USER.CREATE, data);
+	}
+
+	static edit(token, body) {
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name: body.name,
+				type: body.type,
+				password: body.password
+			})
+		};
+
+		return fetch(Constants.API_ROUTES.USER.EDIT(body._id), data);
 	}
 
 	static delete(token, id) {

@@ -47,7 +47,7 @@ module.exports.getById = async function (userId) {
 // crear usuario para loguearse en el issuer
 module.exports.create = async function (name, password, type) {
 	try {
-		if (!Constants.USER_TYPES[type]) return Promise.reject(Messages.USER.ERR.TYPE);
+		if (!Constants.USER_CREATED_TYPES[type]) return Promise.reject(Messages.USER.ERR.TYPE);
 		const user = await User.generate(name, password, type);
 		if (!user) return Promise.reject(Messages.USER.ERR.CREATE);
 		return Promise.resolve(user);
@@ -61,6 +61,7 @@ module.exports.create = async function (name, password, type) {
 module.exports.delete = async function (id) {
 	try {
 		let user = await User.findOne({ _id: ObjectId(id), deleted: false });
+		if (user.type === Constants.USER_TYPES.Admin) return Promise.reject(Messages.USER.ERR.DELETE);
 		user = await user.delete();
 		if (!user) return Promise.reject(Messages.USER.ERR.DELETE);
 		return Promise.resolve(user);
@@ -79,5 +80,19 @@ module.exports.getAll = async function () {
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.USER.ERR.GET);
+	}
+};
+
+// Edita un usuario y lo retorna
+module.exports.edit = async function (id, name, password, type) {
+	try {
+		if (!Constants.USER_CREATED_TYPES[type]) return Promise.reject(Messages.USER.ERR.TYPE);
+		let user = await this.getById(id);
+		user = await user.edit(name, password, type);
+		if (!user) return Promise.reject(Messages.USER.ERR.EDIT);
+		return Promise.resolve(user);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.USER.ERR.EDIT);
 	}
 };

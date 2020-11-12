@@ -28,6 +28,7 @@ const MONGO_URL =
 console.log(MONGO_URL);
 
 const USER_TYPES = { Admin: "Admin", Manager: "Manager", Observer: "Observer" };
+const USER_CREATED_TYPES = { Manager: "Manager", Observer: "Observer" };
 const ALLOWED_ROLES = {
 	Admin: ["Admin"],
 	Manager: ["Admin", "Manager"],
@@ -115,6 +116,7 @@ module.exports = {
 	},
 
 	USER_TYPES: USER_TYPES,
+	USER_CREATED_TYPES: USER_CREATED_TYPES,
 
 	CERT_CATEGORY_MAPPING: CERT_CATEGORY_MAPPING,
 	CERT_CATEGORY_TYPES: CERT_CATEGORY_TYPES,

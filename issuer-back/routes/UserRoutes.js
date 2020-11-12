@@ -32,9 +32,6 @@ router.post(
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		if (!process.env.ENABLE_INSECURE_ENDPOINTS) {
-			return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 404);
-		}
 		const name = req.body.name;
 		const password = req.body.password;
 		const type = req.body.type;
@@ -118,6 +115,44 @@ router.get(
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			console.log(err);
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/*
+ *	edita un usuario
+ */
+router.put(
+	"/:id",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		},
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "password",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING, Constants.VALIDATION_TYPES.IS_PASSWORD],
+			length: { min: Constants.PASSWORD_MIN_LENGTH }
+		},
+		{
+			name: "type",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		const name = req.body.name;
+		const password = req.body.password;
+		const type = req.body.type;
+		const id = req.params.id;
+
+		try {
+			await UserService.edit(id, name, password, type);
+			return ResponseHandler.sendRes(res, {});
+		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
 	}

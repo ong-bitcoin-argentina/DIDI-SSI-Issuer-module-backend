@@ -1,5 +1,5 @@
 import React from "react";
-import { DATE_FORMAT } from "../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
 import { AssignmentLate, Edit } from "@material-ui/icons";
@@ -36,9 +36,9 @@ export const getUserData = (user, onDelete, onEdit) => {
 	return {
 		...user,
 		onCreated: (
-			<div style={{ textAlign: "center" }}>{user.onCreated ? moment(user.onCreated).format(DATE_FORMAT) : "-"}</div>
+			<div style={{ textAlign: "center" }}>{user.createdOn ? moment(user.createdOn).format(DATE_FORMAT) : "-"}</div>
 		),
-		actions: (
+		actions: user.type !== Constants.ROLES.Admin && (
 			<div className="Actions">
 				<div className="EditAction" onClick={() => onEdit(user)}>
 					<Tooltip title="Editar" placement="top" arrow>
