@@ -7,6 +7,7 @@ const BlockchainService = require("../services/BlockchainService");
 const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators");
 
 const TokenService = require("../services/TokenService");
+const RegisterDTO = require("./utils/RegisterDTO");
 
 const { checkValidationResult, validate } = Validator;
 
@@ -36,7 +37,7 @@ router.post(
 		try {
 			const { did, name, key } = req.body;
 			const register = await BlockchainService.newRegister(did, key, name);
-			return ResponseHandler.sendRes(res, register);
+			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			console.log(err);
 			return ResponseHandler.sendErr(res, err);
@@ -60,7 +61,8 @@ router.get(
 	async function (req, res) {
 		try {
 			const registers = await BlockchainService.getAll();
-			return ResponseHandler.sendRes(res, registers);
+			const result = registers.map(register => RegisterDTO.toDTO(register));
+			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			console.log(err);
 			return ResponseHandler.sendErr(res, err);
