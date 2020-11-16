@@ -35,8 +35,8 @@ router.post(
 	async function (req, res) {
 		try {
 			const { did, name, key } = req.body;
-			await BlockchainService.newRegister(did, key, name);
-			return ResponseHandler.sendRes(res, {});
+			const register = await BlockchainService.newRegister(did, key, name);
+			return ResponseHandler.sendRes(res, register);
 		} catch (err) {
 			console.log(err);
 			return ResponseHandler.sendErr(res, err);

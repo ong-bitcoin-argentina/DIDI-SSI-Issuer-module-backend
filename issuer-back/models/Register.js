@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const Hashing = require("./utils/Hashing");
+const Encryption = require("./utils/Encryption");
 const Constants = require("../constants/Constants");
-const HashedData = require("./dataTypes/HashedData");
 
 const RegisterSchema = mongoose.Schema({
 	name: {
@@ -13,7 +12,7 @@ const RegisterSchema = mongoose.Schema({
 		required: true,
 		unique: true
 	},
-	key: {
+	private_key: {
 		type: String,
 		required: true
 	},
@@ -42,7 +41,8 @@ Register.generate = async function (did, key, name, expireOn) {
 		register = new Register();
 
 		register.name = name;
-		register.key = key;
+		const key_encripted = await Encryption.encrypt(key);
+		register.private_key = key_encripted;
 		register.did = did;
 		register.deleted = false;
 		register.createdOn = new Date();

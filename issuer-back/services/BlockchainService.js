@@ -168,8 +168,8 @@ module.exports.newRegister = async function (did, key, name) {
 		const byDIDExist = await Register.getByDID(did);
 		if (byDIDExist) return Promise.reject(Messages.REGISTER.ERR.DID_EXISTS);
 
-		// enviar la data al issuer
-		const data = await sendDidToIssuer(did, name);
+		// Se envia el did a Didi
+		const data = await sendDidToDidi(did, name);
 
 		const register = await Register.generate(did, key, name, data.expireOn);
 		if (!register) return Promise.reject(Messages.REGISTER.ERR.CREATE);
@@ -183,8 +183,8 @@ module.exports.newRegister = async function (did, key, name) {
 // retorna todos los registros
 module.exports.getAll = async function () {
 	try {
-		let registers = await Register.getAll();
-		if (!registers) return Promise.reject(Messages.REGISTER.ERR.GET);
+		const registers = await Register.getAll();
+
 		return Promise.resolve(registers);
 	} catch (err) {
 		console.log(err);
@@ -192,7 +192,7 @@ module.exports.getAll = async function () {
 	}
 };
 
-const sendDidToIssuer = async function (did, name) {
+const sendDidToDidi = async function (did, name) {
 	try {
 		const response = await fetch(Constants.DIDI_API + "/issuer", {
 			method: "POST",
