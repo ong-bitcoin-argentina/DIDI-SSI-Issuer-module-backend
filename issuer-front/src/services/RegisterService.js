@@ -1,0 +1,46 @@
+import Constants from "../constants/Constants";
+
+export default class RegisterService {
+	static async getAll(token) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		const response = await fetch(Constants.API_ROUTES.REGISTER.GET_ALL, data);
+		return response.json();
+	}
+
+	static async getAllBlockchains(token) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		const response = await fetch(Constants.API_ROUTES.REGISTER.GET_ALL_BLOCKCHAINS, data);
+		return response.json();
+	}
+
+	static create(token, body) {
+		const data = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name: body.name,
+				did: body.did,
+				key: body.key
+			})
+		};
+
+		return fetch(Constants.API_ROUTES.REGISTER.CREATE, data);
+	}
+}

@@ -55,6 +55,8 @@ const CERT_CATEGORY_MAPPING = {
 
 const DIDI_API = process.env.DIDI_API;
 
+const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
+
 module.exports = {
 	API_VERSION: "1.0",
 	DEBUGG: DEBUGG,
@@ -143,6 +145,8 @@ module.exports = {
 		DELEGATE_DURATION: DELEGATE_DURATION,
 		SET_ATTRIBUTE: SET_ATTRIBUTE
 	},
+
+	BLOCKCHAINS: BLOCKCHAINS,
 
 	RSA_PRIVATE_KEY: RSA_PRIVATE_KEY,
 	HASH_SALT: HASH_SALT,
