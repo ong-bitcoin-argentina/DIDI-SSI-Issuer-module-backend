@@ -133,7 +133,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 							<Select id="emisor-select-input" required fullWidth name="blockchain" onChange={handleChange}>
 								{blockchains.map((blockchain, index) => (
 									<MenuItem key={index} value={blockchain}>
-										{blockchain}
+										<span style={{ textTransform: "uppercase" }}>{blockchain}</span>
 									</MenuItem>
 								))}
 							</Select>

@@ -55,7 +55,7 @@ const CERT_CATEGORY_MAPPING = {
 
 const DIDI_API = process.env.DIDI_API;
 
-const BLOCKCHAINS = ["RSK", "LACCHAIN", "BFA"];
+const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
 
 module.exports = {
 	API_VERSION: "1.0",
