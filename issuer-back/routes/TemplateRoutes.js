@@ -68,14 +68,18 @@ router.post(
 			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
 			isHead: true
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const name = req.body.name;
+		const { name, registerId } = req.body;
 
 		try {
-			const template = await TemplateService.create(name);
+			const template = await TemplateService.create(name, registerId);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -109,19 +113,22 @@ router.put(
 		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
 		const data = JSON.parse(req.body.data);
-		const preview = req.body.preview;
-		const type = req.body.type;
+		const { preview, type, registerId } = req.body;
 
 		const category = req.body.category || "";
 		const id = req.params.id;
 
 		try {
-			let template = await TemplateService.edit(id, data, preview, type, category);
+			let template = await TemplateService.edit(id, data, preview, type, category, registerId);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

@@ -22,6 +22,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import logoApp from "../../../images/ai-di-logo.svg";
 import Header from "../../components/Header";
+import RegisterService from "../../../services/RegisterService";
 
 class Template extends Component {
 	constructor(props) {
@@ -60,6 +61,10 @@ class Template extends Component {
 				console.log(err);
 			}
 		);
+
+		RegisterService.getAll(token)
+			.then(response => this.setState({ registers: response.data }))
+			.catch(error => self.setState({ error }));
 	}
 
 	// volver a listado
@@ -146,6 +151,33 @@ class Template extends Component {
 		);
 	};
 
+	renderBlockchainRegister = () => {
+		const { template, registers } = this.state;
+		const { registerId } = template;
+		return (
+			<div className="Template-Type">
+				<h2 className="DataTitle">{Messages.EDIT.DATA.EMISOR}</h2>
+				<Select
+					className="CategoriesPicker"
+					displayEmpty
+					value={registerId ? registerId : ""}
+					onChange={event => {
+						template.registerId = event.target.value;
+						this.setState({ template: template });
+					}}
+				>
+					{(registers || []).map(({ name, _id }) => {
+						return (
+							<MenuItem key={_id} value={_id}>
+								{name}
+							</MenuItem>
+						);
+					})}
+				</Select>
+			</div>
+		);
+	};
+
 	// mostrar pantalla de edicion de modelos de credenciales
 	render() {
 		if (!Cookie.get("token")) {
@@ -160,6 +192,7 @@ class Template extends Component {
 				{this.renderDialog()}
 				<div className="container">
 					{!loading && this.renderTemplateCategory()}
+					{!loading && this.renderBlockchainRegister()}
 					{!loading && this.renderTemplate()}
 					{!loading && this.renderTemplateType()}
 					{this.renderButtons()}

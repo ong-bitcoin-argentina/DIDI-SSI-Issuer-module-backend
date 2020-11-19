@@ -571,13 +571,12 @@ class Main extends Component {
 
 	// crear templates
 	onTemplateCreate = data => {
-		const name = data.name;
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
 		TemplateService.create(
 			token,
-			name,
+			data,
 			async function (template) {
 				const templates = self.state.templates;
 				const data = TemplateTableHelper.getTemplateData(

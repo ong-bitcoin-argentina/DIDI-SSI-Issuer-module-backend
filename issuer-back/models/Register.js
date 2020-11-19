@@ -72,3 +72,8 @@ Register.getAll = async function () {
 Register.getByDID = async function (did) {
 	return await Register.findOne({ did });
 };
+
+// obtener un registro por el id
+Register.getById = async function (_id) {
+	return await Register.findOne({ _id });
+};

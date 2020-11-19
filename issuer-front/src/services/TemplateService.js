@@ -1,7 +1,8 @@
 import Constants from "../constants/Constants";
 
 export default class TemplateService {
-	static create(token, name, cb, errCb) {
+	static create(token, data_, cb, errCb) {
+		const { name, registerId } = data_;
 		const data = {
 			method: "POST",
 			headers: {
@@ -9,7 +10,8 @@ export default class TemplateService {
 				token: token
 			},
 			body: JSON.stringify({
-				name: name
+				name,
+				registerId
 			})
 		};
 
@@ -71,7 +73,8 @@ export default class TemplateService {
 				data: JSON.stringify(templateData),
 				preview: template.previewData,
 				category: template.category,
-				type: template.previewType
+				type: template.previewType,
+				registerId: template.registerId
 			})
 		};
 		fetch(url, data)
