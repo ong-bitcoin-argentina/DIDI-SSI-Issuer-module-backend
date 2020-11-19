@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Constants = require("../constants/Constants");
 const { cardSchema } = require("./dataTypes/CardSchema");
 const { getCardLayout } = require("./utils/Card");
+const ObjectId = mongoose.ObjectId;
 
 // Modelo de certificado a partir del cual se podran generar certificados particulares
 // define la data que tendra que agregarse a los mismos y la forma en que esta se mostrara en la app
@@ -48,7 +49,9 @@ const TemplateSchema = mongoose.Schema({
 		enum: Constants.CERT_CATEGORY_TYPES
 	},
 	registerId: {
-		type: String
+		type: ObjectId,
+		required: true,
+		ref: "Register"
 	},
 	data: {
 		cert: [dataElement],
