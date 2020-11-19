@@ -959,7 +959,7 @@ class Certificate extends Component {
 				</div>
 
 				<div className="CertificateButtons">
-					{role !== Constants.ROLES.Observer && (
+					{!(this.state.cert?.revocation || role === Constants.ROLES.Observer) && (
 						<button
 							hidden={this.state.action === "viewing"}
 							className="SaveButton"
