@@ -47,6 +47,9 @@ const TemplateSchema = mongoose.Schema({
 		type: String,
 		enum: Constants.CERT_CATEGORY_TYPES
 	},
+	registerId: {
+		type: String
+	},
 	data: {
 		cert: [dataElement],
 		participant: [dataElement],
@@ -67,11 +70,12 @@ TemplateSchema.index({ name: 1 });
 TemplateSchema.add({ cardLayout: cardSchema });
 
 // modificar modelo de certificado
-TemplateSchema.methods.edit = async function (data, previewData, previewType, category) {
+TemplateSchema.methods.edit = async function (data, previewData, previewType, category, registerId) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: {
 			category: category,
+			registerId,
 			previewData: previewData,
 			previewType: previewType,
 			cardLayout: getCardLayout(previewType),
@@ -108,7 +112,7 @@ const Template = mongoose.model("Template", TemplateSchema);
 module.exports = Template;
 
 // crear modelo de certificado "vacio" (con los campos por defecto)
-Template.generate = async function (name) {
+Template.generate = async function (name, registerId) {
 	try {
 		const query = { name: name, deleted: false };
 		const template = await Template.findOne(query);
@@ -120,6 +124,7 @@ Template.generate = async function (name) {
 
 	let template = new Template();
 	template.name = name;
+	template.registerId = registerId;
 	template.previewType = "1";
 	template.previewData = [Constants.CERT_FIELD_MANDATORY.FIRST_NAME, Constants.CERT_FIELD_MANDATORY.LAST_NAME];
 	template.cardLayout = getCardLayout(template.previewType);

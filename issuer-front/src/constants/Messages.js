@@ -13,6 +13,7 @@ module.exports = {
 			CERT: "Datos de la Credencial",
 			PART: "Datos del Participante",
 			OTHER: "Otros Datos",
+			EMISOR: "Emisor",
 
 			MICRO_CRED_NAME: "Nombre de la Micro",
 			MICRO_CRED_FIELDS: "Campos de la Micro"

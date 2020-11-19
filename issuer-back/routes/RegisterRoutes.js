@@ -53,7 +53,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),
@@ -78,7 +78,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
 			isHead: true
 		}
 	]),

@@ -12,6 +12,8 @@ import Spinner from "../../utils/Spinner";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
+import RegisterService from "../../../services/RegisterService";
+import Cookie from "js-cookie";
 
 class Templates extends Component {
 	constructor(props) {
@@ -22,7 +24,14 @@ class Templates extends Component {
 
 	// generar referencia para abrirlo desde el padre
 	componentDidMount() {
+		this.getAllRegister();
 		this.props.onRef(this);
+	}
+
+	async getAllRegister() {
+		const token = Cookie.get("token");
+		const response = await RegisterService.getAll(token);
+		this.setState({ registers: response.data });
 	}
 
 	// borrar referencia
@@ -58,6 +67,7 @@ class Templates extends Component {
 				onRef={ref => (this.createDialog = ref)}
 				title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
 				fieldNames={["name"]}
+				selectNames={[{ name: "registerId", label: "Emisor", options: this.state.registers }]}
 				onAccept={this.props.onCreate}
 			/>
 		);
