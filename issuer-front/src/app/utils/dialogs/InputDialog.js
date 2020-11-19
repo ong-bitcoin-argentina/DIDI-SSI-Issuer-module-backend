@@ -77,7 +77,6 @@ export default class InputDialog extends Component {
 		const fieldNames = this.props.fieldNames;
 		const selectNames = this.props.selectNames || [];
 		const t = this.props.selectNames || [];
-		console.log(t.map(c => c));
 		return (
 			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
