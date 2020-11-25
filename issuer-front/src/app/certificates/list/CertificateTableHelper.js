@@ -22,12 +22,14 @@ import Cookie from "js-cookie";
 
 const { Observer } = Constants.ROLES;
 
-const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
+const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN } = Messages.LIST.TABLE;
 const { VIEW } = Messages.LIST.BUTTONS;
 
 class CertificateTableHelper {
 	static baseCells = cert => ({
 		_id: cert._id,
+		blockchain: cert.registerDid ? cert.registerDid.split(":")[2] : "RSK",
+		registerDid: cert.registerDid,
 		certName: cert.name,
 		createdOn: cert.emmitedOn ? moment(cert.emmitedOn).format(DATE_FORMAT) : "-",
 		firstName: cert.firstName,
@@ -200,6 +202,19 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "certName"
+			},
+			{
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect
+							options={["BFA", "RSK", "LACCHAIN"]}
+							label={BLOCKCHAIN}
+							onChange={onFilterChange}
+							field="blockchain"
+						/>
+					</div>
+				),
+				accessor: "blockchain"
 			},
 			{
 				Header: <DateRangeFilter label={`${EMISSION_DATE} ${EMISSION_DATE2}`} onChange={onDateRangeFilterChange} />,

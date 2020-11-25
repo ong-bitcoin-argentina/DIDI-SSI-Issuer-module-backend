@@ -50,12 +50,13 @@ const CertificatesEmmited = () => {
 	}, [selected]);
 
 	useEffect(() => {
-		const { firstName, lastName, certName, start, end } = filters;
+		const { firstName, lastName, certName, start, end, blockchain } = filters;
 		const result = data.filter(
 			row =>
 				filter(row, "firstName", firstName) &&
 				filter(row, "lastName", lastName) &&
 				filter(row, "certName", certName) &&
+				filter(row, "blockchain", blockchain) &&
 				filterByDates(row, start, end)
 		);
 		updateFilterData(result, selected);
@@ -116,7 +117,7 @@ const CertificatesEmmited = () => {
 	const updateCertificates = (certs, selectedCerts, updateState) => {
 		const data_ = certs.map(item => {
 			return CertificateTableHelper.getCertificatesEmmitedData(
-				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn },
+				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn, registerDid: item.registerDid },
 				selectedCerts,
 				handleSelectOne,
 				handleView,

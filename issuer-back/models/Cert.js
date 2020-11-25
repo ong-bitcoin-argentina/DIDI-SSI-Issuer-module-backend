@@ -200,7 +200,15 @@ Cert.getRevokeds = async function () {
 // obtener certificados segun su emision
 Cert.findByEmission = async function (emmited) {
 	const query = { deleted: false, emmitedOn: { $exists: emmited }, revocation: { $exists: false } };
-	return await Cert.find(query).sort({ createdOn: -1 });
+	return await Cert.find(query)
+		.populate({
+			path: "templateId",
+			populate: {
+				path: "registerId",
+				model: "Register"
+			}
+		})
+		.sort({ createdOn: -1 });
 };
 
 // obtener certificado por id
