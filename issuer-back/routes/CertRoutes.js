@@ -244,17 +244,19 @@ router.post(
 /**
  * usar con precaucion
  */
-router.post("/updateAllDeleted", validate([TOKEN_VALIDATION.Manager]), checkValidationResult, async function (
-	req,
-	res
-) {
-	try {
-		const result = await CertService.updateAllDeleted();
-		return ResponseHandler.sendRes(res, result);
-	} catch (err) {
-		return ResponseHandler.sendErrWithStatus(res, err);
+router.post(
+	"/updateAllDeleted",
+	validate([TOKEN_VALIDATION.Manager]),
+	checkValidationResult,
+	async function (req, res) {
+		try {
+			const result = await CertService.updateAllDeleted();
+			return ResponseHandler.sendRes(res, result);
+		} catch (err) {
+			return ResponseHandler.sendErrWithStatus(res, err);
+		}
 	}
-});
+);
 
 // crea certificado completo (sin microcredenciales)
 const generateFullCertificate = async function (credentials, template, cert, part) {
@@ -279,7 +281,7 @@ const generateFullCertificate = async function (credentials, template, cert, par
 			}
 		});
 
-		const resFull = await MouroService.createCertificate(data, expDate, did);
+		const resFull = await MouroService.createCertificate(data, expDate, did, template);
 		const savedFull = await MouroService.saveCertificate(resFull, true);
 		credentials.push(savedFull);
 
@@ -308,7 +310,7 @@ const generateCertificate = async function (credentials, template, cert, part) {
 					data[name]["data"][dataElem.name] = dataElem.value;
 			});
 
-			const credential = await MouroService.createCertificate(data, expDate, did);
+			const credential = await MouroService.createCertificate(data, expDate, did, template);
 			return Promise.resolve(credential);
 		} catch (err) {
 			return Promise.reject(err);
@@ -381,7 +383,7 @@ const generateCertificate = async function (credentials, template, cert, part) {
 			data[name].wrapped[generateCertNames[i]] = microCred;
 		}
 
-		const generateFull = MouroService.createCertificate(data, expDate, did);
+		const generateFull = MouroService.createCertificate(data, expDate, did, template);
 		saveCertPromises.push(generateFull);
 
 		// guardar microcredenciales y generar la macrocredencial

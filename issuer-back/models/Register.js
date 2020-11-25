@@ -77,3 +77,9 @@ Register.getByDID = async function (did) {
 Register.getById = async function (_id) {
 	return await Register.findOne({ _id });
 };
+
+Register.getCredentials = async function (_id) {
+	const { did, private_key } = await Register.findOne({ _id });
+	const key = await Encryption.decript(private_key);
+	return { did, key };
+};
