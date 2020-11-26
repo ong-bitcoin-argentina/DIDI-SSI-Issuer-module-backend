@@ -23,6 +23,7 @@ import Radio from "@material-ui/core/Radio";
 import logoApp from "../../../images/ai-di-logo.svg";
 import Header from "../../components/Header";
 import RegisterService from "../../../services/RegisterService";
+import BlockchainName from "../../utils/dialogs/blockchainName";
 
 class Template extends Component {
 	constructor(props) {
@@ -166,10 +167,10 @@ class Template extends Component {
 						this.setState({ template: template });
 					}}
 				>
-					{(registers || []).map(({ name, _id }) => {
+					{(registers || []).map(({ name, did, _id }) => {
 						return (
 							<MenuItem key={_id} value={_id}>
-								{name}
+								{name} <BlockchainName did={did} />
 							</MenuItem>
 						);
 					})}

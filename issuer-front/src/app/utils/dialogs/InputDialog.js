@@ -11,6 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import "./_Style.scss";
 import "../../../styles/GeneralStyles.scss";
 import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
+import BlockchainName from "./blockchainName";
 
 export default class InputDialog extends Component {
 	constructor(props) {
@@ -119,9 +120,7 @@ export default class InputDialog extends Component {
 											options.map(({ name, did, _id }) => (
 												<MenuItem key={_id} value={_id}>
 													{name}
-													{did && (
-														<span style={{ textTransform: "uppercase", marginLeft: "5px" }}>({did.split(":")[2]})</span>
-													)}
+													<BlockchainName did={did} />
 												</MenuItem>
 											))}
 									</Select>
