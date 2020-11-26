@@ -11,6 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import "./_Style.scss";
 import "../../../styles/GeneralStyles.scss";
 import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
+import BlockchainName from "./blockchainName";
 
 export default class InputDialog extends Component {
 	constructor(props) {
@@ -116,9 +117,10 @@ export default class InputDialog extends Component {
 										fullWidth
 									>
 										{options?.length &&
-											options.map(({ name, _id }) => (
+											options.map(({ name, did, _id }) => (
 												<MenuItem key={_id} value={_id}>
 													{name}
+													<BlockchainName did={did} />
 												</MenuItem>
 											))}
 									</Select>
