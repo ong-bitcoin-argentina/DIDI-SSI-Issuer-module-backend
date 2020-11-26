@@ -116,9 +116,12 @@ export default class InputDialog extends Component {
 										fullWidth
 									>
 										{options?.length &&
-											options.map(({ name, _id }) => (
+											options.map(({ name, did, _id }) => (
 												<MenuItem key={_id} value={_id}>
 													{name}
+													{did && (
+														<span style={{ textTransform: "uppercase", marginLeft: "5px" }}>({did.split(":")[2]})</span>
+													)}
 												</MenuItem>
 											))}
 									</Select>
