@@ -908,6 +908,7 @@ class Certificate extends Component {
 				<h2>Crear Credencial</h2>
 				<Autocomplete
 					options={templates}
+					disabled={this.state.cert?.revocation}
 					getOptionLabel={option => (option ? option.name : "")}
 					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
 					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
