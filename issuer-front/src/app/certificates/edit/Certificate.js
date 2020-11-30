@@ -909,7 +909,7 @@ class Certificate extends Component {
 				<Autocomplete
 					options={templates}
 					disabled={this.state.cert?.revocation}
-					getOptionLabel={option => (option ? option.name : "")}
+					getOptionLabel={option => (option ? `${option.name} (${option.blockchain.toUpperCase()})` : "")}
 					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
 					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
 					onChange={(_, value) => {

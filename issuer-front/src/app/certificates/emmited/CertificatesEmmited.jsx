@@ -117,7 +117,7 @@ const CertificatesEmmited = () => {
 	const updateCertificates = (certs, selectedCerts, updateState) => {
 		const data_ = certs.map(item => {
 			return CertificateTableHelper.getCertificatesEmmitedData(
-				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn, registerDid: item.registerDid },
+				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn, blockchain: item.blockchain },
 				selectedCerts,
 				handleSelectOne,
 				handleView,

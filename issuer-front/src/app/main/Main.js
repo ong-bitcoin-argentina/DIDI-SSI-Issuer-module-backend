@@ -421,13 +421,14 @@ class Main extends Component {
 			this.onTemplateFilterChange,
 			this.onFirstNameFilterChange,
 			this.onLastNameFilterChange,
+			this.onBlockchainFilterChange,
 			() => this.state.loading
 		);
 
 	certificatesMapedToTable = (certs, selectedCerts) =>
 		certs.map(certificate => {
 			return CertificateTableHelper.getCertificatesPendingData(
-				{ ...certificate, name: certificate.certName || certificate.name },
+				{ ...certificate, name: certificate.certName || certificate.name, blockchain: certificate.blockchain },
 				selectedCerts,
 				this.onCertificateSelectToggle,
 				this.onCertificateEmmit,
@@ -628,26 +629,52 @@ class Main extends Component {
 	// filtro por nombre
 	onFirstNameFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(filter, this.state.lastNameFilter, this.state.templateFilter);
+		this.updateFiltererCertificates(
+			filter,
+			this.state.lastNameFilter,
+			this.state.templateFilter,
+			this.state.blockchainFilter
+		);
 		this.setState({ firstNameFilter: filter });
 	};
 
 	// filtro por apellido
 	onLastNameFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(this.state.firstNameFilter, filter, this.state.templateFilter);
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			filter,
+			this.state.templateFilter,
+			this.state.blockchainFilter
+		);
 		this.setState({ lastNameFilter: filter });
 	};
 
 	// filtro por modelo de credencial
 	onTemplateFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(this.state.firstNameFilter, this.state.lastNameFilter, filter);
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			this.state.lastNameFilter,
+			filter,
+			this.state.blockchainFilter
+		);
 		this.setState({ templateFilter: filter });
 	};
 
+	onBlockchainFilterChange = event => {
+		const filter = event.target.value;
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			this.state.lastNameFilter,
+			this.state.templateFilter,
+			filter
+		);
+		this.setState({ blockchainFilter: filter });
+	};
+
 	// actualizar tabla en funcion de los filtros
-	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter) => {
+	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter, blockchainFilter) => {
 		let cert = this.state.certificates;
 
 		if (firstNameFilter && firstNameFilter !== "") {
@@ -665,6 +692,12 @@ class Main extends Component {
 		if (templateFilter) {
 			cert = cert.filter(certData => {
 				return certData.certName.toLowerCase().includes(templateFilter.toLowerCase());
+			});
+		}
+
+		if (blockchainFilter) {
+			cert = cert.filter(certData => {
+				return certData.blockchain.toLowerCase().includes(blockchainFilter.toLowerCase());
 			});
 		}
 

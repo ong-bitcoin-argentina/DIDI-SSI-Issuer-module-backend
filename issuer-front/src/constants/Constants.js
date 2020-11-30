@@ -250,5 +250,7 @@ module.exports = {
 		Admin: "Admin",
 		Manager: "Manager",
 		Observer: "Observer"
-	}
+	},
+
+	BLOCKCHAINS: ["BFA", "RSK", "LACCHAIN"]
 };
