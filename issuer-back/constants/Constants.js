@@ -57,6 +57,12 @@ const DIDI_API = process.env.DIDI_API;
 
 const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
 
+const STATUS = {
+	PENDING: "Pendiente",
+	DONE: "Creado",
+	ERROR: "Error"
+};
+
 module.exports = {
 	API_VERSION: "1.0",
 	DEBUGG: DEBUGG,
@@ -147,6 +153,8 @@ module.exports = {
 	},
 
 	BLOCKCHAINS: BLOCKCHAINS,
+	STATUS: STATUS,
+	STATUS_ALLOWED: [STATUS.PENDING, STATUS.ERROR, STATUS.DONE],
 
 	RSA_PRIVATE_KEY: RSA_PRIVATE_KEY,
 	HASH_SALT: HASH_SALT,

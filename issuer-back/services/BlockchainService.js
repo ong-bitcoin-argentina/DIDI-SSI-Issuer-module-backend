@@ -159,7 +159,7 @@ module.exports.getDelegateName = async function (issuerDID) {
 };
 
 // crear un nuevo registro en la blockchain
-module.exports.newRegister = async function (did, key, name) {
+module.exports.newRegister = async function (did, key, name, token) {
 	try {
 		// Verifico si la blockchain es correcta
 		if (!Constants.BLOCKCHAINS.includes(did.split(":")[2])) return Promise.reject(Messages.REGISTER.ERR.BLOCKCHAIN);
@@ -169,11 +169,11 @@ module.exports.newRegister = async function (did, key, name) {
 		if (byDIDExist) return Promise.reject(Messages.REGISTER.ERR.DID_EXISTS);
 
 		// Se envia el did a Didi
-		const data = await sendDidToDidi(did, name);
+		sendDidToDidi(did, name, token);
 
-		const register = await Register.generate(did, key, name, data.expireOn);
+		const register = await Register.generate(did, key, name);
 		if (!register) return Promise.reject(Messages.REGISTER.ERR.CREATE);
-		return Promise.resolve(register);
+		return register;
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.REGISTER.ERR.CREATE);
@@ -181,9 +181,9 @@ module.exports.newRegister = async function (did, key, name) {
 };
 
 // retorna todos los registros
-module.exports.getAll = async function () {
+module.exports.getAll = async function (filter) {
 	try {
-		const registers = await Register.getAll();
+		const registers = await Register.getAll(filter);
 
 		return Promise.resolve(registers);
 	} catch (err) {
@@ -192,14 +192,31 @@ module.exports.getAll = async function () {
 	}
 };
 
-const sendDidToDidi = async function (did, name) {
+module.exports.editRegister = async function (did, body) {
+	try {
+		const register = await Register.getByDID(did);
+		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
+
+		const { status } = body;
+		if (!Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(Messages.REGISTER.ERR.STATUS);
+
+		return await register.editStatus(body);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(Messages.REGISTER.ERR.EDIT);
+	}
+};
+
+const sendDidToDidi = async function (did, name, token) {
 	try {
 		const response = await fetch(Constants.DIDI_API + "/issuer", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				did,
-				name
+				name,
+				token,
+				callbackUrl: "http://192.168.0.118:3500/api/1.0/didi_issuer/register"
 			})
 		});
 

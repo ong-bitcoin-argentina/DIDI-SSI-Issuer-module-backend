@@ -36,7 +36,9 @@ router.post(
 	async function (req, res) {
 		try {
 			const { did, name, key } = req.body;
-			const register = await BlockchainService.newRegister(did, key, name);
+			const { token } = req.headers;
+
+			const register = await BlockchainService.newRegister(did, key, name, token);
 			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			console.log(err);
@@ -49,7 +51,7 @@ router.post(
  *	retorna la lista de todos los registros
  */
 router.get(
-	"/all",
+	"/",
 	Validator.validate([
 		{
 			name: "token",
@@ -60,7 +62,7 @@ router.get(
 	Validator.checkValidationResult,
 	async function (req, res) {
 		try {
-			const registers = await BlockchainService.getAll();
+			const registers = await BlockchainService.getAll(req.query);
 			const result = registers.map(register => RegisterDTO.toDTO(register));
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -88,6 +90,37 @@ router.get(
 			return ResponseHandler.sendRes(res, Constants.BLOCKCHAINS);
 		} catch (err) {
 			console.log(err);
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/*
+ * Cambia el estado de un Registro
+ */
+
+router.put(
+	"/:did",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			isHead: true
+		},
+		{
+			name: "status",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{ name: "expireOn", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{ name: "blockHash", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		try {
+			const { did } = req.params;
+			const register = await BlockchainService.editRegister(did, req.body);
+			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
+		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
 	}

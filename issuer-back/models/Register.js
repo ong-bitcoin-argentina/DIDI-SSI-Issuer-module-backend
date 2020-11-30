@@ -16,6 +16,9 @@ const RegisterSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
+	blockHash: {
+		type: String
+	},
 	deleted: {
 		type: Boolean,
 		default: false
@@ -24,18 +27,35 @@ const RegisterSchema = mongoose.Schema({
 		type: Date,
 		default: Date.now()
 	},
+	status: {
+		type: String,
+		default: Constants.STATUS.PENDING
+	},
 	expireOn: {
 		type: Date
 	}
 });
 
 RegisterSchema.index({ name: 1 });
+RegisterSchema.methods.editStatus = async function (data) {
+	const updateQuery = { _id: this._id };
+	const updateAction = {
+		$set: data
+	};
+
+	try {
+		return await Register.findOneAndUpdate(updateQuery, updateAction);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
 
 const Register = mongoose.model("Register", RegisterSchema);
 module.exports = Register;
 
 // crea un nuevo registro
-Register.generate = async function (did, key, name, expireOn) {
+Register.generate = async function (did, key, name) {
 	let register;
 	try {
 		register = new Register();
@@ -46,7 +66,6 @@ Register.generate = async function (did, key, name, expireOn) {
 		register.did = did;
 		register.deleted = false;
 		register.createdOn = new Date();
-		register.expireOn = expireOn;
 
 		register = await register.save();
 		return Promise.resolve(register);
@@ -57,9 +76,9 @@ Register.generate = async function (did, key, name, expireOn) {
 };
 
 // obtener todos los registros
-Register.getAll = async function () {
+Register.getAll = async function (filter) {
 	try {
-		const query = { deleted: false };
+		const query = { deleted: false, ...filter };
 		const registers = await Register.find(query).sort({ createdOn: -1 });
 		return Promise.resolve(registers);
 	} catch (err) {
