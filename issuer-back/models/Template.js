@@ -192,7 +192,7 @@ Template.generate = async function (name, registerId) {
 Template.getAll = async function () {
 	try {
 		const query = { deleted: false };
-		const template = await Template.find(query).sort({ createdOn: -1 });
+		const template = await Template.find(query).populate("registerId").sort({ createdOn: -1 });
 		return Promise.resolve(template);
 	} catch (err) {
 		console.log(err);
