@@ -208,6 +208,9 @@ module.exports.editRegister = async function (did, body) {
 };
 
 const sendDidToDidi = async function (did, name, token) {
+	console.log("LINK------------------------------------------------------------");
+	console.log(Constants.ISSUER_API_URL);
+	console.log("LINK------------------------------------------------------------");
 	try {
 		const response = await fetch(Constants.DIDI_API + "/issuer", {
 			method: "POST",
@@ -216,7 +219,7 @@ const sendDidToDidi = async function (did, name, token) {
 				did,
 				name,
 				token,
-				callbackUrl: "http://192.168.0.118:3500/api/1.0/didi_issuer/register"
+				callbackUrl: `${Constants.ISSUER_API_URL}/register`
 			})
 		});
 
