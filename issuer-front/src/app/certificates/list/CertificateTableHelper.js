@@ -22,8 +22,7 @@ import Cookie from "js-cookie";
 
 const { Observer } = Constants.ROLES;
 
-const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN } = Messages.LIST.TABLE;
-const { VIEW } = Messages.LIST.BUTTONS;
+const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE } = Messages.LIST.TABLE;
 
 class CertificateTableHelper {
 	static baseCells = cert => ({
@@ -39,14 +38,16 @@ class CertificateTableHelper {
 	// genera las columnas de la tabla de credencial
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
 		const role = Cookie.get("role");
+		const { createdOn, blockchain } = cert;
 		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete, enabled: role === Observer });
-
 		const onToggle = (_, value) => {
 			onSelectToggle(cert._id, value);
 		};
 
 		return {
 			...this.baseCells(cert),
+			createdOn: createdOn ? moment(createdOn).format(DATE_FORMAT) : "-",
+			blockchain: blockchain ? blockchain.toUpperCase() : "-",
 			select: role !== Observer && (
 				<div className="Actions">
 					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
@@ -163,6 +164,10 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "blockchain"
+			},
+			{
+				Header: CRATED_DATE,
+				accessor: "createdOn"
 			},
 			{
 				Header: (

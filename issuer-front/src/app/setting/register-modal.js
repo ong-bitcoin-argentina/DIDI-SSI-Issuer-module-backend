@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { isValidElement, useEffect, useState } from "react";
 import {
 	Button,
 	CircularProgress,
@@ -73,7 +73,11 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		setLoading(true);
 		try {
 			const token = Cookie.get("token");
-			await RegisterService.create(token, newRegister);
+			const response = await RegisterService.create(token, newRegister);
+			if (response.status === "error") {
+				setError(response.data.message);
+				return;
+			}
 			resetForm();
 			onSuccess();
 		} catch (error) {

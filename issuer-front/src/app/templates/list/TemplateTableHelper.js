@@ -17,7 +17,7 @@ class TemplateTableHelpers {
 		return {
 			_id: template._id,
 			name: template.name,
-			blockchain: <div style={{ textTransform: "uppercase", textAlign: "center" }}>{template.blockchain}</div>,
+			blockchain: <div style={{ textTransform: "uppercase", textAlign: "center" }}>{template.blockchain ?? "-"}</div>,
 			actions: (
 				<div className="Actions">
 					<div
