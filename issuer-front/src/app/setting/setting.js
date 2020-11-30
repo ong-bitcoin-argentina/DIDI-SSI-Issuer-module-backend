@@ -26,7 +26,7 @@ const Setting = () => {
 		setLoading(true);
 		const token = Cookie.get("token");
 		try {
-			const data_ = await RegisterService.getAll(token);
+			const data_ = await RegisterService.getAll(token, {});
 			setData(data_.data);
 		} catch (error) {
 			setError(error.message);
