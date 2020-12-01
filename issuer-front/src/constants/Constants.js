@@ -13,7 +13,7 @@ module.exports = {
 		},
 		REGISTER: {
 			CREATE: API + "/register",
-			GET_ALL: API + "/register/all",
+			GET: API + "/register",
 			GET_ALL_BLOCKCHAINS: API + "/register/all/blockchain"
 		},
 		TEMPLATES: {
@@ -250,5 +250,13 @@ module.exports = {
 		Admin: "Admin",
 		Manager: "Manager",
 		Observer: "Observer"
+	},
+
+	BLOCKCHAINS: ["BFA", "RSK", "LACCHAIN"],
+
+	STATUS: {
+		DONE: "Creado",
+		ERROR: "Error",
+		PENDING: "Pendiente"
 	}
 };

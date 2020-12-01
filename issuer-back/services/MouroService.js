@@ -64,6 +64,9 @@ module.exports.createShareRequest = async function (claims, cb) {
 // genera un certificado asociando la información recibida en "subject" con el did
 module.exports.createCertificate = async function (subject, expDate, did, template) {
 	const { registerId } = template;
+
+	if (!registerId) return Promise.reject(Messages.REGISTER.ERR.NOT_BLOCKCHAIN);
+
 	const { did: registerDid, key } = await Register.getCredentials(registerId);
 
 	const cleanDid = registerDid.split(":");

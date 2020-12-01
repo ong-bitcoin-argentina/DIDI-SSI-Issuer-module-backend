@@ -1,8 +1,10 @@
 import React from "react";
-import { DATE_FORMAT } from "../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { Tooltip } from "@material-ui/core";
+
+const { ERROR, PENDING, DONE } = Constants.STATUS;
 
 const COLUMNS_NAME = [
 	{
@@ -27,10 +29,20 @@ const COLUMNS_NAME = [
 		name: "expireOn"
 	},
 	{
+		title: "Estado",
+		name: "status"
+	},
+	{
 		title: "Acciones",
 		name: "actions"
 	}
 ];
+
+const COLORES = {
+	[ERROR]: "#EB5757",
+	[PENDING]: "#F2994A",
+	[DONE]: "#43D19D"
+};
 
 export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	Header: (
@@ -45,7 +57,7 @@ export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => (
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
 export const getRegisterData = (register, onView) => {
-	const { did, createdOn, expireOn } = register;
+	const { did, createdOn, expireOn, status } = register;
 	const partsOfDid = did.split(":");
 	const blockchain = partsOfDid[2];
 	const keyDid = partsOfDid[3];
@@ -55,6 +67,7 @@ export const getRegisterData = (register, onView) => {
 		blockchain: <div style={{ textTransform: "uppercase" }}>{blockchain}</div>,
 		onCreated: <div style={{ textAlign: "center" }}>{formatDate(createdOn)}</div>,
 		expireOn: <div style={{ textAlign: "center" }}>{formatDate(expireOn)}</div>,
+		status: <div style={{ textAlign: "center", textTransform: "uppercase", color: COLORES[status] }}>{status}</div>,
 		actions: (
 			<div className="Actions">
 				<div className="EditAction" onClick={() => onView(register)}>

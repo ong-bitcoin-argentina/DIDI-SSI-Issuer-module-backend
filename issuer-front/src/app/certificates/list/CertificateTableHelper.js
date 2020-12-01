@@ -22,14 +22,12 @@ import Cookie from "js-cookie";
 
 const { Observer } = Constants.ROLES;
 
-const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN } = Messages.LIST.TABLE;
-const { VIEW } = Messages.LIST.BUTTONS;
+const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE } = Messages.LIST.TABLE;
 
 class CertificateTableHelper {
 	static baseCells = cert => ({
 		_id: cert._id,
-		blockchain: cert.registerDid ? cert.registerDid.split(":")[2] : "RSK",
-		registerDid: cert.registerDid,
+		blockchain: cert.blockchain ? cert.blockchain.toUpperCase() : "RSK",
 		certName: cert.name,
 		createdOn: cert.emmitedOn ? moment(cert.emmitedOn).format(DATE_FORMAT) : "-",
 		firstName: cert.firstName,
@@ -40,14 +38,16 @@ class CertificateTableHelper {
 	// genera las columnas de la tabla de credencial
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
 		const role = Cookie.get("role");
+		const { createdOn, blockchain } = cert;
 		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete, enabled: role === Observer });
-
 		const onToggle = (_, value) => {
 			onSelectToggle(cert._id, value);
 		};
 
 		return {
 			...this.baseCells(cert),
+			createdOn: createdOn ? moment(createdOn).format(DATE_FORMAT) : "-",
+			blockchain: blockchain ? blockchain.toUpperCase() : "-",
 			select: role !== Observer && (
 				<div className="Actions">
 					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
@@ -132,6 +132,7 @@ class CertificateTableHelper {
 		onTemplateFilterChange,
 		onFirstNameFilterChange,
 		onLastNameFilterChange,
+		onBlockchainFilterChange,
 		isLoading
 	) {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
@@ -155,6 +156,18 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "certName"
+			},
+			{
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect options={Constants.BLOCKCHAINS} label={BLOCKCHAIN} onChange={onBlockchainFilterChange} />
+					</div>
+				),
+				accessor: "blockchain"
+			},
+			{
+				Header: CRATED_DATE,
+				accessor: "createdOn"
 			},
 			{
 				Header: (
@@ -207,7 +220,7 @@ class CertificateTableHelper {
 				Header: (
 					<div className="SelectionTable">
 						<CustomSelect
-							options={["BFA", "RSK", "LACCHAIN"]}
+							options={Constants.BLOCKCHAINS}
 							label={BLOCKCHAIN}
 							onChange={onFilterChange}
 							field="blockchain"
@@ -256,6 +269,19 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "certName"
+			},
+			{
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect
+							options={Constants.BLOCKCHAINS}
+							label={BLOCKCHAIN}
+							onChange={onFilterChange}
+							field="blockchain"
+						/>
+					</div>
+				),
+				accessor: "blockchain"
 			},
 			{
 				Header: `${EMISSION_DATE} ${EMISSION_DATE2}`,

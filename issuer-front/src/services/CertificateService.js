@@ -129,13 +129,19 @@ export default class CertificateService {
 		throw result;
 	}
 
-	static async getPending(token) {
-		let result = await fetch(GET_PENDING, options(token));
-		result = await result.json();
-		if (result.status === "success") {
-			return result.data;
-		}
-		throw result;
+	static getPending(token, cb, errCb) {
+		fetch(GET_PENDING, options(token))
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
 	}
 
 	static async getRevoked(token) {

@@ -129,6 +129,7 @@ class Certificates extends Component {
 					columns={columns}
 					defaultPageSize={Constants.CERTIFICATES.TABLE.PAGE_SIZE}
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
+					style={{ textAlign: "center" }}
 				/>
 			</div>
 		);
