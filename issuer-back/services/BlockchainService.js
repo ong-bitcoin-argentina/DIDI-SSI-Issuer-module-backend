@@ -208,9 +208,6 @@ module.exports.editRegister = async function (did, body) {
 };
 
 const sendDidToDidi = async function (did, name, token) {
-	console.log("LINK------------------------------------------------------------");
-	console.log(Constants.ISSUER_API_URL);
-	console.log("LINK------------------------------------------------------------");
 	try {
 		const response = await fetch(Constants.DIDI_API + "/issuer", {
 			method: "POST",
