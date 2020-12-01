@@ -1,5 +1,5 @@
 const parse = cert => {
-	const register = cert.templateId.registerId;
+	const register = cert.templateId ? cert.templateId.registerId : undefined;
 	const blockchain = register ? register.did.split(":")[2] : undefined;
 	return {
 		_id: cert._id,
