@@ -14,17 +14,21 @@ import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
 import RegisterService from "../../../services/RegisterService";
 import Cookie from "js-cookie";
+import DefautValueService from "../../../services/DefaultValueService";
 
 class Templates extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			registers: []
+		};
 	}
 
 	// generar referencia para abrirlo desde el padre
 	componentDidMount() {
 		this.getAllRegister();
+		this.getDefaultRegister();
 		this.props.onRef(this);
 	}
 
@@ -32,6 +36,12 @@ class Templates extends Component {
 		const token = Cookie.get("token");
 		const response = await RegisterService.getAll(token);
 		this.setState({ registers: response.data });
+	}
+
+	async getDefaultRegister() {
+		const token = Cookie.get("token");
+		const { data } = await DefautValueService.get(token);
+		this.setState({ registerId: data.registerId });
 	}
 
 	// borrar referencia
@@ -67,8 +77,21 @@ class Templates extends Component {
 				onRef={ref => (this.createDialog = ref)}
 				title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
 				fieldNames={["name"]}
-				selectNames={[{ name: "registerId", label: "Emisor", options: this.state.registers }]}
-				onAccept={this.props.onCreate}
+				selectNames={[
+					{
+						name: "registerId",
+						label: "Emisor",
+						options: this.state.registers
+					}
+				]}
+				registerIdDefault={this.state.registerId}
+				onAccept={values => {
+					if (!values.registerId) {
+						this.props.onCreate({ ...values, registerId: this.state.registerId });
+					} else {
+						this.props.onCreate(values);
+					}
+				}}
 			/>
 		);
 	};

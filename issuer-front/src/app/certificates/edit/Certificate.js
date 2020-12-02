@@ -26,6 +26,7 @@ import moment from "moment";
 
 import QrDialog from "../../utils/dialogs/QrDialog";
 import Header from "../../components/Header";
+import DefautValueService from "../../../services/DefaultValueService";
 
 let interval;
 class Certificate extends Component {
@@ -62,6 +63,7 @@ class Certificate extends Component {
 					await self.getTemplate(token);
 					await self.getParticipants();
 				}
+				await self.getDefaultTemplate();
 			} catch (err) {
 				self.setState({ error: err });
 				console.log(err);
@@ -70,6 +72,16 @@ class Certificate extends Component {
 			self.setState({ loading: false });
 		})();
 	}
+
+	getDefaultTemplate = async function () {
+		if (!this.state.selectedTemplate) {
+			const token = Cookie.get("token");
+			const { data } = await DefautValueService.get(token);
+			const templateDefault = this.state.templates.find(({ _id }) => _id === data.templateId);
+
+			this.templateSelected(templateDefault);
+		}
+	};
 
 	// carga modelos de credencial
 	getTemplates = function (token) {
@@ -906,16 +918,18 @@ class Certificate extends Component {
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
 				<h2>Crear Credencial</h2>
-				<Autocomplete
-					options={templates}
-					disabled={this.state.cert?.revocation}
-					getOptionLabel={option => (option ? `${option.name} (${option.blockchain.toUpperCase()})` : "")}
-					value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
-					renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
-					onChange={(_, value) => {
-						this.templateSelected(value);
-					}}
-				/>
+				{!this.state.loading && (
+					<Autocomplete
+						options={templates}
+						disabled={this.state.cert?.revocation}
+						getOptionLabel={option => (option ? `${option.name} (${option.blockchain.toUpperCase()})` : "")}
+						value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
+						renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
+						onChange={(_, value) => {
+							this.templateSelected(value);
+						}}
+					/>
+				)}
 			</div>
 		);
 	};

@@ -22,7 +22,7 @@ export default class InputDialog extends Component {
 
 		this.state = {
 			isOpen: false,
-			fields: fields
+			fields: { ...fields }
 		};
 	}
 
@@ -77,7 +77,8 @@ export default class InputDialog extends Component {
 		const onAccept = this.props.onAccept;
 		const fieldNames = this.props.fieldNames;
 		const selectNames = this.props.selectNames || [];
-		const t = this.props.selectNames || [];
+		const registerIdDefault = this.props.registerIdDefault;
+
 		return (
 			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
@@ -109,14 +110,14 @@ export default class InputDialog extends Component {
 										key={"select-" + key}
 										id={name}
 										name={name}
-										defaultValue={options ? options[0] : undefined}
+										defaultValue={registerIdDefault || undefined}
 										label={label}
 										onChange={event => {
 											this.updateField(name, event.target.value);
 										}}
 										fullWidth
 									>
-										{options?.length &&
+										{options.length !== 0 &&
 											options.map(({ name, did, _id }) => (
 												<MenuItem key={_id} value={_id}>
 													{name}

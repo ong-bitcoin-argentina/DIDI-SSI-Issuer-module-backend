@@ -209,4 +209,17 @@ export default class TemplateService {
 			})
 			.catch(err => errCb(err));
 	}
+
+	static async getAllAsync(token) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		const response = await fetch(Constants.API_ROUTES.TEMPLATES.GET_ALL, data);
+		return await response.json();
+	}
 }
