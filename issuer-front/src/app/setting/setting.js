@@ -10,6 +10,7 @@ import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
 import { getRegisterColumns, getRegisterData } from "./register-table-helper";
 import ModalDetail from "./modal-detail";
+import DefaultForm from "./default-form";
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);
@@ -72,6 +73,7 @@ const Setting = () => {
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 					/>
 				)}
+			<DefaultForm registers={data} />
 			{error && (
 				<div className="errMsg" style={{ width: "100%" }}>
 					{error}
