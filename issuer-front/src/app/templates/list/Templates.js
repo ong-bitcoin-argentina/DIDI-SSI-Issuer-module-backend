@@ -41,7 +41,7 @@ class Templates extends Component {
 	async getDefaultRegister() {
 		const token = Cookie.get("token");
 		const { data } = await DefautValueService.get(token);
-		this.setState({ registerId: data.registerId });
+		this.setState({ registerId: data?.registerId });
 	}
 
 	// borrar referencia
