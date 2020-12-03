@@ -77,7 +77,7 @@ class Certificate extends Component {
 		if (!this.state.selectedTemplate) {
 			const token = Cookie.get("token");
 			const { data } = await DefautValueService.get(token);
-			const templateDefault = this.state.templates.find(({ _id }) => _id === data.templateId);
+			const templateDefault = this.state.templates.find(({ _id }) => _id === data?.templateId);
 
 			this.templateSelected(templateDefault);
 		}
@@ -922,7 +922,9 @@ class Certificate extends Component {
 					<Autocomplete
 						options={templates}
 						disabled={this.state.cert?.revocation}
-						getOptionLabel={option => (option ? `${option.name} (${option.blockchain.toUpperCase()})` : "")}
+						getOptionLabel={option =>
+							option ? `${option.name} ${option.blockchain ? `(${option.blockchain.toUpperCase()})` : ""}` : ""
+						}
 						value={this.state.selectedTemplate ? this.state.selectedTemplate : ""}
 						renderInput={params => <TextField {...params} variant="standard" label={""} placeholder="" fullWidth />}
 						onChange={(_, value) => {
