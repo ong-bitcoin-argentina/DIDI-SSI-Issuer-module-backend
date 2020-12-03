@@ -101,7 +101,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 					<Grid container item xs={12} justify="center">
 						<Grid
 							item
-							style={{ margin: "10px 0 25px", background: "#FAFAFA" }}
+							style={{ marginBottom: "10px", background: "#FAFAFA" }}
 							xs={8}
 							container
 							direction="row"
@@ -114,7 +114,23 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 							<Grid item xs={10} style={{ padding: "10px", textAlign: "center" }}>
 								<Typography variant="body2">
 									Completá los siguientes campos para registrarte como Emisor de Credenciales en Blockchain que quieras
-									uitilizar
+									uitilizar.
+								</Typography>
+							</Grid>
+						</Grid>
+						<Grid
+							item
+							style={{ margin: "10px 0 25px", background: "#FAFAFA" }}
+							xs={8}
+							container
+							direction="row"
+							justify="center"
+							alignItems="center"
+						>
+							<Grid item xs={12} style={{ padding: "10px", textAlign: "center" }}>
+								<Typography variant="body2">
+									La ejecución de esta operación puede demorar varios minutos. El registro quedará en estado PENDIENTE
+									hasta tanto se confirme la transacción.
 								</Typography>
 							</Grid>
 						</Grid>
