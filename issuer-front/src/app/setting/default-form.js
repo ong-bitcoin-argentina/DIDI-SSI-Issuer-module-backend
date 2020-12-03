@@ -120,7 +120,7 @@ const DefaultForm = () => {
 	};
 
 	return (
-		<Grid container style={{ margin: "50px 0 50px" }}>
+		<Grid container style={{ margin: "25px 0" }}>
 			<Grid item xs={12} style={{ background: "#dddee5" }}>
 				<Typography style={{ color: "#8f92a9", padding: "15px 15px 15px" }}>Configuraciones por Defecto</Typography>
 			</Grid>
@@ -149,16 +149,16 @@ const DefaultForm = () => {
 								loading={templateLoading}
 								label={TEMPALTE_LABEL_NAME}
 							/>
+							{error && <Alert color="error">{error}</Alert>}
+							<Grid item xs={12} style={{ margin: "25px 0 15px" }}>
+								{existDefault ? (
+									<DefaultButton funct={editDefaultFunction} name="Guardar Cambios" {...loading} />
+								) : (
+									<DefaultButton funct={createDefaultValue} name="Crear" {...loading} />
+								)}
+							</Grid>
 						</>
 					)}
-					{error && <Alert color="error">{error}</Alert>}
-					<Grid item xs={12} style={{ margin: "25px 0 15px" }}>
-						{existDefault ? (
-							<DefaultButton funct={editDefaultFunction} name="Editar" {...loading} />
-						) : (
-							<DefaultButton funct={createDefaultValue} name="Crear" {...loading} />
-						)}
-					</Grid>
 				</Grid>
 			</Grid>
 			<Notification message={CREATE_MESSAGE} open={create} onClose={changeNotification("create", false)} />

@@ -7,6 +7,7 @@ const DefaultButton = ({ funct, name, templateLoading, registerLoading }) => (
 		onClick={funct}
 		variant="contained"
 		color="primary"
+		style={{ background: "#256EE0", color: "#fff" }}
 		disabled={templateLoading || registerLoading}
 	>
 		{name}
