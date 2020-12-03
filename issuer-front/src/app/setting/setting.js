@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, Grid } from "@material-ui/core";
 import ReactTable from "react-table-6";
 import Messages from "../../constants/Messages";
 import RegisterModal from "./register-modal";
@@ -57,7 +57,20 @@ const Setting = () => {
 
 	return (
 		<>
-			<div className="HeadButtons">{!loading && !ifNotElements && <OpenModalButton setModalOpen={setModalOpen} />}</div>
+			{!loading && !ifNotElements && (
+				<Grid container xs={12} style={{ margin: "10px 0" }}>
+					<Grid item xs={8} container direction="column" style={{ textAlign: "start" }}>
+						<h1 style={{ margin: "0", padding: "0" }}>Configuración</h1>
+						<p>
+							Registrate como Emisor de Credenciales en la/s blockchain/s que quieras verificar tus credenciales a
+							emitir
+						</p>
+					</Grid>
+					<Grid item xs={4} container justify="flex-end" alignItems="center">
+						<OpenModalButton setModalOpen={setModalOpen} />
+					</Grid>
+				</Grid>
+			)}
 			{(loading && (
 				<div style={{ display: "flex", justifyContent: "center" }}>
 					<CircularProgress />
@@ -71,6 +84,7 @@ const Setting = () => {
 						data={data.map(register => getRegisterData(register, selectRegister))}
 						columns={getRegisterColumns}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
+						pageSize={5}
 					/>
 				)}
 			<DefaultForm registers={data} />
