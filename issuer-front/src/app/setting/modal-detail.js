@@ -25,7 +25,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register }) => {
 					<KeyValue field="Nombre" value={name} />
 					<KeyValue field="Fecha de Registro" value={createdOn_} />
 					<KeyValue field="Fecha de Expiración" value={expireOn_} />
-					<KeyValue field="Bloque de blockchain" value={blockHash} />
+					<KeyValue field="Hash de Transacción" value={blockHash} />
 				</Grid>
 			</DialogContent>
 			<DialogActions>
