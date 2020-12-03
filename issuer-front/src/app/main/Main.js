@@ -122,9 +122,10 @@ class Main extends Component {
 						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
 						self.setState({
 							templates: templates,
-							templateColumns: templateColumns
+							templateColumns: templateColumns,
+							loading: false
 						});
-						CertificateService.getAll(
+						CertificateService.getPending(
 							token,
 							async function (certs) {
 								const selectedCerts = self.state.selectedCerts;
@@ -145,8 +146,7 @@ class Main extends Component {
 										self.setState({
 											delegateColumns: delegateColumns,
 											delegates: delegates,
-											error: false,
-											loading: false
+											error: false
 										});
 									},
 									function (err) {
