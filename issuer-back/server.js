@@ -14,6 +14,7 @@ const CertRoutes = require("./routes/CertRoutes");
 const ParticipantRoutes = require("./routes/ParticipantRoutes");
 const DelegateRoutes = require("./routes/DelegateRoutes");
 const RegisterRoutes = require("./routes/RegisterRoutes");
+const DefaultRoutes = require("./routes/DefaultRoutes");
 
 // inicializar cluster para workers, uno por cpu disponible
 var cluster = require("cluster");
@@ -110,6 +111,7 @@ app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
 app.use(route + "/delegate", DelegateRoutes);
 app.use(route + "/register", RegisterRoutes);
+app.use(route + "/default", DefaultRoutes);
 
 // forkear workers
 if (cluster.isMaster) {
