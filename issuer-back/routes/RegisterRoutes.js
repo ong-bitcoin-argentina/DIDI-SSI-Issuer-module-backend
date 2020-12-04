@@ -110,9 +110,7 @@ router.put(
 		{
 			name: "status",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
-		},
-		{ name: "expireOn", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{ name: "blockHash", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
