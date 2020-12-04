@@ -849,6 +849,8 @@ class Main extends Component {
 							error={error}
 							role={role}
 							onDeleteSelects={this.onDeleteSelects}
+							selectedCerts={this.state.selectedCerts}
+							allCertificates={this.state.certificates}
 						/>
 					</TabPanel>
 					<TabPanel>
