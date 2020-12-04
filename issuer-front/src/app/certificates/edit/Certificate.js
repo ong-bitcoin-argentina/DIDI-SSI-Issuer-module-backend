@@ -917,7 +917,7 @@ class Certificate extends Component {
 		return (
 			<div className="TemplateSelector">
 				<div className="DataName">{Constants.CERTIFICATES.EDIT.TEMPLATE_SELECT_MESSAGE}</div>
-				<h2>Crear Credencial</h2>
+				{!this.state.cert?.revocation && <h2>Crear Credencial</h2>}
 				{!this.state.loading && (
 					<Autocomplete
 						options={templates}
