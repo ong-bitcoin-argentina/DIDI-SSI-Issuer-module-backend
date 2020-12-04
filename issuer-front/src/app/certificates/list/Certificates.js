@@ -12,6 +12,7 @@ import Spinner from "../../utils/Spinner";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import DeleteAllCertsDialog from "./delete-all-certs-dialog";
 
 const { Observer } = Constants.ROLES;
 class Certificates extends Component {
@@ -61,6 +62,7 @@ class Certificates extends Component {
 			<div className={loading ? "Certificates Loading" : "Certificates"}>
 				{Spinner.render(loading)}
 				{this.renderDeleteDialog()}
+				{this.renderDeleteAllDialog()}
 				{this.renderRevocationDialog()}
 				{this.renderSectionButtons(loading)}
 				{this.renderTable()}
@@ -68,6 +70,22 @@ class Certificates extends Component {
 			</div>
 		);
 	}
+
+	setOpenDeleteAll = value => {
+		this.setState({ openDeleteAll: value });
+	};
+
+	renderDeleteAllDialog = () => {
+		return (
+			<DeleteAllCertsDialog
+				onDeleteSelects={this.props.onDeleteSelects}
+				selectedCerts={this.props.selectedCerts}
+				openDeleteAll={this.state.openDeleteAll || false}
+				setOpenDeleteAll={this.setOpenDeleteAll}
+				allCertificates={this.props.allCertificates}
+			/>
+		);
+	};
 
 	// muestra el dialogo de borrado
 	renderDeleteDialog = () => {
@@ -135,12 +153,19 @@ class Certificates extends Component {
 		);
 	};
 
+	openDeleteAllDialog = () => {
+		const keys = Object.keys(this.props.selectedCerts);
+		const selectedCerts = keys.filter(key => this.props.selectedCerts[key]);
+		if (selectedCerts.length === 0) return;
+		this.setState({ openDeleteAll: true });
+	};
+
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
 			<>
 				<div className="CertButtons mr-2">
-					<button className="DangerButton" onClick={this.props.onDeleteSelects}>
+					<button className="DangerButton" onClick={this.openDeleteAllDialog}>
 						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
 						Eliminar Credenciales Seleccionadas
 					</button>
