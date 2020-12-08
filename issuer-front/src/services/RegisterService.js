@@ -47,4 +47,19 @@ export default class RegisterService {
 
 		return fetch(Constants.API_ROUTES.REGISTER.CREATE, data);
 	}
+
+	static editName(token, did, name) {
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name
+			})
+		};
+
+		return fetch(`${Constants.API_ROUTES.REGISTER.CREATE}/${did}`, data);
+	}
 }

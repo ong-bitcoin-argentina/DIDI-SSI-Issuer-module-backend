@@ -15,7 +15,7 @@ const TEMPALTE_LABEL_NAME = "Template de Credenciales por defecto";
 const CREATE_MESSAGE = "Se creo exitosamente";
 const EDIT_MESSAGE = "Se edito exitosamente";
 
-const DefaultForm = () => {
+const DefaultForm = ({ registers: register_ }) => {
 	const [defaultValue, setDefaultValue] = useState({});
 	const [prevDefaultValue, setPrevDefaultValue] = useState({});
 
@@ -43,7 +43,7 @@ const DefaultForm = () => {
 		getTemplatesData();
 		getDefaultValueData();
 		getRegisterData();
-	}, []);
+	}, [register_]);
 
 	const getDefaultValueData = async () => {
 		setLoading(l => ({ ...l, defaultvalueLoading: true }));

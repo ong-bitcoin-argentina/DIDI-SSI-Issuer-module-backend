@@ -37,7 +37,7 @@ const RegisterSchema = mongoose.Schema({
 });
 
 RegisterSchema.index({ name: 1 });
-RegisterSchema.methods.editStatus = async function (data) {
+RegisterSchema.methods.edit = async function (data) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: data

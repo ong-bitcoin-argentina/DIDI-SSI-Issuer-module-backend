@@ -11,11 +11,13 @@ import Cookie from "js-cookie";
 import { getRegisterColumns, getRegisterData } from "./register-table-helper";
 import ModalDetail from "./modal-detail";
 import DefaultForm from "./default-form";
+import EditRegisterModal from "./edit-register-modal";
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [detailModalOpen, setDetailModalOpen] = useState(false);
+	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [registerSelected, setRegisterSelected] = useState({});
 	const [blockchains, setBlockchains] = useState([]);
 	const [data, setData] = useState([]);
@@ -50,9 +52,9 @@ const Setting = () => {
 		getBlockchains();
 	}, []);
 
-	const selectRegister = register => {
+	const selectRegister = setModalFn => register => {
 		setRegisterSelected(register);
-		setDetailModalOpen(true);
+		setModalFn(true);
 	};
 
 	return (
@@ -81,7 +83,9 @@ const Setting = () => {
 						sortable={false}
 						previousText={Messages.LIST.TABLE.PREV}
 						nextText={Messages.LIST.TABLE.NEXT}
-						data={data.map(register => getRegisterData(register, selectRegister))}
+						data={data.map(register =>
+							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen))
+						)}
 						columns={getRegisterColumns}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 						pageSize={5}
@@ -100,6 +104,12 @@ const Setting = () => {
 				blockchains={blockchains}
 			/>
 			<ModalDetail modalOpen={detailModalOpen} setModalOpen={setDetailModalOpen} register={registerSelected} />
+			<EditRegisterModal
+				modalOpen={editModalOpen}
+				setModalOpen={setEditModalOpen}
+				register={registerSelected}
+				onAccept={getRegisters}
+			/>
 		</>
 	);
 };

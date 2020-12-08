@@ -197,31 +197,43 @@ module.exports.editRegister = async function (did, body) {
 		const register = await Register.getByDID(did);
 		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
 
-		const { status } = body;
-		if (!Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(Messages.REGISTER.ERR.STATUS);
+		const { status, name } = body;
+		if (status && !Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(Messages.REGISTER.ERR.STATUS);
 
-		return await register.editStatus(body);
+		if (name) await sendEditNameToDidi(did, name);
+
+		return await register.edit(body);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.REGISTER.ERR.EDIT);
 	}
 };
 
+const sendEditNameToDidi = async function (did, name) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, "PUT", { name });
+};
+
 const sendDidToDidi = async function (did, name, token) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer`, "POST", {
+		did,
+		name,
+		token,
+		callbackUrl: `${Constants.ISSUER_API_URL}/register`
+	});
+};
+
+const defaultFetch = async function (url, method, body) {
 	try {
-		const response = await fetch(Constants.DIDI_API + "/issuer", {
-			method: "POST",
+		const response = await fetch(url, {
+			method,
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				did,
-				name,
-				token,
-				callbackUrl: `${Constants.ISSUER_API_URL}/register`
-			})
+			body: JSON.stringify(body)
 		});
 
 		const jsonResp = await response.json();
-		return jsonResp.status === "error" ? Promise.reject(jsonResp) : Promise.resolve(jsonResp.data);
+		if (jsonResp.status === "error") throw jsonResp;
+
+		return jsonResp.data;
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);
