@@ -96,7 +96,7 @@ router.get(
 );
 
 /*
- * Cambia el estado de un Registro
+ * Cambia un Registro
  */
 
 router.put(
@@ -106,10 +106,6 @@ router.put(
 			name: "token",
 			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
 			isHead: true
-		},
-		{
-			name: "status",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
