@@ -1,42 +1,56 @@
 import {
 	Button,
+	Checkbox,
 	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControlLabel,
 	Grid,
 	IconButton,
-	MenuItem,
-	Select,
 	TextField
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import PropTypes from "prop-types";
+import Constants from "../../constants/Constants";
 
 const TITLE = "Usuario";
 
-const ROLES = [
-	{
-		value: "Manager",
-		name: "Gestor"
-	},
-	{
-		value: "Observer",
-		name: "Visualizador"
-	}
-];
+const {
+	Read_Templates,
+	Write_Templates,
+	Delete_Templates,
+	Read_Certs,
+	Write_Certs,
+	Delete_Certs,
+	Read_Dids_Registers,
+	Write_Dids_Registers,
+	Read_Delegates,
+	Write_Delegates
+} = Constants.ROLES;
+
+const GROUPS = {
+	"Gestión de Templates de Credenciales:": [Read_Templates, Write_Templates, Delete_Templates],
+	"Gestión de Credenciales:": [Read_Certs, Write_Certs, Delete_Certs],
+	"Registro de DIDs:": [Read_Dids_Registers, Write_Dids_Registers],
+	"Gestor de Delegados:": [Read_Delegates, Write_Delegates]
+};
 
 const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	const [newUser, setNewUser] = useState(userData);
 	const [loading, setLoading] = useState(false);
+	const [roles, setRoles] = useState({});
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState("");
 
 	useEffect(() => {
 		setNewUser(userData);
+		if (userData.types) {
+			userData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));
+		}
 	}, [userData]);
 
 	const INPUTS = [
@@ -58,7 +72,13 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	];
 
 	const resetState = () => {
-		setNewUser({ type: ROLES[0].value });
+		if (title === "Editar") {
+			setNewUser(userData);
+			userData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));
+		} else {
+			setNewUser({});
+			setRoles({});
+		}
 		setShowPassword(false);
 	};
 
@@ -66,9 +86,14 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 		event.preventDefault();
 		try {
 			setError("");
-			setLoading(true);
 			if (newUser.password === newUser.repeatPassword) {
-				onSubmit(newUser);
+				const types = Object.keys(roles).filter(r => roles[r]);
+				if (types.length === 0) {
+					setError("Seleccione un permiso.");
+					return;
+				}
+				setLoading(true);
+				onSubmit({ ...newUser, types });
 				resetState();
 				event.target.reset();
 				close();
@@ -94,6 +119,16 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 		setNewUser(user => ({ ...user, [name]: value }));
 	};
 
+	const handleRole = event => {
+		const { name, checked } = event.target;
+		setRoles(roles => ({ ...roles, [name]: checked }));
+	};
+
+	const changeGroup = groupName => event => {
+		const { checked } = event.target;
+		GROUPS[groupName].forEach(r => setRoles(roles_ => ({ ...roles_, [r]: checked })));
+	};
+
 	return (
 		<Dialog open={open}>
 			<form onSubmit={handleSubmit} onReset={handleCancel}>
@@ -104,7 +139,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">
-						<Grid item xs={8}>
+						<Grid item xs={9}>
 							{INPUTS.map(({ name, placeholder, type }, index) => (
 								<TextField
 									key={index}
@@ -127,20 +162,41 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 									}}
 								/>
 							))}
-							<Select
-								id="user-select-input"
-								required
-								fullWidth
-								name="type"
-								defaultValue={newUser.type}
-								onChange={handleChange}
-							>
-								{ROLES.map(({ name, value }, index) => (
-									<MenuItem key={index} value={value}>
-										{name}
-									</MenuItem>
-								))}
-							</Select>
+							<h2>Permisos</h2>
+							{Object.keys(GROUPS).map(groupName => (
+								<Grid key={groupName} container xs={12}>
+									<FormControlLabel
+										control={
+											<Checkbox
+												onChange={changeGroup(groupName)}
+												checked={GROUPS[groupName].every(role => roles[role])}
+												color="primary"
+											/>
+										}
+										label={groupName}
+									/>
+									<Grid container justify="flex-end">
+										<Grid item xs={10}>
+											{GROUPS[groupName].map(role => (
+												<Grid item xs={12}>
+													<FormControlLabel
+														key={role}
+														control={
+															<Checkbox
+																checked={Boolean(roles[role])}
+																onChange={handleRole}
+																name={role}
+																color="primary"
+															/>
+														}
+														label={Constants.ROLES_TRANSLATE[role]}
+													/>
+												</Grid>
+											))}
+										</Grid>
+									</Grid>
+								</Grid>
+							))}
 							{error && <div className="errMsg">{error}</div>}
 						</Grid>
 					</Grid>
@@ -167,7 +223,7 @@ CreateUserModal.propTypes = {
 };
 
 CreateUserModal.defaultProps = {
-	userData: { type: ROLES[0].value }
+	userData: {}
 };
 
 export default CreateUserModal;
