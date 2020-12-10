@@ -16,7 +16,7 @@ const { checkValidationResult, validate } = Validator;
 /**
  *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
  */
-router.get("/all", validate([TOKEN_VALIDATION.Observer]), checkValidationResult, async function (_, res) {
+router.get("/all", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResult, async function (_, res) {
 	try {
 		const certs = await CertService.getAll();
 		const result = toDTO(certs);
@@ -30,7 +30,7 @@ router.get("/all", validate([TOKEN_VALIDATION.Observer]), checkValidationResult,
 /**
  *	lista de certificados emitidos
  */
-router.get("/find", validate([TOKEN_VALIDATION.Observer]), checkValidationResult, async function (req, res) {
+router.get("/find", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResult, async function (req, res) {
 	try {
 		const result = await CertService.findBy(req.query);
 		return ResponseHandler.sendRes(res, result);
@@ -47,7 +47,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Read_Certs],
 			isHead: true
 		}
 	]),
@@ -81,7 +81,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Write_Certs],
 			isHead: true
 		},
 		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -135,7 +135,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Write_Certs],
 			isHead: true
 		},
 		{ name: "templateId", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -197,7 +197,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Write_Certs],
 			isHead: true
 		}
 	]),
@@ -246,7 +246,7 @@ router.post(
  */
 router.post(
 	"/updateAllDeleted",
-	validate([TOKEN_VALIDATION.Manager]),
+	validate([TOKEN_VALIDATION.Write_Certs]),
 	checkValidationResult,
 	async function (req, res) {
 		try {

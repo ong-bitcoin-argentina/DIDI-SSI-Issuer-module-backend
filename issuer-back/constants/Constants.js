@@ -28,13 +28,65 @@ const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
 console.log(MONGO_URL);
 
-const USER_TYPES = { Admin: "Admin", Manager: "Manager", Observer: "Observer" };
-const USER_CREATED_TYPES = { Manager: "Manager", Observer: "Observer" };
-const ALLOWED_ROLES = {
-	Admin: ["Admin"],
-	Manager: ["Admin", "Manager"],
-	Observer: ["Admin", "Manager", "Observer"]
+const USER_TYPES = {
+	Admin: "Admin",
+
+	// Permisos para Templates
+	Read_Templates: "Read_Templates",
+	Write_Templates: "Write_Templates",
+	Delete_Templates: "Delete_Templates",
+
+	// Permisos para Certificados
+	Read_Certs: "Read_Certs",
+	Write_Certs: "Write_Certs",
+	Delete_Certs: "Delete_Certs",
+
+	// Permisos para Delegaciones
+	Read_Delegates: "Read_Delegates",
+	Write_Delegates: "Write_Delegates",
+
+	// Permisos para Registro de DIDs
+	Read_Dids_Registers: "Read_Dids_Registers",
+	Write_Dids_Registers: "Write_Dids_Registers"
 };
+
+const {
+	Admin,
+	Read_Templates,
+	Write_Templates,
+	Delete_Templates,
+	Read_Certs,
+	Write_Certs,
+	Delete_Certs,
+	Read_Delegates,
+	Write_Delegates,
+	Read_Dids_Registers,
+	Write_Dids_Registers
+} = USER_TYPES;
+
+const ALLOWED_ROLES = {
+	Admin: [Admin],
+
+	// Permisos para Templates
+	Read_Templates: [Read_Templates, Write_Templates, Delete_Templates, Write_Certs, Read_Certs],
+	Write_Templates: [Write_Templates],
+	Delete_Templates: [Delete_Templates],
+
+	// Permisos para Certificados
+	Read_Certs: [Read_Certs, Write_Certs, Delete_Certs],
+	Write_Certs: [Write_Certs],
+	Delete_Certs: [Delete_Certs],
+
+	// Permisos para Delegaciones
+	Read_Delegates: [Read_Delegates, Write_Delegates],
+	Write_Delegates: [Write_Delegates],
+
+	// Permisos para Registro de DIDs
+	Read_Dids_Registers: [Read_Dids_Registers, Write_Dids_Registers, Read_Certs, Write_Certs],
+	Write_Dids_Registers: [Write_Dids_Registers]
+};
+
+const USER_CREATED_TYPES = Object.keys(USER_TYPES).filter(r => r !== Admin);
 const CERT_FIELD_TYPES = {
 	Text: "Text",
 	Paragraph: "Paragraph",
@@ -71,9 +123,6 @@ module.exports = {
 	VALIDATION_TYPES: {
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ARRAY: "isArray",
-		IS_ADMIN: "isAdmin",
-		IS_MANAGER: "isManager",
-		IS_OBSERVER: "isObserver",
 		IS_STRING: "isString",
 		IS_BOOLEAN: "isBoolean",
 		IS_PASSWORD: "isPassword",

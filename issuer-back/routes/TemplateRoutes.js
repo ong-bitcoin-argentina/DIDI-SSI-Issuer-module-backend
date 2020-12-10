@@ -15,7 +15,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
@@ -39,7 +39,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
@@ -65,7 +65,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -95,7 +95,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{
@@ -144,7 +144,7 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Delete_Templates],
 			isHead: true
 		}
 	]),
@@ -171,7 +171,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_MANAGER],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{
@@ -222,7 +222,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		}
 	]),

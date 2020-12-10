@@ -11,11 +11,13 @@ const UserSchema = mongoose.Schema({
 		required: true
 	},
 	password: HashedData,
-	type: {
-		type: String,
-		enum: Object.keys(Constants.USER_TYPES),
-		required: true
-	},
+	types: [
+		{
+			type: String,
+			enum: Object.keys(Constants.USER_TYPES),
+			required: true
+		}
+	],
 	deleted: {
 		type: Boolean,
 		default: false
@@ -74,13 +76,13 @@ UserSchema.methods.delete = async function () {
 };
 
 // edita un usuario
-UserSchema.methods.edit = async function (name, pass, type) {
+UserSchema.methods.edit = async function (name, pass, types) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: {
-			name: name,
 			password: await Hashing.saltedHash(pass),
-			type: type
+			name,
+			types
 		}
 	};
 
@@ -97,7 +99,7 @@ const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
 // crea un nuevo usuario
-User.generate = async function (name, pass, type) {
+User.generate = async function (name, pass, types) {
 	let user;
 	try {
 		const query = { name: name, deleted: false };
@@ -109,7 +111,7 @@ User.generate = async function (name, pass, type) {
 		user.name = name;
 		user.deleted = false;
 		user.createdOn = new Date();
-		user.type = type;
+		user.types = types;
 
 		user = await user.save();
 		return Promise.resolve(user);
