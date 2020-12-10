@@ -10,8 +10,9 @@ const COLUMNS_NAME = [
 		name: "name"
 	},
 	{
-		title: "tipo",
-		name: "type"
+		title: "tipos",
+		name: "types",
+		width: 1100
 	},
 	{
 		title: "fecha de creacion",
@@ -23,13 +24,14 @@ const COLUMNS_NAME = [
 	}
 ];
 
-export const getUserColumns = COLUMNS_NAME.map(({ name, title }) => ({
+export const getUserColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	Header: (
 		<div className="HeaderText">
 			<p>{title}</p>
 		</div>
 	),
-	accessor: name
+	accessor: name,
+	width
 }));
 
 export const getUserData = (user, onDelete, onEdit) => {
@@ -38,7 +40,8 @@ export const getUserData = (user, onDelete, onEdit) => {
 		onCreated: (
 			<div style={{ textAlign: "center" }}>{user.createdOn ? moment(user.createdOn).format(DATE_FORMAT) : "-"}</div>
 		),
-		actions: user.type !== Constants.ROLES.Admin && (
+		types: user.types.map(role => <span style={{ marginRight: "7px" }}>{Constants.ROLES_TRANSLATE[role]};</span>),
+		actions: !user.types.includes(Constants.ROLES.Admin) && (
 			<div className="Actions">
 				<div className="EditAction" onClick={() => onEdit(user)}>
 					<Tooltip title="Editar" placement="top" arrow>
