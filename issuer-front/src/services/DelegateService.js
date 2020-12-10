@@ -24,6 +24,22 @@ export default class DelegateService {
 			.catch(err => errCb(err));
 	}
 
+	static async getAllAsync(token) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		const response = await fetch(Constants.API_ROUTES.DELEGATE.GET_ALL, data);
+		const json = await response.json();
+
+		if (json.status === "success") return json.data;
+		throw json.data;
+	}
+
 	static create(token, did, name, cb, errCb) {
 		const data = {
 			method: "POST",

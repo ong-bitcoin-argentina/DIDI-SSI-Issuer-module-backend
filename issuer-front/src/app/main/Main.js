@@ -34,6 +34,8 @@ import CertificatesRevoked from "../certificates/revoked/CertificatesRevoked";
 import Header from "../components/Header";
 import UserList from "../users/user-list";
 import Setting from "../setting/setting";
+import { validateAccess } from "../../constants/Roles";
+import DeleteAllCertsDialog from "../certificates/list/delete-all-certs-dialog";
 
 const TABS = {
 	list: 0,
@@ -56,7 +58,7 @@ const {
 	CONFIG
 } = Messages.LIST.BUTTONS;
 
-const { Admin, Observer } = Constants.ROLES;
+const { Admin, Read_Templates, Read_Certs, Read_Delegates, Read_Dids_Registers } = Constants.ROLES;
 
 class Main extends Component {
 	constructor(props) {
@@ -91,100 +93,83 @@ class Main extends Component {
 		};
 	}
 
+	setAllData = async () => {
+		const self = this;
+		const token = Cookie.get("token");
+
+		try {
+			if (validateAccess(Read_Dids_Registers)) {
+				const parts = await ParticipantService.getGlobalAsync(token);
+				const allSelectedParticipants = self.state.allSelectedParticipants;
+				const selectedParticipants = self.state.selectedParticipants;
+				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
+				self.setState({
+					loading: false
+				});
+			}
+
+			if (validateAccess(Read_Templates)) {
+				let templates = await TemplateService.getAllAsync(token);
+				templates = templates.data.map(template => {
+					return TemplateTableHelper.getTemplateData(
+						template,
+						self.onTemplateEdit,
+						self.onTemplateDeleteDialogOpen,
+						() => self.state.loading
+					);
+				});
+				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+				self.setState({
+					templates: templates,
+					templateColumns: templateColumns,
+					loading: false
+				});
+			}
+
+			if (validateAccess(Read_Certs)) {
+				const certs = await CertificateService.getPendingAsync(token);
+				const selectedCerts = self.state.selectedCerts;
+				self.updateSelectedCertsState(certs, selectedCerts);
+				self.setState({
+					loading: false
+				});
+			}
+
+			if (validateAccess(Read_Delegates)) {
+				let delegates = await DelegateService.getAllAsync(token);
+				delegates = delegates.map(delegate => {
+					return DelegatesTableHelper.getDelegatesData(
+						delegate,
+						self.onDelegateDeleteDialogOpen,
+						() => self.state.loading
+					);
+				});
+				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
+
+				self.setState({
+					delegateColumns: delegateColumns,
+					delegates: delegates,
+					error: false,
+					loading: false
+				});
+			}
+		} catch (err) {
+			self.setState({ error: err });
+			console.log(err);
+		}
+	};
+
 	// cargar credenciales
 	componentDidMount() {
 		const splitPath = this.props.history.location.pathname.split("/");
 		const path = splitPath[splitPath.length - 1];
 		let tabIndex = TABS[path];
 
-		const token = Cookie.get("token");
 		const self = this;
 
 		self.setState({ loading: true, tabIndex });
-		ParticipantService.getGlobal(
-			token,
-			async function (parts) {
-				const allSelectedParticipants = self.state.allSelectedParticipants;
-				const selectedParticipants = self.state.selectedParticipants;
-				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 
-				TemplateService.getAll(
-					token,
-					async function (templates) {
-						templates = templates.map(template => {
-							return TemplateTableHelper.getTemplateData(
-								template,
-								self.onTemplateEdit,
-								self.onTemplateDeleteDialogOpen,
-								() => self.state.loading
-							);
-						});
-						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-						self.setState({
-							templates: templates,
-							templateColumns: templateColumns,
-							loading: false
-						});
-						CertificateService.getPending(
-							token,
-							async function (certs) {
-								const selectedCerts = self.state.selectedCerts;
-								self.updateSelectedCertsState(certs, selectedCerts);
-
-								DelegateService.getAll(
-									token,
-									async function (delegates) {
-										delegates = delegates.map(delegate => {
-											return DelegatesTableHelper.getDelegatesData(
-												delegate,
-												self.onDelegateDeleteDialogOpen,
-												() => self.state.loading
-											);
-										});
-										const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
-
-										self.setState({
-											delegateColumns: delegateColumns,
-											delegates: delegates,
-											error: false
-										});
-									},
-									function (err) {
-										self.setState({ error: err });
-										console.log(err);
-									}
-								);
-							},
-							function (err) {
-								self.setState({ error: err });
-								console.log(err);
-							}
-						);
-					},
-					function (err) {
-						self.setState({ error: err });
-						console.log(err);
-					}
-				);
-			},
-			function (err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-
-		DelegateService.getIssuerName(
-			token,
-			function (name) {
-				self.setState({
-					issuerName: name
-				});
-			},
-			function (err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
+		self.setAllData();
 	}
 
 	// seleccionar credencial a pedir para el participante
@@ -792,7 +777,7 @@ class Main extends Component {
 	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
-		Cookie.set("role", "");
+		Cookie.set("roles", []);
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
@@ -804,7 +789,6 @@ class Main extends Component {
 
 		const { loading, tabIndex, error, anchorEl } = this.state;
 		const selectedIndex = tabIndex ?? 0;
-		const role = Cookie.get("role");
 
 		return (
 			<div className="MainContent">
@@ -814,52 +798,56 @@ class Main extends Component {
 					{this.renderActions(loading)}
 
 					<TabList>
-						<Tab disabled={loading && tabIndex !== 0}>{TO_TEMPLATES}</Tab>
-						<Tab disabled={loading && tabIndex !== 1}>{TO_CERTIFICATES_PENDING}</Tab>
-						<Tab disabled={loading && tabIndex !== 2}>{TO_CERTIFICATES}</Tab>
-						<Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>
-						{role !== Observer && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
-						{role === Admin && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
-						{role === Admin && <Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>}
-						{role === Admin && <Tab disabled={loading && tabIndex !== 7}>{CONFIG}</Tab>}
+						{validateAccess(Read_Templates) && <Tab disabled={loading && tabIndex !== 0}>{TO_TEMPLATES}</Tab>}
+						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 1}>{TO_CERTIFICATES_PENDING}</Tab>}
+						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 2}>{TO_CERTIFICATES}</Tab>}
+						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>}
+						{validateAccess(Read_Dids_Registers) && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
+						{validateAccess(Read_Delegates) && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{CONFIG}</Tab>}
 					</TabList>
 
-					<TabPanel>
-						<Templates
-							onRef={ref => (this.templatesSection = ref)}
-							selected={tabIndex === 0}
-							templates={this.state.templates}
-							columns={this.state.templateColumns}
-							loading={loading}
-							error={error}
-							onCreate={this.onTemplateCreate}
-							onDelete={this.onTemplateDelete}
-							role={role}
-						/>
-					</TabPanel>
-					<TabPanel>
-						<Certificates
-							onRef={ref => (this.certificatesSection = ref)}
-							selected={tabIndex === 1}
-							certificates={this.state.filteredCertificates}
-							columns={this.state.certColumns}
-							loading={loading}
-							onMultiEmmit={this.onCertificateMultiEmmit}
-							onDelete={this.onCertificateDelete}
-							error={error}
-							role={role}
-							onDeleteSelects={this.onDeleteSelects}
-							selectedCerts={this.state.selectedCerts}
-							allCertificates={this.state.certificates}
-						/>
-					</TabPanel>
-					<TabPanel>
-						<CertificatesEmmited />
-					</TabPanel>
-					<TabPanel>
-						<CertificatesRevoked />
-					</TabPanel>
-					{role !== Observer && (
+					{validateAccess(Read_Templates) && (
+						<TabPanel>
+							<Templates
+								onRef={ref => (this.templatesSection = ref)}
+								selected={tabIndex === 0}
+								templates={this.state.templates}
+								columns={this.state.templateColumns}
+								loading={loading}
+								error={error}
+								onCreate={this.onTemplateCreate}
+								onDelete={this.onTemplateDelete}
+							/>
+						</TabPanel>
+					)}
+					{validateAccess(Read_Certs) && (
+						<>
+							<TabPanel>
+								<Certificates
+									onRef={ref => (this.certificatesSection = ref)}
+									selected={tabIndex === 1}
+									certificates={this.state.filteredCertificates}
+									columns={this.state.certColumns}
+									loading={loading}
+									onMultiEmmit={this.onCertificateMultiEmmit}
+									onDelete={this.onCertificateDelete}
+									error={error}
+									onDeleteSelects={this.onDeleteSelects}
+									selectedCerts={this.state.selectedCerts}
+									allCertificates={this.state.certificates}
+								/>
+							</TabPanel>
+							<TabPanel>
+								<CertificatesEmmited />
+							</TabPanel>
+							<TabPanel>
+								<CertificatesRevoked />
+							</TabPanel>
+						</>
+					)}
+					{validateAccess(Read_Dids_Registers) && (
 						<TabPanel>
 							<Participants
 								selected={this.state.tabIndex === 4}
@@ -873,22 +861,24 @@ class Main extends Component {
 							/>
 						</TabPanel>
 					)}
-					{role === Admin && (
+					{validateAccess(Read_Delegates) && (
+						<TabPanel>
+							<Delegates
+								onRef={ref => (this.delegatesSection = ref)}
+								loading={loading}
+								selected={this.state.tabIndex === 5}
+								delegates={this.state.delegates}
+								columns={this.state.delegateColumns}
+								onRename={this.onIssuerRename}
+								onCreate={this.onDelegateCreate}
+								onDelete={this.onDelegateDelete}
+								issuerName={this.state.issuerName}
+								error={error}
+							/>
+						</TabPanel>
+					)}
+					{validateAccess(Admin) && (
 						<>
-							<TabPanel>
-								<Delegates
-									onRef={ref => (this.delegatesSection = ref)}
-									loading={loading}
-									selected={this.state.tabIndex === 5}
-									delegates={this.state.delegates}
-									columns={this.state.delegateColumns}
-									onRename={this.onIssuerRename}
-									onCreate={this.onDelegateCreate}
-									onDelete={this.onDelegateDelete}
-									issuerName={this.state.issuerName}
-									error={error}
-								/>
-							</TabPanel>
 							<TabPanel>
 								<UserList />
 							</TabPanel>
