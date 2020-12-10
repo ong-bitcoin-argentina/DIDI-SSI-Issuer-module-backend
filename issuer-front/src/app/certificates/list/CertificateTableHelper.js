@@ -18,7 +18,6 @@ import {
 } from "../../../constants/CertificateDefinitions";
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
-import Cookie from "js-cookie";
 import { validateAccess } from "../../../constants/Roles";
 
 const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE } = Messages.LIST.TABLE;
