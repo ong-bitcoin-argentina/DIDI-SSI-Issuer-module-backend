@@ -27,6 +27,7 @@ import moment from "moment";
 import QrDialog from "../../utils/dialogs/QrDialog";
 import Header from "../../components/Header";
 import DefautValueService from "../../../services/DefaultValueService";
+import { validateAccess } from "../../../constants/Roles";
 
 let interval;
 class Certificate extends Component {
@@ -938,7 +939,6 @@ class Certificate extends Component {
 
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {
-		const role = Cookie.get("role");
 		return (
 			<div className="AddParticipants">
 				<div className="AddParticipantButtons">
@@ -976,7 +976,7 @@ class Certificate extends Component {
 				</div>
 
 				<div className="CertificateButtons">
-					{!(this.state.cert?.revocation || role === Constants.ROLES.Observer) && (
+					{!this.state.cert?.revocation && validateAccess(Constants.ROLES.Write_Certs) && (
 						<button
 							hidden={this.state.action === "viewing"}
 							className="SaveButton"

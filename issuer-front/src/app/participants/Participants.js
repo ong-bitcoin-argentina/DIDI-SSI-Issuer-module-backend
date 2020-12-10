@@ -17,6 +17,7 @@ import Cookie from "js-cookie";
 
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
+import { validateAccess } from "../../constants/Roles";
 
 let interval;
 class Participants extends Component {
@@ -261,33 +262,41 @@ class Participants extends Component {
 	renderButtons = loading => {
 		return (
 			<div className="QrRequestButtons my-2">
-				<div className="PartRequestRow">
-					<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
-						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
-					</button>
+				{validateAccess(Constants.ROLES.Write_Dids_Registers) && (
+					<>
+						<div className="PartRequestRow">
+							<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
+								{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
+							</button>
 
-					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
-						<button disabled={loading} className="CreateButton LoadDidsFromCsv">
-							{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
-						</button>
-					</ReactFileReader>
+							<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
+								<button disabled={loading} className="CreateButton LoadDidsFromCsv">
+									{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
+								</button>
+							</ReactFileReader>
 
-					<button
-						className="CreateButton QrDialogButton"
-						disabled={loading}
-						onClick={() => {
-							if (this.qrDialog) this.qrDialog.open();
-						}}
-					>
-						{Messages.QR.BUTTONS.QR_LOAD}
-					</button>
-				</div>
+							<button
+								className="CreateButton QrDialogButton"
+								disabled={loading}
+								onClick={() => {
+									if (this.qrDialog) this.qrDialog.open();
+								}}
+							>
+								{Messages.QR.BUTTONS.QR_LOAD}
+							</button>
+						</div>
 
-				<div className="QrButtonsRow">
-					<button className="PartRequestButton" disabled={!this.canSendRequest(loading)} onClick={this.sendRequests}>
-						{Messages.QR.BUTTONS.REQUEST}
-					</button>
-				</div>
+						<div className="QrButtonsRow">
+							<button
+								className="PartRequestButton"
+								disabled={!this.canSendRequest(loading)}
+								onClick={this.sendRequests}
+							>
+								{Messages.QR.BUTTONS.REQUEST}
+							</button>
+						</div>
+					</>
+				)}
 			</div>
 		);
 	};

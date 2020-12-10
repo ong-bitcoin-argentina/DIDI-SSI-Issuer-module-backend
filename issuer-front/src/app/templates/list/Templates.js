@@ -15,6 +15,7 @@ import MaterialIcon from "material-icons-react";
 import RegisterService from "../../../services/RegisterService";
 import Cookie from "js-cookie";
 import DefautValueService from "../../../services/DefaultValueService";
+import { validateAccess } from "../../../constants/Roles";
 
 class Templates extends Component {
 	constructor(props) {
@@ -35,7 +36,11 @@ class Templates extends Component {
 	async getAllRegister() {
 		const token = Cookie.get("token");
 		const response = await RegisterService.getAll(token);
-		this.setState({ registers: response.data });
+		if (response.status === "error") {
+			this.setState({ registers: [] });
+		} else {
+			this.setState({ registers: response.data });
+		}
 	}
 
 	async getDefaultRegister() {
@@ -112,10 +117,9 @@ class Templates extends Component {
 	// muestra boton de creacion de modelos de credenciales
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
-		const role = this.props.role;
 		return (
 			<div className="HeadButtons">
-				{selected && role !== Constants.ROLES.Observer && (
+				{selected && validateAccess(Constants.ROLES.Write_Templates) && (
 					<button
 						className="CreateButton TemplateCreateButton"
 						disabled={loading}

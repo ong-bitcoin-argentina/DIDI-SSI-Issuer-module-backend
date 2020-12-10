@@ -19,8 +19,7 @@ import {
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
 import Cookie from "js-cookie";
-
-const { Observer } = Constants.ROLES;
+import { validateAccess } from "../../../constants/Roles";
 
 const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE } = Messages.LIST.TABLE;
 
@@ -37,9 +36,8 @@ class CertificateTableHelper {
 
 	// genera las columnas de la tabla de credencial
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
-		const role = Cookie.get("role");
 		const { createdOn, blockchain } = cert;
-		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete, enabled: role === Observer });
+		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
 		const onToggle = (_, value) => {
 			onSelectToggle(cert._id, value);
 		};
@@ -48,7 +46,7 @@ class CertificateTableHelper {
 			...this.baseCells(cert),
 			createdOn: createdOn ? moment(createdOn).format(DATE_FORMAT) : "-",
 			blockchain: blockchain ? blockchain.toUpperCase() : "-",
-			select: role !== Observer && (
+			select: (validateAccess(Constants.ROLES.Delete_Certs) || validateAccess(Constants.ROLES.Write_Certs)) && (
 				<div className="Actions">
 					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
 				</div>
@@ -71,8 +69,7 @@ class CertificateTableHelper {
 	}
 
 	static getCertificatesEmmitedData(cert, selectedCertificates, onSelectToggle, onView, onRevoke) {
-		const role = Cookie.get("role");
-		const ACTIONS = EMMITED_ACTIONS({ cert, onView, onRevoke, enabled: role === Observer });
+		const ACTIONS = EMMITED_ACTIONS({ cert, onView, onRevoke });
 
 		const onToggle = (_, value) => {
 			onSelectToggle(cert._id, value);
@@ -80,7 +77,7 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			select: role !== Observer && (
+			select: validateAccess(Constants.ROLES.Delete_Certs) && (
 				<div className="Actions">
 					<Checkbox checked={selectedCertificates[cert._id] || false} onChange={onToggle} />
 				</div>
@@ -136,7 +133,6 @@ class CertificateTableHelper {
 		isLoading
 	) {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
-		const role = Cookie.get("role");
 
 		const COLUMNS = EMMITED_COLUMNS({ onLastNameFilterChange, onFirstNameFilterChange });
 
@@ -186,7 +182,8 @@ class CertificateTableHelper {
 			accessor: "select"
 		};
 
-		if (role !== Observer) LIST_COLUMNS.push(select);
+		if (validateAccess(Constants.ROLES.Delete_Certs) || validateAccess(Constants.ROLES.Write_Certs))
+			LIST_COLUMNS.push(select);
 
 		return LIST_COLUMNS;
 	}
@@ -201,7 +198,6 @@ class CertificateTableHelper {
 	) {
 		// TODO: refactor this to get templates names from backend
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
-		const role = Cookie.get("role");
 
 		const LIST_COLUMNS = [
 			...BASE_COLUMNS.map(item => ({
@@ -244,7 +240,7 @@ class CertificateTableHelper {
 			accessor: "select"
 		};
 
-		if (role !== Observer) LIST_COLUMNS.push(select);
+		if (validateAccess(Constants.ROLES.Delete_Certs)) LIST_COLUMNS.push(select);
 
 		return LIST_COLUMNS;
 	}
