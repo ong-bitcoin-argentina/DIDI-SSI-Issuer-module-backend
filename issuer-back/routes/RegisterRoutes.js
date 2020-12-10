@@ -19,7 +19,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		},
 		{ name: "did", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -55,7 +55,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
@@ -80,7 +80,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		}
 	]),
@@ -104,7 +104,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		}
 	]),

@@ -9,14 +9,13 @@ const UserDTO = require("./utils/UserDTO");
 
 /**
  *	Genera un usuario para el issuer
- *	(inseguro: cualquiera puede llamarlo, se recomienda eliminarlo en la version final)
  */
 router.post(
 	"/",
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -26,17 +25,40 @@ router.post(
 			length: { min: Constants.PASSWORD_MIN_LENGTH }
 		},
 		{
-			name: "type",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+			name: "types",
+			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const name = req.body.name;
-		const password = req.body.password;
-		const type = req.body.type;
 		try {
-			await UserService.create(name, password, type);
+			const { name, password, types } = req.body;
+			await UserService.create(name, password, types);
+			return ResponseHandler.sendRes(res, {});
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
+/**
+ *	Genera un usuario ADMIN para el issuer
+ */
+router.post(
+	"/admin",
+	Validator.validate([
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "password",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING, Constants.VALIDATION_TYPES.IS_PASSWORD],
+			length: { min: Constants.PASSWORD_MIN_LENGTH }
+		}
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		try {
+			const { name, password } = req.body;
+			await UserService.createAdmin(name, password);
 			return ResponseHandler.sendRes(res, {});
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -79,7 +101,7 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		}
 	]),
@@ -103,7 +125,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		}
 	]),
@@ -128,7 +150,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Admin],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -138,19 +160,17 @@ router.put(
 			length: { min: Constants.PASSWORD_MIN_LENGTH }
 		},
 		{
-			name: "type",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+			name: "types",
+			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const name = req.body.name;
-		const password = req.body.password;
-		const type = req.body.type;
+		const { types, name, password } = req.body;
 		const id = req.params.id;
 
 		try {
-			await UserService.edit(id, name, password, type);
+			await UserService.edit(id, name, password, types);
 			return ResponseHandler.sendRes(res, {});
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

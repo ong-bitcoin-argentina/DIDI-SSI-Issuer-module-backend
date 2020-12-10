@@ -8,6 +8,22 @@ const TokenService = require("../../services/TokenService");
 const UserService = require("../../services/UserService");
 const { USER_TYPES } = require("../../constants/Constants");
 
+const { Admin } = Constants.USER_TYPES;
+const {
+	IS_PASSWORD,
+	IS_STRING,
+	IS_ARRAY,
+	IS_BOOLEAN,
+	IS_TEMPLATE_DATA,
+	IS_TEMPLATE_DATA_TYPE,
+	IS_TEMPLATE_DATA_VALUE,
+	IS_CERT_DATA,
+	IS_PART_DATA,
+	IS_TEMPLATE_PREVIEW_DATA,
+	IS_CERT_MICRO_CRED_DATA,
+	IS_NEW_PARTICIPANTS_DATA
+} = Constants.VALIDATION_TYPES;
+
 // ejecuta validaciones generadas por "validate"
 module.exports.checkValidationResult = function (req, res, next) {
 	const result = validationResult(req);
@@ -51,8 +67,10 @@ let _doValidate = function (param, isHead) {
 		return validation.custom(async function (token) {
 			try {
 				const user = await _getUserFromToken(token);
-				if (!Constants.ALLOWED_ROLES[role].includes(user.type)) {
-					return Promise.reject(Messages.VALIDATION.ROLES[role]);
+				const allowed_roles = [Admin, ...Constants.ALLOWED_ROLES[role]];
+
+				if (!user.types.some(role_ => allowed_roles.includes(role_))) {
+					return Promise.reject(Messages.VALIDATION.ROLES);
 				}
 				return Promise.resolve(user);
 			} catch (err) {
@@ -399,55 +417,48 @@ let _doValidate = function (param, isHead) {
 	let validation = createValidation(param.name, isHead, param.optional);
 
 	if (param.validate && param.validate.length) {
-		const { Admin, Manager, Observer } = Constants.USER_TYPES;
 		param.validate.forEach(validationType => {
 			switch (validationType) {
 				case Constants.TOKEN_MATCHES_USER_ID:
 					validation = validateToken(validation);
 					break;
-				case Constants.VALIDATION_TYPES.IS_ADMIN:
-					validation = validateTokenRole(validation, Admin);
+				case Constants.USER_TYPES[validationType]:
+					validation = validateTokenRole(validation, Constants.USER_TYPES[validationType]);
 					break;
-				case Constants.VALIDATION_TYPES.IS_MANAGER:
-					validation = validateTokenRole(validation, Manager);
-					break;
-				case Constants.VALIDATION_TYPES.IS_OBSERVER:
-					validation = validateTokenRole(validation, Observer);
-					break;
-				case Constants.VALIDATION_TYPES.IS_PASSWORD:
+				case IS_PASSWORD:
 					validation = validatePasswordIsNotCommon(validation);
 					break;
-				case Constants.VALIDATION_TYPES.IS_STRING:
+				case IS_STRING:
 					validation = validateIsString(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_ARRAY:
+				case IS_ARRAY:
 					validation = validateIsArray(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_BOOLEAN:
+				case IS_BOOLEAN:
 					validation = validateIsBoolean(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA:
+				case IS_TEMPLATE_DATA:
 					validation = validateTemplateData(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_TYPE:
+				case IS_TEMPLATE_DATA_TYPE:
 					validation = validateTemplateDataType(validation);
 					break;
-				case Constants.VALIDATION_TYPES.IS_TEMPLATE_DATA_VALUE:
+				case IS_TEMPLATE_DATA_VALUE:
 					validation = validateValueTypes(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_CERT_DATA:
+				case IS_CERT_DATA:
 					validation = validateValueInTemplate(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_PART_DATA:
+				case IS_PART_DATA:
 					validation = validatePartValueInTemplate(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_TEMPLATE_PREVIEW_DATA:
+				case IS_TEMPLATE_PREVIEW_DATA:
 					validation = validateTemplatePreviewData(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_CERT_MICRO_CRED_DATA:
+				case IS_CERT_MICRO_CRED_DATA:
 					validation = validateTemplateMicroCredData(validation, param);
 					break;
-				case Constants.VALIDATION_TYPES.IS_NEW_PARTICIPANTS_DATA:
+				case IS_NEW_PARTICIPANTS_DATA:
 					validation = validateNewParticipantsData(validation, param);
 					break;
 			}

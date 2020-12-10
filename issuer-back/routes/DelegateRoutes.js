@@ -15,7 +15,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Read_Delegates],
 			isHead: true
 		}
 	]),
@@ -41,7 +41,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Delegates],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -79,7 +79,7 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Delegates],
 			isHead: true
 		},
 		{
@@ -116,7 +116,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Delegates],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
@@ -147,7 +147,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_OBSERVER],
+			validate: [Constants.USER_TYPES.Read_Delegates],
 			isHead: true
 		}
 	]),
