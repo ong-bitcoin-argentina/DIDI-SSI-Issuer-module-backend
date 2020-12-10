@@ -144,6 +144,15 @@ export default class CertificateService {
 			.catch(err => errCb(err));
 	}
 
+	static async getPendingAsync(token) {
+		const response = await fetch(GET_PENDING, options(token));
+
+		const json = await response.json();
+
+		if (json.status === "success") return json.data;
+		throw json.data;
+	}
+
 	static async getRevoked(token) {
 		// TODO: change pending for revoked endpoint
 		let result = await fetch(GET_REVOKED, options(token));
