@@ -42,7 +42,7 @@ router.post(
 );
 
 /**
- *	Genera un usuario ADMIN para el issuer
+ *	Genera un usuario ADMIN para el issuer (Valido si la variable de entorno "ENABLE_INSECURE_ENDPOINTS" esta habilitada)
  */
 router.post(
 	"/admin",
@@ -57,6 +57,10 @@ router.post(
 	Validator.checkValidationResult,
 	async function (req, res) {
 		try {
+			if (!Constants.ENABLE_INSECURE_ENDPOINTS) {
+				return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 404);
+			}
+
 			const { name, password } = req.body;
 			await UserService.createAdmin(name, password);
 			return ResponseHandler.sendRes(res, {});
