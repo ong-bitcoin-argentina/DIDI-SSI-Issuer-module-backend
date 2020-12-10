@@ -5,15 +5,14 @@ import Visibility from "@material-ui/icons/Visibility";
 
 import Messages from "../../../constants/Messages";
 
-import Cookie from "js-cookie";
 import Constants from "../../../constants/Constants";
+import { validateAccess } from "../../../constants/Roles";
 
-const { Observer } = Constants.ROLES;
+const { Write_Templates, Delete_Templates } = Constants.ROLES;
 
 class TemplateTableHelpers {
 	// genera las columnas de la tabla de modelos de credenciales
 	static getTemplateData(template, onEdit, onDelete, isLoading) {
-		const role = Cookie.get("role");
 		return {
 			_id: template._id,
 			name: template.name,
@@ -26,10 +25,9 @@ class TemplateTableHelpers {
 							if (!isLoading()) onEdit(template._id);
 						}}
 					>
-						{role === Observer ? <Visibility fontSize="medium" /> : <EditIcon fontSize="medium" />}
-						{/* {Messages.LIST.BUTTONS.EDIT} */}
+						{!validateAccess(Write_Templates) ? <Visibility fontSize="medium" /> : <EditIcon fontSize="medium" />}
 					</div>
-					{role !== Observer && (
+					{validateAccess(Delete_Templates) && (
 						<div
 							className="DeleteAction"
 							onClick={() => {

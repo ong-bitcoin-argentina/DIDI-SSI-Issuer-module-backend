@@ -13,6 +13,7 @@ import Spinner from "../../utils/Spinner";
 import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
+import { validateAccess } from "../../../constants/Roles";
 
 class Delegates extends Component {
 	constructor(props) {
@@ -84,11 +85,9 @@ class Delegates extends Component {
 
 	// mostrar boton de creacion
 	renderSectionButtons = loading => {
-		const selected = this.props.selected;
-		//const name = this.props.issuerName;
 		return (
 			<div className="HeadButtons">
-				{selected && (
+				{validateAccess(Constants.ROLES.Write_Delegates) && (
 					<button
 						disabled={loading}
 						className="CreateButton"
@@ -100,7 +99,6 @@ class Delegates extends Component {
 						<div className="CreateButtonText CreateDelegateText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
 				)}
-				{/*name && <div className="IssuerName">{name}</div>*/}
 			</div>
 		);
 	};

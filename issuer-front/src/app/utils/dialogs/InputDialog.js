@@ -100,7 +100,7 @@ export default class InputDialog extends Component {
 								/>
 							);
 						})}
-					{selectNames.length &&
+					{selectNames.length !== 0 &&
 						selectNames.map(({ name, label, options }, key) => {
 							return (
 								<Grid style={{ marginTop: "25px" }}>

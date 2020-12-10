@@ -249,8 +249,46 @@ module.exports = {
 	DATE_FORMAT: "YYYY-MM-DD",
 	ROLES: {
 		Admin: "Admin",
-		Manager: "Manager",
-		Observer: "Observer"
+
+		// Permisos para Templates
+		Read_Templates: "Read_Templates",
+		Write_Templates: "Write_Templates",
+		Delete_Templates: "Delete_Templates",
+
+		// Permisos para Certificados
+		Read_Certs: "Read_Certs",
+		Write_Certs: "Write_Certs",
+		Delete_Certs: "Delete_Certs",
+
+		// Permisos para Delegaciones
+		Read_Delegates: "Read_Delegates",
+		Write_Delegates: "Write_Delegates",
+
+		// Permisos para Registro de DIDs
+		Read_Dids_Registers: "Read_Dids_Registers",
+		Write_Dids_Registers: "Write_Dids_Registers"
+	},
+
+	ROLES_TRANSLATE: {
+		Admin: "Admin",
+
+		// Permisos para Templates
+		Read_Templates: "Visualizar Templates",
+		Write_Templates: "Crear/Editar Templates",
+		Delete_Templates: "Deshabilitar Templates",
+
+		// Permisos para Certificados
+		Read_Certs: "Visualizar Credenciales",
+		Write_Certs: "Escribir/Emitir Credenciales",
+		Delete_Certs: "Revocar Credenciales",
+
+		// Permisos para Delegaciones
+		Read_Delegates: "Visualizar Delegaciones",
+		Write_Delegates: "Crear/Editar Delegaciones",
+
+		// Permisos para Registro de DIDs
+		Read_Dids_Registers: "Visualizar Registros de Dids",
+		Write_Dids_Registers: "Crear/Editar Registros de Dids"
 	},
 
 	BLOCKCHAINS: ["BFA", "RSK", "LACCHAIN"],

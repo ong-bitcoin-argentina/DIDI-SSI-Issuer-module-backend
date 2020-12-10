@@ -24,6 +24,7 @@ import logoApp from "../../../images/ai-di-logo.svg";
 import Header from "../../components/Header";
 import RegisterService from "../../../services/RegisterService";
 import BlockchainName from "../../utils/dialogs/blockchainName";
+import { validateAccess } from "../../../constants/Roles";
 
 class Template extends Component {
 	constructor(props) {
@@ -379,10 +380,9 @@ class Template extends Component {
 
 	// mostrar botones al pie de la tabla
 	renderButtons = () => {
-		const role = Cookie.get("role");
 		return (
 			<div className="TemplateButtons">
-				{role !== Constants.ROLES.Observer && (
+				{validateAccess(Constants.ROLES.Write_Templates) && (
 					<button className="SaveButton" onClick={this.onSave}>
 						{Messages.EDIT.BUTTONS.SAVE}
 					</button>

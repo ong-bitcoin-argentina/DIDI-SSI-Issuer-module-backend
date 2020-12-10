@@ -13,8 +13,8 @@ import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import DeleteAllCertsDialog from "./delete-all-certs-dialog";
+import { validateAccess } from "../../../constants/Roles";
 
-const { Observer } = Constants.ROLES;
 class Certificates extends Component {
 	constructor(props) {
 		super(props);
@@ -116,19 +116,16 @@ class Certificates extends Component {
 	// muestra boton de creacion de credencial
 	renderSectionButtons = loading => {
 		const selected = this.props.selected;
-		const role = this.props.role;
 		return (
-			role !== Constants.ROLES.Observer && (
-				<div className="HeadButtons">
-					{this.renderButtons(loading)}
-					{selected && (
-						<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
-							<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-							<div className="CreateButtonText EmmitCertText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
-						</button>
-					)}
-				</div>
-			)
+			<div className="HeadButtons">
+				{this.renderButtons(loading)}
+				{validateAccess(Constants.ROLES.Write_Certs) && (
+					<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
+						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+						<div className="CreateButtonText EmmitCertText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
+					</button>
+				)}
+			</div>
 		);
 	};
 
@@ -164,17 +161,21 @@ class Certificates extends Component {
 	renderButtons = loading => {
 		return (
 			<>
-				<div className="CertButtons mr-2">
-					<button className="DangerButton" onClick={this.openDeleteAllDialog}>
-						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-						Eliminar Credenciales Seleccionadas
-					</button>
-				</div>
-				<div className="CertButtons mr-2">
-					<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
-						<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
-					</button>
-				</div>
+				{validateAccess(Constants.ROLES.Delete_Certs) && (
+					<div className="CertButtons mr-2">
+						<button className="DangerButton" onClick={this.openDeleteAllDialog}>
+							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
+							Eliminar Credenciales Seleccionadas
+						</button>
+					</div>
+				)}
+				{validateAccess(Constants.ROLES.Write_Certs) && (
+					<div className="CertButtons mr-2">
+						<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
+							<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
+						</button>
+					</div>
+				)}
 			</>
 		);
 	};

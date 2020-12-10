@@ -13,6 +13,7 @@ import Notification from "../../components/Notification";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import RevocationSingleModal from "../../components/RevocationSingleModal";
 import RevocationAllModal from "../../components/RevocationAllModal";
+import { validateAccess } from "../../../constants/Roles";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -207,13 +208,10 @@ const CertificatesEmmited = () => {
 		setAllSelected(val);
 	};
 
-	const role = Cookie.get("role");
-	const { Observer } = Constants.ROLES;
-
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
-				{role !== Observer && (
+				{validateAccess(Constants.ROLES.Delete_Certs) && (
 					<Grid item xs={12} className="flex-end">
 						<button
 							className="DangerButton"
