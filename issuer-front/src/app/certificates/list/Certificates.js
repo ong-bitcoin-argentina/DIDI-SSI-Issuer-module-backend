@@ -115,7 +115,6 @@ class Certificates extends Component {
 
 	// muestra boton de creacion de credencial
 	renderSectionButtons = loading => {
-		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
 				{this.renderButtons(loading)}

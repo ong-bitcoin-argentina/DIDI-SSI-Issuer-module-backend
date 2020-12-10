@@ -35,7 +35,6 @@ import Header from "../components/Header";
 import UserList from "../users/user-list";
 import Setting from "../setting/setting";
 import { validateAccess } from "../../constants/Roles";
-import DeleteAllCertsDialog from "../certificates/list/delete-all-certs-dialog";
 
 const TABS = {
 	list: 0,
