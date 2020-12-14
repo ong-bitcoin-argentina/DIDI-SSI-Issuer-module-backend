@@ -228,14 +228,12 @@ router.post(
 			if (credentials.length) result = await CertService.emmit(cert, credentials);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
-			if (err.message && cert)
-				err.message =
-					"(nombre: " +
-					cert.data.participant[0][1].value +
-					", certificado: " +
-					cert.data.cert[0].value +
-					"): " +
-					err.message;
+			console.log(err);
+			if (err.message && cert) {
+				const { data } = cert;
+				const newMessage = `(nombre: ${data.participant[0][1].value}, certificado: ${data.cert[0].value}): ${err.message}`;
+				return ResponseHandler.sendErr(res, { ...err, message: newMessage });
+			}
 			return ResponseHandler.sendErr(res, err);
 		}
 	}
