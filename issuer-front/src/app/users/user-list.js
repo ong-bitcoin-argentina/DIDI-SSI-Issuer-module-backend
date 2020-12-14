@@ -93,7 +93,7 @@ const UserList = () => {
 				</div>
 			)) || (
 				<ReactTable
-					sortable={false}
+					sortable={true}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={users.map(user => getUserData(user, onDelete, onEdit))}

@@ -80,7 +80,7 @@ const Setting = () => {
 			)) ||
 				(ifNotElements && <NotRegistersData setModalOpen={setModalOpen} />) || (
 					<ReactTable
-						sortable={false}
+						sortable={true}
 						previousText={Messages.LIST.TABLE.PREV}
 						nextText={Messages.LIST.TABLE.NEXT}
 						data={data.map(register =>
