@@ -16,6 +16,9 @@ const RegisterSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
+	messageError: {
+		type: String
+	},
 	blockHash: {
 		type: String
 	},
