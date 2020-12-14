@@ -39,6 +39,13 @@ const GROUPS = {
 	"Gestor de Delegados:": [Read_Delegates, Write_Delegates]
 };
 
+const READ_ROLES = {
+	Certs: { options: [Write_Certs, Delete_Certs], value: Read_Certs },
+	Templates: { options: [Write_Templates, Delete_Templates], value: Read_Templates },
+	Registers: { options: [Write_Dids_Registers], value: Read_Dids_Registers },
+	Delegates: { options: [Write_Delegates], value: Read_Delegates }
+};
+
 const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	const [newUser, setNewUser] = useState(userData);
 	const [loading, setLoading] = useState(false);
@@ -72,12 +79,12 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	];
 
 	const resetState = () => {
+		setRoles({});
 		if (title === "Editar") {
 			setNewUser(userData);
 			userData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));
 		} else {
 			setNewUser({});
-			setRoles({});
 		}
 		setShowPassword(false);
 	};
@@ -121,7 +128,19 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 
 	const handleRole = event => {
 		const { name, checked } = event.target;
-		setRoles(roles => ({ ...roles, [name]: checked }));
+		let otherOption;
+		if (checked) {
+			const shortName = name.split("_").reverse()[0];
+			const { value } = READ_ROLES[shortName];
+			otherOption = value;
+		}
+		setRoles(roles => ({ ...roles, [name]: checked, [otherOption]: checked }));
+	};
+
+	const isDisabled = role => {
+		const nameRole = role.split("_");
+
+		return nameRole[0] === "Read" && READ_ROLES[nameRole.reverse()[0]]?.options.some(r => roles[r]);
 	};
 
 	const changeGroup = groupName => event => {
@@ -185,6 +204,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 															<Checkbox
 																checked={Boolean(roles[role])}
 																onChange={handleRole}
+																disabled={isDisabled(role)}
 																name={role}
 																color="primary"
 															/>
