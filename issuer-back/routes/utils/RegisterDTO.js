@@ -5,6 +5,7 @@ const toDTO = register => ({
 	expireOn: register.expireOn,
 	createdOn: register.createdOn,
 	status: register.status,
+	messageError: register.messageError,
 	blockHash: register.blockHash
 });
 
