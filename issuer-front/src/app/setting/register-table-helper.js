@@ -2,6 +2,7 @@ import React from "react";
 import Constants, { DATE_FORMAT, STATUS } from "../../constants/Constants";
 import moment from "moment";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import EditIcon from "@material-ui/icons/Edit";
 import { Tooltip } from "@material-ui/core";
 
@@ -57,7 +58,7 @@ export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => (
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
-export const getRegisterData = (register, onView, onEdit) => {
+export const getRegisterData = (register, onView, onEdit, onRetry) => {
 	const { did, createdOn, expireOn } = register;
 	const partsOfDid = did.split(":");
 	const blockchain = partsOfDid[2];
@@ -80,14 +81,21 @@ export const getRegisterData = (register, onView, onEdit) => {
 			<div className="Actions">
 				<div className="EditAction" onClick={() => onEdit(register)}>
 					<Tooltip title="Editar" placement="top" arrow>
-						<EditIcon fontSize="medium" />
+						<EditIcon fontSize="medium" style={{ color: "#5FCDD7" }} />
 					</Tooltip>
 				</div>
 				<div className="EditAction" onClick={() => onView(register)}>
 					<Tooltip title="Ver" placement="top" arrow>
-						<VisibilityIcon fontSize="medium" />
+						<VisibilityIcon fontSize="medium" style={{ color: "#5FCDD7" }} />
 					</Tooltip>
 				</div>
+				{status === STATUS.ERROR && (
+					<div className="EditAction" onClick={() => onRetry(did)}>
+						<Tooltip title="Re-Intentar" placement="top" arrow>
+							<RefreshIcon fontSize="medium" color="secondary" style={{ color: "#AED67B" }} />
+						</Tooltip>
+					</div>
+				)}
 			</div>
 		)
 	};

@@ -62,4 +62,16 @@ export default class RegisterService {
 
 		return fetch(`${Constants.API_ROUTES.REGISTER.CREATE}/${did}`, data);
 	}
+
+	static retry(token, did) {
+		const data = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		return fetch(`${Constants.API_ROUTES.REGISTER.CREATE}/${did}/retry`, data);
+	}
 }

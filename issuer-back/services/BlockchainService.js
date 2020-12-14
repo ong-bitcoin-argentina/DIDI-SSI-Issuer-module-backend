@@ -16,6 +16,8 @@ const web3 = new Web3(provider);
 
 const fetch = require("node-fetch");
 
+const { INVALID_STATUS, RETRY, GET, BLOCKCHAIN, EDIT, CREATE, DID_EXISTS, STATUS } = Messages.REGISTER.ERR;
+
 // obtiene el contrato (ethr-did-registry)
 const getContract = function (credentials) {
 	return new web3.eth.Contract(DidRegistryContract.abi, Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT, {
@@ -162,21 +164,21 @@ module.exports.getDelegateName = async function (issuerDID) {
 module.exports.newRegister = async function (did, key, name, token) {
 	try {
 		// Verifico si la blockchain es correcta
-		if (!Constants.BLOCKCHAINS.includes(did.split(":")[2])) return Promise.reject(Messages.REGISTER.ERR.BLOCKCHAIN);
+		if (!Constants.BLOCKCHAINS.includes(did.split(":")[2])) return Promise.reject(BLOCKCHAIN);
 
 		// Verifico que el did no exista
 		const byDIDExist = await Register.getByDID(did);
-		if (byDIDExist) return Promise.reject(Messages.REGISTER.ERR.DID_EXISTS);
+		if (byDIDExist) return Promise.reject(DID_EXISTS);
 
 		// Se envia el did a Didi
 		sendDidToDidi(did, name, token);
 
 		const register = await Register.generate(did, key, name);
-		if (!register) return Promise.reject(Messages.REGISTER.ERR.CREATE);
+		if (!register) return Promise.reject(CREATE);
 		return register;
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.REGISTER.ERR.CREATE);
+		return Promise.reject(CREATE);
 	}
 };
 
@@ -188,24 +190,49 @@ module.exports.getAll = async function (filter) {
 		return Promise.resolve(registers);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.REGISTER.ERR.GET);
+		return Promise.reject(GET);
 	}
 };
 
 module.exports.editRegister = async function (did, body) {
 	try {
 		const register = await Register.getByDID(did);
-		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
+		if (!register) return Promise.reject(GET);
 
 		const { status, name } = body;
-		if (status && !Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(Messages.REGISTER.ERR.STATUS);
+		if (status && !Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(STATUS);
 
 		if (name) await sendEditNameToDidi(did, name);
 
 		return await register.edit(body);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.REGISTER.ERR.EDIT);
+		return Promise.reject(EDIT);
+	}
+};
+
+module.exports.retryRegister = async function (did, token) {
+	try {
+		const register = await Register.getByDID(did);
+
+		// Verifico que exista el Register
+		if (!register) return Promise.reject(GET);
+
+		const { name, status } = register;
+
+		// Verifico que el registro este en estado Error
+		if (status !== Constants.STATUS.ERROR) return Promise.reject(INVALID_STATUS);
+
+		// Se envia a DIDI
+		sendDidToDidi(did, name, token);
+
+		// Modifico el estado a Pendiente
+		await register.edit({ status: Constants.STATUS.PENDING, messageError: "" });
+
+		return register;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(RETRY);
 	}
 };
 

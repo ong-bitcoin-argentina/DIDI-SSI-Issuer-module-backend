@@ -47,6 +47,16 @@ const Setting = () => {
 		}
 	};
 
+	const onRetry = async did => {
+		try {
+			const token = Cookie.get("token");
+			await RegisterService.retry(token, did);
+			getRegisters();
+		} catch (error) {
+			setError(error.message);
+		}
+	};
+
 	useEffect(() => {
 		getRegisters();
 		getBlockchains();
@@ -84,7 +94,7 @@ const Setting = () => {
 						previousText={Messages.LIST.TABLE.PREV}
 						nextText={Messages.LIST.TABLE.NEXT}
 						data={data.map(register =>
-							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen))
+							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen), onRetry)
 						)}
 						columns={getRegisterColumns}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
