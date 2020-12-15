@@ -50,6 +50,15 @@ module.exports = {
 			DELETE: { code: "DELEGATE_DELETE", message: "El delegado no pudo ser borrado." }
 		}
 	},
+	PROFILE: {
+		ERR: {
+			GET: { code: "PROFILE_GET", message: "No se encontro el Perfil." },
+			IS_USED: {
+				code: "PROFILE_IS_USED",
+				message: "El perfil que se desea borrar lo estan usando los siguientes usuarios: "
+			}
+		}
+	},
 	USER: {
 		ERR: {
 			INVALID_USER: { code: "INVALID_USER", message: "El usuario y contraseña no coinciden." },

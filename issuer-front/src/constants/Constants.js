@@ -11,6 +11,7 @@ module.exports = {
 			CREATE: API + "/user",
 			EDIT: id => API + "/user/" + id
 		},
+		PROFILE: API + "/profile",
 		REGISTER: {
 			CREATE: API + "/register",
 			GET: API + "/register",

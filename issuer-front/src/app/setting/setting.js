@@ -79,7 +79,7 @@ const Setting = () => {
 						</p>
 					</Grid>
 					<Grid item xs={4} container justify="flex-end" alignItems="center">
-						<OpenModalButton setModalOpen={setModalOpen} />
+						<OpenModalButton setModalOpen={setModalOpen} title="Nuevo Registro" />
 					</Grid>
 				</Grid>
 			)}

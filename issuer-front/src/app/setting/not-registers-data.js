@@ -10,7 +10,7 @@ const NotRegistersData = ({ setModalOpen }) => (
 		</Grid>
 		<Typography variant="h6">Es necesario que te registres en al menos una Blockchain para poder operar</Typography>
 		<Grid item xs={12} container justify="center" style={{ margin: "20px 0 20px 0" }}>
-			<OpenModalButton setModalOpen={setModalOpen} />
+			<OpenModalButton setModalOpen={setModalOpen} title="Nuevo Registro" />
 		</Grid>
 	</Grid>
 );
