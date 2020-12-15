@@ -35,6 +35,7 @@ import Header from "../components/Header";
 import UserList from "../users/user-list";
 import Setting from "../setting/setting";
 import { validateAccess } from "../../constants/Roles";
+import Profile from "../profile/profile";
 
 const TABS = {
 	list: 0,
@@ -54,7 +55,8 @@ const {
 	DELEGATES,
 	TO_CERTIFICATES_PENDING,
 	USERS,
-	CONFIG
+	CONFIG,
+	PROFILE
 } = Messages.LIST.BUTTONS;
 
 const { Admin, Read_Templates, Read_Certs, Read_Delegates, Read_Dids_Registers } = Constants.ROLES;
@@ -805,6 +807,7 @@ class Main extends Component {
 						{validateAccess(Read_Delegates) && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
 						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>}
 						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{CONFIG}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 8}>{PROFILE}</Tab>}
 					</TabList>
 
 					{validateAccess(Read_Templates) && (
@@ -883,6 +886,9 @@ class Main extends Component {
 							</TabPanel>
 							<TabPanel>
 								<Setting />
+							</TabPanel>
+							<TabPanel>
+								<Profile />
 							</TabPanel>
 						</>
 					)}

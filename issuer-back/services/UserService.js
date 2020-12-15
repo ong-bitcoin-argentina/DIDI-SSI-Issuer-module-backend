@@ -8,12 +8,13 @@ const TokenService = require("./TokenService");
 
 const { toDTO } = require("../routes/utils/UserDTO");
 const Constants = require("../constants/Constants");
+const Profile = require("../models/Profile");
 
 // compara las contraseñas y retorna el resultado
 module.exports.login = async function (name, password) {
 	let user;
 	try {
-		user = await User.findOne({ name: name, deleted: false });
+		user = await User.getByName(name);
 		if (!user) return Promise.reject(Messages.USER.ERR.INVALID_USER);
 	} catch (err) {
 		console.log(err);
@@ -35,7 +36,7 @@ module.exports.login = async function (name, password) {
 module.exports.getById = async function (userId) {
 	let user;
 	try {
-		user = await User.findOne({ _id: ObjectId(userId), deleted: false });
+		user = await User.getById(userId);
 		if (!user) return Promise.reject(Messages.USER.ERR.GET);
 		return Promise.resolve(user);
 	} catch (err) {
@@ -45,12 +46,14 @@ module.exports.getById = async function (userId) {
 };
 
 // crear usuario para loguearse en el issuer
-module.exports.create = async function (name, password, types) {
+module.exports.create = async function (name, password, profileId) {
 	try {
-		if (!Constants.USER_CREATED_TYPES.some(t => types.includes(t))) return Promise.reject(Messages.USER.ERR.TYPE);
-		const user = await User.generate(name, password, types);
+		const profile = await Profile.getById(profileId);
+		if (!profile) return Promise.reject(Messages.PROFILE.ERR.GET);
 
+		const user = await User.generate({ name, password, profile });
 		if (!user) return Promise.reject(Messages.USER.ERR.CREATE);
+
 		return Promise.resolve(user);
 	} catch (err) {
 		console.log(err);
@@ -61,7 +64,7 @@ module.exports.create = async function (name, password, types) {
 // crear usuario admin en el issuer
 module.exports.createAdmin = async function (name, password) {
 	try {
-		return await User.generate(name, password, [Constants.USER_TYPES.Admin]);
+		return await User.generate({ name, password, isAdmin: true });
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.USER.ERR.CREATE);
@@ -72,7 +75,7 @@ module.exports.createAdmin = async function (name, password) {
 module.exports.delete = async function (id) {
 	try {
 		let user = await User.findOne({ _id: ObjectId(id), deleted: false });
-		if (user.types.includes(Constants.USER_TYPES.Admin)) return Promise.reject(Messages.USER.ERR.DELETE);
+		if (user.isAdmin) return Promise.reject(Messages.USER.ERR.DELETE);
 		user = await user.delete();
 		if (!user) return Promise.reject(Messages.USER.ERR.DELETE);
 		return Promise.resolve(user);
@@ -95,13 +98,15 @@ module.exports.getAll = async function () {
 };
 
 // Edita un usuario y lo retorna
-module.exports.edit = async function (id, name, password, types) {
+module.exports.edit = async function (id, name, password, profileId) {
 	try {
-		if (!Constants.USER_CREATED_TYPES.some(t => types.includes(t))) return Promise.reject(Messages.USER.ERR.TYPE);
-		let user = await this.getById(id);
+		const profile = await Profile.getById(profileId);
+		if (!profile) return Promise.reject(Messages.PROFILE.ERR.GET);
 
-		if (user.types.includes(Constants.USER_TYPES.Admin)) return Promise.reject(Messages.USER.ERR.EDIT);
-		user = await user.edit(name, password, types);
+		let user = await User.getById(id);
+
+		if (user.isAdmin) return Promise.reject(Messages.USER.ERR.EDIT);
+		user = await user.edit({ name, password, profile });
 
 		if (!user) return Promise.reject(Messages.USER.ERR.EDIT);
 		return Promise.resolve(user);

@@ -10,9 +10,8 @@ const COLUMNS_NAME = [
 		name: "name"
 	},
 	{
-		title: "tipos",
-		name: "types",
-		width: 1100
+		title: "perfil",
+		name: "profile"
 	},
 	{
 		title: "fecha de creacion",
@@ -40,7 +39,6 @@ export const getUserData = (user, onDelete, onEdit) => {
 		onCreated: (
 			<div style={{ textAlign: "center" }}>{user.createdOn ? moment(user.createdOn).format(DATE_FORMAT) : "-"}</div>
 		),
-		types: user.types.map(role => <span style={{ marginRight: "7px" }}>{Constants.ROLES_TRANSLATE[role]};</span>),
 		actions: !user.types.includes(Constants.ROLES.Admin) && (
 			<div className="Actions">
 				<div className="EditAction" onClick={() => onEdit(user)}>

@@ -25,15 +25,15 @@ router.post(
 			length: { min: Constants.PASSWORD_MIN_LENGTH }
 		},
 		{
-			name: "types",
-			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
+			name: "profileId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
 		try {
-			const { name, password, types } = req.body;
-			await UserService.create(name, password, types);
+			const { name, password, profileId } = req.body;
+			await UserService.create(name, password, profileId);
 			return ResponseHandler.sendRes(res, {});
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -164,17 +164,17 @@ router.put(
 			length: { min: Constants.PASSWORD_MIN_LENGTH }
 		},
 		{
-			name: "types",
-			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
+			name: "profileId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const { types, name, password } = req.body;
+		const { profileId, name, password } = req.body;
 		const id = req.params.id;
 
 		try {
-			await UserService.edit(id, name, password, types);
+			await UserService.edit(id, name, password, profileId);
 			return ResponseHandler.sendRes(res, {});
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
