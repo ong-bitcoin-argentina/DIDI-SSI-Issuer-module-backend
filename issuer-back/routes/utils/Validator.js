@@ -67,9 +67,11 @@ let _doValidate = function (param, isHead) {
 		return validation.custom(async function (token) {
 			try {
 				const user = await _getUserFromToken(token);
-				const allowed_roles = [Admin, ...Constants.ALLOWED_ROLES[role]];
+				const { profile, isAdmin } = user;
+				const types = profile ? profile.types : [];
+				const allowed_roles = Constants.ALLOWED_ROLES[role];
 
-				if (!user.types.some(role_ => allowed_roles.includes(role_))) {
+				if (!isAdmin && !types.some(role_ => allowed_roles.includes(role_))) {
 					return Promise.reject(Messages.VALIDATION.ROLES);
 				}
 				return Promise.resolve(user);

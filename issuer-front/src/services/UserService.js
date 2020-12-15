@@ -49,7 +49,7 @@ export default class UserService {
 			},
 			body: JSON.stringify({
 				name: body.name,
-				types: body.types,
+				profileId: body.profileId,
 				password: body.password
 			})
 		};
@@ -66,7 +66,7 @@ export default class UserService {
 			},
 			body: JSON.stringify({
 				name: body.name,
-				types: body.types,
+				profileId: body.profileId,
 				password: body.password
 			})
 		};

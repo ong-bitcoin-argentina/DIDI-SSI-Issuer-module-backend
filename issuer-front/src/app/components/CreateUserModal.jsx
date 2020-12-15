@@ -1,64 +1,46 @@
 import {
 	Button,
-	Checkbox,
 	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	FormControlLabel,
+	FormControl,
 	Grid,
 	IconButton,
+	InputLabel,
+	MenuItem,
+	Select,
 	TextField
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import PropTypes from "prop-types";
-import Constants from "../../constants/Constants";
+import ProfileService from "../../services/ProfileService";
+import Cookie from "js-cookie";
+import { CERT_FIELD_MANDATORY } from "../../constants/Constants";
 
 const TITLE = "Usuario";
-
-const {
-	Read_Templates,
-	Write_Templates,
-	Delete_Templates,
-	Read_Certs,
-	Write_Certs,
-	Delete_Certs,
-	Read_Dids_Registers,
-	Write_Dids_Registers,
-	Read_Delegates,
-	Write_Delegates
-} = Constants.ROLES;
-
-const GROUPS = {
-	"Gestión de Templates de Credenciales:": [Read_Templates, Write_Templates, Delete_Templates],
-	"Gestión de Credenciales:": [Read_Certs, Write_Certs, Delete_Certs],
-	"Registro de DIDs:": [Read_Dids_Registers, Write_Dids_Registers],
-	"Gestor de Delegados:": [Read_Delegates, Write_Delegates]
-};
-
-const READ_ROLES = {
-	Certs: { options: [Write_Certs, Delete_Certs], value: Read_Certs },
-	Templates: { options: [Write_Templates, Delete_Templates], value: Read_Templates },
-	Registers: { options: [Write_Dids_Registers], value: Read_Dids_Registers },
-	Delegates: { options: [Write_Delegates], value: Read_Delegates }
-};
 
 const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	const [newUser, setNewUser] = useState(userData);
 	const [loading, setLoading] = useState(false);
-	const [roles, setRoles] = useState({});
 	const [showPassword, setShowPassword] = useState(false);
+	const [profiles, setProfiles] = useState([]);
 	const [error, setError] = useState("");
 
 	useEffect(() => {
+		getProfilesData();
 		setNewUser(userData);
-		if (userData.types) {
-			userData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));
-		}
 	}, [userData]);
+
+	const getProfilesData = async () => {
+		const token = Cookie.get("token");
+		const profiles = await ProfileService.getAll()(token);
+
+		setProfiles(profiles);
+	};
 
 	const INPUTS = [
 		{
@@ -79,10 +61,8 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	];
 
 	const resetState = () => {
-		setRoles({});
 		if (title === "Editar") {
 			setNewUser(userData);
-			userData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));
 		} else {
 			setNewUser({});
 		}
@@ -94,18 +74,17 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 		try {
 			setError("");
 			if (newUser.password === newUser.repeatPassword) {
-				const types = Object.keys(roles).filter(r => roles[r]);
-				if (types.length === 0) {
-					setError("Seleccione un permiso.");
+				if (!newUser.profileId) {
+					setError("Seleccione un perfil.");
 					return;
 				}
 				setLoading(true);
-				onSubmit({ ...newUser, types });
+				onSubmit(newUser);
 				resetState();
 				event.target.reset();
 				close();
 			} else {
-				setError("Las contraseñas no coinciden");
+				setError("Las contraseñas no coinciden.");
 			}
 			setLoading(false);
 		} catch (error) {
@@ -124,28 +103,6 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 	const handleChange = event => {
 		const { name, value } = event.target;
 		setNewUser(user => ({ ...user, [name]: value }));
-	};
-
-	const handleRole = event => {
-		const { name, checked } = event.target;
-		let otherOption;
-		if (checked) {
-			const shortName = name.split("_").reverse()[0];
-			const { value } = READ_ROLES[shortName];
-			otherOption = value;
-		}
-		setRoles(roles => ({ ...roles, [name]: checked, [otherOption]: checked }));
-	};
-
-	const isDisabled = role => {
-		const nameRole = role.split("_");
-
-		return nameRole[0] === "Read" && READ_ROLES[nameRole.reverse()[0]]?.options.some(r => roles[r]);
-	};
-
-	const changeGroup = groupName => event => {
-		const { checked } = event.target;
-		GROUPS[groupName].forEach(r => setRoles(roles_ => ({ ...roles_, [r]: checked })));
 	};
 
 	return (
@@ -181,42 +138,21 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 									}}
 								/>
 							))}
-							<h2>Permisos</h2>
-							{Object.keys(GROUPS).map(groupName => (
-								<Grid key={groupName} container xs={12}>
-									<FormControlLabel
-										control={
-											<Checkbox
-												onChange={changeGroup(groupName)}
-												checked={GROUPS[groupName].every(role => roles[role])}
-												color="primary"
-											/>
-										}
-										label={groupName}
-									/>
-									<Grid container justify="flex-end">
-										<Grid item xs={10}>
-											{GROUPS[groupName].map(role => (
-												<Grid item xs={12}>
-													<FormControlLabel
-														key={role}
-														control={
-															<Checkbox
-																checked={Boolean(roles[role])}
-																onChange={handleRole}
-																disabled={isDisabled(role)}
-																name={role}
-																color="primary"
-															/>
-														}
-														label={Constants.ROLES_TRANSLATE[role]}
-													/>
-												</Grid>
-											))}
-										</Grid>
-									</Grid>
-								</Grid>
-							))}
+							<FormControl fullWidth>
+								<InputLabel id="simple-select-label">Perfil</InputLabel>
+								<Select
+									labelId="simple-select-label"
+									id="simple-select"
+									placeholder="Perfiles"
+									name="profileId"
+									defaultValue={newUser.profileId}
+									onChange={handleChange}
+								>
+									{profiles.map(({ _id, name }) => (
+										<MenuItem value={_id}>{name}</MenuItem>
+									))}
+								</Select>
+							</FormControl>
 							{error && <div className="errMsg">{error}</div>}
 						</Grid>
 					</Grid>

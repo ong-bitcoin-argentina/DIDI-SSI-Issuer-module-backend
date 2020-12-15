@@ -130,7 +130,8 @@ module.exports = {
 			REVOKE: "Revocar",
 			EXIT: "Salir",
 			USERS: "Usuarios",
-			CONFIG: "Configuracion"
+			CONFIG: "Configuracion",
+			PROFILE: "Perfiles"
 		}
 	},
 	QR: {
