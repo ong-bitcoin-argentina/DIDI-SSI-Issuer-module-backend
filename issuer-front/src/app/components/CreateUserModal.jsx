@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 import ProfileService from "../../services/ProfileService";
 import Cookie from "js-cookie";
 import { CERT_FIELD_MANDATORY } from "../../constants/Constants";
+import ModalTitle from "../utils/modal-title";
 
 const TITLE = "Usuario";
 
@@ -109,9 +110,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 		<Dialog open={open}>
 			<form onSubmit={handleSubmit} onReset={handleCancel}>
 				<DialogTitle id="form-dialog-title">
-					<h3 style={{ margin: "0px" }}>
-						{title} {TITLE}
-					</h3>
+					<ModalTitle title={`${title} ${TITLE}`} />
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">
