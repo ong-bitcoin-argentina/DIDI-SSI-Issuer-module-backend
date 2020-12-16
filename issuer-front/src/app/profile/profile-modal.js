@@ -13,6 +13,7 @@ import {
 import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
 import PropTypes from "prop-types";
+import ModalTitle from "../utils/modal-title";
 
 const TITLE = "Perfil";
 
@@ -127,9 +128,7 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 		<Dialog open={open}>
 			<form onSubmit={handleSubmit} onReset={handleCancel}>
 				<DialogTitle id="form-dialog-title">
-					<h3 style={{ margin: "0px" }}>
-						{title} {TITLE}
-					</h3>
+					<ModalTitle title={`${title} ${TITLE}`} />
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">
