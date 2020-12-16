@@ -3,12 +3,9 @@ import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
 import { AssignmentLate, Edit } from "@material-ui/icons";
+import InputFilter from "../components/InputFilter";
 
 const COLUMNS_NAME = [
-	{
-		title: "nombre",
-		name: "name"
-	},
 	{
 		title: "perfil",
 		name: "profile"
@@ -32,6 +29,16 @@ export const getUserColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	accessor: name,
 	width
 }));
+
+export const getUserAllColumns = handleFilter => {
+	return [
+		{
+			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
+			accessor: "name"
+		},
+		...getUserColumns
+	];
+};
 
 export const getUserData = (user, onDelete, onEdit) => {
 	return {

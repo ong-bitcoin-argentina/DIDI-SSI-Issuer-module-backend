@@ -5,6 +5,7 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import EditIcon from "@material-ui/icons/Edit";
 import { Tooltip } from "@material-ui/core";
+import InputFilter from "../components/InputFilter";
 
 const { ERROR, PENDING, DONE } = Constants.STATUS;
 
@@ -20,10 +21,6 @@ const COLUMNS_NAME = [
 		title: "DID registrado",
 		name: "did",
 		width: 425
-	},
-	{
-		title: "Nombre Registrado",
-		name: "name"
 	},
 	{
 		title: "Fecha de Registro",
@@ -58,6 +55,16 @@ export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => (
 	accessor: name,
 	width
 }));
+
+export const getRegisterAllColumns = handleFilter => {
+	return [
+		{
+			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
+			accessor: "name"
+		},
+		...getRegisterColumns
+	];
+};
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
