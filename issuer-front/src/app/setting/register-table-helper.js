@@ -8,6 +8,9 @@ import { Tooltip } from "@material-ui/core";
 
 const { ERROR, PENDING, DONE } = Constants.STATUS;
 
+const EDIT_COLOR = "#5FCDD7";
+const RETRY_COLOR = "#AED67B";
+
 const COLUMNS_NAME = [
 	{
 		title: "Blockchain",
@@ -79,24 +82,20 @@ export const getRegisterData = (register, onView, onEdit, onRetry) => {
 		),
 		actions: (
 			<div className="Actions">
-				<div className="EditAction" onClick={() => onEdit(register)}>
-					<Tooltip title="Editar" placement="top" arrow>
-						<EditIcon fontSize="medium" style={{ color: "#5FCDD7" }} />
-					</Tooltip>
-				</div>
-				<div className="EditAction" onClick={() => onView(register)}>
-					<Tooltip title="Ver" placement="top" arrow>
-						<VisibilityIcon fontSize="medium" style={{ color: "#5FCDD7" }} />
-					</Tooltip>
-				</div>
+				<Action handle={() onEdit(register)} title="Editar" Icon={EditIcon} color={EDIT_COLOR} />
+				<Action handle={() => onView(register)} title="Ver" Icon={VisibilityIcon} color={EDIT_COLOR} />
 				{status === STATUS.ERROR && (
-					<div className="EditAction" onClick={() => onRetry(did)}>
-						<Tooltip title="Re-Intentar" placement="top" arrow>
-							<RefreshIcon fontSize="medium" color="secondary" style={{ color: "#AED67B" }} />
-						</Tooltip>
-					</div>
+					<Action handle={() => onRetry(did)} title="Re-intentar" Icon={RefreshIcon} color={RETRY_COLOR} />
 				)}
 			</div>
 		)
 	};
 };
+
+const Action = ({ handle, title, Icon, color }) => (
+	<div className="EditAction" onClick={handle}>
+		<Tooltip title={title} placement="top" arrow>
+			<Icon fontSize="medium" style={{ color: color }} />
+		</Tooltip>
+	</div>
+);
