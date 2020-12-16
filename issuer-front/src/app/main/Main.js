@@ -111,7 +111,7 @@ class Main extends Component {
 
 			if (validateAccess(Read_Templates)) {
 				let templates = await TemplateService.getAllAsync(token);
-				templates = templates.data.map(template => {
+				templates = templates.map(template => {
 					return TemplateTableHelper.getTemplateData(
 						template,
 						self.onTemplateEdit,

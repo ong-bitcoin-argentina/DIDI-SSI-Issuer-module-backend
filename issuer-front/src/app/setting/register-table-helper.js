@@ -2,11 +2,15 @@ import React from "react";
 import Constants, { DATE_FORMAT, STATUS } from "../../constants/Constants";
 import moment from "moment";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import EditIcon from "@material-ui/icons/Edit";
 import { Tooltip } from "@material-ui/core";
 import InputFilter from "../components/InputFilter";
 
 const { ERROR, PENDING, DONE } = Constants.STATUS;
+
+const EDIT_COLOR = "#5FCDD7";
+const RETRY_COLOR = "#AED67B";
 
 const COLUMNS_NAME = [
 	{
@@ -64,7 +68,7 @@ export const getRegisterAllColumns = handleFilter => {
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
-export const getRegisterData = (register, onView, onEdit) => {
+export const getRegisterData = (register, onView, onEdit, onRetry) => {
 	const { did, createdOn, expireOn } = register;
 	const partsOfDid = did.split(":");
 	const blockchain = partsOfDid[2];
@@ -85,17 +89,20 @@ export const getRegisterData = (register, onView, onEdit) => {
 		),
 		actions: (
 			<div className="Actions">
-				<div className="EditAction" onClick={() => onEdit(register)}>
-					<Tooltip title="Editar" placement="top" arrow>
-						<EditIcon fontSize="medium" />
-					</Tooltip>
-				</div>
-				<div className="EditAction" onClick={() => onView(register)}>
-					<Tooltip title="Ver" placement="top" arrow>
-						<VisibilityIcon fontSize="medium" />
-					</Tooltip>
-				</div>
+				<Action handle={() => onEdit(register)} title="Editar" Icon={EditIcon} color={EDIT_COLOR} />
+				<Action handle={() => onView(register)} title="Ver" Icon={VisibilityIcon} color={EDIT_COLOR} />
+				{status === STATUS.ERROR && (
+					<Action handle={() => onRetry(did)} title="Re-intentar" Icon={RefreshIcon} color={RETRY_COLOR} />
+				)}
 			</div>
 		)
 	};
 };
+
+const Action = ({ handle, title, Icon, color }) => (
+	<div className="EditAction" onClick={handle}>
+		<Tooltip title={title} placement="top" arrow>
+			<Icon fontSize="medium" style={{ color: color }} />
+		</Tooltip>
+	</div>
+);

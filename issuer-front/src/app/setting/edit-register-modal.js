@@ -27,11 +27,11 @@ const EditRegisterModal = ({ modalOpen, setModalOpen, register, onAccept }) => {
 		}
 		try {
 			const token = Cookie.get("token");
-			await RegisterService.editName(token, register.did, newName);
+			await RegisterService.editName(register.did, newName)(token);
 			onAccept();
 			handleReset();
 		} catch (error) {
-			setError(error.response.data);
+			setError(error.message);
 		}
 	};
 

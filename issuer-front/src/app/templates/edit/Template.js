@@ -25,6 +25,7 @@ import Header from "../../components/Header";
 import RegisterService from "../../../services/RegisterService";
 import BlockchainName from "../../utils/dialogs/blockchainName";
 import { validateAccess } from "../../../constants/Roles";
+import { getRegisterData } from "../../setting/register-table-helper";
 
 class Template extends Component {
 	constructor(props) {
@@ -64,10 +65,19 @@ class Template extends Component {
 			}
 		);
 
-		RegisterService.getAll(token)
-			.then(response => this.setState({ registers: response.data }))
-			.catch(error => self.setState({ error }));
+		this.getRegisterData();
 	}
+
+	getRegisterData = async () => {
+		const token = Cookie.get("token");
+
+		try {
+			const registers = await RegisterService.getAll()(token);
+			this.setState({ registers: registers });
+		} catch (error) {
+			this.setState({ error: error.message });
+		}
+	};
 
 	// volver a listado
 	onBack = () => {

@@ -35,11 +35,11 @@ class Templates extends Component {
 
 	async getAllRegister() {
 		const token = Cookie.get("token");
-		const response = await RegisterService.getAll(token);
-		if (response.status === "error") {
+		try {
+			const registers = await RegisterService.getAll()(token);
+			this.setState({ registers });
+		} catch (error) {
 			this.setState({ registers: [] });
-		} else {
-			this.setState({ registers: response.data });
 		}
 	}
 

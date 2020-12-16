@@ -40,7 +40,7 @@ const Setting = () => {
 		setLoading(true);
 		const token = Cookie.get("token");
 		try {
-			const { data } = await RegisterService.getAll(token, {});
+			const { data } = await RegisterService.getAll({})(token);
 			setData(data);
 			setFilteredData(data);
 		} catch (error) {
@@ -52,8 +52,18 @@ const Setting = () => {
 	const getBlockchains = async () => {
 		try {
 			const token = Cookie.get("token");
-			const blockchains_ = await RegisterService.getAllBlockchains(token);
-			setBlockchains(blockchains_.data);
+			const blockchains_ = await RegisterService.getAllBlockchains()(token);
+			setBlockchains(blockchains_);
+		} catch (error) {
+			setError(error.message);
+		}
+	};
+
+	const onRetry = async did => {
+		try {
+			const token = Cookie.get("token");
+			await RegisterService.retry(did)(token);
+			getRegisters();
 		} catch (error) {
 			setError(error.message);
 		}
@@ -101,7 +111,7 @@ const Setting = () => {
 						previousText={Messages.LIST.TABLE.PREV}
 						nextText={Messages.LIST.TABLE.NEXT}
 						data={filteredData.map(register =>
-							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen))
+							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen), onRetry)
 						)}
 						columns={getRegisterAllColumns(onFilterChange)}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}

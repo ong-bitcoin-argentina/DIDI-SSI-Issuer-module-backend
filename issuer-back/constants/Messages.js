@@ -28,6 +28,11 @@ module.exports = {
 			GET: { code: "REGISTER_GET", message: "El registro no pudo ser obtenido." },
 			DID_EXISTS: { code: "DID_EXISTS", message: "Ya existe un registro con ese did." },
 			STATUS: { code: "STATUS", message: "El status no existe" },
+			RETRY: { code: "RETRY", message: "Hubo un error al intentar validar el registro." },
+			INVALID_STATUS: {
+				code: "INVALID_STATUS",
+				message: "No se puede realizar esta acción con el estado actual del registro."
+			},
 			NOT_BLOCKCHAIN: {
 				code: "NOT_BLOCKCHAIN",
 				message:

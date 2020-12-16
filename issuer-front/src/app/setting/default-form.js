@@ -61,21 +61,17 @@ const DefaultForm = ({ registers: register_ }) => {
 
 	const getData = async (loadingName, setData, fetch_) => {
 		setLoading(l => ({ ...l, [loadingName]: true }));
-		const { data } = await fetch_();
+		const data = await fetch_(token);
 		setLoading(l => ({ ...l, [loadingName]: false }));
 		setData(data);
 	};
 
 	const getTemplatesData = () => {
-		getData("templateLoading", setTemplates, async () => await TemplateService.getAllAsync(token));
+		getData("templateLoading", setTemplates, TemplateService.getAllAsync);
 	};
 
 	const getRegisterData = async () => {
-		getData(
-			"registerLoading",
-			setRegisters,
-			async () => await RegisterService.getAll(token, { status: Constants.STATUS.DONE })
-		);
+		getData("registerLoading", setRegisters, await RegisterService.getAll({ status: Constants.STATUS.DONE }));
 	};
 
 	const handleError = async (fetch_, next) => {

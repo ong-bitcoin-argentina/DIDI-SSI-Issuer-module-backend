@@ -73,11 +73,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		setLoading(true);
 		try {
 			const token = Cookie.get("token");
-			const response = await RegisterService.create(token, newRegister);
-			if (response.status === "error") {
-				setError(response.data.message);
-				return;
-			}
+			await RegisterService.create(newRegister)(token);
 			resetForm();
 			onSuccess();
 		} catch (error) {

@@ -120,4 +120,30 @@ router.put(
 	}
 );
 
+/*
+ * Vuelve a intentar el delegate del Registro en DIDI
+ */
+
+router.post(
+	"/:did/retry",
+	Validator.validate([
+		{
+			name: "token",
+			validate: [Constants.USER_TYPES.Admin],
+			isHead: true
+		}
+	]),
+	Validator.checkValidationResult,
+	async function (req, res) {
+		try {
+			const { did } = req.params;
+			const { token } = req.headers;
+			const register = await BlockchainService.retryRegister(did, token);
+			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
+		} catch (err) {
+			return ResponseHandler.sendErr(res, err);
+		}
+	}
+);
+
 module.exports = router;
