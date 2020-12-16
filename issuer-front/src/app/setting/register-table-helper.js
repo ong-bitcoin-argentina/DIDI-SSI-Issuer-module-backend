@@ -4,8 +4,8 @@ import moment from "moment";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import EditIcon from "@material-ui/icons/Edit";
-import { Tooltip } from "@material-ui/core";
 import InputFilter from "../components/InputFilter";
+import Action from "../utils/Action";
 
 const { ERROR, PENDING, DONE } = Constants.STATUS;
 
@@ -98,11 +98,3 @@ export const getRegisterData = (register, onView, onEdit, onRetry) => {
 		)
 	};
 };
-
-const Action = ({ handle, title, Icon, color }) => (
-	<div className="EditAction" onClick={handle}>
-		<Tooltip title={title} placement="top" arrow>
-			<Icon fontSize="medium" style={{ color: color }} />
-		</Tooltip>
-	</div>
-);
