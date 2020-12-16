@@ -1,8 +1,12 @@
-import { Chip, Tooltip } from "@material-ui/core";
+import { Chip } from "@material-ui/core";
 import React from "react";
 import Constants from "../../constants/Constants";
 import { Edit, Delete } from "@material-ui/icons";
 import InputFilter from "../components/InputFilter";
+import Action from "../utils/Action";
+
+const EDIT_COLOR = "#5FCDD7";
+const DELETE_COLOR = "#EB5757";
 
 const COLUMNS_NAME = [
 	{
@@ -47,16 +51,8 @@ export const getProfileData = (profile, onEdit, onDelete) => {
 		)),
 		actions: (
 			<div className="Actions">
-				<div className="EditAction" onClick={() => onEdit(profile)}>
-					<Tooltip title="Editar" placement="top" arrow>
-						<Edit fontSize="medium" />
-					</Tooltip>
-				</div>
-				<div className="EditAction" onClick={() => onDelete(profile)}>
-					<Tooltip title="Borrar" placement="top" arrow>
-						<Delete fontSize="medium" color="secondary" />
-					</Tooltip>
-				</div>
+				<Action handle={() => onEdit(profile)} title="Editar" Icon={Edit} color={EDIT_COLOR} />
+				<Action handle={() => onDelete(profile)} title="Borrar" Icon={Delete} color={DELETE_COLOR} />
 			</div>
 		)
 	};

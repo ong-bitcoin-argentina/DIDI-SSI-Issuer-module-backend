@@ -40,7 +40,7 @@ const Setting = () => {
 		setLoading(true);
 		const token = Cookie.get("token");
 		try {
-			const { data } = await RegisterService.getAll({})(token);
+			const data = await RegisterService.getAll({})(token);
 			setData(data);
 			setFilteredData(data);
 		} catch (error) {
