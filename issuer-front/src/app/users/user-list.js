@@ -7,8 +7,9 @@ import Messages from "../../constants/Messages";
 import UserService from "../../services/UserService";
 import CreateUserModal from "../components/CreateUserModal";
 import Cookie from "js-cookie";
-import { getUserColumns, getUserData } from "./user-table-helper";
+import { getUserAllColumns, getUserData } from "./user-table-helper";
 import UserDeleteModal from "./user-delete-modal";
+import { filter } from "../../services/utils";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -19,17 +20,27 @@ const UserList = () => {
 	const [userSelected, setUserSelected] = useState({});
 	const [openDelete, setOpenDelete] = useState(false);
 
+	const [filters, setFilters] = useState({});
+	const [filteredData, setFilteredData] = useState([]);
+
 	useEffect(() => {
 		setError("");
 		getUsersData();
 	}, []);
 
+	useEffect(() => {
+		const { name } = filters;
+		const result = users.filter(row => filter(row, "name", name));
+		setFilteredData(result);
+	}, [filters]);
+
 	const getUsersData = async () => {
 		const token = Cookie.get("token");
 		setLoading(true);
 		try {
-			const users_ = await UserService.getAll(token);
-			setUsers(users_.data);
+			const { data } = await UserService.getAll(token);
+			setUsers(data);
+			setFilteredData(data);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -79,6 +90,11 @@ const UserList = () => {
 		setOpenEdit(true);
 	};
 
+	const onFilterChange = (e, key) => {
+		const val = e.target.value;
+		setFilters(prev => ({ ...prev, [key]: val }));
+	};
+
 	return (
 		<>
 			<div className="HeadButtons">
@@ -96,8 +112,8 @@ const UserList = () => {
 					sortable={true}
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
-					data={users.map(user => getUserData(user, onDelete, onEdit))}
-					columns={getUserColumns}
+					data={filteredData.map(user => getUserData(user, onDelete, onEdit))}
+					columns={getUserAllColumns(onFilterChange)}
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 				/>
 			)}

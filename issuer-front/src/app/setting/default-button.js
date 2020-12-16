@@ -3,7 +3,7 @@ import React from "react";
 
 const DefaultButton = ({ funct, name, templateLoading, registerLoading }) => (
 	<Button
-		type="ṕrimary"
+		type="primary"
 		onClick={funct}
 		variant="contained"
 		color="primary"
