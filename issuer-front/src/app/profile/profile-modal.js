@@ -127,9 +127,9 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 		<Dialog open={open}>
 			<form onSubmit={handleSubmit} onReset={handleCancel}>
 				<DialogTitle id="form-dialog-title">
-					<div>
+					<h3 style={{ margin: "0px" }}>
 						{title} {TITLE}
-					</div>
+					</h3>
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">
@@ -144,7 +144,7 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 								required
 								fullWidth
 							/>
-							<h2>Permisos</h2>
+							<h3>Permisos</h3>
 							{Object.keys(GROUPS).map(groupName => (
 								<Grid key={groupName} container xs={12}>
 									<FormControlLabel
