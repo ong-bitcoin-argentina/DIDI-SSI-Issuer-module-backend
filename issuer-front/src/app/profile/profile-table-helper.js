@@ -2,12 +2,9 @@ import { Chip, Tooltip } from "@material-ui/core";
 import React from "react";
 import Constants from "../../constants/Constants";
 import { Edit, Delete } from "@material-ui/icons";
+import InputFilter from "../components/InputFilter";
 
 const COLUMNS_NAME = [
-	{
-		title: "Nombre",
-		name: "name"
-	},
 	{
 		title: "tipos",
 		name: "types",
@@ -28,6 +25,16 @@ export const getProfileColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	accessor: name,
 	width
 }));
+
+export const getProfileAllColumns = handleFilter => {
+	return [
+		{
+			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
+			accessor: "name"
+		},
+		...getProfileColumns
+	];
+};
 
 export const getProfileData = (profile, onEdit, onDelete) => {
 	return {
