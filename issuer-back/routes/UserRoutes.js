@@ -159,11 +159,6 @@ router.put(
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
-			name: "password",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING, Constants.VALIDATION_TYPES.IS_PASSWORD],
-			length: { min: Constants.PASSWORD_MIN_LENGTH }
-		},
-		{
 			name: "profileId",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}

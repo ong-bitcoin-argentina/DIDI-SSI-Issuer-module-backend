@@ -58,6 +58,7 @@ export default class UserService {
 	}
 
 	static edit(token, body) {
+		const password = Boolean(body.password) ? body.password : undefined;
 		const data = {
 			method: "PUT",
 			headers: {
@@ -67,7 +68,7 @@ export default class UserService {
 			body: JSON.stringify({
 				name: body.name,
 				profileId: body.profileId,
-				password: body.password
+				password
 			})
 		};
 

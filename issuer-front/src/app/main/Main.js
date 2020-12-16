@@ -805,9 +805,9 @@ class Main extends Component {
 						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>}
 						{validateAccess(Read_Dids_Registers) && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
 						{validateAccess(Read_Delegates) && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{USERS}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{CONFIG}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 8}>{PROFILE}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{PROFILE}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{USERS}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 8}>{CONFIG}</Tab>}
 					</TabList>
 
 					{validateAccess(Read_Templates) && (
@@ -882,13 +882,13 @@ class Main extends Component {
 					{validateAccess(Admin) && (
 						<>
 							<TabPanel>
+								<Profile />
+							</TabPanel>
+							<TabPanel>
 								<UserList />
 							</TabPanel>
 							<TabPanel>
 								<Setting />
-							</TabPanel>
-							<TabPanel>
-								<Profile />
 							</TabPanel>
 						</>
 					)}

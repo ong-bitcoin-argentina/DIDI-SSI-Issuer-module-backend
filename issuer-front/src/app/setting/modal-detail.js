@@ -3,6 +3,9 @@ import React from "react";
 import KeyValue from "../components/KeyValue";
 import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
+import ModalTitle from "../utils/modal-title";
+
+const TITLE = "Detalles del Registro";
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
@@ -18,7 +21,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
 	return (
 		<Dialog open={modalOpen}>
 			<DialogTitle id="form-dialog-title">
-				<div>Detalles del Registro</div>
+				<ModalTitle title={TITLE} />
 			</DialogTitle>
 			<DialogContent style={{ margin: "0px 0 25px" }}>
 				<Grid container item xs={12} justify="center" direction="column">

@@ -12,9 +12,6 @@ const { ERROR, PENDING, DONE, EXPIRED, ERROR_RENEW } = Constants.STATUS;
 const EDIT_COLOR = "#5FCDD7";
 const RETRY_COLOR = "#AED67B";
 
-const EDIT_COLOR = "#5FCDD7";
-const RETRY_COLOR = "#AED67B";
-
 const COLUMNS_NAME = [
 	{
 		title: "Blockchain",

@@ -24,7 +24,7 @@ import ModalTitle from "../utils/modal-title";
 
 const TITLE = "Usuario";
 
-const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
+const CreateUserModal = ({ open, close, onSubmit, userData, title, required }) => {
 	const [newUser, setNewUser] = useState(userData);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -47,17 +47,20 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 		{
 			name: "name",
 			placeholder: "Nombre",
-			type: "text"
+			type: "text",
+			required: true
 		},
 		{
 			name: "password",
 			placeholder: "Contraseña",
-			type: showPassword ? "text" : "password"
+			type: showPassword ? "text" : "password",
+			required
 		},
 		{
 			name: "repeatPassword",
 			placeholder: "Repetir Contraseña",
-			type: showPassword ? "text" : "password"
+			type: showPassword ? "text" : "password",
+			required
 		}
 	];
 
@@ -115,7 +118,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">
 						<Grid item xs={9}>
-							{INPUTS.map(({ name, placeholder, type }, index) => (
+							{INPUTS.map(({ name, placeholder, type, required }, index) => (
 								<TextField
 									key={index}
 									style={{ marginBottom: "25px" }}
@@ -126,7 +129,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 									onChange={handleChange}
 									defaultValue={newUser[name]}
 									inputProps={{ minlength: name === "password" ? 6 : 1 }}
-									required
+									required={required}
 									fullWidth
 									InputProps={{
 										endAdornment: name === "password" && (
