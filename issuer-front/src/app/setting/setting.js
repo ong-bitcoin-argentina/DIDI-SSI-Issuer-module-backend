@@ -8,10 +8,11 @@ import NotRegistersData from "./not-registers-data";
 import OpenModalButton from "./open-modal-button";
 import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
-import { getRegisterColumns, getRegisterData } from "./register-table-helper";
+import { getRegisterAllColumns, getRegisterData } from "./register-table-helper";
 import ModalDetail from "./modal-detail";
 import DefaultForm from "./default-form";
 import EditRegisterModal from "./edit-register-modal";
+import { filter } from "../../services/utils";
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);
@@ -20,17 +21,28 @@ const Setting = () => {
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [registerSelected, setRegisterSelected] = useState({});
 	const [blockchains, setBlockchains] = useState([]);
+
+	const [filters, setFilters] = useState({});
+	const [filteredData, setFilteredData] = useState([]);
+
 	const [data, setData] = useState([]);
 	const [error, setError] = useState("");
 
 	const ifNotElements = data.length === 0;
 
+	useEffect(() => {
+		const { name } = filters;
+		const result = data.filter(row => filter(row, "name", name));
+		setFilteredData(result);
+	}, [filters]);
+
 	const getRegisters = async () => {
 		setLoading(true);
 		const token = Cookie.get("token");
 		try {
-			const data_ = await RegisterService.getAll(token, {});
-			setData(data_.data);
+			const { data } = await RegisterService.getAll(token, {});
+			setData(data);
+			setFilteredData(data);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -45,6 +57,11 @@ const Setting = () => {
 		} catch (error) {
 			setError(error.message);
 		}
+	};
+
+	const onFilterChange = (e, key) => {
+		const val = e.target.value;
+		setFilters(prev => ({ ...prev, [key]: val }));
 	};
 
 	useEffect(() => {
@@ -83,10 +100,10 @@ const Setting = () => {
 						sortable={true}
 						previousText={Messages.LIST.TABLE.PREV}
 						nextText={Messages.LIST.TABLE.NEXT}
-						data={data.map(register =>
+						data={filteredData.map(register =>
 							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen))
 						)}
-						columns={getRegisterColumns}
+						columns={getRegisterAllColumns(onFilterChange)}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 						pageSize={5}
 					/>

@@ -5,9 +5,10 @@ import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
 import OpenModalButton from "../setting/open-modal-button";
 import ProfileModal from "./profile-modal";
-import { getProfileColumns, getProfileData } from "./profile-table-helper";
+import { getProfileAllColumns, getProfileData } from "./profile-table-helper";
 import Cookie from "js-cookie";
 import ProfileService from "../../services/ProfileService";
+import { filter } from "../../services/utils";
 
 const token = Cookie.get("token");
 
@@ -26,9 +27,18 @@ const Profile = () => {
 	const [profileSelected, setProfileSelected] = useState({});
 	const [error, setError] = useState("");
 
+	const [filters, setFilters] = useState({});
+	const [filteredData, setFilteredData] = useState([]);
+
 	useEffect(() => {
 		getProfilesData();
 	}, []);
+
+	useEffect(() => {
+		const { name } = filters;
+		const result = profiles.filter(row => filter(row, "name", name));
+		setFilteredData(result);
+	}, [filters]);
 
 	const handle = async next => {
 		try {
@@ -46,6 +56,7 @@ const Profile = () => {
 			const profiles = await ProfileService.getAll()(token);
 
 			setProfiles(profiles);
+			setFilteredData(profiles);
 		});
 
 	const createProfile = newProfile =>
@@ -71,6 +82,11 @@ const Profile = () => {
 			await getProfilesData();
 		});
 
+	const onFilterChange = (e, key) => {
+		const val = e.target.value;
+		setFilters(prev => ({ ...prev, [key]: val }));
+	};
+
 	return (
 		<>
 			{(!loading && (
@@ -87,11 +103,11 @@ const Profile = () => {
 					<ReactTable
 						sortable
 						previousText={PREV}
-						columns={getProfileColumns}
+						columns={getProfileAllColumns(onFilterChange)}
 						minRows={MIN_ROWS}
 						pageSize={5}
 						nextText={NEXT}
-						data={profiles.map(profile => getProfileData(profile, onEdit, onDelete))}
+						data={filteredData.map(profile => getProfileData(profile, onEdit, onDelete))}
 					/>
 				</>
 			)) || (
