@@ -236,6 +236,33 @@ module.exports.retryRegister = async function (did, token) {
 	}
 };
 
+module.exports.refreshRegister = async function (did, token) {
+	try {
+		const register = await Register.getByDID(did);
+
+		// Verifico que exista el Register
+		if (!register) return Promise.reject(GET);
+
+		// Se envia a DIDI
+		sendRefreshToDidi(did, token);
+
+		// Modifico el estado a Pendiente
+		await register.edit({ status: Constants.STATUS.PENDING, blockHash: "", messageError: "", expireOn: undefined });
+
+		return register;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(RETRY);
+	}
+};
+
+const sendRefreshToDidi = async function (did, token) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer/${did}/refresh`, "POST", {
+		token,
+		callbackUrl: `${Constants.ISSUER_API_URL}/register`
+	});
+};
+
 const sendEditNameToDidi = async function (did, name) {
 	return await defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, "PUT", { name });
 };

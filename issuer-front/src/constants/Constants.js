@@ -297,6 +297,8 @@ module.exports = {
 	STATUS: {
 		DONE: "Creado",
 		ERROR: "Error",
-		PENDING: "Pendiente"
+		PENDING: "Pendiente",
+		EXPIRED: "Expirado",
+		ERROR_RENEW: "Error al Renovar"
 	}
 };

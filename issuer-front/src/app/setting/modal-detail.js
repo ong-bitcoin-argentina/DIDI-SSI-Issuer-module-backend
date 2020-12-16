@@ -1,13 +1,15 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@material-ui/core";
 import React from "react";
 import KeyValue from "../components/KeyValue";
-import { DATE_FORMAT } from "../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
-const ModalDetail = ({ modalOpen, setModalOpen, register }) => {
-	const { did, name, createdOn, expireOn, blockHash, messageError } = register;
+const { PENDING, ERROR } = Constants.STATUS;
+
+const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
+	const { did, name, createdOn, expireOn, blockHash, messageError, status } = register;
 	const blockchain = did?.split(":")[2];
 	const didKey = did?.split(":")[3];
 	const createdOn_ = formatDate(createdOn);
@@ -28,6 +30,16 @@ const ModalDetail = ({ modalOpen, setModalOpen, register }) => {
 					{messageError && <KeyValue field="Fecha de Expiración" value={messageError} />}
 					{blockHash && <KeyValue field="Hash de Transacción" value={blockHash} />}
 				</Grid>
+				<Button
+					onClick={() => handleRefresh(did)}
+					variant="contained"
+					disabled={status === PENDING || status === ERROR}
+					color="secondary"
+					style={{ marginTop: "10px" }}
+					size="small"
+				>
+					Renovar
+				</Button>
 			</DialogContent>
 			<DialogActions>
 				<Button color="primary" variant="contained" onClick={() => setModalOpen(false)}>

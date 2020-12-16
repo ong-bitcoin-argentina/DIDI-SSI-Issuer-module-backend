@@ -61,7 +61,6 @@ const DefaultForm = ({ registers: register_ }) => {
 
 	const getData = async (loadingName, setData, fetch_) => {
 		setLoading(l => ({ ...l, [loadingName]: true }));
-		console.log(fetch_);
 		const data = await fetch_(token);
 		setLoading(l => ({ ...l, [loadingName]: false }));
 		setData(data);

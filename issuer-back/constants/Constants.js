@@ -115,7 +115,8 @@ const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
 const STATUS = {
 	PENDING: "Pendiente",
 	DONE: "Creado",
-	ERROR: "Error"
+	ERROR: "Error",
+	ERROR_RENEW: "Error al Renovar"
 };
 
 module.exports = {
@@ -206,7 +207,7 @@ module.exports = {
 
 	BLOCKCHAINS: BLOCKCHAINS,
 	STATUS: STATUS,
-	STATUS_ALLOWED: [STATUS.PENDING, STATUS.ERROR, STATUS.DONE],
+	STATUS_ALLOWED: [STATUS.PENDING, STATUS.ERROR, STATUS.DONE, STATUS.ERROR_RENEW],
 
 	RSA_PRIVATE_KEY: RSA_PRIVATE_KEY,
 	HASH_SALT: HASH_SALT,
