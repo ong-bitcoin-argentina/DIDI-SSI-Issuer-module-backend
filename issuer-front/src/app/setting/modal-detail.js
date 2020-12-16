@@ -30,7 +30,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
 					<KeyValue field="Nombre" value={name} />
 					<KeyValue field="Fecha de Registro" value={createdOn_} />
 					{expireOn_ && expireOn_ !== "-" && <KeyValue field="Fecha de Expiración" value={expireOn_} />}
-					{messageError && <KeyValue field="Fecha de Expiración" value={messageError} />}
+					{messageError && <KeyValue field="Mensaje de Error" value={messageError} />}
 					{blockHash && <KeyValue field="Hash de Transacción" value={blockHash} />}
 				</Grid>
 				<Button
