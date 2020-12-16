@@ -220,6 +220,7 @@ export default class TemplateService {
 		};
 
 		const response = await fetch(Constants.API_ROUTES.TEMPLATES.GET_ALL, data);
-		return await response.json();
+		const sj = await response.json();
+		return sj.data;
 	}
 }

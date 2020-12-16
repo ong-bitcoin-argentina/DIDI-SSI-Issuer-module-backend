@@ -29,8 +29,8 @@ const Setting = () => {
 		setLoading(true);
 		const token = Cookie.get("token");
 		try {
-			const data_ = await RegisterService.getAll(token, {});
-			setData(data_.data);
+			const data_ = await RegisterService.getAll({})(token);
+			setData(data_);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -40,8 +40,8 @@ const Setting = () => {
 	const getBlockchains = async () => {
 		try {
 			const token = Cookie.get("token");
-			const blockchains_ = await RegisterService.getAllBlockchains(token);
-			setBlockchains(blockchains_.data);
+			const blockchains_ = await RegisterService.getAllBlockchains()(token);
+			setBlockchains(blockchains_);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -50,7 +50,7 @@ const Setting = () => {
 	const onRetry = async did => {
 		try {
 			const token = Cookie.get("token");
-			await RegisterService.retry(token, did);
+			await RegisterService.retry(did)(token);
 			getRegisters();
 		} catch (error) {
 			setError(error.message);
