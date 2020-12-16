@@ -47,4 +47,8 @@ export default class RegisterService {
 	static retry(did) {
 		return fetchData(options("POST"), `${CREATE}/${did}/retry`);
 	}
+
+	static refresh(did) {
+		return fetchData(options("POST"), `${CREATE}/${did}/refresh`);
+	}
 }

@@ -16,7 +16,19 @@ const web3 = new Web3(provider);
 
 const fetch = require("node-fetch");
 
-const { INVALID_STATUS, RETRY, GET, BLOCKCHAIN, EDIT, CREATE, DID_EXISTS, STATUS } = Messages.REGISTER.ERR;
+const {
+	INVALID_STATUS,
+	RETRY,
+	GET,
+	BLOCKCHAIN,
+	EDIT,
+	CREATE,
+	DID_EXISTS,
+	STATUS,
+	REFRESH_STATUS,
+	REFRESH
+} = Messages.REGISTER.ERR;
+const { ERROR, DONE, ERROR_RENEW, PENDING } = Constants.STATUS;
 
 // obtiene el contrato (ethr-did-registry)
 const getContract = function (credentials) {
@@ -221,19 +233,49 @@ module.exports.retryRegister = async function (did, token) {
 		const { name, status } = register;
 
 		// Verifico que el registro este en estado Error
-		if (status !== Constants.STATUS.ERROR) return Promise.reject(INVALID_STATUS);
+		if (status !== ERROR) return Promise.reject(INVALID_STATUS);
 
 		// Se envia a DIDI
 		sendDidToDidi(did, name, token);
 
 		// Modifico el estado a Pendiente
-		await register.edit({ status: Constants.STATUS.PENDING, messageError: "" });
+		await register.edit({ status: PENDING, messageError: "" });
 
 		return register;
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(RETRY);
 	}
+};
+
+module.exports.refreshRegister = async function (did, token) {
+	try {
+		const register = await Register.getByDID(did);
+
+		// Verifico que exista el Register
+		if (!register) return Promise.reject(GET);
+
+		const { status } = register;
+		if (status === PENDING || status === ERROR) return Promise.reject(REFRESH_STATUS);
+
+		// Se envia a DIDI
+		sendRefreshToDidi(did, token);
+
+		// Modifico el estado a Pendiente
+		await register.edit({ status: PENDING, blockHash: "", messageError: "", expireOn: undefined });
+
+		return register;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(REFRESH);
+	}
+};
+
+const sendRefreshToDidi = async function (did, token) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer/${did}/refresh`, "POST", {
+		token,
+		callbackUrl: `${Constants.ISSUER_API_URL}/register`
+	});
 };
 
 const sendEditNameToDidi = async function (did, name) {

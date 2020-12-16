@@ -118,7 +118,13 @@ const UserList = () => {
 				/>
 			)}
 			{error && <div className="errMsg">{error}</div>}
-			<CreateUserModal title="Crear" open={modalOpen} close={() => setModalOpen(false)} onSubmit={createUser} />
+			<CreateUserModal
+				title="Crear"
+				open={modalOpen}
+				close={() => setModalOpen(false)}
+				onSubmit={createUser}
+				required
+			/>
 			<CreateUserModal
 				title="Editar"
 				open={openEdit}

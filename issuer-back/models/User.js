@@ -80,12 +80,14 @@ UserSchema.methods.delete = async function () {
 // edita un usuario
 UserSchema.methods.edit = async function ({ name, password, profile }) {
 	const updateQuery = { _id: this._id };
+	let setQuery = { name, profile };
+
+	if (password) {
+		const newPassword = await Hashing.saltedHash(password);
+		setQuery = { ...setQuery, password: newPassword };
+	}
 	const updateAction = {
-		$set: {
-			password: await Hashing.saltedHash(password),
-			name,
-			profile
-		}
+		$set: setQuery
 	};
 
 	try {
