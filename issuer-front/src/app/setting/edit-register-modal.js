@@ -44,7 +44,7 @@ const EditRegisterModal = ({ modalOpen, setModalOpen, register, onAccept }) => {
 		<Dialog open={modalOpen}>
 			<form onSubmit={handleSubmit} onReset={handleReset}>
 				<DialogTitle id="form-dialog-title">
-					<div>{TITLE}</div>
+					<h3 style={{ margin: "0px" }}>{TITLE}</h3>
 				</DialogTitle>
 				<DialogContent style={{ margin: "0 0 25px" }}>
 					<Grid container justify="center" style={{ marginTop: "25px" }}>

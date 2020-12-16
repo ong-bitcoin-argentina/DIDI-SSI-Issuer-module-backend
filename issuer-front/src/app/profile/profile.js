@@ -9,6 +9,7 @@ import { getProfileAllColumns, getProfileData } from "./profile-table-helper";
 import Cookie from "js-cookie";
 import ProfileService from "../../services/ProfileService";
 import { filter } from "../../services/utils";
+import DeleteAbstractModal from "../users/delete-abstract-modal";
 
 const token = Cookie.get("token");
 
@@ -29,6 +30,7 @@ const Profile = () => {
 
 	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState([]);
+	const [openDelete, setOpenDelete] = useState(false);
 
 	useEffect(() => {
 		getProfilesData();
@@ -48,6 +50,7 @@ const Profile = () => {
 			setError(error.message);
 		}
 		setLoading(false);
+		setOpenDelete(false);
 	};
 
 	const getProfilesData = () =>
@@ -76,9 +79,14 @@ const Profile = () => {
 		setEditModalOpen(true);
 	};
 
-	const onDelete = async id =>
+	const onDelete = profile => {
+		setProfileSelected(profile);
+		setOpenDelete(true);
+	};
+
+	const handleDelete = async () =>
 		handle(async () => {
-			await ProfileService.delete(id)(token);
+			await ProfileService.delete(profileSelected._id)(token);
 			await getProfilesData();
 		});
 
@@ -128,6 +136,7 @@ const Profile = () => {
 					{error}
 				</div>
 			)}
+			<DeleteAbstractModal title="Perfil" open={openDelete} setOpen={setOpenDelete} onAccept={handleDelete} />
 		</>
 	);
 };

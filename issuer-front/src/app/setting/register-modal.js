@@ -91,7 +91,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		<Dialog open={modalOpen}>
 			<form onSubmit={handleSubmit} onReset={handleReset}>
 				<DialogTitle id="form-dialog-title">
-					<div>Registro de Emisor</div>
+					<h3 style={{ margin: "0px" }}>Registro de Emisor</h3>
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">

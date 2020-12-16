@@ -2,20 +2,20 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mate
 import React from "react";
 import Messages from "../../constants/Messages";
 
-const UserDeleteModal = ({ open, setOpen, onAccept }) => {
+const DeleteAbstractModal = ({ open, setOpen, onAccept, title }) => {
 	const handleClose = () => {
 		setOpen(false);
 	};
 
 	return (
 		<Dialog className="dialogBox" open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-			<DialogTitle id="DialogTitle">Borrar Usuario</DialogTitle>
+			<DialogTitle id="DialogTitle">Borrar {title}</DialogTitle>
 			<DialogContent>
 				<div className="DeleteMessage">
 					<span class="material-icons" style={{ marginBottom: "25px" }}>
 						delete_outline
 					</span>
-					¿Está seguro que desea eliminar el Usuario?
+					¿Está seguro que desea eliminar el {title}?
 				</div>
 			</DialogContent>
 			<DialogActions>
@@ -30,4 +30,4 @@ const UserDeleteModal = ({ open, setOpen, onAccept }) => {
 	);
 };
 
-export default UserDeleteModal;
+export default DeleteAbstractModal;

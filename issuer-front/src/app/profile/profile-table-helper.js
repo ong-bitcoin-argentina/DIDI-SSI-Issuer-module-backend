@@ -52,7 +52,7 @@ export const getProfileData = (profile, onEdit, onDelete) => {
 						<Edit fontSize="medium" />
 					</Tooltip>
 				</div>
-				<div className="EditAction" onClick={() => onDelete(profile._id)}>
+				<div className="EditAction" onClick={() => onDelete(profile)}>
 					<Tooltip title="Borrar" placement="top" arrow>
 						<Delete fontSize="medium" color="secondary" />
 					</Tooltip>

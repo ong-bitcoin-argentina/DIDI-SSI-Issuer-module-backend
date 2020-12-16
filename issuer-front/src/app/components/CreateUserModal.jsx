@@ -109,9 +109,9 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title }) => {
 		<Dialog open={open}>
 			<form onSubmit={handleSubmit} onReset={handleCancel}>
 				<DialogTitle id="form-dialog-title">
-					<div>
+					<h3 style={{ margin: "0px" }}>
 						{title} {TITLE}
-					</div>
+					</h3>
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">

@@ -8,8 +8,8 @@ import UserService from "../../services/UserService";
 import CreateUserModal from "../components/CreateUserModal";
 import Cookie from "js-cookie";
 import { getUserAllColumns, getUserData } from "./user-table-helper";
-import UserDeleteModal from "./user-delete-modal";
 import { filter } from "../../services/utils";
+import DeleteAbstractModal from "./delete-abstract-modal";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -126,7 +126,7 @@ const UserList = () => {
 				close={() => setOpenEdit(false)}
 				onSubmit={editUser}
 			/>
-			<UserDeleteModal open={openDelete} setOpen={setOpenDelete} onAccept={deleteUser} />
+			<DeleteAbstractModal title="Usuario" open={openDelete} setOpen={setOpenDelete} onAccept={deleteUser} />
 		</>
 	);
 };
