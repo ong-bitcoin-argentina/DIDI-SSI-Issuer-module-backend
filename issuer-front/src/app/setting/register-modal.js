@@ -16,6 +16,9 @@ import { Credentials } from "uport-credentials";
 import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import ModalTitle from "../utils/modal-title";
+
+const TITLE = "Registro de Emisor";
 
 const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 	const [identity, setIdentity] = useState({});
@@ -91,7 +94,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		<Dialog open={modalOpen}>
 			<form onSubmit={handleSubmit} onReset={handleReset}>
 				<DialogTitle id="form-dialog-title">
-					<div>Registro de Emisor</div>
+					<ModalTitle title={TITLE} />
 				</DialogTitle>
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">

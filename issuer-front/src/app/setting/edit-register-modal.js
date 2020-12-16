@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextFi
 import React, { useEffect, useState } from "react";
 import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
+import ModalTitle from "../utils/modal-title";
 
 const TITLE = "Editar Nombre del Emisor";
 const EQUALS_NAME_ERROR = "Ingrese un nuevo nombre";
@@ -44,7 +45,7 @@ const EditRegisterModal = ({ modalOpen, setModalOpen, register, onAccept }) => {
 		<Dialog open={modalOpen}>
 			<form onSubmit={handleSubmit} onReset={handleReset}>
 				<DialogTitle id="form-dialog-title">
-					<div>{TITLE}</div>
+					<ModalTitle title={TITLE} />
 				</DialogTitle>
 				<DialogContent style={{ margin: "0 0 25px" }}>
 					<Grid container justify="center" style={{ marginTop: "25px" }}>
