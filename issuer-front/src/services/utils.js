@@ -9,3 +9,25 @@ export const filterByDates = (item, from, to) => {
 	const target = moment(item.createdOn);
 	return !from || !to || (from.isSameOrBefore(target, "day") && to.isSameOrAfter(target, "day"));
 };
+
+export const options = method => token => ({
+	method: method,
+	headers: {
+		"Content-Type": "application/json",
+		token: token
+	}
+});
+
+export const optionsBody = (method, body) => token => ({
+	...options(method)(token),
+	body: JSON.stringify(body)
+});
+
+export const fetchData = (optionsF, url) => async token => {
+	const response = await fetch(url, optionsF(token));
+
+	const json = await response.json();
+
+	if (json.status === "success") return json.data;
+	throw json.data;
+};

@@ -12,9 +12,9 @@ const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 const { PENDING, ERROR } = Constants.STATUS;
 
 const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
-	const { did, name, createdOn, expireOn, blockHash, messageError, status } = register;
-	const blockchain = did?.split(":")[2];
-	const didKey = did?.split(":")[3];
+	const { did, name, createdOn, expireOn, blockHash, messageError, status, blockchain } = register;
+	const partsOfDid = did?.split(":");
+	const didKey = partsOfDid && partsOfDid[partsOfDid.length - 1];
 	const createdOn_ = formatDate(createdOn);
 	const expireOn_ = formatDate(expireOn);
 

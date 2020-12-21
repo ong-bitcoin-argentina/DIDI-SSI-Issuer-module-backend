@@ -1,6 +1,9 @@
+const { getBlockchainName } = require("./GetBlockchain");
+
 const parse = cert => {
 	const register = cert.templateId ? cert.templateId.registerId : undefined;
-	const blockchain = register ? register.did.split(":")[2] : undefined;
+	const blockchain = getBlockchainName(register);
+
 	return {
 		_id: cert._id,
 		name: cert.data.cert[0].value,

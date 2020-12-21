@@ -103,7 +103,7 @@ const DefaultForm = ({ registers: register_ }) => {
 
 	const editDefaultFunction = () => handleError(DefautValueService.edit, changeNotification("edit", true));
 
-	const parseRegisterData = ({ name, did }) => `${name}  (${did.split(":")[2].toUpperCase()})`;
+	const parseRegisterData = ({ name, blockchain }) => `${name}  (${blockchain.toUpperCase()})`;
 	const parseTemplateData = ({ name, blockchain }) => name + (blockchain ? ` (${blockchain.toUpperCase()})` : "");
 
 	const handleChange = event => {
