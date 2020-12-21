@@ -8,6 +8,10 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import "./_Style.scss";
+import "../../../styles/GeneralStyles.scss";
+import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
+import BlockchainName from "./blockchainName";
 
 export default class InputDialog extends Component {
 	constructor(props) {
@@ -18,7 +22,7 @@ export default class InputDialog extends Component {
 
 		this.state = {
 			isOpen: false,
-			fields: fields
+			fields: { ...fields }
 		};
 	}
 
@@ -72,9 +76,11 @@ export default class InputDialog extends Component {
 		const title = this.props.title;
 		const onAccept = this.props.onAccept;
 		const fieldNames = this.props.fieldNames;
+		const selectNames = this.props.selectNames || [];
+		const registerIdDefault = this.props.registerIdDefault;
 
 		return (
-			<Dialog open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
+			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
 					{fieldNames.length &&
@@ -94,12 +100,41 @@ export default class InputDialog extends Component {
 								/>
 							);
 						})}
+					{selectNames.length !== 0 &&
+						selectNames.map(({ name, label, options }, key) => {
+							return (
+								<Grid style={{ marginTop: "25px" }}>
+									<InputLabel id={`${label}-select-label`}>{label}</InputLabel>
+									<Select
+										labelId={`${label}-select-label`}
+										key={"select-" + key}
+										id={name}
+										name={name}
+										defaultValue={registerIdDefault || undefined}
+										label={label}
+										onChange={event => {
+											this.updateField(name, event.target.value);
+										}}
+										fullWidth
+									>
+										{options.length !== 0 &&
+											options.map(({ name, did, _id }) => (
+												<MenuItem key={_id} value={_id}>
+													{name}
+													<BlockchainName did={did} />
+												</MenuItem>
+											))}
+									</Select>
+								</Grid>
+							);
+						})}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.close} color="primary">
+					<Button className="CloseButton" onClick={this.close} color="primary">
 						{Messages.LIST.DIALOG.CANCEL}
 					</Button>
 					<Button
+						className="CreateModalButton"
 						onClick={() => {
 							onAccept(this.state.fields);
 							this.close();

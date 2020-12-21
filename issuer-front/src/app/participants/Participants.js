@@ -17,6 +17,7 @@ import Cookie from "js-cookie";
 
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
+import { validateAccess } from "../../constants/Roles";
 
 let interval;
 class Participants extends Component {
@@ -73,7 +74,7 @@ class Participants extends Component {
 		return false;
 	};
 
-	// manda los pedidos correspondientes a los participantes/certificados seleccionados
+	// manda los pedidos correspondientes a los participantes/credenciales seleccionados
 	sendRequests = () => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
@@ -177,7 +178,7 @@ class Participants extends Component {
 		);
 	};
 
-	// volver a listado de certificados
+	// volver a listado de credenciales
 	onBack = () => {
 		if (this.reqSentDialog) this.reqSentDialog.close();
 
@@ -205,14 +206,14 @@ class Participants extends Component {
 				{Spinner.render(loading)}
 				{this.renderRequestSentDialog()}
 				{this.renderQrDialog()}
-				{this.renderTable()}
 				{this.renderButtons(loading)}
-				<div className="errMsg">{error && error.message}</div>
+				{this.renderTable()}
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}
 
-	// muestra el dialogo de carga de participantes por qr para modelo de certificado
+	// muestra el dialogo de carga de participantes por qr para modelo de credencial
 	renderQrDialog = () => {
 		return (
 			<QrDialog
@@ -260,34 +261,42 @@ class Participants extends Component {
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
-			<div className="QrRequestButtons">
-				<div className="PartRequestRow">
-					<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
-						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
-					</button>
+			<div className="QrRequestButtons my-2">
+				{validateAccess(Constants.ROLES.Write_Dids_Registers) && (
+					<>
+						<div className="PartRequestRow">
+							<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
+								{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
+							</button>
 
-					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
-						<button disabled={loading} className="CreateButton LoadDidsFromCsv">
-							{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
-						</button>
-					</ReactFileReader>
+							<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
+								<button disabled={loading} className="CreateButton LoadDidsFromCsv">
+									{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
+								</button>
+							</ReactFileReader>
 
-					<button
-						className="CreateButton QrDialogButton"
-						disabled={loading}
-						onClick={() => {
-							if (this.qrDialog) this.qrDialog.open();
-						}}
-					>
-						{Messages.QR.BUTTONS.QR_LOAD}
-					</button>
-				</div>
+							<button
+								className="CreateButton QrDialogButton"
+								disabled={loading}
+								onClick={() => {
+									if (this.qrDialog) this.qrDialog.open();
+								}}
+							>
+								{Messages.QR.BUTTONS.QR_LOAD}
+							</button>
+						</div>
 
-				<div className="QrButtonsRow">
-					<button className="PartRequestButton" disabled={!this.canSendRequest(loading)} onClick={this.sendRequests}>
-						{Messages.QR.BUTTONS.REQUEST}
-					</button>
-				</div>
+						<div className="QrButtonsRow">
+							<button
+								className="PartRequestButton"
+								disabled={!this.canSendRequest(loading)}
+								onClick={this.sendRequests}
+							>
+								{Messages.QR.BUTTONS.REQUEST}
+							</button>
+						</div>
+					</>
+				)}
 			</div>
 		);
 	};

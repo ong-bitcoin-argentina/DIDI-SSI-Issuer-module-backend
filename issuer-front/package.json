@@ -1,7 +1,7 @@
 {
 	"name": "issuer-react",
 	"version": "0.1.0",
-	"private": true,
+	"license": "SEE LICENSE IN LICENSE",
 	"dependencies": {
 		"@babel/runtime": "7.11.2",
 		"@material-ui/core": "4.9.4",
@@ -14,6 +14,7 @@
 		"dotenv": "8.2.0",
 		"ethr-did-resolver": "2.2.0",
 		"js-cookie": "2.2.1",
+		"material-icons": "^0.3.1",
 		"material-icons-react": "1.0.4",
 		"moment": "2.27.0",
 		"node-sass": "4.13.1",
@@ -29,7 +30,8 @@
 		"react-spinners": "0.8.0",
 		"react-table-6": "6.11.0",
 		"react-tabs": "3.0.0",
-		"react-with-direction": "1.3.1"
+		"react-with-direction": "1.3.1",
+		"uport-credentials": "1.3.5"
 	},
 	"scripts": {
 		"start": "react-scripts start",

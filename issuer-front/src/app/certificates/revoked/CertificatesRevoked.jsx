@@ -8,9 +8,11 @@ import CertificateTableHelper from "../list/CertificateTableHelper";
 import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { filter } from "../../../services/utils";
+import { useHistory } from "react-router-dom";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
+const { EDIT_CERT } = Constants.ROUTES;
 
 const CertificatesRevoked = () => {
 	const [columns, setColumns] = useState([]);
@@ -18,6 +20,7 @@ const CertificatesRevoked = () => {
 	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const history = useHistory();
 
 	const onFilterChange = (e, key) => {
 		const val = e.target.value;
@@ -25,7 +28,7 @@ const CertificatesRevoked = () => {
 	};
 
 	const handleView = id => {
-		console.log(id);
+		history.push(EDIT_CERT + id);
 	};
 
 	useEffect(() => {
@@ -53,10 +56,13 @@ const CertificatesRevoked = () => {
 	}, []);
 
 	useEffect(() => {
-		const { firstName, lastName, certName } = filters;
+		const { firstName, lastName, certName, blockchain } = filters;
 		const result = data.filter(
 			row =>
-				filter(row, "firstName", firstName) && filter(row, "lastName", lastName) && filter(row, "certName", certName)
+				filter(row, "firstName", firstName) &&
+				filter(row, "lastName", lastName) &&
+				filter(row, "certName", certName) &&
+				filter(row, "blockchain", blockchain)
 		);
 		setFilteredData(result);
 	}, [filters]);

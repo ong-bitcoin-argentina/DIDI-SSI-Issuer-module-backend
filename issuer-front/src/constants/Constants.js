@@ -5,6 +5,19 @@ module.exports = {
 	VERSION,
 	API_ROUTES: {
 		LOGIN: API + "/user/login",
+		USER: {
+			GET_ALL: API + "/user/all",
+			DELETE: id => API + "/user/" + id,
+			CREATE: API + "/user",
+			EDIT: id => API + "/user/" + id
+		},
+		PROFILE: API + "/profile",
+		REGISTER: {
+			CREATE: API + "/register",
+			GET: API + "/register",
+			GET_ALL_BLOCKCHAINS: API + "/register/all/blockchain"
+		},
+		DEFAULT_VALUE: API + "/default",
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
 			GET_QR: (id, code) => {
@@ -80,7 +93,7 @@ module.exports = {
 
 	CERT_FIELD_MANDATORY: {
 		DID: "DID",
-		NAME: "CREDENCIAL",
+		NAME: "Credencial o Curso",
 		FIRST_NAME: "NOMBRE",
 		LAST_NAME: "APELLIDO",
 		EXPIRATION_DATE: "EXPIRATION DATE"
@@ -204,7 +217,7 @@ module.exports = {
 			CSV_MISSING_FIELDS: function () {
 				return {
 					err: "CSV_MISSING_FIELDS",
-					message: "La cantidad de campos en el csv no se corresponde con la del certificado."
+					message: "La cantidad de campos en el csv no se corresponde con la de la Credencial."
 				};
 			},
 			EXP_DATE_INVALID: {
@@ -234,5 +247,58 @@ module.exports = {
 		}
 	},
 
-	DATE_FORMAT: "YYYY-MM-DD"
+	DATE_FORMAT: "YYYY-MM-DD",
+	ROLES: {
+		Admin: "Admin",
+
+		// Permisos para Templates
+		Read_Templates: "Read_Templates",
+		Write_Templates: "Write_Templates",
+		Delete_Templates: "Delete_Templates",
+
+		// Permisos para Certificados
+		Read_Certs: "Read_Certs",
+		Write_Certs: "Write_Certs",
+		Delete_Certs: "Delete_Certs",
+
+		// Permisos para Delegaciones
+		Read_Delegates: "Read_Delegates",
+		Write_Delegates: "Write_Delegates",
+
+		// Permisos para Registro de DIDs
+		Read_Dids_Registers: "Read_Dids_Registers",
+		Write_Dids_Registers: "Write_Dids_Registers"
+	},
+
+	ROLES_TRANSLATE: {
+		Admin: "Admin",
+
+		// Permisos para Templates
+		Read_Templates: "Visualizar Templates",
+		Write_Templates: "Crear/Editar Templates",
+		Delete_Templates: "Deshabilitar Templates",
+
+		// Permisos para Certificados
+		Read_Certs: "Visualizar Credenciales",
+		Write_Certs: "Escribir/Emitir Credenciales",
+		Delete_Certs: "Revocar Credenciales",
+
+		// Permisos para Delegaciones
+		Read_Delegates: "Visualizar Delegaciones",
+		Write_Delegates: "Crear/Editar Delegaciones",
+
+		// Permisos para Registro de DIDs
+		Read_Dids_Registers: "Visualizar Registros de Dids",
+		Write_Dids_Registers: "Crear/Editar Registros de Dids"
+	},
+
+	BLOCKCHAINS: ["BFA", "RSK", "LACCHAIN"],
+
+	STATUS: {
+		DONE: "Creado",
+		ERROR: "Error",
+		PENDING: "Pendiente",
+		EXPIRED: "Expirado",
+		ERROR_RENEW: "Error al Renovar"
+	}
 };

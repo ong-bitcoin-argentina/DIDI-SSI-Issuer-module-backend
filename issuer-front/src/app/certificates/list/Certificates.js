@@ -11,6 +11,9 @@ import Messages from "../../../constants/Messages";
 import Spinner from "../../utils/Spinner";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import DeleteAllCertsDialog from "./delete-all-certs-dialog";
+import { validateAccess } from "../../../constants/Roles";
 
 class Certificates extends Component {
 	constructor(props) {
@@ -51,7 +54,7 @@ class Certificates extends Component {
 		if (this.revokeDialog) this.revokeDialog.open();
 	};
 
-	// mostrar pantalla de certificados
+	// mostrar pantalla de credencial
 	render() {
 		const error = this.props.error || this.state.error;
 		const loading = this.props.loading;
@@ -59,14 +62,30 @@ class Certificates extends Component {
 			<div className={loading ? "Certificates Loading" : "Certificates"}>
 				{Spinner.render(loading)}
 				{this.renderDeleteDialog()}
+				{this.renderDeleteAllDialog()}
 				{this.renderRevocationDialog()}
 				{this.renderSectionButtons(loading)}
 				{this.renderTable()}
-				{this.renderButtons(loading)}
-				<div className="errMsg">{error && error.message}</div>
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}
+
+	setOpenDeleteAll = value => {
+		this.setState({ openDeleteAll: value });
+	};
+
+	renderDeleteAllDialog = () => {
+		return (
+			<DeleteAllCertsDialog
+				onDeleteSelects={this.props.onDeleteSelects}
+				selectedCerts={this.props.selectedCerts}
+				openDeleteAll={this.state.openDeleteAll || false}
+				setOpenDeleteAll={this.setOpenDeleteAll}
+				allCertificates={this.props.allCertificates}
+			/>
+		);
+	};
 
 	// muestra el dialogo de borrado
 	renderDeleteDialog = () => {
@@ -74,7 +93,7 @@ class Certificates extends Component {
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
 				title={Messages.LIST.DIALOG.DELETE_CERT_TITLE}
-				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION("la Credencial")}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
 			/>
@@ -94,12 +113,12 @@ class Certificates extends Component {
 		);
 	};
 
-	// muestra boton de creacion de certificados
+	// muestra boton de creacion de credencial
 	renderSectionButtons = loading => {
-		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
-				{selected && (
+				{this.renderButtons(loading)}
+				{validateAccess(Constants.ROLES.Write_Certs) && (
 					<button disabled={loading} className="CreateButton" onClick={this.onCertificateCreate}>
 						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
 						<div className="CreateButtonText EmmitCertText">{Messages.LIST.BUTTONS.CREATE_CERT}</div>
@@ -109,10 +128,10 @@ class Certificates extends Component {
 		);
 	};
 
-	// muestra tabla de certificados
+	// muestra tabla de credencial
 	renderTable = () => {
 		const certificates = this.props.certificates;
-		const columns = this.props.columns ? this.props.columns : [];
+		const columns = this.props.columns ?? [];
 
 		return (
 			<div className="CertificateTable">
@@ -124,19 +143,39 @@ class Certificates extends Component {
 					columns={columns}
 					defaultPageSize={Constants.CERTIFICATES.TABLE.PAGE_SIZE}
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
+					style={{ textAlign: "center" }}
 				/>
 			</div>
 		);
 	};
 
+	openDeleteAllDialog = () => {
+		const keys = Object.keys(this.props.selectedCerts);
+		const selectedCerts = keys.filter(key => this.props.selectedCerts[key]);
+		if (selectedCerts.length === 0) return;
+		this.setState({ openDeleteAll: true });
+	};
+
 	// mostrar botones al pie de la tabla
 	renderButtons = loading => {
 		return (
-			<div className="CertButtons">
-				<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
-					<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
-				</button>
-			</div>
+			<>
+				{validateAccess(Constants.ROLES.Delete_Certs) && (
+					<div className="CertButtons mr-2">
+						<button className="DangerButton" onClick={this.openDeleteAllDialog}>
+							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
+							Eliminar Credenciales Seleccionadas
+						</button>
+					</div>
+				)}
+				{validateAccess(Constants.ROLES.Write_Certs) && (
+					<div className="CertButtons mr-2">
+						<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
+							<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
+						</button>
+					</div>
+				)}
+			</>
 		);
 	};
 }

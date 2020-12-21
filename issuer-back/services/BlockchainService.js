@@ -5,6 +5,7 @@ const regName = delegateTypes.Secp256k1SignatureAuthentication2018;
 // console.log(regName);
 
 const Messages = require("../constants/Messages");
+const Register = require("../models/Register");
 
 const DidRegistryContract = require("ethr-did-registry");
 var Tx = require("ethereumjs-tx");
@@ -13,8 +14,24 @@ var Web3 = require("web3");
 const provider = new Web3.providers.HttpProvider(Constants.BLOCKCHAIN.BLOCK_CHAIN_URL);
 const web3 = new Web3(provider);
 
+const fetch = require("node-fetch");
+
+const {
+	INVALID_STATUS,
+	RETRY,
+	GET,
+	BLOCKCHAIN,
+	EDIT,
+	CREATE,
+	DID_EXISTS,
+	STATUS,
+	REFRESH_STATUS,
+	REFRESH
+} = Messages.REGISTER.ERR;
+const { ERROR, DONE, ERROR_RENEW, PENDING } = Constants.STATUS;
+
 // obtiene el contrato (ethr-did-registry)
-const getContract = function(credentials) {
+const getContract = function (credentials) {
 	return new web3.eth.Contract(DidRegistryContract.abi, Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT, {
 		from: credentials.from,
 		gasLimit: 3000000
@@ -22,20 +39,20 @@ const getContract = function(credentials) {
 };
 
 // quita la extension "did:ethr:"
-const cleanDid = function(did) {
+const cleanDid = function (did) {
 	let cleanDid = did.split(":");
 	cleanDid = cleanDid[cleanDid.length - 1];
 	return cleanDid;
 };
 
 // realiza una transaccion generica a un contrato ethereum
-const makeSignedTransaction = async function(bytecode, credentials) {
-	const getNonce = async function(web3, senderAddress) {
+const makeSignedTransaction = async function (bytecode, credentials) {
+	const getNonce = async function (web3, senderAddress) {
 		var result = await web3.eth.getTransactionCount(senderAddress, "pending");
 		return result;
 	};
 
-	const getGasPrice = async function(web3) {
+	const getGasPrice = async function (web3) {
 		var block = await web3.eth.getBlock("latest");
 		if (block.minimumGasPrice <= 21000) {
 			return 21000;
@@ -66,7 +83,7 @@ const makeSignedTransaction = async function(bytecode, credentials) {
 };
 
 // realiza una delegacion de "userDID" a "otherDID"
-module.exports.addDelegate = async function(userDID, credentials, otherDID) {
+module.exports.addDelegate = async function (userDID, credentials, otherDID) {
 	try {
 		const contract = getContract(credentials);
 		const bytecode = await contract.methods
@@ -81,7 +98,7 @@ module.exports.addDelegate = async function(userDID, credentials, otherDID) {
 };
 
 // anula la delegacion de "userDID" a "otherDID" de existir esta
-module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
+module.exports.removeDelegate = async function (userDID, credentials, otherDID) {
 	try {
 		const contract = getContract(credentials);
 		const bytecode = await contract.methods.revokeDelegate(cleanDid(userDID), regName, cleanDid(otherDID)).encodeABI();
@@ -94,7 +111,7 @@ module.exports.removeDelegate = async function(userDID, credentials, otherDID) {
 };
 
 // retorna true si "userDID" realizo una delegacion de DID a "otherDID"
-module.exports.validDelegate = async function(userDID, credentials, otherDID) {
+module.exports.validDelegate = async function (userDID, credentials, otherDID) {
 	try {
 		const contract = getContract(credentials);
 		const result = await contract.methods
@@ -108,7 +125,7 @@ module.exports.validDelegate = async function(userDID, credentials, otherDID) {
 };
 
 // modifica el nombre que mostrara el delegado
-module.exports.setDelegateName = async function(issuerDID, credentials, name) {
+module.exports.setDelegateName = async function (issuerDID, credentials, name) {
 	try {
 		const contract = getContract(credentials);
 		const bytecode = await contract.methods
@@ -123,7 +140,7 @@ module.exports.setDelegateName = async function(issuerDID, credentials, name) {
 };
 
 // obtiene el nombre que mostrara el delegado
-module.exports.getDelegateName = async function(issuerDID) {
+module.exports.getDelegateName = async function (issuerDID) {
 	try {
 		// TODO: esto genera errores cuando los eventos son muchos.
 		// Debe ser refactorizado.
@@ -152,5 +169,142 @@ module.exports.getDelegateName = async function(issuerDID) {
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.DELEGATE.ERR.GET_NAME);
+	}
+};
+
+// crear un nuevo registro en la blockchain
+module.exports.newRegister = async function (did, key, name, token) {
+	try {
+		// Verifico si la blockchain es correcta
+		if (!Constants.BLOCKCHAINS.includes(did.split(":")[2])) return Promise.reject(BLOCKCHAIN);
+
+		// Verifico que el did no exista
+		const byDIDExist = await Register.getByDID(did);
+		if (byDIDExist) return Promise.reject(DID_EXISTS);
+
+		// Se envia el did a Didi
+		sendDidToDidi(did, name, token);
+
+		const register = await Register.generate(did, key, name);
+		if (!register) return Promise.reject(CREATE);
+		return register;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(CREATE);
+	}
+};
+
+// retorna todos los registros
+module.exports.getAll = async function (filter) {
+	try {
+		const registers = await Register.getAll(filter);
+
+		return Promise.resolve(registers);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(GET);
+	}
+};
+
+module.exports.editRegister = async function (did, body) {
+	try {
+		const register = await Register.getByDID(did);
+		if (!register) return Promise.reject(GET);
+
+		const { status, name } = body;
+		if (status && !Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(STATUS);
+
+		if (name) await sendEditNameToDidi(did, name);
+
+		return await register.edit(body);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(EDIT);
+	}
+};
+
+module.exports.retryRegister = async function (did, token) {
+	try {
+		const register = await Register.getByDID(did);
+
+		// Verifico que exista el Register
+		if (!register) return Promise.reject(GET);
+
+		const { name, status } = register;
+
+		// Verifico que el registro este en estado Error
+		if (status !== ERROR) return Promise.reject(INVALID_STATUS);
+
+		// Se envia a DIDI
+		sendDidToDidi(did, name, token);
+
+		// Modifico el estado a Pendiente
+		await register.edit({ status: PENDING, messageError: "" });
+
+		return register;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(RETRY);
+	}
+};
+
+module.exports.refreshRegister = async function (did, token) {
+	try {
+		const register = await Register.getByDID(did);
+
+		// Verifico que exista el Register
+		if (!register) return Promise.reject(GET);
+
+		const { status } = register;
+		if (status === PENDING || status === ERROR) return Promise.reject(REFRESH_STATUS);
+
+		// Se envia a DIDI
+		sendRefreshToDidi(did, token);
+
+		// Modifico el estado a Pendiente
+		await register.edit({ status: PENDING, blockHash: "", messageError: "", expireOn: undefined });
+
+		return register;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(REFRESH);
+	}
+};
+
+const sendRefreshToDidi = async function (did, token) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer/${did}/refresh`, "POST", {
+		token,
+		callbackUrl: `${Constants.ISSUER_API_URL}/register`
+	});
+};
+
+const sendEditNameToDidi = async function (did, name) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, "PUT", { name });
+};
+
+const sendDidToDidi = async function (did, name, token) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer`, "POST", {
+		did,
+		name,
+		token,
+		callbackUrl: `${Constants.ISSUER_API_URL}/register`
+	});
+};
+
+const defaultFetch = async function (url, method, body) {
+	try {
+		const response = await fetch(url, {
+			method,
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(body)
+		});
+
+		const jsonResp = await response.json();
+		if (jsonResp.status === "error") throw jsonResp;
+
+		return jsonResp.data;
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
 	}
 };

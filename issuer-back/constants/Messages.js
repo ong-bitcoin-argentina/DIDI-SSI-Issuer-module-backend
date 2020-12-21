@@ -20,6 +20,34 @@ module.exports = {
 			}
 		}
 	},
+	REGISTER: {
+		ERR: {
+			CREATE: { code: "REGISTER_CREATE", message: "El registro no pudo ser creado." },
+			EDIT: { code: "REGISTER_EDIT", message: "El modelo de registro no pudo ser editado." },
+			BLOCKCHAIN: { code: "NOT_EXIST_BLOCKCHAIN", message: "No existe la blockchain elegida." },
+			GET: { code: "REGISTER_GET", message: "El registro no pudo ser obtenido." },
+			DID_EXISTS: { code: "DID_EXISTS", message: "Ya existe un registro con ese did." },
+			STATUS: { code: "STATUS", message: "El status no existe" },
+			RETRY: { code: "RETRY", message: "Hubo un error al intentar validar el registro." },
+			INVALID_STATUS: {
+				code: "INVALID_STATUS",
+				message: "No se puede realizar esta acción con el estado actual del registro."
+			},
+			NOT_BLOCKCHAIN: {
+				code: "NOT_BLOCKCHAIN",
+				message:
+					"Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template."
+			},
+			REFRESH_STATUS: {
+				code: "REFRESH_STATUS_NOT_VALID",
+				message: "No se puede realizar esta accion, debido al estado del registro."
+			},
+			REFRESH: {
+				code: "REGISTER_REFRESH",
+				message: "No se pudo actualizar el registro."
+			}
+		}
+	},
 	DELEGATE: {
 		ERR: {
 			SET_NAME: { code: "SET_NAME", message: "No se pudo actualizar el nombre del emisor." },
@@ -30,13 +58,25 @@ module.exports = {
 			DELETE: { code: "DELEGATE_DELETE", message: "El delegado no pudo ser borrado." }
 		}
 	},
+	PROFILE: {
+		ERR: {
+			GET: { code: "PROFILE_GET", message: "No se encontro el Perfil." },
+			IS_USED: {
+				code: "PROFILE_IS_USED",
+				message: "El perfil que se desea borrar lo estan usando los siguientes usuarios: "
+			}
+		}
+	},
 	USER: {
 		ERR: {
 			INVALID_USER: { code: "INVALID_USER", message: "El usuario y contraseña no coinciden." },
 			CREATE: { code: "USER_CREATE", message: "El usuario no pudo ser creado." },
 			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido." },
 			SET_NAME: { code: "DELEGATE_SET_NAME", message: "El delegado no pudo ser verificado." },
-			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." }
+			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." },
+			TYPE: { code: "INVALID_TYPE", message: "El tipo elegido para el usuario no es valido." },
+			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." },
+			EDIT: { code: "USER_EDIT", message: "El modelo de usuario no pudo ser editado." }
 		}
 	},
 	CERT: {
@@ -86,7 +126,7 @@ module.exports = {
 	},
 	VALIDATION: {
 		INVALID_TOKEN: { code: "INVALID_TOKEN", message: "Token invalido." },
-		NOT_ADMIN: { code: "NOT_ADMIN", message: "Esta operacion requiere privilegios de administrador." },
+		ROLES: { code: "PERMISSION_DENIED", message: "Esta operacion requiere privilegios que no tienes." },
 		TEMPLATE_DATA_TYPE: {
 			INVALID_DATA_TYPE: function (data) {
 				return { code: "INVALID_DATA_TYPE", message: `${data} no es una sección válida del certificado.` };

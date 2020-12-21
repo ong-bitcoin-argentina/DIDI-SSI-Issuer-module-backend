@@ -1,8 +1,9 @@
 const Template = require("../models/Template");
 const Messages = require("../constants/Messages");
+const Register = require("../models/Register");
 
 // obtener el modelo de certificado a correspondiente a ese id
-var getById = async function(id) {
+var getById = async function (id) {
 	try {
 		let template = await Template.getById(id);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.GET);
@@ -15,7 +16,7 @@ var getById = async function(id) {
 module.exports.getById = getById;
 
 // retorna todos los modelos de certificados
-module.exports.getAll = async function() {
+module.exports.getAll = async function () {
 	try {
 		let templates = await Template.getAll();
 		if (!templates) return Promise.reject(Messages.TEMPLATE.ERR.GET);
@@ -27,9 +28,13 @@ module.exports.getAll = async function() {
 };
 
 // genera un nuevo modelo de certificado
-module.exports.create = async function(name) {
+module.exports.create = async function (name, registerId) {
 	try {
-		const template = await Template.generate(name);
+		// Verifico que el registro exista
+		const register = await Register.getById(registerId);
+		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
+
+		const template = await Template.generate(name, registerId);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
 		return Promise.resolve(template);
 	} catch (err) {
@@ -39,11 +44,16 @@ module.exports.create = async function(name) {
 };
 
 // modifica el modelo de certificado
-module.exports.edit = async function(id, data, previewData, previewType, category) {
+module.exports.edit = async function (id, data, previewData, previewType, category, registerId) {
 	try {
 		let template = await getById(id);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.GET);
-		template = await template.edit(data, previewData, previewType, category);
+
+		// Verifico que el registro exista
+		const register = await Register.getById(registerId);
+		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
+
+		template = await template.edit(data, previewData, previewType, category, registerId);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
 		return Promise.resolve(template);
 	} catch (err) {
@@ -53,7 +63,7 @@ module.exports.edit = async function(id, data, previewData, previewType, categor
 };
 
 // marca el modelo de certificado como borrado
-module.exports.delete = async function(id) {
+module.exports.delete = async function (id) {
 	try {
 		let template = await getById(id);
 		template = await template.delete();

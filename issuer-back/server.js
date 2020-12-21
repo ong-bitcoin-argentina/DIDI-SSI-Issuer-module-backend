@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -13,6 +13,9 @@ const TemplateRoutes = require("./routes/TemplateRoutes");
 const CertRoutes = require("./routes/CertRoutes");
 const ParticipantRoutes = require("./routes/ParticipantRoutes");
 const DelegateRoutes = require("./routes/DelegateRoutes");
+const RegisterRoutes = require("./routes/RegisterRoutes");
+const DefaultRoutes = require("./routes/DefaultRoutes");
+const ProfileRoutes = require("./routes/ProfileRoutes");
 
 // inicializar cluster para workers, uno por cpu disponible
 var cluster = require("cluster");
@@ -23,13 +26,18 @@ var http = require("http");
 var server = http.createServer(app);
 
 // serve all files from public dir
-const path = require('path');
-const dir = path.join(__dirname, 'public');
+const path = require("path");
+const dir = path.join(__dirname, "public");
 app.use(express.static(dir));
+
+if (process.env.ENABLE_AZURE_LOGGER) {
+	const { logger } = require("./services/logger");
+	logger.start();
+}
 
 // sobreescribir log para agregarle el timestamp
 const log = console.log;
-console.log = function(data) {
+console.log = function (data) {
 	process.stdout.write(new Date().toISOString() + ": ");
 	log(data);
 };
@@ -56,14 +64,23 @@ mongoose
 		console.log(Messages.INDEX.ERR.CONNECTION + err.message);
 	});
 
-app.get("/", (_, res) => res.send(Messages.INDEX.MSG.HELLO_WORLD));
+app.get("/", (_, res) => res.send(`${Messages.INDEX.MSG.HELLO_WORLD} v${process.env.VERSION}`));
 
 // loggear llamadas
-app.use(function(req, _, next) {
+app.use(function (req, _, next) {
 	if (Constants.DEBUGG) {
 		console.log(req.method + " " + req.originalUrl);
 		process.stdout.write("body: ");
 		console.log(req.body);
+	}
+	if (process.env.ENABLE_AZURE_LOGGER) {
+		logger.defaultClient.trackEvent({
+			name: "request",
+			properties: {
+				method: req.method,
+				url: req.originalUrl
+			}
+		});
 	}
 	next();
 });
@@ -71,9 +88,19 @@ app.use(function(req, _, next) {
 app.use(cors());
 
 // loggear errores
-app.use(function(error, _, _, next) {
+app.use(function (error, req, _, next) {
 	console.log(error);
-	next();
+	if (process.env.ENABLE_AZURE_LOGGER) {
+		logger.defaultClient.trackEvent({
+			name: "error",
+			properties: {
+				value: "error",
+				method: req.method,
+				url: req.originalUrl
+			}
+		});
+		next();
+	}
 });
 
 const route = "/api/" + Constants.API_VERSION + "/didi_issuer";
@@ -84,6 +111,9 @@ app.use(route + "/participant", ParticipantRoutes);
 app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
 app.use(route + "/delegate", DelegateRoutes);
+app.use(route + "/register", RegisterRoutes);
+app.use(route + "/default", DefaultRoutes);
+app.use(route + "/profile", ProfileRoutes);
 
 // forkear workers
 if (cluster.isMaster) {
@@ -93,11 +123,11 @@ if (cluster.isMaster) {
 		cluster.fork();
 	}
 
-	cluster.on("online", function(worker) {
+	cluster.on("online", function (worker) {
 		console.log(Messages.INDEX.MSG.STARTED_WORKER(worker.process.pid));
 	});
 
-	cluster.on("exit", function(worker, code, signal) {
+	cluster.on("exit", function (worker, code, signal) {
 		console.log(Messages.INDEX.MSG.ENDED_WORKER(worker.process.pid, code, signal));
 		console.log(Messages.INDEX.MSG.STARTING_WORKER);
 		cluster.fork();

@@ -10,6 +10,7 @@ const { Credentials } = require("uport-credentials");
 
 const { Resolver } = require("did-resolver");
 const { getResolver } = require("ethr-did-resolver");
+const Register = require("../models/Register");
 const resolver = new Resolver(
 	getResolver({ rpcUrl: Constants.BLOCKCHAIN.BLOCK_CHAIN_URL, registry: Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT })
 );
@@ -61,10 +62,19 @@ module.exports.createShareRequest = async function (claims, cb) {
 };
 
 // genera un certificado asociando la información recibida en "subject" con el did
-module.exports.createCertificate = async function (subject, expDate, did) {
+module.exports.createCertificate = async function (subject, expDate, did, template) {
+	const { registerId } = template;
+
+	if (!registerId) return Promise.reject(Messages.REGISTER.ERR.NOT_BLOCKCHAIN);
+
+	const { did: registerDid, key } = await Register.getCredentials(registerId);
+
+	const cleanDid = registerDid.split(":");
+	const prefixedDid = cleanDid.slice(2).join(":");
+
 	const vcissuer = new EthrDID({
-		address: Constants.ISSUER_SERVER_DID,
-		privateKey: Constants.ISSUER_SERVER_PRIVATE_KEY
+		address: prefixedDid,
+		privateKey: key
 	});
 
 	const date = expDate ? (new Date(expDate).getTime() / 1000) | 0 : undefined;

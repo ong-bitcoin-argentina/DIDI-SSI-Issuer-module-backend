@@ -2,6 +2,7 @@
 
 echo "> Updating .env"
 echo $REACT_APP_API_URL >> .env
+echo $REACT_APP_VERSION >> .env
 cat .env
 
 echo "> Building the app"

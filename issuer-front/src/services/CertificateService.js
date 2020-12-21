@@ -129,13 +129,28 @@ export default class CertificateService {
 		throw result;
 	}
 
-	static async getPending(token) {
-		let result = await fetch(GET_PENDING, options(token));
-		result = await result.json();
-		if (result.status === "success") {
-			return result.data;
-		}
-		throw result;
+	static getPending(token, cb, errCb) {
+		fetch(GET_PENDING, options(token))
+			.then(data => {
+				return data.json();
+			})
+			.then(data => {
+				if (data.status === "success") {
+					return cb(data.data);
+				} else {
+					errCb(data.data);
+				}
+			})
+			.catch(err => errCb(err));
+	}
+
+	static async getPendingAsync(token) {
+		const response = await fetch(GET_PENDING, options(token));
+
+		const json = await response.json();
+
+		if (json.status === "success") return json.data;
+		throw json.data;
 	}
 
 	static async getRevoked(token) {
@@ -171,7 +186,7 @@ export default class CertificateService {
 			.catch(err => errCb(err));
 	}
 
-	static delete(token, id, cb, errCb) {
+	static delete(token, id) {
 		const options = {
 			method: "DELETE",
 			headers: {
@@ -180,32 +195,10 @@ export default class CertificateService {
 			}
 		};
 
-		fetch(DELETE(id), options)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+		return fetch(DELETE(id), options);
 	}
 
-	static revoke(token, id, reason, cb, errCb) {
-		fetch(DELETE(id), options(token, "DELETE", { reason }))
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	static revoke(token, id, reason) {
+		return fetch(DELETE(id), options(token, "DELETE", { reason }));
 	}
 }

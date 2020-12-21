@@ -15,15 +15,15 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
-		},
+			validate: [Constants.USER_TYPES.Read_Delegates],
+			isHead: true
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (_, res) {
 		try {
 			const delegates = await DelegateService.getAll();
-			const result = delegates.map((delegate) => {
+			const result = delegates.map(delegate => {
 				return { did: delegate.did, name: delegate.name };
 			});
 			return ResponseHandler.sendRes(res, result);
@@ -41,14 +41,14 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
+			validate: [Constants.USER_TYPES.Write_Delegates],
+			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
 		{
 			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING],
-		},
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
@@ -79,13 +79,13 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
+			validate: [Constants.USER_TYPES.Write_Delegates],
+			isHead: true
 		},
 		{
 			name: "did",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING],
-		},
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
@@ -116,10 +116,10 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
+			validate: [Constants.USER_TYPES.Write_Delegates],
+			isHead: true
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
@@ -147,9 +147,9 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
-			isHead: true,
-		},
+			validate: [Constants.USER_TYPES.Read_Delegates],
+			isHead: true
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {

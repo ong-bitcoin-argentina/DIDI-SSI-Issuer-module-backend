@@ -13,6 +13,7 @@ import Spinner from "../../utils/Spinner";
 import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
+import { validateAccess } from "../../../constants/Roles";
 
 class Delegates extends Component {
 	constructor(props) {
@@ -52,7 +53,7 @@ class Delegates extends Component {
 
 				{this.renderSectionButtons(loading)}
 				{this.renderTable()}
-				<div className="errMsg">{error && error.message}</div>
+				{error && <div className="errMsg">{error.message}</div>}
 			</div>
 		);
 	}
@@ -75,7 +76,7 @@ class Delegates extends Component {
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
 				title={Messages.LIST.DIALOG.DELETE_DELEGATE_TITLE}
-				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION("el Delegado")}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
 			/>
@@ -84,11 +85,9 @@ class Delegates extends Component {
 
 	// mostrar boton de creacion
 	renderSectionButtons = loading => {
-		const selected = this.props.selected;
-		//const name = this.props.issuerName;
 		return (
 			<div className="HeadButtons">
-				{selected && (
+				{validateAccess(Constants.ROLES.Write_Delegates) && (
 					<button
 						disabled={loading}
 						className="CreateButton"
@@ -100,7 +99,6 @@ class Delegates extends Component {
 						<div className="CreateButtonText CreateDelegateText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
 				)}
-				{/*name && <div className="IssuerName">{name}</div>*/}
 			</div>
 		);
 	};

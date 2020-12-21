@@ -29,11 +29,16 @@ import DelegatesTableHelper from "../administrative/list/DelegatesTableHelper";
 
 import InputDialog from "../utils/dialogs/InputDialog";
 
-import logoApp from "../../images/ai-di-logo.svg";
-import CertificatesEmmited from "../certificates/emmited/certificates-emmited";
-import CertificatesRevoked from "../certificates/revoked/certificates-revoked";
+import CertificatesEmmited from "../certificates/emmited/CertificatesEmmited";
+import CertificatesRevoked from "../certificates/revoked/CertificatesRevoked";
+import Header from "../components/Header";
+import UserList from "../users/user-list";
+import Setting from "../setting/setting";
+import { validateAccess } from "../../constants/Roles";
+import Profile from "../profile/profile";
 
-const tabs = {
+const TABS = {
+	list: 0,
 	templates: 0,
 	"certificates-pending": 1,
 	certificates: 2,
@@ -48,8 +53,13 @@ const {
 	TO_QR,
 	TO_TEMPLATES,
 	DELEGATES,
-	TO_CERTIFICATES_PENDING
+	TO_CERTIFICATES_PENDING,
+	USERS,
+	CONFIG,
+	PROFILE
 } = Messages.LIST.BUTTONS;
+
+const { Admin, Read_Templates, Read_Certs, Read_Delegates, Read_Dids_Registers } = Constants.ROLES;
 
 class Main extends Component {
 	constructor(props) {
@@ -74,6 +84,7 @@ class Main extends Component {
 				address: {}
 			},
 			allSelectedCerts: false,
+			anchorEl: null,
 			selectedCerts: {},
 			certificates: [],
 			filteredCertificates: [],
@@ -83,103 +94,86 @@ class Main extends Component {
 		};
 	}
 
-	// cargar certificados
-	componentDidMount() {
-		const splitPath = this.props.history.location.pathname.split("/");
-		const path = splitPath[splitPath.length - 1];
-		let tabIndex = tabs[path];
-
-		const token = Cookie.get("token");
+	setAllData = async () => {
 		const self = this;
+		const token = Cookie.get("token");
 
-		self.setState({ loading: true, tabIndex });
-		ParticipantService.getGlobal(
-			token,
-			async function (parts) {
+		try {
+			if (validateAccess(Read_Dids_Registers)) {
+				const parts = await ParticipantService.getGlobalAsync(token);
 				const allSelectedParticipants = self.state.allSelectedParticipants;
 				const selectedParticipants = self.state.selectedParticipants;
 				self.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
-
-				TemplateService.getAll(
-					token,
-					async function (templates) {
-						templates = templates.map(template => {
-							return TemplateTableHelper.getTemplateData(
-								template,
-								self.onTemplateEdit,
-								self.onTemplateDeleteDialogOpen,
-								() => self.state.loading
-							);
-						});
-						const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-						self.setState({
-							templates: templates,
-							templateColumns: templateColumns
-						});
-						CertificateService.getAll(
-							token,
-							async function (certs) {
-								const selectedCerts = self.state.selectedCerts;
-								self.updateSelectedCertsState(certs, selectedCerts);
-
-								DelegateService.getAll(
-									token,
-									async function (delegates) {
-										delegates = delegates.map(delegate => {
-											return DelegatesTableHelper.getDelegatesData(
-												delegate,
-												self.onDelegateDeleteDialogOpen,
-												() => self.state.loading
-											);
-										});
-										const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
-
-										self.setState({
-											delegateColumns: delegateColumns,
-											delegates: delegates,
-											error: false,
-											loading: false
-										});
-									},
-									function (err) {
-										self.setState({ error: err });
-										console.log(err);
-									}
-								);
-							},
-							function (err) {
-								self.setState({ error: err });
-								console.log(err);
-							}
-						);
-					},
-					function (err) {
-						self.setState({ error: err });
-						console.log(err);
-					}
-				);
-			},
-			function (err) {
-				self.setState({ error: err });
-				console.log(err);
-			}
-		);
-
-		DelegateService.getIssuerName(
-			token,
-			function (name) {
 				self.setState({
-					issuerName: name
+					loading: false
 				});
-			},
-			function (err) {
-				self.setState({ error: err });
-				console.log(err);
 			}
-		);
+
+			if (validateAccess(Read_Templates)) {
+				let templates = await TemplateService.getAllAsync(token);
+				templates = templates.map(template => {
+					return TemplateTableHelper.getTemplateData(
+						template,
+						self.onTemplateEdit,
+						self.onTemplateDeleteDialogOpen,
+						() => self.state.loading
+					);
+				});
+				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+				self.setState({
+					templates: templates,
+					templateColumns: templateColumns,
+					loading: false
+				});
+			}
+
+			if (validateAccess(Read_Certs)) {
+				const certs = await CertificateService.getPendingAsync(token);
+				const selectedCerts = self.state.selectedCerts;
+				self.updateSelectedCertsState(certs, selectedCerts);
+				self.setState({
+					loading: false
+				});
+			}
+
+			if (validateAccess(Read_Delegates)) {
+				let delegates = await DelegateService.getAllAsync(token);
+				delegates = delegates.map(delegate => {
+					return DelegatesTableHelper.getDelegatesData(
+						delegate,
+						self.onDelegateDeleteDialogOpen,
+						() => self.state.loading
+					);
+				});
+				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
+
+				self.setState({
+					delegateColumns: delegateColumns,
+					delegates: delegates,
+					error: false,
+					loading: false
+				});
+			}
+		} catch (err) {
+			self.setState({ error: err });
+			console.log(err);
+		}
+	};
+
+	// cargar credenciales
+	componentDidMount() {
+		const splitPath = this.props.history.location.pathname.split("/");
+		const path = splitPath[splitPath.length - 1];
+		let tabIndex = TABS[path];
+
+		const self = this;
+
+		self.setState({ loading: true, tabIndex });
+
+		self.setAllData();
 	}
 
-	// seleccionar certificado a pedir para el participante
+	// seleccionar credencial a pedir para el participante
 	onParticipantSelectToggle = (id, type, value) => {
 		const allSelectedParticipants = this.state.allSelectedParticipants;
 		const selectedParticipants = this.state.selectedParticipants;
@@ -187,7 +181,7 @@ class Main extends Component {
 		this.updateSelectedParticipantsState(this.state.parts, selectedParticipants, allSelectedParticipants);
 	};
 
-	// seleccionar certificado a pedir para todos los participantes
+	// seleccionar credencial a pedir para todos los participantes
 	onParticipantSelectAllToggle = (type, value) => {
 		const parts = this.state.parts;
 		const allSelectedParticipants = this.state.allSelectedParticipants;
@@ -200,7 +194,7 @@ class Main extends Component {
 		this.updateSelectedParticipantsState(parts, selectedParticipants, allSelectedParticipants);
 	};
 
-	// actualizar seleccion de certificados a pedir para participantes
+	// actualizar seleccion de credenciales a pedir para participantes
 	updateSelectedParticipantsState = (parts, selectedParts, allSelectedParticipants) => {
 		const types = this.state.partTypes;
 		parts.forEach(part => {
@@ -270,7 +264,7 @@ class Main extends Component {
 		);
 	};
 
-	// abrir dialogo de confirmacion para revocacion de certificados
+	// abrir dialogo de confirmacion para revocacion de credenciales
 	onCertificateRevoke = id => {
 		if (this.certificatesSection) {
 			this.setState({ selectedCertId: id });
@@ -278,7 +272,7 @@ class Main extends Component {
 		}
 	};
 
-	// abrir dialogo de confirmacion para borrado de certificados
+	// abrir dialogo de confirmacion para borrado de credenciales
 	onCertificateDeleteDialogOpen = id => {
 		if (this.certificatesSection) {
 			this.setState({ selectedCertId: id });
@@ -286,8 +280,8 @@ class Main extends Component {
 		}
 	};
 
-	// borrar certificados
-	onCertificateDelete = () => {
+	// borrar credenciales
+	onCertificateDelete = async () => {
 		const id = this.state.selectedCertId;
 		const token = Cookie.get("token");
 		const self = this;
@@ -297,49 +291,140 @@ class Main extends Component {
 		cert.select = <div></div>;
 
 		self.setState({ certs: self.state.certificates, loading: true });
-		CertificateService.delete(
-			token,
-			id,
-			async function (cert) {
-				const certs = self.state.certs.filter(t => t._id !== cert._id);
 
-				self.setState({
-					certs: certs,
-					loading: false,
-					error: false
-				});
-
-				self.onCertificateSelectAllToggle(false);
-			},
-			function (err) {
-				self.setState({ error: err, loading: false });
-				console.log(err);
-			}
-		);
+		try {
+			await CertificateService.delete(token, id);
+			const certs = self.state.certs.filter(t => t._id !== cert._id);
+			self.setState({
+				certs: certs,
+				loading: false,
+				error: false
+			});
+			self.updateSelectedCertsState(certs, {});
+			self.onCertificateSelectAllToggle(false);
+		} catch (error) {
+			self.setState({ error: error, loading: false });
+		}
 	};
 
-	// selecciionar certificados para emision multiple
+	onDeleteSelects = async () => {
+		const token = Cookie.get("token");
+		const keys = Object.keys(this.state.selectedCerts);
+		const selectedCerts = keys.filter(key => this.state.selectedCerts[key]);
+
+		if (selectedCerts.length === 0) return;
+
+		const certs = this.state.certificates.filter(t => selectedCerts.indexOf(t._id) > -1);
+		certs.forEach(cert => {
+			cert.actions = <div></div>;
+			cert.selected = <div></div>;
+		});
+
+		this.setState({ certs: this.state.certificates, loading: true });
+
+		const self = this;
+		let errors = [];
+
+		for (const id of selectedCerts) {
+			try {
+				await CertificateService.delete(token, id);
+			} catch (error) {
+				errors.push(error.message);
+			}
+		}
+		if (errors.length) {
+			let err = {};
+			err.message = (
+				<ul>
+					{errors.map((error, key) => (
+						<li key={"err-" + key} className="errorList">
+							{error}
+						</li>
+					))}
+				</ul>
+			);
+			self.setState({ error: err, loading: false });
+		} else {
+			self.getCertificates();
+			self.setState({ error: false, tabIndex: 0 });
+			self.setState({ tabIndex: 1 });
+		}
+	};
+
+	// selecciionar credenciales para emision multiple
 	onCertificateSelectToggle = (certId, value) => {
-		const certs = this.state.certs;
-		const allSelectedCerts = this.state.allSelectedCerts;
 		const selectedCerts = this.state.selectedCerts;
 		selectedCerts[certId] = value;
-		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+		this.updateFilterData(selectedCerts);
 	};
 
-	// seleccionar todos los certificados para emitirlos
+	// seleccionar todos los credenciales para emitirlos
 	onCertificateSelectAllToggle = value => {
 		let allSelectedCerts = this.state.allSelectedCerts;
-		const certs = this.state.certs;
+		const certs = this.state.filteredCertificates;
 		const selectedCerts = this.state.selectedCerts;
 		certs.forEach(cert => {
 			if (!cert["emmitedOn"]) selectedCerts[cert._id] = value;
 		});
 		allSelectedCerts = value;
-		this.updateSelectedCertsState(certs, selectedCerts, allSelectedCerts);
+		this.updateFilterData(selectedCerts, allSelectedCerts);
 	};
 
-	// actualizar seleccion de certificados a emitir
+	onRenameModalOpen = () => {
+		if (this.renameDialog) this.renameDialog.open();
+	};
+
+	updateFilterData = selectedCerts => {
+		let allSelected = true;
+		const { filteredCertificates, certificates } = this.state;
+		filteredCertificates.forEach(cert => {
+			if (!selectedCerts[cert._id]) {
+				selectedCerts[cert._id] = false;
+				allSelected = false;
+			}
+		});
+
+		this.setState({
+			selectedCerts: selectedCerts,
+			allSelectedCerts: allSelected
+		});
+
+		const certificatesData = this.certificatesMapedToTable(filteredCertificates, selectedCerts);
+		const certColumns = this.updateColumns(certificates, selectedCerts, allSelected);
+
+		this.setState({
+			filteredCertificates: certificatesData,
+			certColumns: certColumns
+		});
+	};
+
+	updateColumns = (certificates, selectedCerts, allSelected) =>
+		CertificateTableHelper.getCertColumns(
+			certificates,
+			selectedCerts,
+			allSelected,
+			this.onCertificateSelectAllToggle,
+			this.onTemplateFilterChange,
+			this.onFirstNameFilterChange,
+			this.onLastNameFilterChange,
+			this.onBlockchainFilterChange,
+			() => this.state.loading
+		);
+
+	certificatesMapedToTable = (certs, selectedCerts) =>
+		certs.map(certificate => {
+			return CertificateTableHelper.getCertificatesPendingData(
+				{ ...certificate, name: certificate.certName || certificate.name, blockchain: certificate.blockchain },
+				selectedCerts,
+				this.onCertificateSelectToggle,
+				this.onCertificateEmmit,
+				this.onCertificateEdit,
+				this.onCertificateDeleteDialogOpen,
+				() => this.state.loading
+			);
+		});
+
+	// actualizar seleccion de credenciales a emitir
 	updateSelectedCertsState = (certs, selectedCerts) => {
 		let allSelected = true;
 		certs.forEach(cert => {
@@ -356,28 +441,8 @@ class Main extends Component {
 
 		const filteredCerts = certs.filter(item => !item.emmitedOn);
 
-		const certificates = filteredCerts.map(certificate => {
-			return CertificateTableHelper.getCertificatesPendingData(
-				certificate,
-				selectedCerts,
-				this.onCertificateSelectToggle,
-				this.onCertificateEmmit,
-				this.onCertificateEdit,
-				this.onCertificateDeleteDialogOpen,
-				() => this.state.loading
-			);
-		});
-
-		const certColumns = CertificateTableHelper.getCertColumns(
-			certificates,
-			selectedCerts,
-			allSelected,
-			this.onCertificateSelectAllToggle,
-			this.onTemplateFilterChange,
-			this.onFirstNameFilterChange,
-			this.onLastNameFilterChange,
-			() => this.state.loading
-		);
+		const certificates = this.certificatesMapedToTable(filteredCerts, selectedCerts);
+		const certColumns = this.updateColumns(certificates, selectedCerts, allSelected);
 
 		this.setState({
 			certs: certs,
@@ -387,7 +452,7 @@ class Main extends Component {
 		});
 	};
 
-	// emitir certificados marcados para emision multiple
+	// emitir credenciales marcados para emision multiple
 	onCertificateMultiEmmit = () => {
 		const keys = Object.keys(this.state.selectedCerts);
 		const toEmmit = keys.filter(key => this.state.selectedCerts[key]);
@@ -438,7 +503,8 @@ class Main extends Component {
 
 					self.setState({ error: err, loading: false });
 				} else {
-					self.componentDidMount();
+					self.setState({ tabIndex: 2, error: false, loading: false });
+					self.getCertificates();
 				}
 			})
 			.catch(function (err) {
@@ -446,7 +512,23 @@ class Main extends Component {
 			});
 	};
 
-	// emitir certificados
+	getCertificates = () => {
+		const token = Cookie.get("token");
+		const self = this;
+		CertificateService.getAll(
+			token,
+			async function (certs) {
+				self.updateSelectedCertsState(certs, {});
+				self.setState({ lastNameFilter: "", firstNameFilter: "", loading: false });
+			},
+			function (err) {
+				self.setState({ error: err });
+				console.log(err);
+			}
+		);
+	};
+
+	// emitir credenciales
 	onCertificateEmmit = id => {
 		const token = Cookie.get("token");
 		const self = this;
@@ -454,13 +536,13 @@ class Main extends Component {
 		const cert = self.state.certificates.find(t => t._id === id);
 		cert.actions = <div></div>;
 		cert.select = <div></div>;
-
 		self.setState({ certs: self.state.certificates, loading: true });
 		CertificateService.emmit(
 			token,
 			id,
 			async function (_) {
-				self.componentDidMount();
+				self.setState({ tabIndex: 2, error: false, loading: false });
+				self.getCertificates();
 			},
 			function (err) {
 				console.log(err);
@@ -476,13 +558,12 @@ class Main extends Component {
 
 	// crear templates
 	onTemplateCreate = data => {
-		const name = data.name;
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
 		TemplateService.create(
 			token,
-			name,
+			data,
 			async function (template) {
 				const templates = self.state.templates;
 				const data = TemplateTableHelper.getTemplateData(
@@ -534,26 +615,52 @@ class Main extends Component {
 	// filtro por nombre
 	onFirstNameFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(filter, this.state.lastNameFilter, this.state.templateFilter);
+		this.updateFiltererCertificates(
+			filter,
+			this.state.lastNameFilter,
+			this.state.templateFilter,
+			this.state.blockchainFilter
+		);
 		this.setState({ firstNameFilter: filter });
 	};
 
 	// filtro por apellido
 	onLastNameFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(this.state.firstNameFilter, filter, this.state.templateFilter);
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			filter,
+			this.state.templateFilter,
+			this.state.blockchainFilter
+		);
 		this.setState({ lastNameFilter: filter });
 	};
 
-	// filtro por modelo de certificado
+	// filtro por modelo de credencial
 	onTemplateFilterChange = event => {
 		const filter = event.target.value;
-		this.updateFiltererCertificates(this.state.firstNameFilter, this.state.lastNameFilter, filter);
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			this.state.lastNameFilter,
+			filter,
+			this.state.blockchainFilter
+		);
 		this.setState({ templateFilter: filter });
 	};
 
+	onBlockchainFilterChange = event => {
+		const filter = event.target.value;
+		this.updateFiltererCertificates(
+			this.state.firstNameFilter,
+			this.state.lastNameFilter,
+			this.state.templateFilter,
+			filter
+		);
+		this.setState({ blockchainFilter: filter });
+	};
+
 	// actualizar tabla en funcion de los filtros
-	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter) => {
+	updateFiltererCertificates = (firstNameFilter, lastNameFilter, templateFilter, blockchainFilter) => {
 		let cert = this.state.certificates;
 
 		if (firstNameFilter && firstNameFilter !== "") {
@@ -562,7 +669,7 @@ class Main extends Component {
 			});
 		}
 
-		if (lastNameFilter && firstNameFilter !== "") {
+		if (lastNameFilter && lastNameFilter !== "") {
 			cert = cert.filter(certData => {
 				return certData.lastName.toLowerCase().includes(lastNameFilter.toLowerCase());
 			});
@@ -574,9 +681,15 @@ class Main extends Component {
 			});
 		}
 
+		if (blockchainFilter) {
+			cert = cert.filter(certData => {
+				return certData.blockchain.toLowerCase().includes(blockchainFilter.toLowerCase());
+			});
+		}
+
 		// cert = cert.filter(item => item.createdOn === "-");
 
-		this.setState({ filteredCertificates: cert });
+		this.setState({ filteredCertificates: cert }, () => this.updateFilterData(this.state.selectedCerts));
 	};
 
 	// a pantalla de edicion
@@ -643,7 +756,7 @@ class Main extends Component {
 		);
 	};
 
-	// renombrar issuer (nombre que aparecera en los certificados emitidos)
+	// renombrar issuer (nombre que aparecera en los credenciales emitidos)
 	onIssuerRename = data => {
 		const name = data.name;
 		const token = Cookie.get("token");
@@ -665,6 +778,7 @@ class Main extends Component {
 	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
+		Cookie.set("roles", []);
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
@@ -674,87 +788,110 @@ class Main extends Component {
 			return <Redirect to={Constants.ROUTES.LOGIN} />;
 		}
 
-		const { loading, tabIndex, error } = this.state;
+		const { loading, tabIndex, error, anchorEl } = this.state;
 		const selectedIndex = tabIndex ?? 0;
 
 		return (
 			<div className="MainContent">
-				<div className="Header">
-					<img src={logoApp} alt="ai di logo" />
-					<div className="Menu">
-						<p>Menu</p>
-					</div>
-				</div>
+				<Header onRenameModalOpen={this.onRenameModalOpen} />
 				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
 					{this.renderActions(loading)}
 
 					<TabList>
-						<Tab disabled={loading && tabIndex !== 0}>{TO_TEMPLATES}</Tab>
-						<Tab disabled={loading && tabIndex !== 1}>{TO_CERTIFICATES_PENDING}</Tab>
-						<Tab disabled={loading && tabIndex !== 2}>{TO_CERTIFICATES}</Tab>
-						<Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>
-						<Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>
-						<Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>
+						{validateAccess(Read_Templates) && <Tab disabled={loading && tabIndex !== 0}>{TO_TEMPLATES}</Tab>}
+						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 1}>{TO_CERTIFICATES_PENDING}</Tab>}
+						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 2}>{TO_CERTIFICATES}</Tab>}
+						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>}
+						{validateAccess(Read_Dids_Registers) && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
+						{validateAccess(Read_Delegates) && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{PROFILE}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{USERS}</Tab>}
+						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 8}>{CONFIG}</Tab>}
 					</TabList>
 
-					<TabPanel>
-						<Templates
-							onRef={ref => (this.templatesSection = ref)}
-							selected={tabIndex === 0}
-							templates={this.state.templates}
-							columns={this.state.templateColumns}
-							loading={loading}
-							error={error}
-							onCreate={this.onTemplateCreate}
-							onDelete={this.onTemplateDelete}
-						/>
-					</TabPanel>
-					<TabPanel>
-						<Certificates
-							onRef={ref => (this.certificatesSection = ref)}
-							selected={tabIndex === 1}
-							certificates={this.state.filteredCertificates}
-							columns={this.state.certColumns}
-							loading={loading}
-							onMultiEmmit={this.onCertificateMultiEmmit}
-							onDelete={this.onCertificateDelete}
-							error={error}
-						/>
-					</TabPanel>
-					<TabPanel>
-						<CertificatesEmmited />
-					</TabPanel>
-					<TabPanel>
-						<CertificatesRevoked />
-					</TabPanel>
-					<TabPanel>
-						<Participants
-							selected={this.state.tabIndex === 4}
-							loading={loading}
-							templates={this.state.templates}
-							participants={this.state.participants}
-							columns={this.state.participantColumns}
-							error={error}
-							onReload={this.onParticipantsReload}
-							selectedParticipants={this.state.selectedParticipants}
-						/>
-					</TabPanel>
-
-					<TabPanel>
-						<Delegates
-							onRef={ref => (this.delegatesSection = ref)}
-							loading={loading}
-							selected={this.state.tabIndex === 5}
-							delegates={this.state.delegates}
-							columns={this.state.delegateColumns}
-							onRename={this.onIssuerRename}
-							onCreate={this.onDelegateCreate}
-							onDelete={this.onDelegateDelete}
-							issuerName={this.state.issuerName}
-							error={error}
-						/>
-					</TabPanel>
+					{validateAccess(Read_Templates) && (
+						<TabPanel>
+							<Templates
+								onRef={ref => (this.templatesSection = ref)}
+								selected={tabIndex === 0}
+								templates={this.state.templates}
+								columns={this.state.templateColumns}
+								loading={loading}
+								error={error}
+								onCreate={this.onTemplateCreate}
+								onDelete={this.onTemplateDelete}
+							/>
+						</TabPanel>
+					)}
+					{validateAccess(Read_Certs) && (
+						<>
+							<TabPanel>
+								<Certificates
+									onRef={ref => (this.certificatesSection = ref)}
+									selected={tabIndex === 1}
+									certificates={this.state.filteredCertificates}
+									columns={this.state.certColumns}
+									loading={loading}
+									onMultiEmmit={this.onCertificateMultiEmmit}
+									onDelete={this.onCertificateDelete}
+									error={error}
+									onDeleteSelects={this.onDeleteSelects}
+									selectedCerts={this.state.selectedCerts}
+									allCertificates={this.state.certificates}
+								/>
+							</TabPanel>
+							<TabPanel>
+								<CertificatesEmmited />
+							</TabPanel>
+							<TabPanel>
+								<CertificatesRevoked />
+							</TabPanel>
+						</>
+					)}
+					{validateAccess(Read_Dids_Registers) && (
+						<TabPanel>
+							<Participants
+								selected={this.state.tabIndex === 4}
+								loading={loading}
+								templates={this.state.templates}
+								participants={this.state.participants}
+								columns={this.state.participantColumns}
+								error={error}
+								onReload={this.onParticipantsReload}
+								selectedParticipants={this.state.selectedParticipants}
+							/>
+						</TabPanel>
+					)}
+					{validateAccess(Read_Delegates) && (
+						<TabPanel>
+							<Delegates
+								onRef={ref => (this.delegatesSection = ref)}
+								loading={loading}
+								selected={this.state.tabIndex === 5}
+								delegates={this.state.delegates}
+								columns={this.state.delegateColumns}
+								onRename={this.onIssuerRename}
+								onCreate={this.onDelegateCreate}
+								onDelete={this.onDelegateDelete}
+								issuerName={this.state.issuerName}
+								error={error}
+							/>
+						</TabPanel>
+					)}
+					{validateAccess(Admin) && (
+						<>
+							<TabPanel>
+								<Profile />
+							</TabPanel>
+							<TabPanel>
+								<UserList />
+							</TabPanel>
+							<TabPanel>
+								<Setting />
+							</TabPanel>
+						</>
+					)}
 				</Tabs>
 			</div>
 		);
@@ -782,7 +919,7 @@ class Main extends Component {
 		return (
 			<div className="ActionsMenu">
 				<button onClick={this.toggleShowMenu}>{Messages.LIST.MENU.TITLE}</button>
-				{showMenu && (
+				{false && (
 					<div className="ActionsMenuItems">
 						<button
 							disabled={loading}

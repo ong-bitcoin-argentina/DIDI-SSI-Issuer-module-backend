@@ -16,13 +16,41 @@
 	margin-top: 5px;
 	display: flex;
 	align-items: center;
+	justify-content: flex-end;
 }
 
 .QrButtons {
-	margin-top: 20px;
+	margin: 1em;
 	display: flex;
 	margin-left: auto;
 	margin-right: auto;
+	.CloseButton {
+		background: white !important;
+		border: 1px solid #dddee5 !important;
+		box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.0523656) !important;
+		color: #333333 !important;
+		&:hover {
+			opacity: 0.8 !important;
+		}
+	}
+	.QrButton {
+		background: #256ee0 !important;
+		color: white !important;
+		&:hover {
+			opacity: 0.8 !important;
+		}
+	}
+
+	.CloseButton,
+	.QrButton {
+		display: flex;
+		align-content: center;
+		width: auto;
+		border-radius: 4px;
+		align-items: center;
+		padding: 1em 2em;
+		border: transparent;
+	}
 }
 
 .ButtonsRow {
@@ -39,12 +67,17 @@
 }
 
 .QrPetition {
-	min-width: 400px;
-	min-height: 400px;
-	margin: 0 0 20px 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
 	padding: 10px;
 	align-self: center;
 	overflow-wrap: break-word;
+	#canvas {
+		margin: 0 auto !important;
+		width: 50%;
+	}
 }
 
 .ParticipantLoaded {
@@ -111,7 +144,10 @@
 }
 
 .CertificateButtons {
-	margin-top: 5px;
+	margin-top: 2em;
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: space-between;
 }
 
 .SendButton {

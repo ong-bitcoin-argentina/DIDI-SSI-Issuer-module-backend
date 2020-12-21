@@ -4,6 +4,7 @@ const MouroService = require("../services/MouroService");
 const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
+const { toDTO } = require("./utils/TemplateDTO");
 const Constants = require("../constants/Constants");
 
 /**
@@ -14,17 +15,15 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(_, res) {
+	async function (_, res) {
 		try {
 			const templates = await TemplateService.getAll();
-			const result = templates.map(template => {
-				return { _id: template._id, name: template.name };
-			});
+			const result = toDTO(templates);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -40,12 +39,12 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		try {
 			const template = await TemplateService.getById(id);
@@ -66,17 +65,21 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
-		const name = req.body.name;
+	async function (req, res) {
+		const { name, registerId } = req.body;
 
 		try {
-			const template = await TemplateService.create(name);
+			const template = await TemplateService.create(name, registerId);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -92,7 +95,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{
@@ -110,19 +113,22 @@ router.put(
 		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const data = JSON.parse(req.body.data);
-		const preview = req.body.preview;
-		const type = req.body.type;
+		const { preview, type, registerId } = req.body;
 
 		const category = req.body.category || "";
 		const id = req.params.id;
 
 		try {
-			let template = await TemplateService.edit(id, data, preview, type, category);
+			let template = await TemplateService.edit(id, data, preview, type, category, registerId);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -138,12 +144,12 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Delete_Templates],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 
 		try {
@@ -165,7 +171,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{
@@ -178,7 +184,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const dids = req.body.dids;
 		const certNames = req.body.certNames;
 		const requestCode = req.params.requestCode;
@@ -216,12 +222,12 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
-	async function(req, res) {
+	async function (req, res) {
 		const id = req.params.id;
 		const requestCode = req.params.requestCode;
 		try {

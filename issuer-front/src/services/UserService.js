@@ -19,12 +19,71 @@ export default class UserService {
 			})
 			.then(data => {
 				if (data.status === "success") {
-					const token = data.data.token;
-					return cb(token);
+					return cb(data.data);
 				} else {
 					errCb(data.data);
 				}
 			})
 			.catch(err => errCb(err));
+	}
+
+	static async getAll(token) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		const data_ = await fetch(Constants.API_ROUTES.USER.GET_ALL, data);
+		return data_.json();
+	}
+
+	static create(token, body) {
+		const data = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name: body.name,
+				profileId: body.profileId,
+				password: body.password
+			})
+		};
+
+		return fetch(Constants.API_ROUTES.USER.CREATE, data);
+	}
+
+	static edit(token, body) {
+		const password = Boolean(body.password) ? body.password : undefined;
+		const data = {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			},
+			body: JSON.stringify({
+				name: body.name,
+				profileId: body.profileId,
+				password
+			})
+		};
+
+		return fetch(Constants.API_ROUTES.USER.EDIT(body._id), data);
+	}
+
+	static delete(token, id) {
+		const data = {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		return fetch(Constants.API_ROUTES.USER.DELETE(id), data);
 	}
 }

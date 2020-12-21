@@ -1,6 +1,7 @@
 {
 	"name": "api",
 	"version": "2.0.0",
+	"license": "SEE LICENSE IN LICENSE",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
@@ -19,6 +20,8 @@
 	"dependencies": {
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
+		"applicationinsights": "^2.0.0-beta.200831.2",
+		"applicationinsights-native-metrics": "0.0.5",
 		"bcrypt": "5.0.0",
 		"body-parser": "1.19.0",
 		"cors": "2.8.5",
@@ -33,8 +36,9 @@
 		"graphql": "14.6.0",
 		"graphql-tag": "2.10.3",
 		"jsonwebtoken": "8.5.1",
+		"lodash.pick": "4.4.0",
 		"mongoose": "5.9.2",
-		"node-fetch": "2.6.0",
+		"node-fetch": "2.6.1",
 		"node-pre-gyp": "0.14.0",
 		"node-rsa": "1.0.7",
 		"nodemon": "2.0.2",
