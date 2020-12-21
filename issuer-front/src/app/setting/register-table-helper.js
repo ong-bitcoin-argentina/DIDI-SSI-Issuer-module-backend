@@ -71,10 +71,9 @@ export const getRegisterAllColumns = handleFilter => {
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
 export const getRegisterData = (register, onView, onEdit, onRetry) => {
-	const { did, createdOn, expireOn } = register;
+	const { did, createdOn, expireOn, blockchain } = register;
 	const partsOfDid = did.split(":");
-	const blockchain = partsOfDid[2];
-	const keyDid = partsOfDid[3];
+	const keyDid = partsOfDid[partsOfDid.length - 1];
 	const isExpireOn = expireOn ? new Date(expireOn) < new Date() : false;
 	const status = isExpireOn ? EXPIRED : register.status;
 
