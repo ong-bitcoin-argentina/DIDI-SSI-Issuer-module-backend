@@ -157,7 +157,7 @@ class Template extends Component {
 				// self.props.history.push(Constants.ROUTES.TEMPLATES);
 			},
 			function (err) {
-				self.setState({ error: err });
+				self.setState({ error: err, loading: false });
 				console.log(err);
 			}
 		);

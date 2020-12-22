@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 
 const { EXIT } = Messages.EDIT.BUTTONS;
 
-const Header = ({ onRenameModalOpen }) => {
+const Header = ({ onRenameModalOpen, resetTab }) => {
 	const history = useHistory();
 
 	const onLogout = () => {
@@ -19,7 +19,7 @@ const Header = ({ onRenameModalOpen }) => {
 
 	return (
 		<div className="Header">
-			<img src={logoApp} alt="ai di logo" />
+			<img src={logoApp} alt="ai di logo" onClick={resetTab} style={{ cursor: "pointer" }} />
 			<Button aria-controls="simple-menu" aria-haspopup="true" onClick={onLogout} style={{ color: "white" }}>
 				{EXIT}
 			</Button>

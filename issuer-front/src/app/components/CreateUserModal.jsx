@@ -140,7 +140,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required }) =
 									}}
 								/>
 							))}
-							<FormControl fullWidth>
+							<FormControl fullWidth required>
 								<InputLabel id="simple-select-label">Perfil</InputLabel>
 								<Select
 									labelId="simple-select-label"

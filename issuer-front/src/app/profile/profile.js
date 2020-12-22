@@ -11,8 +11,6 @@ import ProfileService from "../../services/ProfileService";
 import { filter } from "../../services/utils";
 import DeleteAbstractModal from "../users/delete-abstract-modal";
 
-const token = Cookie.get("token");
-
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS } = Constants.CERTIFICATES.TABLE;
 
@@ -55,6 +53,7 @@ const Profile = () => {
 
 	const getProfilesData = () =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			setLoading(true);
 			const profiles = await ProfileService.getAll()(token);
 
@@ -64,12 +63,14 @@ const Profile = () => {
 
 	const createProfile = newProfile =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			await ProfileService.create(newProfile)(token);
 			await getProfilesData();
 		});
 
 	const editProfile = ({ _id, ...rest }) =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			await ProfileService.edit(_id, rest)(token);
 			await getProfilesData();
 		});
@@ -86,6 +87,7 @@ const Profile = () => {
 
 	const handleDelete = async () =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			await ProfileService.delete(profileSelected._id)(token);
 			await getProfilesData();
 		});
@@ -113,7 +115,7 @@ const Profile = () => {
 						previousText={PREV}
 						columns={getProfileAllColumns(onFilterChange)}
 						minRows={MIN_ROWS}
-						pageSize={5}
+						defaultPageSize={5}
 						nextText={NEXT}
 						data={filteredData.map(profile => getProfileData(profile, onEdit, onDelete))}
 					/>

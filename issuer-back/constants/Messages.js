@@ -61,6 +61,7 @@ module.exports = {
 	PROFILE: {
 		ERR: {
 			GET: { code: "PROFILE_GET", message: "No se encontro el Perfil." },
+			NAME_NOT_UNIQUE: { code: "NAME_NOT_UNIQUE", message: "El nombre del perfil ya existe." },
 			IS_USED: {
 				code: "PROFILE_IS_USED",
 				message: "El perfil que se desea borrar lo estan usando los siguientes usuarios: "
@@ -143,7 +144,7 @@ module.exports = {
 		TEMPLATE_DATA: {
 			INVALID_TEMPLATE_PREVIEW_TYPE: {
 				code: "INVALID_TEMPLATE_PREVIEW_TYPE",
-				message: "Se permiten actalmetne solo 2, 4 o 6 campos para previsualizar."
+				message: "Se permiten actualmente solo 2, 4 o 6 campos para previsualizar."
 			},
 			INVALID_TEMPLATE_ID: { code: "INVALID_TEMPLATE_ID", message: "No existe modelo de certificado con ese id." },
 			INVALID_TEMPLATE_PREVIEW_DATA: {
