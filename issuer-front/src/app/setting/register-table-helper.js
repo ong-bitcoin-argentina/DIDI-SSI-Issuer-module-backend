@@ -86,11 +86,11 @@ export const getRegisterData = (register, onView, onEdit, onRetry) => {
 		status: <div style={{ textAlign: "center", textTransform: "uppercase", color: COLORES[status] }}>{status}</div>,
 		actions: (
 			<div className="Actions">
-				<Action handle={() => onEdit(register)} title="Editar" Icon={EditIcon} color={EDIT_COLOR} />
-				<Action handle={() => onView(register)} title="Ver" Icon={VisibilityIcon} color={EDIT_COLOR} />
 				{status === STATUS.ERROR && (
 					<Action handle={() => onRetry(did)} title="Re-intentar" Icon={RefreshIcon} color={RETRY_COLOR} />
 				)}
+				<Action handle={() => onEdit(register)} title="Editar" Icon={EditIcon} color={EDIT_COLOR} />
+				<Action handle={() => onView(register)} title="Ver" Icon={VisibilityIcon} color={EDIT_COLOR} />
 			</div>
 		)
 	};

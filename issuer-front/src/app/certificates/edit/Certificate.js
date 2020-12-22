@@ -553,7 +553,7 @@ class Certificate extends Component {
 				self.props.history.push(Constants.ROUTES.CERTIFICATES_PENDING);
 			},
 			function (err) {
-				self.setState({ error: err });
+				self.setState({ error: err, loading: false });
 				console.log(err);
 			}
 		);

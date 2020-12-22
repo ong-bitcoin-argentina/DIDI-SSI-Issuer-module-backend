@@ -110,21 +110,7 @@ class Main extends Component {
 			}
 
 			if (validateAccess(Read_Templates)) {
-				let templates = await TemplateService.getAllAsync(token);
-				templates = templates.map(template => {
-					return TemplateTableHelper.getTemplateData(
-						template,
-						self.onTemplateEdit,
-						self.onTemplateDeleteDialogOpen,
-						() => self.state.loading
-					);
-				});
-				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-				self.setState({
-					templates: templates,
-					templateColumns: templateColumns,
-					loading: false
-				});
+				self.getTemplatesData();
 			}
 
 			if (validateAccess(Read_Certs)) {
@@ -155,8 +141,7 @@ class Main extends Component {
 				});
 			}
 		} catch (err) {
-			self.setState({ error: err });
-			console.log(err);
+			self.setState({ error: err, loading: false });
 		}
 	};
 
@@ -556,6 +541,26 @@ class Main extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
 
+	getTemplatesData = async () => {
+		const token = Cookie.get("token");
+		const self = this;
+		let templates = await TemplateService.getAllAsync(token);
+		templates = templates.map(template => {
+			return TemplateTableHelper.getTemplateData(
+				template,
+				self.onTemplateEdit,
+				self.onTemplateDeleteDialogOpen,
+				() => self.state.loading
+			);
+		});
+		const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+		self.setState({
+			templates: templates,
+			templateColumns: templateColumns,
+			loading: false
+		});
+	};
+
 	// crear templates
 	onTemplateCreate = data => {
 		const token = Cookie.get("token");
@@ -565,17 +570,7 @@ class Main extends Component {
 			token,
 			data,
 			async function (template) {
-				const templates = self.state.templates;
-				const data = TemplateTableHelper.getTemplateData(
-					template,
-					self.onTemplateEdit,
-					self.onTemplateDeleteDialogOpen,
-					() => self.state.loading
-				);
-				templates.push(data);
-
-				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-				self.setState({ templates: templates, templateColumns: templateColumns, loading: false, error: false });
+				self.getTemplatesData();
 			},
 			function (err) {
 				self.setState({ loading: false, error: err });
@@ -782,6 +777,10 @@ class Main extends Component {
 		this.props.history.push(Constants.ROUTES.LOGIN);
 	};
 
+	resetTab = () => {
+		this.setState({ tabIndex: 0 });
+	};
+
 	// mostrar pantalla principal con tabs para las distintas secciones
 	render() {
 		if (!Cookie.get("token")) {
@@ -793,7 +792,7 @@ class Main extends Component {
 
 		return (
 			<div className="MainContent">
-				<Header onRenameModalOpen={this.onRenameModalOpen} />
+				<Header onRenameModalOpen={this.onRenameModalOpen} resetTab={this.resetTab} />
 				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
 					{this.renderActions(loading)}

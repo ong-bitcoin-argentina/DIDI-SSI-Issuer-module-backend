@@ -32,6 +32,7 @@ const CertificatesEmmited = () => {
 	const [revokeSuccess, setRevokeSuccess] = useState(false);
 	const [revokeFail, setRevokeFail] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState({});
 	const history = useHistory();
 
 	useEffect(() => {
@@ -80,9 +81,14 @@ const CertificatesEmmited = () => {
 
 	const getData = async () => {
 		setLoading(true);
-		const token = Cookie.get("token");
-		const certificates = await CertificateService.getEmmited(token);
-		updateCertificates(certificates, selected, setData);
+		try {
+			const token = Cookie.get("token");
+			const certificates = await CertificateService.getEmmited(token);
+			updateCertificates(certificates, selected, setData);
+		} catch (error) {
+			setError(error.data);
+		}
+		setLoading(false);
 	};
 
 	const onFilterChange = (e, key) => {
@@ -264,6 +270,8 @@ const CertificatesEmmited = () => {
 				time={3500}
 				onClose={onCloseRevokeFail}
 			/>
+
+			{error.message && <div className="errMsg">{error.message}</div>}
 		</>
 	);
 };

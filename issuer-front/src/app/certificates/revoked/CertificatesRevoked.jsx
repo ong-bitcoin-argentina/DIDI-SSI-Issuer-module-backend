@@ -20,6 +20,7 @@ const CertificatesRevoked = () => {
 	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState({});
 	const history = useHistory();
 
 	const onFilterChange = (e, key) => {
@@ -42,13 +43,18 @@ const CertificatesRevoked = () => {
 	const getData = async () => {
 		const token = Cookie.get("token");
 		setLoading(true);
-		let certificates = await CertificateService.getRevoked(token);
+		try {
+			let certificates = await CertificateService.getRevoked(token);
+			setLoading(false);
+			setData(
+				certificates.map(item => {
+					return CertificateTableHelper.getCertificatesRevokedData(item, handleView);
+				})
+			);
+		} catch (error) {
+			setError(error.data);
+		}
 		setLoading(false);
-		setData(
-			certificates.map(item => {
-				return CertificateTableHelper.getCertificatesRevokedData(item, handleView);
-			})
-		);
 	};
 
 	useEffect(() => {
@@ -86,6 +92,7 @@ const CertificatesRevoked = () => {
 					)}
 				</Grid>
 			</Grid>
+			{error.message && <div className="errMsg">{error.message}</div>}
 		</>
 	);
 };
