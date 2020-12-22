@@ -18,15 +18,14 @@ module.exports.createProfile = async body => {
 		// Valido que los tipos de permisos son correctos
 		validateTypes(types);
 
-		// Valido que el nombre no exista
-		let profile = await Profile.getByName(name);
+		// Valido que el nombre no exista, y si existe y esta como borrado, lo edito
+		const profile = await Profile.getByName(name);
 		if (profile) {
 			if (!profile.deleted) throw NAME_NOT_UNIQUE;
-			profile = await profile.edit({ ...body, deleted: false });
-		} else {
-			profile = await Profile.generate(body);
+			return await profile.edit({ ...body, deleted: false });
 		}
-		return profile;
+
+		return await Profile.generate(body);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(err);

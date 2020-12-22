@@ -544,15 +544,14 @@ class Main extends Component {
 	getTemplatesData = async () => {
 		const token = Cookie.get("token");
 		const self = this;
-		let templates = await TemplateService.getAllAsync(token);
-		templates = templates.map(template => {
-			return TemplateTableHelper.getTemplateData(
+		const templates = (await TemplateService.getAllAsync(token)).map(template =>
+			TemplateTableHelper.getTemplateData(
 				template,
 				self.onTemplateEdit,
 				self.onTemplateDeleteDialogOpen,
 				() => self.state.loading
-			);
-		});
+			)
+		);
 		const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
 		self.setState({
 			templates: templates,
