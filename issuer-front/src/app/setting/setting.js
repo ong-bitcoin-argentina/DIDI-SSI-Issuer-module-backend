@@ -126,7 +126,7 @@ const Setting = () => {
 						)}
 						columns={getRegisterAllColumns(onFilterChange)}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
-						pageSize={5}
+						defaultPageSize={5}
 					/>
 				)}
 			<DefaultForm registers={data} />
