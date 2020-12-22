@@ -6,7 +6,7 @@ const getBlockchainName = register => {
 	if (register) {
 		const split = register.did.split(":");
 		const blockchain = split[2];
-		Constants.BLOCKCHAINS.includes(blockchain) && (blockchain_ = blockchain);
+		if (Constants.BLOCKCHAINS.includes(blockchain)) blockchain_ = blockchain;
 	}
 	return blockchain_;
 };
