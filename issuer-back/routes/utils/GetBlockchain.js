@@ -1,8 +1,14 @@
+const Constants = require("../../constants/Constants");
 const { BLOCK_CHAIN_DEFAULT } = require("../../constants/Constants");
 
 const getBlockchainName = register => {
-	const split = register ? register.did.split(":") : undefined;
-	return register && split.length === 4 ? split[2] : BLOCK_CHAIN_DEFAULT;
+	let blockchain_ = BLOCK_CHAIN_DEFAULT;
+	if (register) {
+		const split = register.did.split(":");
+		const blockchain = split[2];
+		Constants.BLOCKCHAINS.includes(blockchain) && (blockchain_ = blockchain);
+	}
+	return blockchain_;
 };
 
 module.exports = {
