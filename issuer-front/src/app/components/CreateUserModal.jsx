@@ -24,24 +24,15 @@ import ModalTitle from "../utils/modal-title";
 
 const TITLE = "Usuario";
 
-const CreateUserModal = ({ open, close, onSubmit, userData, title, required }) => {
+const CreateUserModal = ({ open, close, onSubmit, userData, title, required, profiles }) => {
 	const [newUser, setNewUser] = useState(userData);
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-	const [profiles, setProfiles] = useState([]);
 	const [error, setError] = useState("");
 
 	useEffect(() => {
-		getProfilesData();
 		setNewUser(userData);
 	}, [userData]);
-
-	const getProfilesData = async () => {
-		const token = Cookie.get("token");
-		const profiles = await ProfileService.getAll()(token);
-
-		setProfiles(profiles);
-	};
 
 	const INPUTS = [
 		{

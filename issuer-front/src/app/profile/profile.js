@@ -35,10 +35,15 @@ const Profile = () => {
 	}, []);
 
 	useEffect(() => {
-		const { name } = filters;
-		const result = profiles.filter(row => filter(row, "name", name));
+		const { name, type } = filters;
+		const result = profiles.filter(row => filter(row, "name", name) && filterTypes(row, type));
 		setFilteredData(result);
 	}, [filters]);
+
+	const filterTypes = (row, type) => {
+		const types = row && row.types;
+		return !type || types.some(t => Constants.ROLES_TRANSLATE[t] === type);
+	};
 
 	const handle = async next => {
 		try {

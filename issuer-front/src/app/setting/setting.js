@@ -12,7 +12,7 @@ import { getRegisterAllColumns, getRegisterData } from "./register-table-helper"
 import ModalDetail from "./modal-detail";
 import DefaultForm from "./default-form";
 import EditRegisterModal from "./edit-register-modal";
-import { filter } from "../../services/utils";
+import { filter, filterByDates } from "../../services/utils";
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);
@@ -31,8 +31,16 @@ const Setting = () => {
 	const ifNotElements = data.length === 0;
 
 	useEffect(() => {
-		const { name } = filters;
-		const result = data.filter(row => filter(row, "name", name));
+		const { name, created, expired, blockchain, did, status } = filters;
+		const result = data.filter(
+			row =>
+				filter(row, "name", name) &&
+				filterByDates(row, created?.start, created?.end) &&
+				filterByDates(row, expired?.start, expired?.end, "expireOn") &&
+				filter(row, "did", did) &&
+				filter(row, "status", status) &&
+				filter(row, "blockchain", blockchain)
+		);
 		setFilteredData(result);
 	}, [filters]);
 
@@ -95,6 +103,10 @@ const Setting = () => {
 		setModalFn(true);
 	};
 
+	const onDateRangeFilterChange = (value, key) => {
+		setFilters(prev => ({ ...prev, [key]: value }));
+	};
+
 	return (
 		<>
 			{!loading && !ifNotElements && (
@@ -124,7 +136,7 @@ const Setting = () => {
 						data={filteredData.map(register =>
 							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen), onRetry)
 						)}
-						columns={getRegisterAllColumns(onFilterChange)}
+						columns={getRegisterAllColumns(onFilterChange, onDateRangeFilterChange)}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 						defaultPageSize={5}
 					/>

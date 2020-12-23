@@ -4,16 +4,12 @@ import Constants from "../../constants/Constants";
 import { Edit, Delete } from "@material-ui/icons";
 import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
+import CustomSelect from "../components/CustomSelect";
 
 const EDIT_COLOR = "#5FCDD7";
 const DELETE_COLOR = "#EB5757";
 
 const COLUMNS_NAME = [
-	{
-		title: "tipos",
-		name: "types",
-		width: 1100
-	},
 	{
 		title: "acciones",
 		name: "actions"
@@ -35,6 +31,18 @@ export const getProfileAllColumns = handleFilter => {
 		{
 			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
 			accessor: "name"
+		},
+		{
+			Header: (
+				<CustomSelect
+					options={Object.values(Constants.ROLES_TRANSLATE)}
+					field="type"
+					label="Tipos"
+					onChange={handleFilter}
+				/>
+			),
+			accessor: "types",
+			width: 1100
 		},
 		...getProfileColumns
 	];
