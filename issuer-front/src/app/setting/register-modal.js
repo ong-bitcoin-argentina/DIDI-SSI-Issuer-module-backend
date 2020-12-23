@@ -1,4 +1,4 @@
-import React, { isValidElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Button,
 	CircularProgress,
@@ -17,6 +17,7 @@ import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import ModalTitle from "../utils/modal-title";
+import ClipBoardInput from "../components/ClipBoardInput";
 
 const TITLE = "Registro de Emisor";
 
@@ -134,6 +135,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 							</Grid>
 						</Grid>
 						<Grid item xs={8}>
+							<ClipBoardInput label="Clave Privada" value={newRegister.key} />
 							{INPUTS.map(({ name, placeholder, disabled, initial }, index) => (
 								<TextField
 									disabled={disabled}
