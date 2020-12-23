@@ -21,13 +21,14 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Checkbox from "@material-ui/core/Checkbox";
 import ListItemText from "@material-ui/core/ListItemText";
-import logoApp from "../../../images/ai-di-logo.svg";
 import moment from "moment";
 
 import QrDialog from "../../utils/dialogs/QrDialog";
 import Header from "../../components/Header";
 import DefautValueService from "../../../services/DefaultValueService";
 import { validateAccess } from "../../../constants/Roles";
+
+const { Write_Certs } = Constants.ROLES;
 
 let interval;
 class Certificate extends Component {
@@ -127,7 +128,7 @@ class Certificate extends Component {
 		const self = this;
 
 		// si el cert fue emitido, no puedo editarlo
-		const action = this.state.cert.emmitedOn ? "viewing" : "editing";
+		const action = this.state.cert.emmitedOn || !validateAccess(Write_Certs) ? "viewing" : "editing";
 		const selectedTemplate = this.state.templates.find(template => template._id === this.state.cert.templateId);
 
 		return new Promise(function (resolve, reject) {
@@ -922,7 +923,7 @@ class Certificate extends Component {
 				{!this.state.loading && (
 					<Autocomplete
 						options={templates}
-						disabled={this.state.cert?.revocation}
+						disabled={this.state.cert?.revocation || !validateAccess(Write_Certs)}
 						getOptionLabel={option =>
 							option ? `${option.name} ${option.blockchain ? `(${option.blockchain.toUpperCase()})` : ""}` : ""
 						}
@@ -941,42 +942,47 @@ class Certificate extends Component {
 	renderButtons = () => {
 		return (
 			<div className="AddParticipants">
-				<div className="AddParticipantButtons">
-					<button
-						className="CertButton AddParticipant"
-						hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						onClick={this.addParticipant}
-					>
-						{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
-					</button>
-
-					<button
-						className="CertButton LoadParticipant"
-						hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						onClick={() => {
-							if (this.qrDialog) this.qrDialog.open();
-						}}
-					>
-						{Messages.EDIT.BUTTONS.LOAD_PARTICIPANTS}
-					</button>
-
-					<button
-						className="CertButton SampleCsv"
-						hidden={this.state.action === "viewing" || this.state.action === "editing"}
-						onClick={this.createSampleCsv}
-					>
-						{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
-					</button>
-
-					<ReactFileReader handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
-						<button className="CertButton" hidden={this.state.action === "viewing" || this.state.action === "editing"}>
-							{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
+				{validateAccess(Write_Certs) && (
+					<div className="AddParticipantButtons">
+						<button
+							className="CertButton AddParticipant"
+							hidden={this.state.action === "viewing" || this.state.action === "editing"}
+							onClick={this.addParticipant}
+						>
+							{Messages.EDIT.BUTTONS.ADD_PARTICIPANTS}
 						</button>
-					</ReactFileReader>
-				</div>
+
+						<button
+							className="CertButton LoadParticipant"
+							hidden={this.state.action === "viewing" || this.state.action === "editing"}
+							onClick={() => {
+								if (this.qrDialog) this.qrDialog.open();
+							}}
+						>
+							{Messages.EDIT.BUTTONS.LOAD_PARTICIPANTS}
+						</button>
+
+						<button
+							className="CertButton SampleCsv"
+							hidden={this.state.action === "viewing" || this.state.action === "editing"}
+							onClick={this.createSampleCsv}
+						>
+							{Messages.EDIT.BUTTONS.SAMPLE_CERT_FROM_CSV}
+						</button>
+
+						<ReactFileReader handleFiles={this.loadCertFromCsv} fileTypes={".csv"}>
+							<button
+								className="CertButton"
+								hidden={this.state.action === "viewing" || this.state.action === "editing"}
+							>
+								{Messages.EDIT.BUTTONS.LOAD_CERT_FROM_CSV}
+							</button>
+						</ReactFileReader>
+					</div>
+				)}
 
 				<div className="CertificateButtons">
-					{!this.state.cert?.revocation && validateAccess(Constants.ROLES.Write_Certs) && (
+					{!this.state.cert?.revocation && validateAccess(Write_Certs) && (
 						<button
 							hidden={this.state.action === "viewing"}
 							className="SaveButton"
