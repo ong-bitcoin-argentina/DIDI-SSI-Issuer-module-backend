@@ -6,6 +6,7 @@ import { AssignmentLate, Edit } from "@material-ui/icons";
 import InputFilter from "../components/InputFilter";
 import CustomSelect from "../components/CustomSelect";
 import DateRangeFilter from "../components/DateRangeFilter/DateRangeFilter";
+import { validateAccess } from "../../constants/Roles";
 
 const COLUMNS_NAME = [
 	{
@@ -13,6 +14,8 @@ const COLUMNS_NAME = [
 		name: "actions"
 	}
 ];
+
+const { Write_Users, Delete_Certs } = Constants.ROLES;
 
 export const getUserColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	Header: (
@@ -49,16 +52,20 @@ export const getUserData = (user, onDelete, onEdit) => {
 		),
 		actions: !user.types.includes(Constants.ROLES.Admin) && (
 			<div className="Actions">
-				<div className="EditAction" onClick={() => onEdit(user)}>
-					<Tooltip title="Editar" placement="top" arrow>
-						<Edit fontSize="medium" />
-					</Tooltip>
-				</div>
-				<div className="DeleteAction" onClick={() => onDelete(user)}>
-					<Tooltip title="Borrar" placement="top" arrow>
-						<AssignmentLate fontSize="medium" />
-					</Tooltip>
-				</div>
+				{validateAccess(Write_Users) && (
+					<div className="EditAction" onClick={() => onEdit(user)}>
+						<Tooltip title="Editar" placement="top" arrow>
+							<Edit fontSize="medium" />
+						</Tooltip>
+					</div>
+				)}
+				{validateAccess(Delete_Certs) && (
+					<div className="DeleteAction" onClick={() => onDelete(user)}>
+						<Tooltip title="Borrar" placement="top" arrow>
+							<AssignmentLate fontSize="medium" />
+						</Tooltip>
+					</div>
+				)}
 			</div>
 		)
 	};

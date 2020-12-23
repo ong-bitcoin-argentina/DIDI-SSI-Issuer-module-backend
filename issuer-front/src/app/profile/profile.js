@@ -10,6 +10,7 @@ import Cookie from "js-cookie";
 import ProfileService from "../../services/ProfileService";
 import { filter } from "../../services/utils";
 import DeleteAbstractModal from "../users/delete-abstract-modal";
+import { validateAccess } from "../../constants/Roles";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS } = Constants.CERTIFICATES.TABLE;
@@ -111,9 +112,11 @@ const Profile = () => {
 							<h1 style={{ margin: "0", padding: "0" }}>{TITLE}</h1>
 							<p>{DESCRIPTION}</p>
 						</Grid>
-						<Grid item xs={4} container justify="flex-end" alignItems="center">
-							<OpenModalButton setModalOpen={setModalOpen} title={BUTTON_MODAL_NAME} />
-						</Grid>
+						{validateAccess(Constants.ROLES.Write_Profiles) && (
+							<Grid item xs={4} container justify="flex-end" alignItems="center">
+								<OpenModalButton setModalOpen={setModalOpen} title={BUTTON_MODAL_NAME} />
+							</Grid>
+						)}
 					</Grid>
 					<ReactTable
 						sortable

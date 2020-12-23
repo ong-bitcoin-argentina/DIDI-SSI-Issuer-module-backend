@@ -59,7 +59,15 @@ const {
 	PROFILE
 } = Messages.LIST.BUTTONS;
 
-const { Admin, Read_Templates, Read_Certs, Read_Delegates, Read_Dids_Registers } = Constants.ROLES;
+const {
+	Admin,
+	Read_Templates,
+	Read_Certs,
+	Read_Delegates,
+	Read_Dids_Registers,
+	Read_Profiles,
+	Read_Users
+} = Constants.ROLES;
 
 class Main extends Component {
 	constructor(props) {
@@ -803,8 +811,8 @@ class Main extends Component {
 						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>}
 						{validateAccess(Read_Dids_Registers) && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
 						{validateAccess(Read_Delegates) && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{PROFILE}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{USERS}</Tab>}
+						{validateAccess(Read_Profiles) && <Tab disabled={loading && tabIndex !== 6}>{PROFILE}</Tab>}
+						{validateAccess(Read_Users) && <Tab disabled={loading && tabIndex !== 7}>{USERS}</Tab>}
 						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 8}>{CONFIG}</Tab>}
 					</TabList>
 
@@ -877,18 +885,20 @@ class Main extends Component {
 							/>
 						</TabPanel>
 					)}
+					{validateAccess(Read_Profiles) && (
+						<TabPanel>
+							<Profile />
+						</TabPanel>
+					)}
+					{validateAccess(Read_Users) && (
+						<TabPanel>
+							<UserList />
+						</TabPanel>
+					)}
 					{validateAccess(Admin) && (
-						<>
-							<TabPanel>
-								<Profile />
-							</TabPanel>
-							<TabPanel>
-								<UserList />
-							</TabPanel>
-							<TabPanel>
-								<Setting />
-							</TabPanel>
-						</>
+						<TabPanel>
+							<Setting />
+						</TabPanel>
 					)}
 				</Tabs>
 			</div>
