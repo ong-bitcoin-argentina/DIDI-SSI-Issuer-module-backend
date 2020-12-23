@@ -37,12 +37,6 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 
 	const INPUTS = [
 		{
-			name: "did",
-			placeholder: "DID asignado",
-			disabled: true,
-			initial: identity.did
-		},
-		{
 			name: "name",
 			placeholder: "Nombre",
 			disabled: false,
@@ -135,6 +129,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 							</Grid>
 						</Grid>
 						<Grid item xs={8}>
+							<ClipBoardInput label="Did Asignado" value={identity.did} />
 							<ClipBoardInput label="Clave Privada" value={newRegister.key} />
 							{INPUTS.map(({ name, placeholder, disabled, initial }, index) => (
 								<TextField
