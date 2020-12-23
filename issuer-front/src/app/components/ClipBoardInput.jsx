@@ -23,7 +23,7 @@ const ClipBoardInput = ({ label, value }) => {
 
 	return (
 		<Grid style={{ margin: "15px 0" }}>
-			<b>{label}: </b>
+			<span style={{ color: "#00000061" }}>{label}:</span>
 			<Grid container item xs={12} direction="row" alignItems="center">
 				<Grid item xs={10}>
 					<input
