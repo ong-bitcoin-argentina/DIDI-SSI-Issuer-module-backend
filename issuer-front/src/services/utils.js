@@ -2,11 +2,12 @@ import moment from "moment";
 
 export const filter = (item, key, val) => {
 	const parsedVal = val && val.toLowerCase();
-	return !parsedVal || item[key].toLowerCase().includes(parsedVal);
+	return !parsedVal || item[key]?.toLowerCase().includes(parsedVal);
 };
 
-export const filterByDates = (item, from, to) => {
-	const target = moment(item.createdOn);
+export const filterByDates = (item, from, to, key) => {
+	const key_ = key ? item[key] : item.createdOn;
+	const target = moment(key_);
 	return !from || !to || (from.isSameOrBefore(target, "day") && to.isSameOrAfter(target, "day"));
 };
 

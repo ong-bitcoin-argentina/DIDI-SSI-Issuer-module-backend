@@ -8,8 +8,9 @@ import UserService from "../../services/UserService";
 import CreateUserModal from "../components/CreateUserModal";
 import Cookie from "js-cookie";
 import { getUserAllColumns, getUserData } from "./user-table-helper";
-import { filter } from "../../services/utils";
+import { filter, filterByDates } from "../../services/utils";
 import DeleteAbstractModal from "./delete-abstract-modal";
+import ProfileService from "../../services/ProfileService";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -20,19 +21,31 @@ const UserList = () => {
 	const [userSelected, setUserSelected] = useState({});
 	const [openDelete, setOpenDelete] = useState(false);
 
+	const [profiles, setProfiles] = useState([]);
+
 	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState([]);
 
 	useEffect(() => {
 		setError("");
 		getUsersData();
+		getProfilesData();
 	}, []);
 
 	useEffect(() => {
-		const { name } = filters;
-		const result = users.filter(row => filter(row, "name", name));
+		const { name, profile, start, end } = filters;
+		const result = users.filter(
+			row => filter(row, "name", name) && filter(row, "profile", profile) && filterByDates(row, start, end)
+		);
 		setFilteredData(result);
 	}, [filters]);
+
+	const getProfilesData = async () => {
+		const token = Cookie.get("token");
+		const profiles = await ProfileService.getAll()(token);
+
+		setProfiles(profiles);
+	};
 
 	const getUsersData = async () => {
 		const token = Cookie.get("token");
@@ -95,6 +108,10 @@ const UserList = () => {
 		setFilters(prev => ({ ...prev, [key]: val }));
 	};
 
+	const onDateRangeFilterChange = ({ start, end }) => {
+		setFilters(prev => ({ ...prev, start, end }));
+	};
+
 	return (
 		<>
 			<div className="HeadButtons">
@@ -113,7 +130,7 @@ const UserList = () => {
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={filteredData.map(user => getUserData(user, onDelete, onEdit))}
-					columns={getUserAllColumns(onFilterChange)}
+					columns={getUserAllColumns(onFilterChange, profiles, onDateRangeFilterChange)}
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 				/>
 			)}
@@ -123,6 +140,7 @@ const UserList = () => {
 				open={modalOpen}
 				close={() => setModalOpen(false)}
 				onSubmit={createUser}
+				profiles={profiles}
 				required
 			/>
 			<CreateUserModal
@@ -131,6 +149,7 @@ const UserList = () => {
 				userData={userSelected}
 				close={() => setOpenEdit(false)}
 				onSubmit={editUser}
+				profiles={profiles}
 			/>
 			<DeleteAbstractModal title="Usuario" open={openDelete} setOpen={setOpenDelete} onAccept={deleteUser} />
 		</>

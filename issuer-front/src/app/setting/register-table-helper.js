@@ -6,6 +6,8 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import EditIcon from "@material-ui/icons/Edit";
 import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
+import CustomSelect from "../components/CustomSelect";
+import DateRangeFilter from "../components/DateRangeFilter/DateRangeFilter";
 
 const { ERROR, PENDING, DONE, EXPIRED, ERROR_RENEW } = Constants.STATUS;
 
@@ -13,27 +15,6 @@ const EDIT_COLOR = "#5FCDD7";
 const RETRY_COLOR = "#AED67B";
 
 const COLUMNS_NAME = [
-	{
-		title: "Blockchain",
-		name: "blockchain"
-	},
-	{
-		title: "DID registrado",
-		name: "did",
-		width: 425
-	},
-	{
-		title: "Fecha de Registro",
-		name: "onCreated"
-	},
-	{
-		title: "Fecha de Expiración",
-		name: "expireOn"
-	},
-	{
-		title: "Estado",
-		name: "status"
-	},
 	{
 		title: "Acciones",
 		name: "actions"
@@ -58,11 +39,42 @@ export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => (
 	width
 }));
 
-export const getRegisterAllColumns = handleFilter => {
+export const getRegisterAllColumns = (handleFilter, onDateRangeFilterChange) => {
 	return [
 		{
-			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
+			Header: <InputFilter label="nombre" onChange={handleFilter} field="name" />,
 			accessor: "name"
+		},
+		{
+			Header: (
+				<CustomSelect options={Constants.BLOCKCHAINS} field="blockchain" label="Blockchain" onChange={handleFilter} />
+			),
+			accessor: "blockchain"
+		},
+		{
+			Header: <InputFilter label="did registrado" onChange={handleFilter} field="did" />,
+			accessor: "did",
+			width: 425
+		},
+		{
+			Header: (
+				<DateRangeFilter label="fecha de registro" onChange={value => onDateRangeFilterChange(value, "created")} />
+			),
+			accessor: "onCreated",
+			width: 220
+		},
+		{
+			Header: (
+				<DateRangeFilter label="fecha de expiracion" onChange={value => onDateRangeFilterChange(value, "expired")} />
+			),
+			accessor: "expireOn",
+			width: 220
+		},
+		{
+			Header: (
+				<CustomSelect options={Object.values(Constants.STATUS)} field="status" label="Estado" onChange={handleFilter} />
+			),
+			accessor: "status"
 		},
 		...getRegisterColumns
 	];

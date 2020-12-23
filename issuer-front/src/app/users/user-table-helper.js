@@ -4,16 +4,10 @@ import moment from "moment";
 import { Tooltip } from "@material-ui/core";
 import { AssignmentLate, Edit } from "@material-ui/icons";
 import InputFilter from "../components/InputFilter";
+import CustomSelect from "../components/CustomSelect";
+import DateRangeFilter from "../components/DateRangeFilter/DateRangeFilter";
 
 const COLUMNS_NAME = [
-	{
-		title: "perfil",
-		name: "profile"
-	},
-	{
-		title: "fecha de creacion",
-		name: "onCreated"
-	},
 	{
 		title: "acciones",
 		name: "actions"
@@ -30,15 +24,22 @@ export const getUserColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	width
 }));
 
-export const getUserAllColumns = handleFilter => {
-	return [
-		{
-			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
-			accessor: "name"
-		},
-		...getUserColumns
-	];
-};
+export const getUserAllColumns = (handleFilter, profiles, onDateRangeFilterChange) => [
+	{
+		Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
+		accessor: "name"
+	},
+	{
+		Header: <CustomSelect options={profiles.map(p => p.name)} field="profile" label="Perfil" onChange={handleFilter} />,
+		accessor: "profile"
+	},
+	{
+		Header: <DateRangeFilter label="fecha de creacion" onChange={onDateRangeFilterChange} />,
+		accessor: "onCreated",
+		width: 220
+	},
+	...getUserColumns
+];
 
 export const getUserData = (user, onDelete, onEdit) => {
 	return {
