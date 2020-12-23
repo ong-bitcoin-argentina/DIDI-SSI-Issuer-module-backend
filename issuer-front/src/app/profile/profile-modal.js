@@ -27,18 +27,28 @@ const {
 	Read_Dids_Registers,
 	Write_Dids_Registers,
 	Read_Delegates,
-	Write_Delegates
+	Write_Delegates,
+	Read_Profiles,
+	Write_Profiles,
+	Delete_Profiles,
+	Read_Users,
+	Write_Users,
+	Delete_Users
 } = Constants.ROLES;
 
 const GROUPS = {
 	"Gestión de Templates de Credenciales:": [Read_Templates, Write_Templates, Delete_Templates],
 	"Gestión de Credenciales:": [Read_Certs, Write_Certs, Delete_Certs],
 	"Registro de DIDs:": [Read_Dids_Registers, Write_Dids_Registers],
-	"Gestor de Delegados:": [Read_Delegates, Write_Delegates]
+	"Gestor de Delegados:": [Read_Delegates, Write_Delegates],
+	"Gestor de Perfiles:": [Read_Profiles, Write_Profiles, Delete_Profiles],
+	"Gestor de Usuarios:": [Read_Users, Write_Users, Delete_Users]
 };
 
 const READ_ROLES = {
 	Certs: { options: [Write_Certs, Delete_Certs], value: Read_Certs },
+	Users: { options: [Write_Users, Delete_Users], value: Read_Users },
+	Profiles: { options: [Write_Profiles, Delete_Profiles], value: Read_Profiles },
 	Templates: { options: [Write_Templates, Delete_Templates], value: Read_Templates },
 	Registers: { options: [Write_Dids_Registers], value: Read_Dids_Registers },
 	Delegates: { options: [Write_Delegates], value: Read_Delegates }

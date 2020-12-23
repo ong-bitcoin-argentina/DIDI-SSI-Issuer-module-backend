@@ -49,7 +49,17 @@ const USER_TYPES = {
 
 	// Permisos para Registro de DIDs
 	Read_Dids_Registers: "Read_Dids_Registers",
-	Write_Dids_Registers: "Write_Dids_Registers"
+	Write_Dids_Registers: "Write_Dids_Registers",
+
+	// Permisos para Perfiles
+	Read_Profiles: "Read_Profiles",
+	Write_Profiles: "Write_Profiles",
+	Delete_Profiles: "Delete_Profiles",
+
+	// Permisos para Usuarios
+	Read_Users: "Read_Users",
+	Write_Users: "Write_Users",
+	Delete_Users: "Delete_Users"
 };
 
 const {
@@ -63,7 +73,13 @@ const {
 	Read_Delegates,
 	Write_Delegates,
 	Read_Dids_Registers,
-	Write_Dids_Registers
+	Write_Dids_Registers,
+	Read_Profiles,
+	Write_Profiles,
+	Delete_Profiles,
+	Read_Users,
+	Write_Users,
+	Delete_Users
 } = USER_TYPES;
 
 const ALLOWED_ROLES = {
@@ -85,7 +101,17 @@ const ALLOWED_ROLES = {
 
 	// Permisos para Registro de DIDs
 	Read_Dids_Registers: [Read_Dids_Registers, Write_Dids_Registers, Read_Certs, Write_Certs],
-	Write_Dids_Registers: [Write_Dids_Registers]
+	Write_Dids_Registers: [Write_Dids_Registers],
+
+	// Permisos para Perfiles
+	Read_Profiles: [Read_Profiles, Write_Profiles, Delete_Profiles, Read_Users, Write_Users],
+	Write_Profiles: [Write_Profiles],
+	Delete_Profiles: [Delete_Profiles],
+
+	// Permisos para Usuarios
+	Read_Users: [Read_Users, Write_Users, Delete_Users],
+	Write_Users: [Write_Users],
+	Delete_Users: [Delete_Users]
 };
 
 const USER_CREATED_TYPES = Object.keys(USER_TYPES).filter(r => r !== Admin);

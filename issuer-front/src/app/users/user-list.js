@@ -11,6 +11,7 @@ import { getUserAllColumns, getUserData } from "./user-table-helper";
 import { filter, filterByDates } from "../../services/utils";
 import DeleteAbstractModal from "./delete-abstract-modal";
 import ProfileService from "../../services/ProfileService";
+import { validateAccess } from "../../constants/Roles";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -115,10 +116,12 @@ const UserList = () => {
 	return (
 		<>
 			<div className="HeadButtons">
-				<button className="CreateButton" onClick={() => setModalOpen(true)}>
-					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="CreateButtonText">Crear Usuario</div>
-				</button>
+				{validateAccess(Constants.ROLES.Write_Users) && (
+					<button className="CreateButton" onClick={() => setModalOpen(true)}>
+						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+						<div className="CreateButtonText">Crear Usuario</div>
+					</button>
+				)}
 			</div>
 			{(loading && (
 				<div style={{ display: "flex", justifyContent: "center" }}>

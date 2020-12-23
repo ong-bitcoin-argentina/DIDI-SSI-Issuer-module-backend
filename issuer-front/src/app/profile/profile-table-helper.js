@@ -5,9 +5,12 @@ import { Edit, Delete } from "@material-ui/icons";
 import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
 import CustomSelect from "../components/CustomSelect";
+import { validateAccess } from "../../constants/Roles";
 
 const EDIT_COLOR = "#5FCDD7";
 const DELETE_COLOR = "#EB5757";
+
+const { Write_Profiles, Delete_Profiles } = Constants.ROLES;
 
 const COLUMNS_NAME = [
 	{
@@ -59,8 +62,12 @@ export const getProfileData = (profile, onEdit, onDelete) => {
 		)),
 		actions: (
 			<div className="Actions">
-				<Action handle={() => onEdit(profile)} title="Editar" Icon={Edit} color={EDIT_COLOR} />
-				<Action handle={() => onDelete(profile)} title="Borrar" Icon={Delete} color={DELETE_COLOR} />
+				{validateAccess(Write_Profiles) && (
+					<Action handle={() => onEdit(profile)} title="Editar" Icon={Edit} color={EDIT_COLOR} />
+				)}
+				{validateAccess(Delete_Profiles) && (
+					<Action handle={() => onDelete(profile)} title="Borrar" Icon={Delete} color={DELETE_COLOR} />
+				)}
 			</div>
 		)
 	};

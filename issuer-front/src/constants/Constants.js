@@ -267,7 +267,17 @@ module.exports = {
 
 		// Permisos para Registro de DIDs
 		Read_Dids_Registers: "Read_Dids_Registers",
-		Write_Dids_Registers: "Write_Dids_Registers"
+		Write_Dids_Registers: "Write_Dids_Registers",
+
+		// Permisos para Perfiles
+		Read_Profiles: "Read_Profiles",
+		Write_Profiles: "Write_Profiles",
+		Delete_Profiles: "Delete_Profiles",
+
+		// Permisos para Usuarios
+		Read_Users: "Read_Users",
+		Write_Users: "Write_Users",
+		Delete_Users: "Delete_Users"
 	},
 
 	ROLES_TRANSLATE: {
@@ -289,7 +299,17 @@ module.exports = {
 
 		// Permisos para Registro de DIDs
 		Read_Dids_Registers: "Visualizar Registros de Dids",
-		Write_Dids_Registers: "Crear/Editar Registros de Dids"
+		Write_Dids_Registers: "Crear/Editar Registros de Dids",
+
+		// Permisos para Perfiles
+		Read_Profiles: "Visualizar Perfiles",
+		Write_Profiles: "Crear/Editar Perfiles",
+		Delete_Profiles: "Eliminar Perfiles",
+
+		// Permisos para Usuarios
+		Read_Users: "Visualizar Usuarios",
+		Write_Users: "Crear/Editar Usuarios",
+		Delete_Users: "Eliminar Usuarios"
 	},
 
 	BLOCKCHAINS: ["BFA", "RSK", "LACCHAIN"],
