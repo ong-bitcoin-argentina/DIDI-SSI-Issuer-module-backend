@@ -52,7 +52,10 @@ module.exports.create = async function (name, password, profileId) {
 		if (!profile) return Promise.reject(Messages.PROFILE.ERR.GET);
 
 		const user = await User.findOne({ name });
-		if (user) return Promise.reject(Messages.USER.ERR.UNIQUE_NAME);
+		if (user) {
+			if (!user.deleted) return Promise.reject(Messages.USER.ERR.UNIQUE_NAME);
+			return await user.edit({ name, password, profile });
+		}
 
 		return await User.generate({ name, password, profile });
 	} catch (err) {

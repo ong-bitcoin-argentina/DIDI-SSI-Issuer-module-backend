@@ -66,6 +66,7 @@ const UserList = () => {
 			const token = Cookie.get("token");
 			await UserService.create(user)(token);
 			await getUsersData();
+			setError("");
 		} catch (error) {
 			setError(error.message);
 		}
@@ -76,6 +77,7 @@ const UserList = () => {
 			const token = Cookie.get("token");
 			await UserService.edit(user)(token);
 			await getUsersData();
+			setError("");
 		} catch (error) {
 			setError(error.message);
 		}
