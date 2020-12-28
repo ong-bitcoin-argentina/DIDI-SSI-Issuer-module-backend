@@ -75,6 +75,7 @@ module.exports = {
 			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido." },
 			SET_NAME: { code: "DELEGATE_SET_NAME", message: "El delegado no pudo ser verificado." },
 			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." },
+			UNIQUE_NAME: { code: "UNIQUE_NAME", message: "El nombre del usuario ya existe." },
 			TYPE: { code: "INVALID_TYPE", message: "El tipo elegido para el usuario no es valido." },
 			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." },
 			EDIT: { code: "USER_EDIT", message: "El modelo de usuario no pudo ser editado." }
@@ -109,7 +110,8 @@ module.exports = {
 			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado." },
 			GET: { code: "TEMPLATE_GET", message: "El modelo de certificado no pudo ser obtenido." },
 			EDIT: { code: "TEMPLATE_EDIT", message: "El modelo de certificado no pudo ser modificado." },
-			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado." }
+			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado." },
+			UNIQUE_NAME: { code: "UNIQUE_NAME", message: "El nombre del template ya existe." }
 		}
 	},
 	CERTIFICATE: {
