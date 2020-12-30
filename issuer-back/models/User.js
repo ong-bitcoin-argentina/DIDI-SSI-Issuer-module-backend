@@ -84,7 +84,7 @@ UserSchema.methods.edit = async function ({ name, password, profile, deleted = f
 
 	if (password) {
 		const newPassword = await Hashing.saltedHash(password);
-		setQuery = { ...setQuery, password: newPassword };
+		setQuery.password = newPassword;
 	}
 	const updateAction = {
 		$set: setQuery

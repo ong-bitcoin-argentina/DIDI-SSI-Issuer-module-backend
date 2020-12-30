@@ -55,6 +55,7 @@ const UserList = () => {
 			const users_ = await UserService.getAll()(token);
 			setUsers(users_);
 			setFilteredData(users_);
+			setError(null);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -66,7 +67,6 @@ const UserList = () => {
 			const token = Cookie.get("token");
 			await UserService.create(user)(token);
 			await getUsersData();
-			setError("");
 		} catch (error) {
 			setError(error.message);
 		}
@@ -77,7 +77,6 @@ const UserList = () => {
 			const token = Cookie.get("token");
 			await UserService.edit(user)(token);
 			await getUsersData();
-			setError("");
 		} catch (error) {
 			setError(error.message);
 		}
@@ -88,7 +87,6 @@ const UserList = () => {
 			const token = Cookie.get("token");
 			await UserService.delete(userSelected._id)(token);
 			await getUsersData();
-			setError("");
 			setUserSelected({});
 			setOpenDelete(false);
 		} catch (error) {
