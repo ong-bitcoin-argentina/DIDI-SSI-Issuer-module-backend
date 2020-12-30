@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@material-ui/core";
+import React from "react";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@material-ui/core";
+import DefaultButton from "../../setting/default-button";
 
 const DELETE_TITLE = "Borrar Credenciales";
 const MESSAGE = "Estás por eliminar la siguientes credenciales pendientes de emisión:";
@@ -37,12 +38,8 @@ const DeleteAllCertsDialog = ({ onDeleteSelects, selectedCerts, openDeleteAll, a
 				))}
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleClose} color="primary">
-					Cancelar
-				</Button>
-				<Button onClick={handleAccept} color="secondary" variant="contained">
-					Borrar
-				</Button>
+				<DefaultButton funct={handleClose} otherClass="CreateButtonOutlined" name="Cancelar" />
+				<DefaultButton funct={handleAccept} otherClass="DangerButton" name="Borrar" />
 			</DialogActions>
 		</Dialog>
 	);

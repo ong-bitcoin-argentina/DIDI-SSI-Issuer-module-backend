@@ -1,7 +1,5 @@
 import {
-	Button,
 	Checkbox,
-	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -14,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
 import PropTypes from "prop-types";
 import ModalTitle from "../utils/modal-title";
+import DefaultButton from "../setting/default-button";
 
 const TITLE = "Perfil";
 
@@ -194,12 +193,8 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" type="reset" disabled={loading}>
-						Cancelar
-					</Button>
-					<Button color="primary" variant="contained" type="submit" disabled={loading}>
-						{loading ? <CircularProgress size={20} color="white" /> : title}
-					</Button>
+					<DefaultButton otherClass="DangerButtonOutlined" name="Cancelar" type="reset" disabled={loading} />
+					<DefaultButton name={title} type="submit" disabled={loading} loading={loading} />
 				</DialogActions>
 			</form>
 		</Dialog>

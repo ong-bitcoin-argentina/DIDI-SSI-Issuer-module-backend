@@ -1,6 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from "@material-ui/core";
 import React from "react";
 import Messages from "../../constants/Messages";
+import DefaultButton from "../setting/default-button";
 
 const DeleteAbstractModal = ({ open, setOpen, onAccept, title }) => {
 	const handleClose = () => {
@@ -19,12 +20,8 @@ const DeleteAbstractModal = ({ open, setOpen, onAccept, title }) => {
 				</div>
 			</DialogContent>
 			<DialogActions>
-				<Button className="CloseModalButton" onClick={handleClose} color="secondary">
-					{Messages.LIST.DIALOG.CANCEL}
-				</Button>
-				<Button className="CreateModalButton" onClick={onAccept} color="primary" variant="contained">
-					Borrar
-				</Button>
+				<DefaultButton funct={handleClose} otherClass="DangerButtonOutlined" name={Messages.LIST.DIALOG.CANCEL} />
+				<DefaultButton funct={onAccept} name="Borrar" />
 			</DialogActions>
 		</Dialog>
 	);

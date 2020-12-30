@@ -208,8 +208,9 @@
 	.CreateButton {
 		display: flex;
 		align-items: center;
-		.CreateButtonText, .CreateDelegateText {
-			margin-top: 0!important;
+		.CreateButtonText,
+		.CreateDelegateText {
+			margin-top: 0 !important;
 		}
 	}
 }
@@ -245,10 +246,38 @@
 	color: $white;
 	align-items: center;
 	padding: 0 1em 0 0.5em;
+	cursor: pointer;
 
 	.material-icons.md-dark {
 		color: $white;
 	}
+}
+
+.CreateButtonDisabled {
+	@extend .CreateButton;
+	cursor: auto;
+	background-color: #c7c8d4;
+}
+
+.CreateButtonOutlined {
+	@extend .CreateButton;
+	background-color: transparent;
+	.CreateButtonText {
+		color: #256eee;
+	}
+}
+
+.DangerButtonOutlined {
+	@extend .CreateButton;
+	background-color: transparent;
+	.CreateButtonText {
+		color: $Delete;
+	}
+}
+
+.DangerButtonOutlined:focus,
+.CreateButtonOutlined:focus {
+	outline: none;
 }
 
 .DangerButton {

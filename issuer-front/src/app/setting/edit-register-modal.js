@@ -1,8 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
 import ModalTitle from "../utils/modal-title";
+import DefaultButton from "./default-button";
 
 const TITLE = "Editar Nombre del Emisor";
 const EQUALS_NAME_ERROR = "Ingrese un nuevo nombre";
@@ -67,12 +68,8 @@ const EditRegisterModal = ({ modalOpen, setModalOpen, register, onAccept }) => {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Button color="primary" type="reset">
-						cerrar
-					</Button>
-					<Button color="primary" variant="contained" type="submit">
-						aceptar
-					</Button>
+					<DefaultButton otherClass="CreateButtonOutlined" name="Cerrar" type="reset" />
+					<DefaultButton name="Aceptar" type="submit" />
 				</DialogActions>
 			</form>
 		</Dialog>
