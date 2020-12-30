@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-	Button,
-	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -18,6 +16,7 @@ import Cookie from "js-cookie";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import ModalTitle from "../utils/modal-title";
 import ClipBoardInput from "../components/ClipBoardInput";
+import DefaultButton from "./default-button";
 
 const TITLE = "Registro de Emisor";
 
@@ -162,12 +161,8 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" type="reset" disabled={loading}>
-						Cancelar
-					</Button>
-					<Button color="primary" variant="contained" type="submit" disabled={loading}>
-						{loading ? <CircularProgress size={20} color="white" /> : "Registrarme"}
-					</Button>
+					<DefaultButton otherClass="DangerButtonOutlined" name="Cancelar" type="reset" disabled={loading} />
+					<DefaultButton name="Registrarme" type="submit" disabled={loading} loading={loading} />
 				</DialogActions>
 			</form>
 		</Dialog>

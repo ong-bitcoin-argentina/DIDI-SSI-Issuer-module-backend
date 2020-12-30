@@ -1,17 +1,16 @@
-import { Button } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import React from "react";
 
-const DefaultButton = ({ funct, name, templateLoading, registerLoading }) => (
-	<Button
-		type="primary"
+const DefaultButton = ({ funct = () => {}, name, disabled, otherClass, loading, ...rest }) => (
+	<button
 		onClick={funct}
-		variant="contained"
-		color="primary"
-		style={{ background: "#256EE0", color: "#fff" }}
-		disabled={templateLoading || registerLoading}
+		className={`CreateButton ${disabled ? "CreateButtonDisabled" : otherClass}`}
+		style={{ padding: "0 1em" }}
+		disabled={disabled}
+		{...rest}
 	>
-		{name}
-	</Button>
+		{loading ? <CircularProgress size={20} color="white" /> : <div className="CreateButtonText">{name}</div>}
+	</button>
 );
 
 export default DefaultButton;

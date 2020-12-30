@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@material-ui/core";
 import React from "react";
 import KeyValue from "../components/KeyValue";
 import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 import ModalTitle from "../utils/modal-title";
+import DefaultButton from "./default-button";
 
 const TITLE = "Detalles del Registro";
 
@@ -33,21 +34,15 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
 					{messageError && <KeyValue field="Mensaje de Error" value={messageError} />}
 					{blockHash && <KeyValue field="Hash de Transacción" value={blockHash} />}
 				</Grid>
-				<Button
-					onClick={() => handleRefresh(did)}
-					variant="contained"
+				<DefaultButton
+					funct={() => handleRefresh(did)}
+					otherClass="DangerButton"
+					name="Renovar"
 					disabled={status === PENDING || status === ERROR}
-					color="secondary"
-					style={{ marginTop: "10px" }}
-					size="small"
-				>
-					Renovar
-				</Button>
+				/>
 			</DialogContent>
 			<DialogActions>
-				<Button color="primary" variant="contained" onClick={() => setModalOpen(false)}>
-					cerrar
-				</Button>
+				<DefaultButton funct={() => setModalOpen(false)} name="Cerrar" />
 			</DialogActions>
 		</Dialog>
 	);
