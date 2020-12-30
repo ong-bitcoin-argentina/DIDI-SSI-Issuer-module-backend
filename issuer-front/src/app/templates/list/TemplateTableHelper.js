@@ -7,6 +7,7 @@ import Messages from "../../../constants/Messages";
 
 import Constants from "../../../constants/Constants";
 import { validateAccess } from "../../../constants/Roles";
+import { Tooltip } from "@material-ui/core";
 
 const { Write_Templates, Delete_Templates } = Constants.ROLES;
 
@@ -25,7 +26,9 @@ class TemplateTableHelpers {
 							if (!isLoading()) onEdit(template._id);
 						}}
 					>
-						{!validateAccess(Write_Templates) ? <Visibility fontSize="medium" /> : <EditIcon fontSize="medium" />}
+						<Tooltip title={!validateAccess(Write_Templates) ? "Ver" : "Editar"} placement="top" arrow>
+							{!validateAccess(Write_Templates) ? <Visibility fontSize="medium" /> : <EditIcon fontSize="medium" />}
+						</Tooltip>
 					</div>
 					{validateAccess(Delete_Templates) && (
 						<div
@@ -34,7 +37,9 @@ class TemplateTableHelpers {
 								if (!isLoading()) onDelete(template._id);
 							}}
 						>
-							<DeleteIcon fontSize="medium" />
+							<Tooltip title="Borrar" placement="top" arrow>
+								<DeleteIcon fontSize="medium" />
+							</Tooltip>
 							{/* {Messages.LIST.BUTTONS.DELETE} */}
 						</div>
 					)}

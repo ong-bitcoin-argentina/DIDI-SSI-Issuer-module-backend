@@ -17,9 +17,14 @@ const Header = ({ onRenameModalOpen, resetTab }) => {
 		history.push(Constants.ROUTES.LOGIN);
 	};
 
+	const goToHome = () => {
+		if (resetTab) resetTab();
+		history.push(Constants.ROUTES.LIST);
+	};
+
 	return (
 		<div className="Header">
-			<img src={logoApp} alt="ai di logo" onClick={resetTab} style={{ cursor: "pointer" }} />
+			<img src={logoApp} alt="ai di logo" onClick={goToHome} style={{ cursor: "pointer" }} />
 			<Button aria-controls="simple-menu" aria-haspopup="true" onClick={onLogout} style={{ color: "white" }}>
 				{EXIT}
 			</Button>

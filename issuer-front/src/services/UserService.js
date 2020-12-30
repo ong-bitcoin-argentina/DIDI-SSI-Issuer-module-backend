@@ -1,5 +1,7 @@
 import Constants from "../constants/Constants";
+import { fetchData, options, optionsBody } from "./utils";
 
+const { CREATE, GET_ALL } = Constants.API_ROUTES.USER;
 export default class UserService {
 	static login(user, pass, cb, errCb) {
 		const data = {
@@ -27,63 +29,19 @@ export default class UserService {
 			.catch(err => errCb(err));
 	}
 
-	static async getAll(token) {
-		const data = {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			}
-		};
-
-		const data_ = await fetch(Constants.API_ROUTES.USER.GET_ALL, data);
-		return data_.json();
+	static getAll() {
+		return fetchData(options("GET"), GET_ALL);
 	}
 
-	static create(token, body) {
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				name: body.name,
-				profileId: body.profileId,
-				password: body.password
-			})
-		};
-
-		return fetch(Constants.API_ROUTES.USER.CREATE, data);
+	static create(body) {
+		return fetchData(optionsBody("POST", body), CREATE);
 	}
 
-	static edit(token, body) {
-		const password = Boolean(body.password) ? body.password : undefined;
-		const data = {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				name: body.name,
-				profileId: body.profileId,
-				password
-			})
-		};
-
-		return fetch(Constants.API_ROUTES.USER.EDIT(body._id), data);
+	static edit(body) {
+		return fetchData(optionsBody("PUT", body), Constants.API_ROUTES.USER.EDIT(body._id));
 	}
 
-	static delete(token, id) {
-		const data = {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			}
-		};
-
-		return fetch(Constants.API_ROUTES.USER.DELETE(id), data);
+	static delete(id) {
+		return fetchData(options("DELETE"), Constants.API_ROUTES.USER.DELETE(id));
 	}
 }

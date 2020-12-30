@@ -52,9 +52,10 @@ const UserList = () => {
 		const token = Cookie.get("token");
 		setLoading(true);
 		try {
-			const { data } = await UserService.getAll(token);
-			setUsers(data);
-			setFilteredData(data);
+			const users_ = await UserService.getAll()(token);
+			setUsers(users_);
+			setFilteredData(users_);
+			setError(null);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -64,7 +65,7 @@ const UserList = () => {
 	const createUser = async user => {
 		try {
 			const token = Cookie.get("token");
-			await UserService.create(token, user);
+			await UserService.create(user)(token);
 			await getUsersData();
 		} catch (error) {
 			setError(error.message);
@@ -74,7 +75,7 @@ const UserList = () => {
 	const editUser = async user => {
 		try {
 			const token = Cookie.get("token");
-			await UserService.edit(token, user);
+			await UserService.edit(user)(token);
 			await getUsersData();
 		} catch (error) {
 			setError(error.message);
@@ -84,9 +85,8 @@ const UserList = () => {
 	const deleteUser = async () => {
 		try {
 			const token = Cookie.get("token");
-			await UserService.delete(token, userSelected._id);
+			await UserService.delete(userSelected._id)(token);
 			await getUsersData();
-			setError("");
 			setUserSelected({});
 			setOpenDelete(false);
 		} catch (error) {

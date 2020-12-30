@@ -34,9 +34,10 @@ module.exports.create = async function (name, registerId) {
 		const register = await Register.getById(registerId);
 		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
 
-		const template = await Template.generate(name, registerId);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
-		return Promise.resolve(template);
+		const template = await Template.findOne({ name });
+		if (template) return Promise.reject(Messages.TEMPLATE.ERR.UNIQUE_NAME);
+
+		return await Template.generate(name, registerId);
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
