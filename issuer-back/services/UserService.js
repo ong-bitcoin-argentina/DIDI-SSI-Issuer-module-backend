@@ -54,7 +54,7 @@ module.exports.create = async function (name, password, profileId) {
 		const user = await User.findOne({ name });
 		if (user) {
 			if (!user.deleted) return Promise.reject(Messages.USER.ERR.UNIQUE_NAME);
-			return await user.edit({ name, password, profile });
+			return await user.edit({ name, password, profile, createdOn: Date.now() });
 		}
 
 		return await User.generate({ name, password, profile });

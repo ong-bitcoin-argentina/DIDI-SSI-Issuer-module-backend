@@ -60,6 +60,7 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 	const [error, setError] = useState("");
 
 	useEffect(() => {
+		setRoles({});
 		setNewProfile(profileData);
 		if (profileData.types) {
 			profileData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));

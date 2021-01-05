@@ -123,6 +123,7 @@ module.exports = {
 			CREATE_TEMPLATE: "Crear Modelo de Credencial",
 			CREATE_CERT: "Crear Credencial",
 			EMMIT_SELECTED: "Emitir Seleccionados",
+			DELETE_SELECETED: "Eliminar Credenciales Seleccionadas",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
 			EDIT: "Editar",

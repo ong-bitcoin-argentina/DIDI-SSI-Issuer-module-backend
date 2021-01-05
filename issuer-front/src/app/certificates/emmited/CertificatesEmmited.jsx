@@ -14,6 +14,7 @@ import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import RevocationSingleModal from "../../components/RevocationSingleModal";
 import RevocationAllModal from "../../components/RevocationAllModal";
 import { validateAccess } from "../../../constants/Roles";
+import DefaultButton from "../../setting/default-button";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -219,14 +220,14 @@ const CertificatesEmmited = () => {
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				{validateAccess(Constants.ROLES.Delete_Certs) && (
 					<Grid item xs={12} className="flex-end">
-						<button
-							className="DangerButton"
-							onClick={handleRevokeSelected}
-							disabled={!Object.values(selected).some(val => val)}
+						<DefaultButton
+							name="Revocar Credenciales Seleccionadas"
+							otherClass="DangerButton"
+							funct={handleRevokeSelected}
+							disabled={!Object.keys(selected).filter(key => selected[key])[0]}
 						>
 							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-							Revocar Credenciales Seleccionadas
-						</button>
+						</DefaultButton>
 					</Grid>
 				)}
 				<Grid item xs={12} style={{ textAlign: "center" }}>

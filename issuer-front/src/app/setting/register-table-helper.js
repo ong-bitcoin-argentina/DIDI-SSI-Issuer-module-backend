@@ -17,7 +17,8 @@ const RETRY_COLOR = "#AED67B";
 const COLUMNS_NAME = [
 	{
 		title: "Acciones",
-		name: "actions"
+		name: "actions",
+		width: 130
 	}
 ];
 
@@ -54,7 +55,7 @@ export const getRegisterAllColumns = (handleFilter, onDateRangeFilterChange) => 
 		{
 			Header: <InputFilter label="did registrado" onChange={handleFilter} field="did" />,
 			accessor: "did",
-			width: 425
+			width: 370
 		},
 		{
 			Header: (

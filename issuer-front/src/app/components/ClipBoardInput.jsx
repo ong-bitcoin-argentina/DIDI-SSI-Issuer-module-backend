@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import Notification from "./Notification";
 import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 
-const NOTIFICATION_TEXT = " fue copiada con éxito.";
+const NOTIFICATION_TEXT = " fue copiado/a con éxito.";
 
 const ClipBoardInput = ({ label, value }) => {
 	const [openNotification, setOpenNotification] = useState(false);

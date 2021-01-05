@@ -15,7 +15,7 @@ const COLUMNS_NAME = [
 	}
 ];
 
-const { Write_Users, Delete_Certs } = Constants.ROLES;
+const { Write_Users, Delete_Users } = Constants.ROLES;
 
 export const getUserColumns = COLUMNS_NAME.map(({ name, title, width }) => ({
 	Header: (
@@ -59,7 +59,7 @@ export const getUserData = (user, onDelete, onEdit) => {
 						</Tooltip>
 					</div>
 				)}
-				{validateAccess(Delete_Certs) && (
+				{validateAccess(Delete_Users) && (
 					<div className="DeleteAction" onClick={() => onDelete(user)}>
 						<Tooltip title="Borrar" placement="top" arrow>
 							<AssignmentLate fontSize="medium" />
