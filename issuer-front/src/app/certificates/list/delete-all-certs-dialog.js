@@ -16,10 +16,7 @@ const DeleteAllCertsDialog = ({ onDeleteSelects, selectedCerts, openDeleteAll, a
 	};
 
 	const getCerts = () => {
-		const keys = Object.keys(selectedCerts);
-		const selectedCerts_ = keys.filter(key => selectedCerts[key]);
-		const certs = allCertificates.filter(t => selectedCerts_.indexOf(t._id) > -1);
-		return certs;
+		return allCertificates.filter(t => selectedCerts.indexOf(t._id) > -1);
 	};
 
 	return (
@@ -39,7 +36,7 @@ const DeleteAllCertsDialog = ({ onDeleteSelects, selectedCerts, openDeleteAll, a
 			</DialogContent>
 			<DialogActions>
 				<DefaultButton funct={handleClose} otherClass="CreateButtonOutlined" name="Cancelar" />
-				<DefaultButton funct={handleAccept} otherClass="DangerButton" name="Borrar" />
+				<DefaultButton funct={handleAccept} name="Borrar" />
 			</DialogActions>
 		</Dialog>
 	);

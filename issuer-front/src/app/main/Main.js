@@ -151,6 +151,7 @@ class Main extends Component {
 		} catch (err) {
 			self.setState({ error: err, loading: false });
 		}
+		self.setState({ loading: false });
 	};
 
 	// cargar credenciales
@@ -777,6 +778,11 @@ class Main extends Component {
 		);
 	};
 
+	getSelectedCerts = () => {
+		const keys = Object.keys(this.state.selectedCerts);
+		return keys.filter(key => this.state.selectedCerts[key]);
+	};
+
 	// a pantalla de login
 	onLogout = () => {
 		Cookie.set("token", "");
@@ -843,7 +849,7 @@ class Main extends Component {
 									onDelete={this.onCertificateDelete}
 									error={error}
 									onDeleteSelects={this.onDeleteSelects}
-									selectedCerts={this.state.selectedCerts}
+									selectedCerts={this.getSelectedCerts()}
 									allCertificates={this.state.certificates}
 								/>
 							</TabPanel>
