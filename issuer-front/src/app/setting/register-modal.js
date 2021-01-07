@@ -122,8 +122,8 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 						>
 							<Grid item xs={12} style={{ padding: "10px", textAlign: "center" }}>
 								<Typography variant="body2">
-									La ejecución de esta operación puede demorar varios minutos. El registro quedará en estado PENDIENTE
-									hasta tanto se confirme la transacción.
+									La ejecución de esta operación puede demorar. El registro quedará en estado PENDIENTE hasta tanto se
+									confirme la transacción.
 								</Typography>
 							</Grid>
 						</Grid>

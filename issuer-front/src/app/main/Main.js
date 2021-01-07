@@ -785,6 +785,7 @@ class Main extends Component {
 
 	// a pantalla de login
 	onLogout = () => {
+		Cookie.set("_id", "");
 		Cookie.set("token", "");
 		Cookie.set("roles", []);
 		this.props.history.push(Constants.ROUTES.LOGIN);

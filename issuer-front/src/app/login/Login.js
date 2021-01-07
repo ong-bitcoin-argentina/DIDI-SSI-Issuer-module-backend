@@ -29,6 +29,7 @@ class Login extends Component {
 			this.state.password,
 			async function (user) {
 				Cookie.set("token", user.token);
+				Cookie.set("_id", user._id);
 				Cookie.set("roles", user.types);
 				self.setState({});
 			},

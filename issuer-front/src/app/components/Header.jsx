@@ -13,6 +13,7 @@ const Header = ({ onRenameModalOpen, resetTab }) => {
 
 	const onLogout = () => {
 		Cookie.set("token", "");
+		Cookie.set("_id", "");
 		Cookie.set("roles", []);
 		history.push(Constants.ROUTES.LOGIN);
 	};

@@ -7,6 +7,8 @@ import InputFilter from "../components/InputFilter";
 import CustomSelect from "../components/CustomSelect";
 import DateRangeFilter from "../components/DateRangeFilter/DateRangeFilter";
 import { validateAccess } from "../../constants/Roles";
+import Cookie from "js-cookie";
+import Action from "../utils/Action";
 
 const COLUMNS_NAME = [
 	{
@@ -45,6 +47,8 @@ export const getUserAllColumns = (handleFilter, profiles, onDateRangeFilterChang
 ];
 
 export const getUserData = (user, onDelete, onEdit) => {
+	const local_user_id = Cookie.get("_id");
+	const { _id } = user;
 	return {
 		...user,
 		onCreated: (
@@ -52,20 +56,10 @@ export const getUserData = (user, onDelete, onEdit) => {
 		),
 		actions: !user.types.includes(Constants.ROLES.Admin) && (
 			<div className="Actions">
-				{validateAccess(Write_Users) && (
-					<div className="EditAction" onClick={() => onEdit(user)}>
-						<Tooltip title="Editar" placement="top" arrow>
-							<Edit fontSize="medium" />
-						</Tooltip>
-					</div>
+				{validateAccess(Delete_Users) && local_user_id !== _id && (
+					<Action handle={() => onDelete(user)} title="Borrar" Icon={AssignmentLate} color="#EB5757" />
 				)}
-				{validateAccess(Delete_Users) && (
-					<div className="DeleteAction" onClick={() => onDelete(user)}>
-						<Tooltip title="Borrar" placement="top" arrow>
-							<AssignmentLate fontSize="medium" />
-						</Tooltip>
-					</div>
-				)}
+				{validateAccess(Write_Users) && <Action handle={() => onEdit(user)} title="Editar" Icon={Edit} />}
 			</div>
 		)
 	};
