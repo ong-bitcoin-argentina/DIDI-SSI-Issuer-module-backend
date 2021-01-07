@@ -18,6 +18,7 @@ import Cookie from "js-cookie";
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
 import { validateAccess } from "../../constants/Roles";
+import DefaultButton from "../setting/default-button";
 
 let interval;
 class Participants extends Component {
@@ -287,13 +288,12 @@ class Participants extends Component {
 						</div>
 
 						<div className="QrButtonsRow">
-							<button
-								className="PartRequestButton"
+							{/* PartRequestButton */}
+							<DefaultButton
+								funct={this.sendRequests}
 								disabled={!this.canSendRequest(loading)}
-								onClick={this.sendRequests}
-							>
-								{Messages.QR.BUTTONS.REQUEST}
-							</button>
+								name={Messages.QR.BUTTONS.REQUEST}
+							/>
 						</div>
 					</>
 				)}

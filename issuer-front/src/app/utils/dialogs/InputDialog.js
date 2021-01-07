@@ -12,6 +12,7 @@ import "./_Style.scss";
 import "../../../styles/GeneralStyles.scss";
 import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
 import BlockchainName from "./blockchainName";
+import DefaultButton from "../../setting/default-button";
 
 export default class InputDialog extends Component {
 	constructor(props) {
@@ -130,20 +131,15 @@ export default class InputDialog extends Component {
 						})}
 				</DialogContent>
 				<DialogActions>
-					<Button className="CloseButton" onClick={this.close} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-					<Button
-						className="CreateModalButton"
-						onClick={() => {
+					<DefaultButton otherClass="DangerButtonOutlined" name={Messages.LIST.DIALOG.CANCEL} funct={this.close} />
+					<DefaultButton
+						name={Messages.LIST.DIALOG.CREATE}
+						disabled={Object.values(this.state.fields).indexOf("") >= 0}
+						funct={() => {
 							onAccept(this.state.fields);
 							this.close();
 						}}
-						disabled={Object.values(this.state.fields).indexOf("") >= 0}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.CREATE}
-					</Button>
+					/>
 				</DialogActions>
 			</Dialog>
 		);
