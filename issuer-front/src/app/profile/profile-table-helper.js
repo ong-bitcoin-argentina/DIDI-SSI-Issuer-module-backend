@@ -1,4 +1,4 @@
-import { Chip } from "@material-ui/core";
+import { Chip, Grid } from "@material-ui/core";
 import React from "react";
 import Constants from "../../constants/Constants";
 import { Edit, Delete } from "@material-ui/icons";
@@ -54,12 +54,16 @@ export const getProfileAllColumns = handleFilter => {
 export const getProfileData = (profile, onEdit, onDelete) => {
 	return {
 		...profile,
-		types: profile.types.map(role => (
-			<Chip
-				style={{ marginRight: "5px", fontSize: "12px", fontWeight: "500" }}
-				label={Constants.ROLES_TRANSLATE[role]}
-			/>
-		)),
+		types: (
+			<Grid container justify="flex-start">
+				{profile.types.map(role => (
+					<Chip
+						style={{ marginRight: "5px", fontSize: "12px", fontWeight: "500", margin: "4px 2px" }}
+						label={Constants.ROLES_TRANSLATE[role]}
+					/>
+				))}
+			</Grid>
+		),
 		actions: (
 			<div className="Actions">
 				{validateAccess(Write_Profiles) && (
