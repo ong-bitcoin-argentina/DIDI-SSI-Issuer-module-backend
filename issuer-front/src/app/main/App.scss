@@ -35,6 +35,10 @@ body {
 	display: inline-block;
 }
 
+.ReactTable .rt-resizer {
+	z-index: 0 !important;
+}
+
 .MuiInput-root {
 	width: 100%;
 }
