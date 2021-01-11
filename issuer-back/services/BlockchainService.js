@@ -26,7 +26,8 @@ const {
 	DID_EXISTS,
 	STATUS,
 	REFRESH_STATUS,
-	REFRESH
+	REFRESH,
+	NAME_EXIST
 } = Messages.REGISTER.ERR;
 const { ERROR, DONE, ERROR_RENEW, PENDING } = Constants.STATUS;
 
@@ -175,19 +176,24 @@ module.exports.getDelegateName = async function (issuerDID) {
 // crear un nuevo registro en la blockchain
 module.exports.newRegister = async function (did, key, name, token) {
 	try {
+		const blockchain = did.split(":")[2];
+
 		// Verifico si la blockchain es correcta
-		if (!Constants.BLOCKCHAINS.includes(did.split(":")[2])) return Promise.reject(BLOCKCHAIN);
+		if (!Constants.BLOCKCHAINS.includes(blockchain)) return Promise.reject(BLOCKCHAIN);
 
 		// Verifico que el did no exista
 		const byDIDExist = await Register.getByDID(did);
 		if (byDIDExist) return Promise.reject(DID_EXISTS);
 
+		const repeatedRegister = await Register.findOne({ name, did: { $regex: blockchain, $options: "i" } });
+		if (repeatedRegister) return Promise.reject(NAME_EXIST);
+
 		// Se envia el did a Didi
 		sendDidToDidi(did, name, token);
 
-		const register = await Register.generate(did, key, name);
-		if (!register) return Promise.reject(CREATE);
-		return register;
+		const newRegister = await Register.generate(did, key, name);
+		if (!newRegister) return Promise.reject(CREATE);
+		return newRegister;
 	} catch (err) {
 		console.log(err);
 		return Promise.reject(CREATE);
