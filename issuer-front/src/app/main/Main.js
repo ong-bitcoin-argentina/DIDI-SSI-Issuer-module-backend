@@ -712,6 +712,7 @@ class Main extends Component {
 	onDelegateCreate = data => {
 		const did = data.did;
 		const name = data.name;
+		const registerId = data.registerId;
 
 		const token = Cookie.get("token");
 		const self = this;
@@ -720,6 +721,7 @@ class Main extends Component {
 			token,
 			did,
 			name,
+			registerId,
 			async function (delegate) {
 				const delegates = self.state.delegates;
 				const data = DelegatesTableHelper.getDelegatesData(
