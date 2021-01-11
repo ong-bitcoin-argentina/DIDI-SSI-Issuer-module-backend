@@ -45,6 +45,10 @@ module.exports = {
 			REFRESH: {
 				code: "REGISTER_REFRESH",
 				message: "No se pudo actualizar el registro."
+			},
+			NAME_EXIST: {
+				code: "NAME_EXIST",
+				message: "Ya existe el nombre para la misma blockchain."
 			}
 		}
 	},
