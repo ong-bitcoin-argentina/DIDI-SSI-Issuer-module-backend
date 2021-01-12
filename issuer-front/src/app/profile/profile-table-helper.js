@@ -6,6 +6,7 @@ import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
 import CustomSelect from "../components/CustomSelect";
 import { validateAccess } from "../../constants/Roles";
+import CustomChip from "../components/CustomChip";
 
 const EDIT_COLOR = "#5FCDD7";
 const DELETE_COLOR = "#EB5757";
@@ -57,10 +58,7 @@ export const getProfileData = (profile, onEdit, onDelete) => {
 		types: (
 			<Grid container justify="flex-start">
 				{profile.types.map(role => (
-					<Chip
-						style={{ marginRight: "5px", fontSize: "12px", fontWeight: "500", margin: "4px 2px" }}
-						label={Constants.ROLES_TRANSLATE[role]}
-					/>
+					<CustomChip title={Constants.ROLES_TRANSLATE[role]} />
 				))}
 			</Grid>
 		),
