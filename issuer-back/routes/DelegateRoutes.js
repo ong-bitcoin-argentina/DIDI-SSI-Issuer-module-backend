@@ -7,7 +7,7 @@ const BlockchainService = require("../services/BlockchainService");
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const Register = require("../models/Register");
-const { getDidClean } = require("./utils/DidClean");
+const { getCleanedDid } = require("./utils/DidClean");
 const Messages = require("../constants/Messages");
 
 /**
@@ -61,12 +61,11 @@ router.post(
 	async function (req, res) {
 		const { name, did, registerId } = req.body;
 		try {
-			const register = await Register.getById(registerId);
-			if (!register) throw Messages.REGISTER.ERR.NOT_EXIST;
-			const { cleanDid } = getDidClean(register.did);
+			const { private_key, did } = await Register.getById(registerId);
+			const { cleanDid } = getCleanedDid(did);
 
 			// autorizo en la blockchain
-			await BlockchainService.addDelegate(cleanDid, { from: cleanDid, key: register.private_key }, did);
+			await BlockchainService.addDelegate(cleanDid, { from: cleanDid, key: private_key }, did);
 
 			// registro autorizacion en la bd local
 			const delegate = await DelegateService.create(did, name);

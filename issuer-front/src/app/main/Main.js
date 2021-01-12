@@ -710,10 +710,7 @@ class Main extends Component {
 
 	// crear delegacion
 	onDelegateCreate = data => {
-		const did = data.did;
-		const name = data.name;
-		const registerId = data.registerId;
-
+		const { did, name, registerId } = data;
 		const token = Cookie.get("token");
 		const self = this;
 		self.setState({ loading: true });
