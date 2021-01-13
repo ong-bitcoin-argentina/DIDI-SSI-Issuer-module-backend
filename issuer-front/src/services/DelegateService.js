@@ -40,7 +40,7 @@ export default class DelegateService {
 		throw json.data;
 	}
 
-	static create(token, did, name, cb, errCb) {
+	static create(token, did, name, registerId, cb, errCb) {
 		const data = {
 			method: "POST",
 			headers: {
@@ -49,7 +49,8 @@ export default class DelegateService {
 			},
 			body: JSON.stringify({
 				did: did,
-				name: name
+				name: name,
+				registerId
 			})
 		};
 

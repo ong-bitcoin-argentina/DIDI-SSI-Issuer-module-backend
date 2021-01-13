@@ -1,4 +1,4 @@
-import { Chip } from "@material-ui/core";
+import { Chip, Grid } from "@material-ui/core";
 import React from "react";
 import Constants from "../../constants/Constants";
 import { Edit, Delete } from "@material-ui/icons";
@@ -6,6 +6,7 @@ import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
 import CustomSelect from "../components/CustomSelect";
 import { validateAccess } from "../../constants/Roles";
+import CustomChip from "../components/CustomChip";
 
 const EDIT_COLOR = "#5FCDD7";
 const DELETE_COLOR = "#EB5757";
@@ -54,12 +55,13 @@ export const getProfileAllColumns = handleFilter => {
 export const getProfileData = (profile, onEdit, onDelete) => {
 	return {
 		...profile,
-		types: profile.types.map(role => (
-			<Chip
-				style={{ marginRight: "5px", fontSize: "12px", fontWeight: "500" }}
-				label={Constants.ROLES_TRANSLATE[role]}
-			/>
-		)),
+		types: (
+			<Grid container justify="flex-start">
+				{profile.types.map(role => (
+					<CustomChip title={Constants.ROLES_TRANSLATE[role]} />
+				))}
+			</Grid>
+		),
 		actions: (
 			<div className="Actions">
 				{validateAccess(Write_Profiles) && (

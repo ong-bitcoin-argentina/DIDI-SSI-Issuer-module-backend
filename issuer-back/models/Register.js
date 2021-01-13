@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Encryption = require("./utils/Encryption");
 const Constants = require("../constants/Constants");
+const Messages = require("../constants/Messages");
 
 const RegisterSchema = mongoose.Schema({
 	name: {
@@ -97,7 +98,14 @@ Register.getByDID = async function (did) {
 
 // obtener un registro por el id
 Register.getById = async function (_id) {
-	return await Register.findOne({ _id });
+	const register = await Register.findOne({ _id });
+
+	if (!register) throw Messages.REGISTER.ERR.NOT_EXIST;
+
+	const private_key = await Encryption.decript(register.private_key);
+	register.private_key = private_key;
+
+	return register;
 };
 
 Register.getCredentials = async function (_id) {

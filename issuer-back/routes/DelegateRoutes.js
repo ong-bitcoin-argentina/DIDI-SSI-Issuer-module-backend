@@ -6,6 +6,9 @@ const BlockchainService = require("../services/BlockchainService");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
+const Register = require("../models/Register");
+const { getCleanedDid } = require("./utils/DidClean");
+const Messages = require("../constants/Messages");
 
 /**
  *	retorna todos los dids a los que el issuer delego su permiso para emitir certificados
@@ -48,19 +51,21 @@ router.post(
 		{
 			name: "did",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const name = req.body.name;
-		const did = req.body.did;
+		const { name, did, registerId } = req.body;
 		try {
+			const { private_key, did } = await Register.getById(registerId);
+			const { cleanDid } = getCleanedDid(did);
+
 			// autorizo en la blockchain
-			await BlockchainService.addDelegate(
-				Constants.ISSUER_SERVER_DID,
-				{ from: Constants.ISSUER_SERVER_DID, key: Constants.ISSUER_SERVER_PRIVATE_KEY },
-				did
-			);
+			await BlockchainService.addDelegate(cleanDid, { from: cleanDid, key: private_key }, did);
 
 			// registro autorizacion en la bd local
 			const delegate = await DelegateService.create(did, name);

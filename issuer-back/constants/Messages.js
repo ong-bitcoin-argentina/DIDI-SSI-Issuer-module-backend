@@ -23,6 +23,7 @@ module.exports = {
 	REGISTER: {
 		ERR: {
 			CREATE: { code: "REGISTER_CREATE", message: "El registro no pudo ser creado." },
+			NOT_EXIST: { code: "NOT_EXIST", message: "El registro no existe" },
 			EDIT: { code: "REGISTER_EDIT", message: "El modelo de registro no pudo ser editado." },
 			BLOCKCHAIN: { code: "NOT_EXIST_BLOCKCHAIN", message: "No existe la blockchain elegida." },
 			GET: { code: "REGISTER_GET", message: "El registro no pudo ser obtenido." },
