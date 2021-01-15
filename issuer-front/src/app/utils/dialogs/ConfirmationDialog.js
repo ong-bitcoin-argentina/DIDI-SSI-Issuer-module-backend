@@ -56,12 +56,14 @@ export default class ConfirmationDialog extends Component {
 			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
-					<div className="DeleteMessage">
-						<span class="material-icons" style={{ marginBottom: "25px" }}>
-							delete_outline
-						</span>
-						{message}
-					</div>
+					{message && (
+						<div className="DeleteMessage">
+							<span class="material-icons" style={{ marginBottom: "25px" }}>
+								delete_outline
+							</span>
+							{message}
+						</div>
+					)}
 				</DialogContent>
 				<DialogActions>
 					{!hideClose && (
