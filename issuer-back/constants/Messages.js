@@ -39,8 +39,8 @@ module.exports = {
 				message:
 					"Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template."
 			},
-			REFRESH_STATUS: {
-				code: "REFRESH_STATUS_NOT_VALID",
+			STATUS_NOT_VALID: {
+				code: "STATUS_NOT_VALID",
 				message: "No se puede realizar esta accion, debido al estado del registro."
 			},
 			REFRESH: {

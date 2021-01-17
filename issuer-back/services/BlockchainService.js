@@ -25,11 +25,11 @@ const {
 	CREATE,
 	DID_EXISTS,
 	STATUS,
-	REFRESH_STATUS,
+	STATUS_NOT_VALID,
 	REFRESH,
 	NAME_EXIST
 } = Messages.REGISTER.ERR;
-const { ERROR, DONE, ERROR_RENEW, PENDING } = Constants.STATUS;
+const { ERROR, DONE, ERROR_RENEW, PENDING, REVOKING, REVOKE } = Constants.STATUS;
 
 // obtiene el contrato (ethr-did-registry)
 const getContract = function (credentials) {
@@ -262,7 +262,7 @@ module.exports.refreshRegister = async function (did, token) {
 		if (!register) return Promise.reject(GET);
 
 		const { status } = register;
-		if (status === PENDING || status === ERROR) return Promise.reject(REFRESH_STATUS);
+		if ([PENDING, ERROR, REVOKE, ERROR_RENEW].includes(status)) return Promise.reject(STATUS_NOT_VALID);
 
 		// Se envia a DIDI
 		sendRefreshToDidi(did, token);
@@ -275,6 +275,38 @@ module.exports.refreshRegister = async function (did, token) {
 		console.log(err);
 		return Promise.reject(REFRESH);
 	}
+};
+
+module.exports.revoke = async function (did, token) {
+	try {
+		const register = await Register.getByDID(did);
+
+		// Verifico que exista el Register
+		if (!register) throw GET;
+
+		// Verifico que tenga un estado valido
+		const { status } = register;
+		if ([PENDING, ERROR, REVOKE, ERROR_RENEW].includes(status)) throw STATUS_NOT_VALID;
+
+		// Se envia el revoke a DIDI
+		sendRevokeToDidi(did, token);
+
+		// Modifico el estado a Revocando
+		await register.edit({ status: REVOKING, messageError: "" });
+
+		return register;
+	} catch (err) {
+		console.log(err);
+		throw new Error(err);
+	}
+};
+
+const sendRevokeToDidi = async function (did, token) {
+	return await defaultFetch(`${Constants.DIDI_API}/issuer`, "DELETE", {
+		token,
+		did,
+		callbackUrl: `${Constants.ISSUER_API_URL}/register`
+	});
 };
 
 const sendRefreshToDidi = async function (did, token) {
