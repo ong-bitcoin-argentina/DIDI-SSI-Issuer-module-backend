@@ -98,6 +98,17 @@ const Setting = () => {
 		}
 	};
 
+	const handleRevoke = async did => {
+		try {
+			const token = Cookie.get("token");
+			await RegisterService.revoke(did)(token);
+			getRegisters();
+			setDetailModalOpen(false);
+		} catch (error) {
+			setError(error.message);
+		}
+	};
+
 	const selectRegister = setModalFn => register => {
 		setRegisterSelected(register);
 		setModalFn(true);
@@ -155,6 +166,7 @@ const Setting = () => {
 			/>
 			<ModalDetail
 				handleRefresh={handleRefresh}
+				handleRevoke={handleRevoke}
 				modalOpen={detailModalOpen}
 				setModalOpen={setDetailModalOpen}
 				register={registerSelected}

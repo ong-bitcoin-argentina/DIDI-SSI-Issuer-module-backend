@@ -10,14 +10,15 @@ const TITLE = "Detalles del Registro";
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
-const { PENDING, ERROR } = Constants.STATUS;
+const { PENDING, ERROR, REVOKING, REVOKE } = Constants.STATUS;
 
-const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
+const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh, handleRevoke }) => {
 	const { did, name, createdOn, expireOn, blockHash, messageError, status, blockchain } = register;
 	const partsOfDid = did?.split(":");
 	const didKey = partsOfDid && partsOfDid[partsOfDid.length - 1];
 	const createdOn_ = formatDate(createdOn);
 	const expireOn_ = formatDate(expireOn);
+	const statusNotAllowed = [PENDING, ERROR, REVOKING, REVOKE];
 
 	return (
 		<Dialog open={modalOpen}>
@@ -25,7 +26,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
 				<ModalTitle title={TITLE} />
 			</DialogTitle>
 			<DialogContent style={{ margin: "0px 0 25px" }}>
-				<Grid container item xs={12} justify="center" direction="column">
+				<Grid container item xs={12} justify="center" direction="column" style={{ marginBottom: "5px" }}>
 					<KeyValue field="DID" value={didKey} />
 					<KeyValue field="Blockchain" value={blockchain} />
 					<KeyValue field="Nombre" value={name} />
@@ -35,14 +36,22 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh }) => {
 					{blockHash && <KeyValue field="Hash de Transacción" value={blockHash} />}
 				</Grid>
 				<DefaultButton
-					funct={() => handleRefresh(did)}
+					funct={() => handleRevoke(did)}
 					otherClass="DangerButton"
-					name="Renovar"
-					disabled={status === PENDING || status === ERROR}
+					name="Revocar"
+					disabled={statusNotAllowed.includes(status)}
 				/>
 			</DialogContent>
-			<DialogActions>
-				<DefaultButton funct={() => setModalOpen(false)} name="Cerrar" />
+			<DialogActions style={{ padding: "2em 25px" }}>
+				<Grid container justify="space-between">
+					<DefaultButton
+						funct={() => handleRefresh(did)}
+						otherClass="WarningButton"
+						name="Renovar"
+						disabled={statusNotAllowed.includes(status)}
+					/>
+					<DefaultButton funct={() => setModalOpen(false)} name="Cerrar" />
+				</Grid>
 			</DialogActions>
 		</Dialog>
 	);

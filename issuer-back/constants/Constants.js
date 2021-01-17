@@ -139,11 +139,15 @@ const DIDI_API = process.env.DIDI_API;
 const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
 
 const STATUS = {
-	PENDING: "Pendiente",
+	PENDING: "Creando",
 	DONE: "Creado",
 	ERROR: "Error",
-	ERROR_RENEW: "Error al Renovar"
+	ERROR_RENEW: "Error al Renovar",
+	REVOKE: "Revocado",
+	REVOKING: "Revocando"
 };
+
+const STATUS_ALLOWED = Object.values(STATUS);
 
 BLOCK_CHAIN_DEFAULT = "rsk";
 
@@ -235,7 +239,7 @@ module.exports = {
 
 	BLOCKCHAINS: BLOCKCHAINS,
 	STATUS: STATUS,
-	STATUS_ALLOWED: [STATUS.PENDING, STATUS.ERROR, STATUS.DONE, STATUS.ERROR_RENEW],
+	STATUS_ALLOWED: STATUS_ALLOWED,
 
 	RSA_PRIVATE_KEY: RSA_PRIVATE_KEY,
 	HASH_SALT: HASH_SALT,

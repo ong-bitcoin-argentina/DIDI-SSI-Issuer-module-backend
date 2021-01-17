@@ -30,4 +30,8 @@ export default class RegisterService {
 	static refresh(did) {
 		return fetchData(options("POST"), `${CREATE}/${did}/refresh`);
 	}
+
+	static revoke(did) {
+		return fetchData(options("DELETE"), `${CREATE}/${did}`);
+	}
 }
