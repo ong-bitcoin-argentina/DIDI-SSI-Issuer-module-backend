@@ -172,12 +172,13 @@ router.put(
 /**
  * Marca un certificado como borrado y lo revoca en caso de haber sido emitido
  */
-router.delete("/:id", validate([CERT_REVOCATION]), checkValidationResult, async function (req, res) {
+router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
 	const { id } = req.params;
 	const { reason } = req.body;
 	const { token } = req.headers;
 
 	try {
+		console.log("------ ENTRO ACA ------------");
 		const { userId } = TokenService.getTokenData(token);
 		const cert = await CertService.deleteOrRevoke(id, reason, userId);
 		const did = getDID(cert);
