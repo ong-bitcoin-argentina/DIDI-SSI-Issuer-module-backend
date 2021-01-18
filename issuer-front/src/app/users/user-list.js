@@ -63,23 +63,15 @@ const UserList = () => {
 	};
 
 	const createUser = async user => {
-		try {
-			const token = Cookie.get("token");
-			await UserService.create(user)(token);
-			await getUsersData();
-		} catch (error) {
-			setError(error.message);
-		}
+		const token = Cookie.get("token");
+		await UserService.create(user)(token);
+		await getUsersData();
 	};
 
 	const editUser = async user => {
-		try {
-			const token = Cookie.get("token");
-			await UserService.edit(user)(token);
-			await getUsersData();
-		} catch (error) {
-			setError(error.message);
-		}
+		const token = Cookie.get("token");
+		await UserService.edit(user)(token);
+		await getUsersData();
 	};
 
 	const deleteUser = async () => {

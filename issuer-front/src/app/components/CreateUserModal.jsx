@@ -58,9 +58,10 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 			setNewUser({});
 		}
 		setShowPassword(false);
+		setError("");
 	};
 
-	const handleSubmit = (event, values) => {
+	const handleSubmit = async (event, values) => {
 		event.preventDefault();
 		try {
 			setError("");
@@ -70,9 +71,8 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 					return;
 				}
 				setLoading(true);
-				onSubmit(newUser);
+				await onSubmit(newUser);
 				resetState();
-				event.target.reset();
 				close();
 			} else {
 				setError("Las contraseñas no coinciden.");
