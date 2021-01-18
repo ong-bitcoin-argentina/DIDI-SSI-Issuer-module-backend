@@ -106,6 +106,11 @@ module.exports.getAll = async function () {
 // Edita un usuario y lo retorna
 module.exports.edit = async function (id, name, password, profileId) {
 	try {
+		const passwordValidation =
+			password && (Constants.COMMON_PASSWORDS.includes(password) || password.length < Constants.PASSWORD_MIN_LENGTH);
+
+		if (passwordValidation) throw Messages.VALIDATION.COMMON_PASSWORD;
+
 		const profile = await Profile.getById(profileId);
 		if (!profile) return Promise.reject(Messages.PROFILE.ERR.GET);
 
@@ -118,6 +123,6 @@ module.exports.edit = async function (id, name, password, profileId) {
 		return Promise.resolve(user);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.USER.ERR.EDIT);
+		return Promise.reject(err);
 	}
 };
