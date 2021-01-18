@@ -20,7 +20,7 @@ export default class RegisterService {
 	}
 
 	static editName(did, name) {
-		return fetchData(optionsBody("POST", { name }), `${CREATE}/${did}`);
+		return fetchData(optionsBody("PUT", { name }), `${CREATE}/${did}`);
 	}
 
 	static retry(did) {
