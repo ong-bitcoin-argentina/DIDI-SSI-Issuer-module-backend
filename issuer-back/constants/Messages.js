@@ -116,7 +116,11 @@ module.exports = {
 			GET: { code: "TEMPLATE_GET", message: "El modelo de certificado no pudo ser obtenido." },
 			EDIT: { code: "TEMPLATE_EDIT", message: "El modelo de certificado no pudo ser modificado." },
 			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado." },
-			UNIQUE_NAME: { code: "UNIQUE_NAME", message: "El nombre del template ya existe." }
+			UNIQUE_NAME: {
+				code: "UNIQUE_NAME",
+				message:
+					"Error al Crear el Template: El nombre elegido ya existe. Por favor, vuelva a intentarlo con un nombre diferente."
+			}
 		}
 	},
 	CERTIFICATE: {
