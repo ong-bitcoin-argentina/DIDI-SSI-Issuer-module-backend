@@ -230,6 +230,7 @@ const CertificatesEmmited = () => {
 						</DefaultButton>
 					</Grid>
 				)}
+				{error.message && <div className="errMsg">{error.message}</div>}
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable
@@ -271,8 +272,6 @@ const CertificatesEmmited = () => {
 				time={3500}
 				onClose={onCloseRevokeFail}
 			/>
-
-			{error.message && <div className="errMsg">{error.message}</div>}
 		</>
 	);
 };

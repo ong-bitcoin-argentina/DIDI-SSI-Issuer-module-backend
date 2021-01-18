@@ -69,8 +69,8 @@ class Templates extends Component {
 				{this.renderSectionButtons(loading)}
 				{this.renderDeleteDialog()}
 				{this.renderCreateDialog()}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}

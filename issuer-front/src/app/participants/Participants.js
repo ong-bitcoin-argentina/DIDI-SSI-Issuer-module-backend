@@ -208,8 +208,8 @@ class Participants extends Component {
 				{this.renderRequestSentDialog()}
 				{this.renderQrDialog()}
 				{this.renderButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}

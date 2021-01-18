@@ -62,8 +62,8 @@ class Delegates extends Component {
 				{this.renderDeleteDialog()}
 
 				{this.renderSectionButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}

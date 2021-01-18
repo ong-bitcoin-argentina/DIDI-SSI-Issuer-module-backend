@@ -118,6 +118,11 @@ const Profile = () => {
 							</Grid>
 						)}
 					</Grid>
+					{error && (
+						<div className="errMsg" style={{ width: "100%" }}>
+							{error}
+						</div>
+					)}
 					<ReactTable
 						sortable
 						previousText={PREV}
@@ -141,11 +146,6 @@ const Profile = () => {
 				onSubmit={editProfile}
 				profileData={profileSelected}
 			/>
-			{error && (
-				<div className="errMsg" style={{ width: "100%" }}>
-					{error}
-				</div>
-			)}
 			<DeleteAbstractModal title="Perfil" open={openDelete} setOpen={setOpenDelete} onAccept={handleDelete} />
 		</>
 	);
