@@ -33,7 +33,7 @@ const RegisterSchema = mongoose.Schema({
 	},
 	status: {
 		type: String,
-		default: Constants.STATUS.PENDING
+		default: Constants.STATUS.CREATING
 	},
 	expireOn: {
 		type: Date

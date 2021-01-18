@@ -10,7 +10,7 @@ const TITLE = "Detalles del Registro";
 
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
-const { PENDING, ERROR, REVOKING, REVOKE } = Constants.STATUS;
+const { CREATING, ERROR, REVOKING, REVOKED } = Constants.STATUS;
 
 const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh, handleRevoke }) => {
 	const { did, name, createdOn, expireOn, blockHash, messageError, status, blockchain } = register;
@@ -18,7 +18,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh, handleR
 	const didKey = partsOfDid && partsOfDid[partsOfDid.length - 1];
 	const createdOn_ = formatDate(createdOn);
 	const expireOn_ = formatDate(expireOn);
-	const statusNotAllowed = [PENDING, ERROR, REVOKING, REVOKE];
+	const statusNotAllowed = [CREATING, ERROR, REVOKING, REVOKED];
 
 	return (
 		<Dialog open={modalOpen}>

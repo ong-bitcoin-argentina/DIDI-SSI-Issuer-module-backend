@@ -9,7 +9,7 @@ import Action from "../utils/Action";
 import CustomSelect from "../components/CustomSelect";
 import DateRangeFilter from "../components/DateRangeFilter/DateRangeFilter";
 
-const { ERROR, PENDING, DONE, EXPIRED, ERROR_RENEW, REVOKE, REVOKING } = Constants.STATUS;
+const { ERROR, CREATING, DONE, EXPIRED, ERROR_RENEW, REVOKED, REVOKING } = Constants.STATUS;
 
 const EDIT_COLOR = "#5FCDD7";
 const RETRY_COLOR = "#AED67B";
@@ -24,10 +24,10 @@ const COLUMNS_NAME = [
 
 const COLORES = {
 	[ERROR]: "#EB5757",
-	[PENDING]: "#F2994A",
+	[CREATING]: "#F2994A",
 	[REVOKING]: "#F2994A",
 	[DONE]: "#43D19D",
-	[REVOKE]: "#43D19D",
+	[REVOKED]: "#43D19D",
 	[EXPIRED]: "#EB5757",
 	[ERROR_RENEW]: "#EB5757"
 };
