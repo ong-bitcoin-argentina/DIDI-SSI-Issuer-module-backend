@@ -317,10 +317,10 @@ module.exports = {
 	STATUS: {
 		DONE: "Creado",
 		ERROR: "Error",
-		PENDING: "Creando",
+		CREATING: "Creando",
 		EXPIRED: "Expirado",
 		ERROR_RENEW: "Error al Renovar",
-		REVOKE: "Revocado",
+		REVOKED: "Revocado",
 		REVOKING: "Revocando"
 	}
 };

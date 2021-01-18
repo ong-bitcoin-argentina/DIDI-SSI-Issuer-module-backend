@@ -139,11 +139,11 @@ const DIDI_API = process.env.DIDI_API;
 const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
 
 const STATUS = {
-	PENDING: "Creando",
+	CREATING: "Creando",
 	DONE: "Creado",
 	ERROR: "Error",
 	ERROR_RENEW: "Error al Renovar",
-	REVOKE: "Revocado",
+	REVOKED: "Revocado",
 	REVOKING: "Revocando"
 };
 

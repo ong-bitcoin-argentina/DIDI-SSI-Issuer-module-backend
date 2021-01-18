@@ -29,7 +29,8 @@ const {
 	REFRESH,
 	NAME_EXIST
 } = Messages.REGISTER.ERR;
-const { ERROR, DONE, ERROR_RENEW, PENDING, REVOKING, REVOKE } = Constants.STATUS;
+const { ERROR, DONE, ERROR_RENEW, CREATING, REVOKING, REVOKED } = Constants.STATUS;
+const DISALLOW_WITH_THESE = [CREATING, ERROR, REVOKED, ERROR_RENEW];
 
 // obtiene el contrato (ethr-did-registry)
 const getContract = function (credentials) {
@@ -245,7 +246,7 @@ module.exports.retryRegister = async function (did, token) {
 		sendDidToDidi(did, name, token);
 
 		// Modifico el estado a Pendiente
-		await register.edit({ status: PENDING, messageError: "" });
+		await register.edit({ status: CREATING, messageError: "" });
 
 		return register;
 	} catch (err) {
@@ -262,13 +263,13 @@ module.exports.refreshRegister = async function (did, token) {
 		if (!register) return Promise.reject(GET);
 
 		const { status } = register;
-		if ([PENDING, ERROR, REVOKE, ERROR_RENEW].includes(status)) return Promise.reject(STATUS_NOT_VALID);
+		if (DISALLOW_WITH_THESE.includes(status)) return Promise.reject(STATUS_NOT_VALID);
 
 		// Se envia a DIDI
 		sendRefreshToDidi(did, token);
 
 		// Modifico el estado a Pendiente
-		await register.edit({ status: PENDING, blockHash: "", messageError: "", expireOn: undefined });
+		await register.edit({ status: CREATING, blockHash: "", messageError: "", expireOn: undefined });
 
 		return register;
 	} catch (err) {
@@ -286,7 +287,7 @@ module.exports.revoke = async function (did, token) {
 
 		// Verifico que tenga un estado valido
 		const { status } = register;
-		if ([PENDING, ERROR, REVOKE, ERROR_RENEW].includes(status)) throw STATUS_NOT_VALID;
+		if (DISALLOW_WITH_THESE.includes(status)) throw STATUS_NOT_VALID;
 
 		// Se envia el revoke a DIDI
 		sendRevokeToDidi(did, token);
