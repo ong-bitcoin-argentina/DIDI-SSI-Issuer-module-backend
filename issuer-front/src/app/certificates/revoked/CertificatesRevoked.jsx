@@ -76,6 +76,7 @@ const CertificatesRevoked = () => {
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
+				{error.message && <div className="errMsg">{error.message}</div>}
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable
@@ -92,7 +93,6 @@ const CertificatesRevoked = () => {
 					)}
 				</Grid>
 			</Grid>
-			{error.message && <div className="errMsg">{error.message}</div>}
 		</>
 	);
 };

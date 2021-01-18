@@ -123,6 +123,11 @@ const Setting = () => {
 					</Grid>
 				</Grid>
 			)}
+			{error && (
+				<div className="errMsg" style={{ width: "100%" }}>
+					{error}
+				</div>
+			)}
 			{(loading && (
 				<div style={{ display: "flex", justifyContent: "center" }}>
 					<CircularProgress />
@@ -142,11 +147,6 @@ const Setting = () => {
 					/>
 				)}
 			<DefaultForm registers={data} />
-			{error && (
-				<div className="errMsg" style={{ width: "100%" }}>
-					{error}
-				</div>
-			)}
 			<RegisterModal
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}

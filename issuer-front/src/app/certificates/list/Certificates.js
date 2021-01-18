@@ -68,8 +68,8 @@ class Certificates extends Component {
 				{this.renderDeleteAllDialog()}
 				{this.renderRevocationDialog()}
 				{this.renderSectionButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}

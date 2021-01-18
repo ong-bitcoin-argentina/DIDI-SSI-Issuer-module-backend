@@ -123,6 +123,7 @@ const UserList = () => {
 					</button>
 				)}
 			</div>
+			{error && <div className="errMsg">{error}</div>}
 			{(loading && (
 				<div style={{ display: "flex", justifyContent: "center" }}>
 					<CircularProgress />
@@ -137,7 +138,6 @@ const UserList = () => {
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 				/>
 			)}
-			{error && <div className="errMsg">{error}</div>}
 			<CreateUserModal
 				title="Crear"
 				open={modalOpen}
