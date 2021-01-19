@@ -178,7 +178,6 @@ router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async fu
 	const { token } = req.headers;
 
 	try {
-		console.log("------ ENTRO ACA ------------");
 		const { userId } = TokenService.getTokenData(token);
 		const cert = await CertService.deleteOrRevoke(id, reason, userId);
 		const did = getDID(cert);
