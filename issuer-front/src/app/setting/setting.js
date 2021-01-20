@@ -87,11 +87,16 @@ const Setting = () => {
 		getBlockchains();
 	}, []);
 
+	const reset = () => {
+		getRegisters();
+		setFilters({});
+	};
+
 	const handleRefresh = async did => {
 		try {
 			const token = Cookie.get("token");
 			await RegisterService.refresh(did)(token);
-			getRegisters();
+			reset();
 			setDetailModalOpen(false);
 		} catch (error) {
 			setError(error.message);
@@ -102,7 +107,7 @@ const Setting = () => {
 		try {
 			const token = Cookie.get("token");
 			await RegisterService.revoke(did)(token);
-			getRegisters();
+			reset();
 			setDetailModalOpen(false);
 		} catch (error) {
 			setError(error.message);
@@ -158,12 +163,7 @@ const Setting = () => {
 					/>
 				)}
 			<DefaultForm registers={data} />
-			<RegisterModal
-				modalOpen={modalOpen}
-				setModalOpen={setModalOpen}
-				onSuccess={getRegisters}
-				blockchains={blockchains}
-			/>
+			<RegisterModal modalOpen={modalOpen} setModalOpen={setModalOpen} onSuccess={reset} blockchains={blockchains} />
 			<ModalDetail
 				handleRefresh={handleRefresh}
 				handleRevoke={handleRevoke}
@@ -175,7 +175,7 @@ const Setting = () => {
 				modalOpen={editModalOpen}
 				setModalOpen={setEditModalOpen}
 				register={registerSelected}
-				onAccept={getRegisters}
+				onAccept={reset}
 			/>
 		</>
 	);
