@@ -41,14 +41,13 @@ const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, 
 			</DialogContent>
 			<DialogActions>
 				<DefaultButton funct={toggleModal} otherClass="CreateButtonOutlined" name="Cancelar" />
-				<button
-					onClick={handleRevokeConfirm}
-					className="DangerButton"
-					style={{ padding: "0 1em" }}
+				<DefaultButton
+					funct={handleRevokeConfirm}
+					otherClass="DangerButton"
 					disabled={!revokeReason}
-				>
-					{loading ? <CircularProgress size={20} color="white" /> : <div className="CreateButtonText">Revocar</div>}
-				</button>
+					loading={loading}
+					name="Revocar"
+				/>
 			</DialogActions>
 		</Dialog>
 	);
