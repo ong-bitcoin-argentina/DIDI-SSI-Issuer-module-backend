@@ -25,9 +25,11 @@ const CollapseMessageError = ({ blockchain, messageError, status }) => {
 
 	return (
 		messageError && (
-			<Typography variant="subtitle2" style={{ marginTop: "10px" }}>
-				{messages[status]}
-				{icons[status]}.
+			<>
+				<Typography variant="subtitle2" style={{ margin: "20px 0px", color: "#ff0000" }}>
+					{messages[status]}
+					{icons[status]}.
+				</Typography>
 				<Grid container justify="flex-end">
 					<span
 						onClick={() => setOpen(v => !v)}
@@ -36,12 +38,12 @@ const CollapseMessageError = ({ blockchain, messageError, status }) => {
 						Ver detalle del error.
 					</span>
 				</Grid>
-				<Collapse in={open} timeout="auto" unmountOnExit>
+				<Collapse in={open} timeout="auto" unmountOnExit style={{ marginTop: "20px" }}>
 					<Typography variant="body2" style={{ textAlign: "center", padding: "15px 10px", background: "#dddee5" }}>
 						{messageError}
 					</Typography>
 				</Collapse>
-			</Typography>
+			</>
 		)
 	);
 };
