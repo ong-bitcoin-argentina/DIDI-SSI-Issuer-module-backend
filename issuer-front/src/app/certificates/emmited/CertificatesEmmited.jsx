@@ -162,7 +162,7 @@ const CertificatesEmmited = () => {
 	const handleSubmit = (revokeReason, onSuccess, handleFail) =>
 		catchError(async () => {
 			const token = Cookie.get("token");
-			await CertificateService.revoke(token, activeCert._id, revokeReason);
+			await CertificateService.revoke(activeCert._id, revokeReason)(token);
 			setActiveCert({});
 			onSuccess();
 		}, handleFail);
@@ -171,7 +171,7 @@ const CertificatesEmmited = () => {
 		catchError(async () => {
 			const token = Cookie.get("token");
 			for (const cert of certsToRevoke) {
-				await CertificateService.revoke(token, cert._id, revokeReason, () => {});
+				await CertificateService.revoke(cert._id, revokeReason)(token);
 				const certsRemoved = certsToRevoke.map(c => {
 					if (c._id === cert._id) {
 						c.revoked = true;

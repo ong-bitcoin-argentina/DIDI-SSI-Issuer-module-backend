@@ -287,7 +287,7 @@ class Main extends Component {
 		self.setState({ certs: self.state.certificates, loading: true });
 
 		try {
-			await CertificateService.delete(token, id);
+			await CertificateService.delete(id)(token);
 			const certs = self.state.certs.filter(t => t._id !== cert._id);
 			self.setState({
 				certs: certs,
@@ -321,7 +321,7 @@ class Main extends Component {
 
 		for (const id of selectedCerts) {
 			try {
-				await CertificateService.delete(token, id);
+				await CertificateService.delete(id)(token);
 			} catch (error) {
 				errors.push(error.message);
 			}
