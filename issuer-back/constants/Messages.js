@@ -24,7 +24,10 @@ module.exports = {
 		ERR: {
 			CREATE: { code: "REGISTER_CREATE", message: "El registro no pudo ser creado." },
 			NOT_EXIST: { code: "NOT_EXIST", message: "El registro no existe" },
-			EDIT: { code: "REGISTER_EDIT", message: "El modelo de registro no pudo ser editado." },
+			EDIT: {
+				code: "REGISTER_EDIT",
+				message: "El modelo de registro no pudo ser editado. Verifique que el registro haya sido creado con éxito."
+			},
 			BLOCKCHAIN: { code: "NOT_EXIST_BLOCKCHAIN", message: "No existe la blockchain elegida." },
 			GET: { code: "REGISTER_GET", message: "El registro no pudo ser obtenido." },
 			DID_EXISTS: { code: "DID_EXISTS", message: "Ya existe un registro con ese did." },
