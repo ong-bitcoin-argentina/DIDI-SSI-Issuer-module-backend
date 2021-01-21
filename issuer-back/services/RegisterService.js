@@ -113,7 +113,7 @@ module.exports.refreshRegister = async function (did, token) {
 		return await register.edit({ status: CREATING, blockHash: "", messageError: "", expireOn: undefined });
 	} catch (err) {
 		console.log(err);
-		throw err;
+		throw REFRESH;
 	}
 };
 
