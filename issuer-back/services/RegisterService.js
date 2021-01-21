@@ -73,40 +73,37 @@ module.exports.newRegister = async function (did, key, name, token) {
 
 		const newRegister = await Register.generate(did, key, name);
 		if (!newRegister) throw CREATE;
-
 		return newRegister;
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(err);
+		throw err;
 	}
 };
 
 // retorna todos los registros
 module.exports.getAll = async function (filter) {
 	try {
-		const registers = await Register.getAll(filter);
-
-		return Promise.resolve(registers);
+		return await Register.getAll(filter);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(GET);
+		throw GET;
 	}
 };
 
 module.exports.editRegister = async function (did, body) {
 	try {
 		const register = await Register.getByDID(did);
-		if (!register) return Promise.reject(GET);
+		if (!register) throw GET;
 
 		const { status, name } = body;
-		if (status && !Constants.STATUS_ALLOWED.includes(status)) return Promise.reject(STATUS);
+		if (status && !Constants.STATUS_ALLOWED.includes(status)) throw STATUS;
 
 		if (name) await sendEditNameToDidi(did, name);
 
 		return await register.edit(body);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(EDIT);
+		throw err;
 	}
 };
 
@@ -115,23 +112,21 @@ module.exports.retryRegister = async function (did, token) {
 		const register = await Register.getByDID(did);
 
 		// Verifico que exista el Register
-		if (!register) return Promise.reject(GET);
+		if (!register) throw GET;
 
 		const { name, status } = register;
 
 		// Verifico que el registro este en estado Error
-		if (status !== ERROR) return Promise.reject(INVALID_STATUS);
+		if (status !== ERROR) throw INVALID_STATUS;
 
 		// Se envia a DIDI
 		sendDidToDidi(did, name, token);
 
 		// Modifico el estado a Pendiente
-		await register.edit({ status: CREATING, messageError: "" });
-
-		return register;
+		return await register.edit({ status: CREATING, messageError: "" });
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(RETRY);
+		throw err;
 	}
 };
 
@@ -140,21 +135,19 @@ module.exports.refreshRegister = async function (did, token) {
 		const register = await Register.getByDID(did);
 
 		// Verifico que exista el Register
-		if (!register) return Promise.reject(GET);
+		if (!register) throw GET;
 
 		const { status } = register;
-		if (DISALLOW_WITH_THESE.includes(status)) return Promise.reject(STATUS_NOT_VALID);
+		if (DISALLOW_WITH_THESE.includes(status)) throw STATUS_NOT_VALID;
 
 		// Se envia a DIDI
 		sendRefreshToDidi(did, token);
 
 		// Modifico el estado a Pendiente
-		await register.edit({ status: CREATING, blockHash: "", messageError: "", expireOn: undefined });
-
-		return register;
+		return await register.edit({ status: CREATING, blockHash: "", messageError: "", expireOn: undefined });
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(REFRESH);
+		throw REFRESH;
 	}
 };
 
@@ -173,9 +166,7 @@ module.exports.revoke = async function (did, token) {
 		sendRevokeToDidi(did, token);
 
 		// Modifico el estado a Revocando
-		await register.edit({ status: REVOKING, messageError: "" });
-
-		return register;
+		return await register.edit({ status: REVOKING, messageError: "" });
 	} catch (err) {
 		console.log(err);
 		throw new Error(err);
@@ -224,6 +215,6 @@ const defaultFetch = async function (url, method, body) {
 		return jsonResp.data;
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(err);
+		throw err;
 	}
 };
