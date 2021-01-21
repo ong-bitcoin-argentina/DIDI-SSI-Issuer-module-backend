@@ -109,7 +109,10 @@ Register.getById = async function (_id) {
 };
 
 Register.getCredentials = async function (_id) {
-	const { did, private_key } = await Register.findOne({ _id });
+	const register = await Register.findOne({ _id });
+	if (!register) throw Messages.REGISTER.ERR.NOT_EXIST;
+	const { did, private_key } = register;
+
 	const key = await Encryption.decript(private_key);
 	return { did, key };
 };

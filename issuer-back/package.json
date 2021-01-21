@@ -18,6 +18,7 @@
 		"express"
 	],
 	"dependencies": {
+		"@proyecto-didi/didi-blockchain-manager": "1.1.5",
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
 		"applicationinsights": "^2.0.0-beta.200831.2",
