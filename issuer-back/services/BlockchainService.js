@@ -23,7 +23,7 @@ module.exports.addDelegate = async function (registerId, otherDID) {
 		return await blockchainManager.addDelegate(credentials, otherDID, Constants.BLOCKCHAIN.DELEGATE_DURATION);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.DELEGATE.ERR.DELEGATE);
+		throw Messages.DELEGATE.ERR.DELEGATE;
 	}
 };
 
@@ -39,7 +39,7 @@ module.exports.removeDelegate = async function (otherDID) {
 		return await blockchainManager.revokeDelegate(credentials, otherDID);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.DELEGATE.ERR.DELETE);
+		throw Messages.DELEGATE.ERR.DELETE;
 	}
 };
 
