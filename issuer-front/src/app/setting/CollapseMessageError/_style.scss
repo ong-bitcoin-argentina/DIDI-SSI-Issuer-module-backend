@@ -1,0 +1,23 @@
+.message {
+	margin: 20px 0 !important;
+	color: #ff0000;
+}
+
+.error-detail {
+	color: #0000ff;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.message-error-collapse {
+	text-align: center;
+	padding: 15px 10px;
+	background: #dddee5;
+}
+
+.refresh-icon {
+	transform: scale(0.8);
+	margin: -3px;
+	position: relative;
+	bottom: -3px;
+}
