@@ -3,7 +3,7 @@ const ResponseHandler = require("./utils/ResponseHandler");
 
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
-const BlockchainService = require("../services/BlockchainService");
+const RegisterService = require("../services/RegisterService");
 const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators");
 
 const TokenService = require("../services/TokenService");
@@ -38,7 +38,7 @@ router.post(
 			const { did, name, key } = req.body;
 			const { token } = req.headers;
 
-			const register = await BlockchainService.newRegister(did, key, name, token);
+			const register = await RegisterService.newRegister(did, key, name, token);
 			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			console.log(err);
@@ -62,7 +62,7 @@ router.get(
 	Validator.checkValidationResult,
 	async function (req, res) {
 		try {
-			const registers = await BlockchainService.getAll(req.query);
+			const registers = await RegisterService.getAll(req.query);
 			const result = registers.map(register => RegisterDTO.toDTO(register));
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
@@ -112,7 +112,7 @@ router.put(
 	async function (req, res) {
 		try {
 			const { did } = req.params;
-			const register = await BlockchainService.editRegister(did, req.body);
+			const register = await RegisterService.editRegister(did, req.body);
 			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -138,7 +138,7 @@ router.post(
 		try {
 			const { did } = req.params;
 			const { token } = req.headers;
-			const register = await BlockchainService.retryRegister(did, token);
+			const register = await RegisterService.retryRegister(did, token);
 			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -164,7 +164,7 @@ router.post(
 		try {
 			const { did } = req.params;
 			const { token } = req.headers;
-			const register = await BlockchainService.refreshRegister(did, token);
+			const register = await RegisterService.refreshRegister(did, token);
 			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -190,7 +190,7 @@ router.delete(
 		try {
 			const { did } = req.params;
 			const { token } = req.headers;
-			const register = await BlockchainService.revoke(did, token);
+			const register = await RegisterService.revoke(did, token);
 			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
