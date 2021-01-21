@@ -21,7 +21,6 @@ import DefaultButton from "./default-button";
 const TITLE = "Registro de Emisor";
 
 const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
-	const [identity, setIdentity] = useState({});
 	const [newRegister, setNewRegister] = useState({});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
@@ -30,8 +29,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		const identity_ = Credentials.createIdentity();
 		const did = identity_.did.split(":")[2];
 		const key = identity_.privateKey;
-		setIdentity({ did });
-		setNewRegister({ key });
+		setNewRegister({ key, did });
 	}, [modalOpen]);
 
 	const INPUTS = [
@@ -45,15 +43,10 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 
 	const handleChange = event => {
 		const { name, value } = event.target;
-		if (name === "blockchain") {
-			setNewRegister(register => ({ ...register, did: `did:ethr:${value}:${identity.did}` }));
-		} else {
-			setNewRegister(register => ({ ...register, [name]: value }));
-		}
+		setNewRegister(register => ({ ...register, [name]: value }));
 	};
 
 	const resetForm = () => {
-		setIdentity({});
 		setNewRegister({});
 		setError("");
 		setModalOpen(false);
@@ -70,7 +63,11 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		setLoading(true);
 		try {
 			const token = Cookie.get("token");
-			await RegisterService.create(newRegister)(token);
+			const { did, blockchain } = newRegister;
+			await RegisterService.create({
+				...newRegister,
+				did: `did:ethr:${blockchain}:${did}`
+			})(token);
 			resetForm();
 			onSuccess();
 		} catch (error) {
@@ -122,14 +119,14 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 						>
 							<Grid item xs={12} style={{ padding: "10px", textAlign: "center" }}>
 								<Typography variant="body2">
-									La ejecución de esta operación puede demorar. El registro quedará en estado PENDIENTE hasta tanto se
+									La ejecución de esta operación puede demorar. El registro quedará en estado CREANDO hasta tanto se
 									confirme la transacción.
 								</Typography>
 							</Grid>
 						</Grid>
 						<Grid item xs={8}>
-							<ClipBoardInput label="Did Asignado" value={identity.did} />
-							<ClipBoardInput label="Clave Privada" value={newRegister.key} />
+							<ClipBoardInput label="Did Asignado" value={newRegister.did} name="did" handleChange={handleChange} />
+							<ClipBoardInput label="Clave Privada" value={newRegister.key} name="key" handleChange={handleChange} />
 							{INPUTS.map(({ name, placeholder, disabled, initial }, index) => (
 								<TextField
 									disabled={disabled}

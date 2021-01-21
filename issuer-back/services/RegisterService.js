@@ -2,6 +2,9 @@ const fetch = require("node-fetch");
 const Messages = require("../constants/Messages");
 const Register = require("../models/Register");
 const Constants = require("../constants/Constants");
+const { Resolver } = require("did-resolver");
+const { SimpleSigner, createJWT, verifyJWT } = require("did-jwt");
+const { getResolver } = require("ethr-did-resolver");
 
 const {
 	INVALID_STATUS,
@@ -14,35 +17,67 @@ const {
 	STATUS,
 	STATUS_NOT_VALID,
 	REFRESH,
-	NAME_EXIST
+	NAME_EXIST,
+	INVALID_DID,
+	INVALID_PRIVATE_KEY
 } = Messages.REGISTER.ERR;
 const { ERROR, DONE, ERROR_RENEW, CREATING, REVOKING, REVOKED } = Constants.STATUS;
 const DISALLOW_WITH_THESE = [CREATING, ERROR, REVOKED, ERROR_RENEW];
+
+const resolver = new Resolver(getResolver(Constants.BLOCKCHAIN.PROVIDER_CONFIG));
+
+const CODES = {
+	"Not a valid ethr DID": INVALID_DID,
+	"Signature invalid for JWT": INVALID_PRIVATE_KEY
+};
+
+const validateDidAndKey = async (did, key) => {
+	try {
+		const signer = SimpleSigner(key);
+		const jwt = await createJWT({}, { alg: "ES256K-R", issuer: did, signer });
+
+		const options = {
+			resolver
+		};
+
+		await verifyJWT(jwt, options);
+	} catch (error) {
+		const { message } = error;
+		console.log(message);
+
+		throw CODES[message.split(":")[0]];
+	}
+};
 
 // crear un nuevo registro en la blockchain
 module.exports.newRegister = async function (did, key, name, token) {
 	try {
 		const blockchain = did.split(":")[2];
 
+		// Verifico si esta bien creado el did y la key
+		await validateDidAndKey(did, key);
+
 		// Verifico si la blockchain es correcta
-		if (!Constants.BLOCKCHAINS.includes(blockchain)) return Promise.reject(BLOCKCHAIN);
+		if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
 
 		// Verifico que el did no exista
 		const byDIDExist = await Register.getByDID(did);
-		if (byDIDExist) return Promise.reject(DID_EXISTS);
+		if (byDIDExist) throw DID_EXISTS;
 
+		// Verifico que no exista el nombre en una misma blockchain
 		const repeatedRegister = await Register.findOne({ name, did: { $regex: blockchain, $options: "i" } });
-		if (repeatedRegister) return Promise.reject(NAME_EXIST);
+		if (repeatedRegister) throw NAME_EXIST;
 
 		// Se envia el did a Didi
 		sendDidToDidi(did, name, token);
 
 		const newRegister = await Register.generate(did, key, name);
-		if (!newRegister) return Promise.reject(CREATE);
+		if (!newRegister) throw CREATE;
+
 		return newRegister;
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(CREATE);
+		return Promise.reject(err);
 	}
 };
 
