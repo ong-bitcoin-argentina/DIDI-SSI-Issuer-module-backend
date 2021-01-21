@@ -4,9 +4,6 @@ const Messages = require("../constants/Messages");
 const Register = require("../models/Register");
 const Delegate = require("../models/Delegate");
 
-const { delegateTypes } = require("ethr-did-resolver");
-const regName = delegateTypes.Secp256k1SignatureAuthentication2018;
-
 // Instancia del Blockchain Manager
 const config = {
 	gasPrice: 10000,
