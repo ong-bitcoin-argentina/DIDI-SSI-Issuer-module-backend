@@ -4,7 +4,7 @@ import Constants, { DATE_FORMAT } from "../../constants/Constants";
 import moment from "moment";
 import ModalTitle from "../utils/modal-title";
 import DefaultButton from "./default-button";
-import CollapseMessageError from "./CollapseMessageError";
+import CollapseMessageError from "./CollapseMessageError/CollapseMessageError";
 
 const TITLE = "Detalles del Registro";
 
@@ -43,7 +43,7 @@ const ModalDetail = ({ modalOpen, setModalOpen, register, handleRefresh, handleR
 					<KeyValue field="Fecha de Registro" value={createdOn_} />
 					{expireOn_ && expireOn_ !== "-" && <KeyValue field="Fecha de Expiración" value={expireOn_} />}
 					{blockHash && <KeyValue field="Hash de Transacción" value={blockHash} />}
-					<CollapseMessageError messageError={messageError} blockchain={blockchain} status={status} />
+					{messageError && <CollapseMessageError messageError={messageError} blockchain={blockchain} status={status} />}
 				</Grid>
 				{!statusNotAllowed.includes(status) && (
 					<Grid container direction="column">
