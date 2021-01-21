@@ -775,7 +775,6 @@ class Certificate extends Component {
 					<div className="MicroCreds">
 						<div className="MicroCredsHeader">
 							<div className="DataName MicroCredsNameLabel">{Messages.EDIT.DATA.MICRO_CRED_NAME}</div>
-							<div className="DataName MicroCredsFieldsLabel">{Messages.EDIT.DATA.MICRO_CRED_FIELDS}</div>
 						</div>
 						{cert.microCredentials.map((microCred, key) => {
 							let picked = [];
@@ -793,6 +792,7 @@ class Certificate extends Component {
 											this.microcredNameChanged(key, event);
 										}}
 									/>
+									<div className="DataName MicroCredsFieldsLabel">{Messages.EDIT.DATA.MICRO_CRED_FIELDS}</div>
 									<Select
 										className="MicroCredFieldsSelect"
 										multiple
