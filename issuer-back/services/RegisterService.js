@@ -17,20 +17,17 @@ const {
 	STATUS,
 	STATUS_NOT_VALID,
 	REFRESH,
-	NAME_EXIST,
-	INVALID_DID,
-	INVALID_PRIVATE_KEY
+	NAME_EXIST
 } = Messages.REGISTER.ERR;
 const { ERROR, DONE, ERROR_RENEW, CREATING, REVOKING, REVOKED } = Constants.STATUS;
 const DISALLOW_WITH_THESE = [CREATING, ERROR, REVOKED, ERROR_RENEW];
 
 const resolver = new Resolver(getResolver(Constants.BLOCKCHAIN.PROVIDER_CONFIG));
 
-const CODES = {
-	"Not a valid ethr DID": INVALID_DID,
-	"Signature invalid for JWT": INVALID_PRIVATE_KEY
-};
-
+/*
+ * Se create un JWT y luego se verifica, para saber si el did y la key estan bien
+ * generadas y si la key corresponde a ese did, en caso contrario, el verifyJWT lanza un excepción
+ */
 const validateDidAndKey = async (did, key) => {
 	try {
 		const signer = SimpleSigner(key);
@@ -45,7 +42,7 @@ const validateDidAndKey = async (did, key) => {
 		const { message } = error;
 		console.log(message);
 
-		throw CODES[message.split(":")[0]];
+		throw Messages.REGISTER.ERR[message.split(":")[0]];
 	}
 };
 
