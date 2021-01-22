@@ -5,7 +5,7 @@ import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 
 const NOTIFICATION_TEXT = " fue copiado/a con éxito.";
 
-const ClipBoardInput = ({ label, value }) => {
+const ClipBoardInput = ({ label, value, handleChange, name }) => {
 	const [openNotification, setOpenNotification] = useState(false);
 	const myInput = useRef(null);
 
@@ -27,8 +27,10 @@ const ClipBoardInput = ({ label, value }) => {
 			<Grid container item xs={12} direction="row" alignItems="center">
 				<Grid item xs={10}>
 					<input
-						readOnly
-						value={value}
+						required
+						name={name}
+						defaultValue={value}
+						onChange={handleChange}
 						ref={myInput}
 						style={{ width: "100%", height: "25px", border: "1px solid #949494" }}
 					/>
