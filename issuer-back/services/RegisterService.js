@@ -5,6 +5,7 @@ const Constants = require("../constants/Constants");
 const { Resolver } = require("did-resolver");
 const { SimpleSigner, createJWT, verifyJWT } = require("did-jwt");
 const { getResolver } = require("ethr-did-resolver");
+const { BLOCKCHAIN_MANAGER_CODES } = require("../constants/Constants");
 
 const {
 	INVALID_STATUS,
@@ -17,7 +18,8 @@ const {
 	STATUS,
 	STATUS_NOT_VALID,
 	REFRESH,
-	NAME_EXIST
+	NAME_EXIST,
+	INVALID_DID_AND_KEY
 } = Messages.REGISTER.ERR;
 const { ERROR, DONE, ERROR_RENEW, CREATING, REVOKING, REVOKED } = Constants.STATUS;
 const DISALLOW_WITH_THESE = [CREATING, ERROR, REVOKED, ERROR_RENEW];
@@ -42,7 +44,8 @@ const validateDidAndKey = async (did, key) => {
 		const { message } = error;
 		console.log(message);
 
-		throw Messages.REGISTER.ERR[message.split(":")[0]];
+		const code = BLOCKCHAIN_MANAGER_CODES[message.split(":")[0]];
+		throw Messages.REGISTER.ERR[code] || INVALID_DID_AND_KEY;
 	}
 };
 

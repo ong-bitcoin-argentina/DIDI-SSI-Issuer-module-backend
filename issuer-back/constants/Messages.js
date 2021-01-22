@@ -54,13 +54,17 @@ module.exports = {
 				code: "NAME_EXIST",
 				message: "Ya existe el nombre para la misma blockchain."
 			},
-			"Not a valid ethr DID": {
+			INVALID_DID: {
 				code: "INVALID_DID",
 				message: "El did es inválido."
 			},
-			"Signature invalid for JWT": {
+			INVALID_PRIVATE_KEY: {
 				code: "INVALID_PRIVATE_KEY",
 				message: "La clave privada es inválida."
+			},
+			INVALID_DID_AND_KEY: {
+				code: "INVALID_DID_AND_KEY",
+				message: "Hubo un error al validar el did y la clave privada."
 			}
 		}
 	},
