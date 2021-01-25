@@ -13,7 +13,7 @@ import Constants from "../../constants/Constants";
 const BLOCKCHAIN_LABEL_NAME = "Blockchain de Verificación por defecto";
 const TEMPLATE_LABEL_NAME = "Template de Credenciales por defecto";
 const CREATE_MESSAGE = "Se creo exitosamente";
-const EDIT_MESSAGE = "Se edito exitosamente";
+const EDIT_MESSAGE = "Se editó exitosamente";
 
 const DefaultForm = ({ registers: register_ }) => {
 	const [defaultValue, setDefaultValue] = useState({});

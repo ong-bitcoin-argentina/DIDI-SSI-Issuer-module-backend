@@ -56,7 +56,7 @@ module.exports = {
 			ADD_PARTICIPANTS: "Nuevo Participante",
 			LOAD_PARTICIPANTS: "Cargar Participantes",
 			RENAME_ISSUER: "Renombrar Emisor",
-			CREATE: "NUEVO CAMPO",
+			CREATE: "Nuevo Campo",
 			SEND: "Enviar",
 			SAVE: "Guardar",
 			CANCEL: "Cancelar",
@@ -105,7 +105,7 @@ module.exports = {
 			PREV: "ANTERIOR",
 			NEXT: "SIGUIENTE",
 			EMISSION_DATE: "FECHA DE",
-			EMISSION_DATE2: "EMISION",
+			EMISSION_DATE2: "EMISIÓN",
 			CRATED_DATE: "FECHA DE CREACIÓN",
 			REVOCATION: "REVOCACIÓN",
 			SELECT: "SELECCIONAR",
@@ -131,7 +131,7 @@ module.exports = {
 			REVOKE: "Revocar",
 			EXIT: "Salir",
 			USERS: "Usuarios",
-			CONFIG: "Configuracion",
+			CONFIG: "Configuración",
 			PROFILE: "Perfiles"
 		}
 	},
@@ -145,8 +145,8 @@ module.exports = {
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
 		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de Credencial para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
-		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
-		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de Credencial actual",
+		QR_MESSAGE: "Escanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
+		QR_PD: "Nota: Los datos obtenidos a partir del Qr serán accessibles solo para el modelo de Credencial actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
 			REQUEST: "Solicitar Credenciales",

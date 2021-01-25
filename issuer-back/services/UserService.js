@@ -10,6 +10,8 @@ const { toDTO } = require("../routes/utils/UserDTO");
 const Constants = require("../constants/Constants");
 const Profile = require("../models/Profile");
 
+const { INVALID_USER } = Messages.USER.ERR;
+
 // compara las contraseñas y retorna el resultado
 module.exports.login = async function (name, password) {
 	let user;
@@ -23,12 +25,11 @@ module.exports.login = async function (name, password) {
 
 	try {
 		const isMatch = await user.comparePassword(password);
-		if (!isMatch) return Promise.reject(Messages.USER.ERR.INVALID_USER);
-		const userResponse = toDTO(user);
-		return Promise.resolve({ ...userResponse, token: TokenService.generateToken(user._id) });
+		if (!isMatch) throw INVALID_USER;
+		return { user, token: TokenService.generateToken(user._id) };
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.USER.ERR.INVALID_USER);
+		throw INVALID_USER;
 	}
 };
 

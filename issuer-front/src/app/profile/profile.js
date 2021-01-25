@@ -17,7 +17,7 @@ const { MIN_ROWS } = Constants.CERTIFICATES.TABLE;
 
 const BUTTON_MODAL_NAME = "Nuevo Perfil";
 const TITLE = "Perfiles";
-const DESCRIPTION = "Crea perfiles asignando distintos tipos de permisos";
+const DESCRIPTION = "Creá perfiles asignando distintos tipos de permisos";
 
 const Profile = () => {
 	const [loading, setLoading] = useState(false);

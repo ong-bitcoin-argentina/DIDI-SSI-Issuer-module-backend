@@ -58,7 +58,7 @@ router.post(
 	async function (req, res) {
 		try {
 			if (!Constants.ENABLE_INSECURE_ENDPOINTS) {
-				return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 404);
+				return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 403);
 			}
 
 			const { name, password } = req.body;
@@ -89,8 +89,8 @@ router.post(
 		const name = req.body.name;
 		const password = req.body.password;
 		try {
-			const user = await UserService.login(name, password);
-			return ResponseHandler.sendRes(res, user);
+			const { user, token } = await UserService.login(name, password);
+			return ResponseHandler.sendRes(res, { ...UserDTO.toDTO(user), token });
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}

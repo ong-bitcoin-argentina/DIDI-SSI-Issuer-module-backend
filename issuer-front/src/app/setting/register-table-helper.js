@@ -68,7 +68,7 @@ export const getRegisterAllColumns = (handleFilter, onDateRangeFilterChange) => 
 		},
 		{
 			Header: (
-				<DateRangeFilter label="fecha de expiracion" onChange={value => onDateRangeFilterChange(value, "expired")} />
+				<DateRangeFilter label="fecha de expiración" onChange={value => onDateRangeFilterChange(value, "expired")} />
 			),
 			accessor: "expireOn",
 			width: 220
