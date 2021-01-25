@@ -773,9 +773,6 @@ class Certificate extends Component {
 
 				{cert.split && cert.microCredentials && cert.microCredentials.length > 0 && (
 					<div className="MicroCreds">
-						<div className="MicroCredsHeader">
-							<div className="DataName MicroCredsNameLabel">{Messages.EDIT.DATA.MICRO_CRED_NAME}</div>
-						</div>
 						{cert.microCredentials.map((microCred, key) => {
 							let picked = [];
 							for (let i = 0; i < cert.microCredentials.length; i++) {
@@ -784,6 +781,7 @@ class Certificate extends Component {
 							const data = allData.filter(microCredName => picked.indexOf(microCredName) < 0);
 							return (
 								<div className="DataElem" key={"Microcred-" + key}>
+									<div className="DataName MicroCredsNameLabel">{Messages.EDIT.DATA.MICRO_CRED_NAME}</div>
 									<input
 										type="text"
 										className="DataInput MicroCredFieldName"

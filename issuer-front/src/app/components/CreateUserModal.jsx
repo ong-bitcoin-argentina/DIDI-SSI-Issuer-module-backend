@@ -70,6 +70,10 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 					setError("Seleccione un perfil.");
 					return;
 				}
+				if (newUser.password.length < 6) {
+					setError("La contraseña requiere un mínimo de 6 caracteres.");
+					return;
+				}
 				setLoading(true);
 				await onSubmit(newUser);
 				resetState();
@@ -115,7 +119,6 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 									type={type}
 									onChange={handleChange}
 									defaultValue={newUser[name]}
-									inputProps={{ minlength: name === "password" ? 6 : 1 }}
 									required={required}
 									fullWidth
 									InputProps={{

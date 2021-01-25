@@ -198,20 +198,21 @@ class Template extends Component {
 		}
 		const loading = this.state.loading;
 		return (
-			<div className={`${loading && "Loading"} Template mb-2`}>
+			<>
 				<Header />
-
 				{Spinner.render(loading)}
-				{this.renderDialog()}
-				<div className="container">
-					{!loading && this.renderTemplateCategory()}
-					{!loading && this.renderBlockchainRegister()}
-					{!loading && this.renderTemplate()}
-					{!loading && this.renderTemplateType()}
-					{this.renderButtons()}
-					{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
+				<div className={`${loading && "Loading"} Template mb-2`}>
+					{this.renderDialog()}
+					<div className="container">
+						{!loading && this.renderTemplateCategory()}
+						{!loading && this.renderBlockchainRegister()}
+						{!loading && this.renderTemplate()}
+						{!loading && this.renderTemplateType()}
+						{!loading && this.renderButtons()}
+						{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
+					</div>
 				</div>
-			</div>
+			</>
 		);
 	}
 

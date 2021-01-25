@@ -14,7 +14,7 @@ const { CREATING, ERROR, REVOKING, REVOKED } = Constants.STATUS;
 
 const KeyValue = ({ field, value }) => (
 	<Typography variant="subtitle2">
-		{field}: {value}
+		<b>{field}</b>: {value}
 	</Typography>
 );
 
