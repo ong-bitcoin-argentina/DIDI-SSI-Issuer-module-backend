@@ -153,9 +153,10 @@ const CertificatesEmmited = () => {
 	const catchError = async (previousFunction, handleFail) => {
 		try {
 			await previousFunction();
-		} catch (_) {
+		} catch (error) {
 			handleFail();
 			onRevokeFail();
+			setError(error);
 		}
 	};
 
@@ -268,7 +269,7 @@ const CertificatesEmmited = () => {
 			<Notification
 				open={revokeFail}
 				severity="error"
-				message="Ocurrió un error la revocar la credencial."
+				message={error.message}
 				time={3500}
 				onClose={onCloseRevokeFail}
 			/>

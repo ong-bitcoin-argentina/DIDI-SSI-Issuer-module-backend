@@ -103,7 +103,7 @@ module.exports.editRegister = async function (did, body) {
 		return await register.edit(body);
 	} catch (err) {
 		console.log(err);
-		throw err;
+		throw EDIT;
 	}
 };
 
