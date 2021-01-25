@@ -12,7 +12,7 @@ const RegisterDTO = require("./utils/RegisterDTO");
 const { checkValidationResult, validate } = Validator;
 
 /**
- * Registra un nuevo registro en la blockchain
+ * Registra un nuevo registro de delegación de un nuevo emisor en la blockchain elegida
  */
 router.post(
 	"/",

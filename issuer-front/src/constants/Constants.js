@@ -140,7 +140,7 @@ module.exports = {
 			},
 			TYPING_TIMEOUT: 1000
 		},
-		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS", "LABORAL"],
+		CATEGORIES: ["EDUCACIÓN", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS", "LABORAL"],
 		TYPES: {
 			TEXT: "Text",
 			PARAGRAPH: "Paragraph",
@@ -222,7 +222,7 @@ module.exports = {
 			},
 			EXP_DATE_INVALID: {
 				err: "EXP_DATE_INVALID",
-				message: "La fecha de expiracion debe ser mayor a la fecha actual."
+				message: "La fecha de expiración debe ser mayor a la fecha actual."
 			}
 		},
 		MANDATORY_DATA: {

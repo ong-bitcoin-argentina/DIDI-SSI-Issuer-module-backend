@@ -39,7 +39,7 @@ export const getUserAllColumns = (handleFilter, profiles, onDateRangeFilterChang
 		accessor: "profile"
 	},
 	{
-		Header: <DateRangeFilter label="fecha de creacion" onChange={onDateRangeFilterChange} />,
+		Header: <DateRangeFilter label="fecha de creación" onChange={onDateRangeFilterChange} />,
 		accessor: "onCreated",
 		width: 220
 	},
