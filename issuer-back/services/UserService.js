@@ -6,7 +6,6 @@ const Messages = require("../constants/Messages");
 
 const TokenService = require("./TokenService");
 
-const { toDTO } = require("../routes/utils/UserDTO");
 const Constants = require("../constants/Constants");
 const Profile = require("../models/Profile");
 
