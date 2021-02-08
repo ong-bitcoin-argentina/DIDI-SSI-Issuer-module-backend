@@ -35,6 +35,9 @@ const CertificatesEmmited = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState({});
 	const history = useHistory();
+	const [allCheckboxSelected, setAllCheckboxSelected] = useState(false);
+	const [page, setPage] = useState(0);
+	const [isPageSelected, setIsPageSelected] = useState(false);
 
 	useEffect(() => {
 		if (data.length) {
@@ -50,9 +53,30 @@ const CertificatesEmmited = () => {
 
 	useEffect(() => {
 		updateFilterData(filteredData, selected);
+
+		const value = isAllPageSelected(page);
+		setIsPageSelected(value);
 	}, [selected]);
 
 	useEffect(() => {
+		getDataByPage(page).forEach(({ _id }) => handleSelectOne(_id, allCheckboxSelected));
+		setIsPageSelected(allCheckboxSelected);
+	}, [allCheckboxSelected, allSelected]);
+
+	useEffect(() => {
+		setPage(page);
+
+		const value = isAllPageSelected(page);
+		setIsPageSelected(value);
+		setAllCheckboxSelected(false);
+	}, [page]);
+
+	useEffect(() => {
+		updateColumns(selected);
+	}, [isPageSelected]);
+
+	useEffect(() => {
+		console.log(7);
 		const { firstName, lastName, certName, start, end, blockchain } = filters;
 		const result = data.filter(
 			row =>
@@ -66,12 +90,6 @@ const CertificatesEmmited = () => {
 	}, [filters]);
 
 	useEffect(() => {
-		const generated = {};
-		filteredData.forEach(item => (generated[item._id] = allSelected));
-		setSelected(generated);
-	}, [allSelected]);
-
-	useEffect(() => {
 		if (revokeSuccess || revokeFail) {
 			setActiveCert(null);
 			setCertsToRevoke([]);
@@ -79,6 +97,18 @@ const CertificatesEmmited = () => {
 			setModalRevokeAllOpen(false);
 		}
 	}, [revokeSuccess, revokeFail]);
+
+	const isAllPageSelected = page => {
+		const toRevoke = Object.keys(selected).filter(k => selected[k]);
+		return !loading && getDataByPage(page).every(({ _id }) => toRevoke.includes(_id));
+	};
+
+	const getDataByPage = page => {
+		const inicio = page * PAGE_SIZE;
+		const final = inicio + PAGE_SIZE;
+
+		return filteredData.slice(inicio, final);
+	};
 
 	const getData = async () => {
 		setLoading(true);
@@ -114,7 +144,7 @@ const CertificatesEmmited = () => {
 		const localColumns = CertificateTableHelper.getCertEmmitedColumns(
 			data,
 			selectedCerts,
-			allSelected,
+			isPageSelected,
 			handleSelectAllToggle,
 			onFilterChange,
 			onDateRangeFilterChange
@@ -213,6 +243,7 @@ const CertificatesEmmited = () => {
 	};
 
 	const handleSelectAllToggle = val => {
+		setAllCheckboxSelected(val);
 		setAllSelected(val);
 	};
 
@@ -242,6 +273,7 @@ const CertificatesEmmited = () => {
 							columns={columns}
 							defaultPageSize={PAGE_SIZE}
 							minRows={MIN_ROWS}
+							onPageChange={setPage}
 						/>
 					) : (
 						<CircularProgress />
