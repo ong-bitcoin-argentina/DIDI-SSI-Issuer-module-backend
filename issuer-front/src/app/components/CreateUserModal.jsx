@@ -63,14 +63,15 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 
 	const handleSubmit = async (event, values) => {
 		event.preventDefault();
+		const { password, profileId, repeatPassword } = newUser;
 		try {
 			setError("");
-			if (newUser.password === newUser.repeatPassword) {
-				if (!newUser.profileId) {
+			if (password === repeatPassword) {
+				if (!profileId) {
 					setError("Seleccione un perfil.");
 					return;
 				}
-				if (newUser.password.length < 6) {
+				if (password && password.length < 6) {
 					setError("La contraseña requiere un mínimo de 6 caracteres.");
 					return;
 				}
