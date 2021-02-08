@@ -14,6 +14,7 @@ const validateToken = role => ({
 	isHead: true
 });
 
+// Estas validaciones son para reutilizar codigo solamente en este archivo
 const validations = role => [
 	validateToken(role),
 	{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },

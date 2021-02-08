@@ -1,6 +1,8 @@
 const Constants = require("../../constants/Constants");
 const { BLOCK_CHAIN_DEFAULT } = require("../../constants/Constants");
 
+// Se obtiene el nombre de la blockchain a travez de un Registro, si este no cuenta con una blockchain, se devuelta la default
+
 const getBlockchainName = register => {
 	let blockchain_ = BLOCK_CHAIN_DEFAULT;
 	if (register) {
