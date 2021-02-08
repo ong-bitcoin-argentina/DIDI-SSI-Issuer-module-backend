@@ -76,7 +76,6 @@ const CertificatesEmmited = () => {
 	}, [isPageSelected]);
 
 	useEffect(() => {
-		console.log(7);
 		const { firstName, lastName, certName, start, end, blockchain } = filters;
 		const result = data.filter(
 			row =>
@@ -104,10 +103,10 @@ const CertificatesEmmited = () => {
 	};
 
 	const getDataByPage = page => {
-		const inicio = page * PAGE_SIZE;
-		const final = inicio + PAGE_SIZE;
+		const start = page * PAGE_SIZE;
+		const end = start + PAGE_SIZE;
 
-		return filteredData.slice(inicio, final);
+		return filteredData.slice(start, end);
 	};
 
 	const getData = async () => {
