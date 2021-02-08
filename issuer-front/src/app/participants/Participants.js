@@ -259,7 +259,6 @@ class Participants extends Component {
 						options: this.state.registers
 					}
 				]}
-				registerIdDefault={this.state.registerId}
 				onAccept={this.sendRequests}
 			/>
 		);

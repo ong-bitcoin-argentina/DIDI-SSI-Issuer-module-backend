@@ -3,7 +3,7 @@ const Messages = require("../constants/Messages");
 
 const EthrDID = require("ethr-did");
 const { createVerifiableCredential } = require("did-jwt-vc");
-const { verifyJWT, decodeJWT, SimpleSigner } = require("did-jwt");
+const { decodeJWT, SimpleSigner } = require("did-jwt");
 const fetch = require("node-fetch");
 
 const { Credentials } = require("uport-credentials");
