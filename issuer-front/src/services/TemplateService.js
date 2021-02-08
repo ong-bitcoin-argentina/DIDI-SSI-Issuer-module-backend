@@ -137,7 +137,7 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static getQrPetition(token, id, code, cb, errCb) {
+	static getQrPetition(token, id, code, cb, errCb, registerId) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -146,7 +146,7 @@ export default class TemplateService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.TEMPLATES.GET_QR(id, code), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.GET_QR(id, code, registerId), data)
 			.then(data => {
 				return data.json();
 			})
@@ -160,7 +160,7 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static sendRequest(token, dids, certs, code, cb, errCb) {
+	static sendRequest(token, dids, certs, code, cb, errCb, registerId) {
 		const data = {
 			method: "POST",
 			headers: {
@@ -169,7 +169,8 @@ export default class TemplateService {
 			},
 			body: JSON.stringify({
 				dids: dids,
-				certNames: certs
+				certNames: certs,
+				registerId
 			})
 		};
 

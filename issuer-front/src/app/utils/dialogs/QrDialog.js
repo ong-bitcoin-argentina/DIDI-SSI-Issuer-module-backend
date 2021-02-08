@@ -17,7 +17,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TemplateService from "../../../services/TemplateService";
 import ParticipantService from "../../../services/ParticipantService";
 import Cookie from "js-cookie";
-
+import RegisterService from "../../../services/RegisterService";
+import BlockchainName from "./blockchainName";
 
 var QRCode = require("qrcode");
 
@@ -30,7 +31,8 @@ export default class QrDialog extends Component {
 			parts: [],
 			loading: false,
 			isOpen: false,
-			qrSet: false
+			qrSet: false,
+			registers: []
 		};
 	}
 
@@ -72,6 +74,8 @@ export default class QrDialog extends Component {
 				self.props.onParticipantsReload();
 			}
 		}, 10000);
+
+		this.getAllRegister();
 	}
 
 	// borrar referencia
@@ -80,6 +84,16 @@ export default class QrDialog extends Component {
 		this.props.onRef(undefined);
 		if (interval) {
 			clearInterval(interval);
+		}
+	}
+
+	async getAllRegister() {
+		const token = Cookie.get("token");
+		try {
+			const registers = await RegisterService.getAll()(token);
+			this.setState({ registers });
+		} catch (error) {
+			this.setState({ registers: [] });
 		}
 	}
 
@@ -93,7 +107,8 @@ export default class QrDialog extends Component {
 	// cerrar dialogo
 	close = () => {
 		this.setState({
-			isOpen: false
+			isOpen: false,
+			registerId: undefined
 		});
 	};
 
@@ -135,7 +150,8 @@ export default class QrDialog extends Component {
 			function (err) {
 				self.setState({ loading: false, error: err });
 				console.log(err);
-			}
+			},
+			this.state.registerId
 		);
 	};
 
@@ -164,6 +180,7 @@ export default class QrDialog extends Component {
 					<DialogTitle id="DialogTitle">{title}</DialogTitle>
 					<DialogContent>
 						{Spinner.render(loading)}
+						{this.renderSelectRegisterInput()}
 						<div className="QrReq">
 							{!selected && this.renderTemplateSelector()}
 							{this.renderParticipantSelector()}
@@ -172,6 +189,36 @@ export default class QrDialog extends Component {
 						</div>
 					</DialogContent>
 				</Dialog>
+			</div>
+		);
+	};
+
+	handleRegister = event => {
+		const { value } = event.target;
+		this.setState({ registerId: value });
+	};
+
+	renderSelectRegisterInput = () => {
+		const { registers } = this.state;
+		return (
+			<div className="QrTemplateSelector" style={{ margin: "25px 0", width: "93%" }}>
+				<div className="DataName">Emisor</div>
+				<Select
+					labelId="register-select-label"
+					id="register"
+					fullWidth
+					name="registerId"
+					label="Register"
+					onChange={this.handleRegister}
+				>
+					{registers.length !== 0 &&
+						registers.map(({ name, did, _id }) => (
+							<MenuItem key={_id} value={_id}>
+								{name}
+								<BlockchainName did={did} />
+							</MenuItem>
+						))}
+				</Select>
 			</div>
 		);
 	};

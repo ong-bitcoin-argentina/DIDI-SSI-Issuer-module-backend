@@ -3,14 +3,13 @@ import React, { Component } from "react";
 import Messages from "../../../constants/Messages";
 
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "./_Style.scss";
 import "../../../styles/GeneralStyles.scss";
-import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
+import { Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import BlockchainName from "./blockchainName";
 import DefaultButton from "../../setting/default-button";
 
@@ -84,7 +83,7 @@ export default class InputDialog extends Component {
 			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
-					{fieldNames.length &&
+					{fieldNames.length > 0 &&
 						fieldNames.map((name, key) => {
 							return (
 								<TextField

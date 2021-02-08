@@ -20,9 +20,7 @@ module.exports = {
 		DEFAULT_VALUE: API + "/default",
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
-			GET_QR: (id, code) => {
-				return API + "/template/" + id + "/qr/" + code;
-			},
+			GET_QR: (id, code, registerId) => `${API}/template/${id}/qr/${code}/${registerId}`,
 			REQUEST: code => {
 				return API + "/template/request/" + code;
 			},
