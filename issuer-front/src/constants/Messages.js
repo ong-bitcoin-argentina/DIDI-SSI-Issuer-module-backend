@@ -141,7 +141,7 @@ module.exports = {
 		},
 		DID_SELECT: "DID",
 		CERTIFICATE_SELECT: "Credencial A PEDIR",
-		TEMPLATE_SELECT: "MODELO DE Credencial",
+		TEMPLATE_SELECT: "Modelo de Credencial",
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
 		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de Credencial para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
