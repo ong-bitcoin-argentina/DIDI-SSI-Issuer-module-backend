@@ -13,6 +13,11 @@ import ModalDetail from "./modal-detail";
 import DefaultForm from "./default-form";
 import EditRegisterModal from "./edit-register-modal";
 import { filter, filterByDates } from "../../services/utils";
+import DescriptionGrid from "../components/DescriptionGrid";
+
+const TITLE = "Configuración";
+const DESCRIPTION =
+	"Registrate como Emisor de Credenciales en la/s blockchain/s que quieras verificar tus credenciales a emitir";
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);
@@ -126,18 +131,9 @@ const Setting = () => {
 	return (
 		<>
 			{!loading && !ifNotElements && (
-				<Grid container xs={12} style={{ margin: "10px 0" }}>
-					<Grid item xs={8} container direction="column" style={{ textAlign: "start" }}>
-						<h1 style={{ margin: "0", padding: "0" }}>Configuración</h1>
-						<p>
-							Registrate como Emisor de Credenciales en la/s blockchain/s que quieras verificar tus credenciales a
-							emitir
-						</p>
-					</Grid>
-					<Grid item xs={4} container justify="flex-end" alignItems="center">
-						<OpenModalButton setModalOpen={setModalOpen} title="Nuevo Registro" />
-					</Grid>
-				</Grid>
+				<DescriptionGrid title={TITLE} description={DESCRIPTION}>
+					<OpenModalButton setModalOpen={setModalOpen} title="Nuevo Registro" />
+				</DescriptionGrid>
 			)}
 			{error && (
 				<div className="errMsg" style={{ width: "100%" }}>

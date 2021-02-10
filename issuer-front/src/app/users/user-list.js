@@ -1,4 +1,4 @@
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, Grid } from "@material-ui/core";
 import MaterialIcon from "material-icons-react";
 import React, { useEffect, useState } from "react";
 import ReactTable from "react-table-6";
@@ -12,6 +12,10 @@ import { filter, filterByDates } from "../../services/utils";
 import DeleteAbstractModal from "./delete-abstract-modal";
 import ProfileService from "../../services/ProfileService";
 import { validateAccess } from "../../constants/Roles";
+import DescriptionGrid from "../components/DescriptionGrid";
+
+const TITLE = "Usuarios";
+const DESCRIPTION = "Creá, eliminá y editá los usuarios que tienen acceso al Issuer";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -109,10 +113,12 @@ const UserList = () => {
 		<>
 			<div className="HeadButtons">
 				{validateAccess(Constants.ROLES.Write_Users) && (
-					<button className="CreateButton" onClick={() => setModalOpen(true)}>
-						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-						<div className="CreateButtonText">Crear Usuario</div>
-					</button>
+					<DescriptionGrid title={TITLE} description={DESCRIPTION}>
+						<button className="CreateButton" onClick={() => setModalOpen(true)}>
+							<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+							<div className="CreateButtonText">Crear Usuario</div>
+						</button>
+					</DescriptionGrid>
 				)}
 			</div>
 			{error && <div className="errMsg">{error}</div>}
