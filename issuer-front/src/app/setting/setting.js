@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
-import { CircularProgress, Grid } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import ReactTable from "react-table-6";
 import Messages from "../../constants/Messages";
 import RegisterModal from "./register-modal";
