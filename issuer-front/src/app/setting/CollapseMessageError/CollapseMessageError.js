@@ -22,14 +22,16 @@ const CollapseMessageError = ({ blockchain, messageError, status }) => {
 
 	return (
 		<>
-			<Typography variant="subtitle2" className="message">
-				{MESSAGES[status](blockchain)}
-				{icons[status]}.
-			</Typography>
-			<Grid container justify="flex-end">
-				<span onClick={() => setOpen(v => !v)} className="error-detail">
-					Ver detalle del error.
-				</span>
+			<Grid className="errMsg">
+				<Typography variant="subtitle2">
+					{MESSAGES[status](blockchain)}
+					{icons[status]}.
+				</Typography>
+				<Grid container justify="flex-end">
+					<span onClick={() => setOpen(v => !v)} className="error-detail">
+						Ver detalle del error.
+					</span>
+				</Grid>
 			</Grid>
 			<Collapse in={open} timeout="auto" unmountOnExit style={{ marginTop: "20px" }}>
 				<Typography variant="body2" className="message-error-collapse">
