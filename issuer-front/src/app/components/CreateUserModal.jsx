@@ -41,7 +41,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 			name: "password",
 			placeholder: "Contraseña",
 			type: showPassword ? "text" : "password",
-			helperText: "Requiere al menos 6 caracteres",
+			helperText: "Requiere al menos 6 caracteres y no debe ser una contraseña de uso común",
 			required
 		},
 		{
