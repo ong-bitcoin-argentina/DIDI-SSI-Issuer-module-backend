@@ -124,9 +124,21 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 								</Typography>
 							</Grid>
 						</Grid>
-						<Grid item xs={8}>
-							<ClipBoardInput label="Did Asignado" value={newRegister.did} name="did" handleChange={handleChange} />
-							<ClipBoardInput label="Clave Privada" value={newRegister.key} name="key" handleChange={handleChange} />
+						<Grid item xs={10}>
+							<ClipBoardInput
+								label="Did Asignado"
+								value={newRegister.did}
+								name="did"
+								handleChange={handleChange}
+								type="text"
+							/>
+							<ClipBoardInput
+								label="Clave Privada"
+								value={newRegister.key}
+								name="key"
+								handleChange={handleChange}
+								type="password"
+							/>
 							{INPUTS.map(({ name, placeholder, disabled, initial }, index) => (
 								<TextField
 									disabled={disabled}

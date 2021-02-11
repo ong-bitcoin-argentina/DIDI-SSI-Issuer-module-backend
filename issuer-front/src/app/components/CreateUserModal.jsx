@@ -41,6 +41,7 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 			name: "password",
 			placeholder: "Contraseña",
 			type: showPassword ? "text" : "password",
+			helperText: "Requiere al menos 6 caracteres y no debe ser una contraseña de uso común",
 			required
 		},
 		{
@@ -110,18 +111,16 @@ const CreateUserModal = ({ open, close, onSubmit, userData, title, required, pro
 				<DialogContent style={{ margin: "0px 0 25px" }}>
 					<Grid container item xs={12} justify="center">
 						<Grid item xs={9}>
-							{INPUTS.map(({ name, placeholder, type, required }, index) => (
+							{INPUTS.map(({ name, placeholder, ...rest }, index) => (
 								<TextField
 									key={index}
 									style={{ marginBottom: "25px" }}
-									id={`"user-${name}-input"`}
 									label={placeholder}
-									name={name}
-									type={type}
 									onChange={handleChange}
 									defaultValue={newUser[name]}
-									required={required}
+									name={name}
 									fullWidth
+									{...rest}
 									InputProps={{
 										endAdornment: name === "password" && (
 											<IconButton style={{ padding: 0 }} onClick={() => setShowPassword(pw => !pw)}>
