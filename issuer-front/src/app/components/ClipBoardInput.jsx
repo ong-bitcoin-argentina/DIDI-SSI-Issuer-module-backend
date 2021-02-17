@@ -43,12 +43,12 @@ const ClipBoardInput = ({ label, value, handleChange, name, type }) => {
 	const PasswordButton = () => {
 		return (
 			<>
-				<PasswordIcon />
 				{visibilyPassword && (
 					<IconButton aria-label="copy" onClick={copy}>
 						<FileCopyOutlinedIcon style={{ transform: "scale(0.9)" }} />
 					</IconButton>
 				)}
+				<PasswordIcon />
 			</>
 		);
 	};
@@ -67,7 +67,7 @@ const ClipBoardInput = ({ label, value, handleChange, name, type }) => {
 						style={{ width: "100%", height: "25px", border: "1px solid #949494" }}
 					/>
 				</Grid>
-				<Grid item xs={3} container justify="flex-end">
+				<Grid item xs={3} container justify="flex-start" style={{ paddingLeft: "10px" }}>
 					{type === "password" ? (
 						<PasswordButton />
 					) : (
