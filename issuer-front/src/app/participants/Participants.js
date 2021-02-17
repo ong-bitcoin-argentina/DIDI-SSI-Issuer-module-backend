@@ -20,6 +20,7 @@ import { validateAccess } from "../../constants/Roles";
 import DefaultButton from "../setting/default-button";
 import InputDialog from "../utils/dialogs/InputDialog";
 import RegisterService from "../../services/RegisterService";
+import Notification from "../components/Notification";
 
 let interval;
 class Participants extends Component {
@@ -29,7 +30,8 @@ class Participants extends Component {
 		this.state = {
 			loading: false,
 			requestSent: false,
-			registers: []
+			registers: [],
+			sendCredentialSuccess: false
 		};
 	}
 
@@ -120,7 +122,8 @@ class Participants extends Component {
 				globalRequestCode,
 				function (_) {
 					self.setState({
-						requestSent: true
+						requestSent: true,
+						sendCredentialSuccess: true
 					});
 				},
 				function (err) {
@@ -213,6 +216,12 @@ class Participants extends Component {
 		}
 	};
 
+	onCloseSendCredentialSuccess = (e, reason) => {
+		if (reason !== "clickaway") {
+			this.setState({ sendCredentialSuccess: false });
+		}
+	};
+
 	// mostrar pantalla de carga de participantes
 	render() {
 		if (!Cookie.get("token")) {
@@ -229,6 +238,11 @@ class Participants extends Component {
 				{this.renderButtons(loading)}
 				{error && <div className="errMsg">{error.message}</div>}
 				{this.renderTable()}
+				<Notification
+					open={this.state.sendCredentialSuccess}
+					message="La solicitud se realizo con éxito."
+					onClose={this.onCloseSendCredentialSuccess}
+				/>
 			</div>
 		);
 	}
@@ -250,7 +264,7 @@ class Participants extends Component {
 		return (
 			<InputDialog
 				onRef={ref => (this.reqSentDialog = ref)}
-				title={Messages.EDIT.DIALOG.QR.REQUEST_SENT}
+				title={"Solicitud de Credenciales"}
 				fieldNames={[]}
 				selectNames={[
 					{
