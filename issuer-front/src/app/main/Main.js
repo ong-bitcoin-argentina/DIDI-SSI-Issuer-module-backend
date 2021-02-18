@@ -570,21 +570,12 @@ class Main extends Component {
 	};
 
 	// crear templates
-	onTemplateCreate = data => {
+	onTemplateCreate = async data => {
 		const token = Cookie.get("token");
 		const self = this;
-		self.setState({ loading: true });
-		TemplateService.create(
-			token,
-			data,
-			async function (template) {
-				self.getTemplatesData();
-			},
-			function (err) {
-				self.setState({ loading: false, error: err });
-				console.log(err);
-			}
-		);
+
+		await TemplateService.create(data)(token);
+		self.getTemplatesData();
 	};
 
 	// abrir dialogo de borrado
@@ -709,32 +700,19 @@ class Main extends Component {
 	};
 
 	// crear delegacion
-	onDelegateCreate = data => {
-		const { did, name, registerId } = data;
+	onDelegateCreate = async data => {
 		const token = Cookie.get("token");
 		const self = this;
-		self.setState({ loading: true });
-		DelegateService.create(
-			token,
-			did,
-			name,
-			registerId,
-			async function (delegate) {
-				const delegates = self.state.delegates;
-				const data = DelegatesTableHelper.getDelegatesData(
-					delegate,
-					self.onDelegateDeleteDialogOpen,
-					() => self.state.loading
-				);
-				delegates.push(data);
-				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
-				self.setState({ delegates: delegates, delegateColumns: delegateColumns, loading: false, error: false });
-			},
-			function (err) {
-				self.setState({ loading: false, error: err });
-				console.log(err);
-			}
+		const delegate = await DelegateService.create(data)(token);
+		const delegates = self.state.delegates;
+		const data_ = DelegatesTableHelper.getDelegatesData(
+			delegate,
+			self.onDelegateDeleteDialogOpen,
+			() => self.state.loading
 		);
+		delegates.push(data_);
+		const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
+		self.setState({ delegates: delegates, delegateColumns: delegateColumns });
 	};
 
 	// borrar delegacion

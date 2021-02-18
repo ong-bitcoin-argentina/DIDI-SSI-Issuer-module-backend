@@ -1,4 +1,5 @@
 import Constants from "../constants/Constants";
+import { fetchData, optionsBody } from "./utils";
 
 export default class DelegateService {
 	static getAll(token, cb, errCb) {
@@ -40,32 +41,8 @@ export default class DelegateService {
 		throw json.data;
 	}
 
-	static create(token, did, name, registerId, cb, errCb) {
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				did: did,
-				name: name,
-				registerId
-			})
-		};
-
-		fetch(Constants.API_ROUTES.DELEGATE.CREATE, data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	static create(data) {
+		return fetchData(optionsBody("POST", data), Constants.API_ROUTES.DELEGATE.CREATE);
 	}
 
 	static delete(token, did, cb, errCb) {

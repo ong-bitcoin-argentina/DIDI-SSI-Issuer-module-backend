@@ -22,7 +22,8 @@ export default class InputDialog extends Component {
 
 		this.state = {
 			isOpen: false,
-			fields: { ...fields }
+			fields: { ...fields },
+			error: ""
 		};
 	}
 
@@ -60,7 +61,8 @@ export default class InputDialog extends Component {
 	close = () => {
 		this.cleanData();
 		this.setState({
-			isOpen: false
+			isOpen: false,
+			error: ""
 		});
 	};
 
@@ -71,10 +73,18 @@ export default class InputDialog extends Component {
 		this.setState({ fields: fields });
 	};
 
+	handleAccept = async () => {
+		try {
+			await this.props.onAccept(this.state.fields);
+			this.close();
+		} catch (error) {
+			this.setState({ error: error.message });
+		}
+	};
+
 	// retorna dialogo
 	render = () => {
 		const title = this.props.title;
-		const onAccept = this.props.onAccept;
 		const fieldNames = this.props.fieldNames;
 		const selectNames = this.props.selectNames || [];
 		const registerIdDefault = this.props.registerIdDefault;
@@ -128,16 +138,14 @@ export default class InputDialog extends Component {
 								</Grid>
 							);
 						})}
+					{this.state.error && <div className="errMsg">{this.state.error}</div>}
 				</DialogContent>
 				<DialogActions>
 					<DefaultButton otherClass="DangerButtonOutlined" name={Messages.LIST.DIALOG.CANCEL} funct={this.close} />
 					<DefaultButton
 						name={Messages.LIST.DIALOG.CREATE}
 						disabled={Object.values(this.state.fields).indexOf("") >= 0}
-						funct={() => {
-							onAccept(this.state.fields);
-							this.close();
-						}}
+						funct={this.handleAccept}
 					/>
 				</DialogActions>
 			</Dialog>

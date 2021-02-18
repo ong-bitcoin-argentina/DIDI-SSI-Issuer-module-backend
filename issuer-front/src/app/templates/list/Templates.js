@@ -90,11 +90,11 @@ class Templates extends Component {
 					}
 				]}
 				registerIdDefault={this.state.registerId}
-				onAccept={values => {
+				onAccept={async values => {
 					if (!values.registerId) {
-						this.props.onCreate({ ...values, registerId: this.state.registerId });
+						await this.props.onCreate({ ...values, registerId: this.state.registerId });
 					} else {
-						this.props.onCreate(values);
+						await this.props.onCreate(values);
 					}
 				}}
 			/>

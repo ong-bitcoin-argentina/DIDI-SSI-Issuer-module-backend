@@ -1,32 +1,9 @@
 import Constants from "../constants/Constants";
+import { fetchData, optionsBody } from "./utils";
 
 export default class TemplateService {
-	static create(token, data_, cb, errCb) {
-		const { name, registerId } = data_;
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				name,
-				registerId
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.CREATE, data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	static create(data) {
+		return fetchData(optionsBody("POST", data), Constants.API_ROUTES.TEMPLATES.CREATE);
 	}
 
 	static save(token, template, cb, errCb) {
