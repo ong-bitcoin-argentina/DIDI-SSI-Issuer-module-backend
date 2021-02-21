@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 const ObjectId = mongoose.ObjectId;
 const Constants = require("../constants/Constants");
 
+const populateRegister = {
+	path: "templateId",
+	populate: {
+		path: "registerId",
+		model: "Register"
+	}
+};
+
 // certificado generado a partir de un modelo, para ser completado y emitido
 
 const dataElement = {
@@ -183,7 +191,7 @@ Cert.generate = async function (data, templateId, split, microCredentials) {
 Cert.getAll = async function () {
 	try {
 		const query = { deleted: false };
-		const certs = await Cert.find(query).sort({ createdOn: -1 });
+		const certs = await Cert.find(query).populate(populateRegister).sort({ createdOn: -1 });
 		return Promise.resolve(certs);
 	} catch (err) {
 		console.log(err);
@@ -194,13 +202,13 @@ Cert.getAll = async function () {
 // obtener certificados revocados
 Cert.getRevokeds = async function () {
 	const query = { revocation: { $exists: true } };
-	return await Cert.find(query).sort({ "revocation.date": -1 });
+	return await Cert.find(query).populate(populateRegister).sort({ "revocation.date": -1 });
 };
 
 // obtener certificados segun su emision
 Cert.findByEmission = async function (emmited) {
 	const query = { deleted: false, emmitedOn: { $exists: emmited }, revocation: { $exists: false } };
-	return await Cert.find(query).sort({ createdOn: -1 });
+	return await Cert.find(query).populate(populateRegister).sort({ createdOn: -1 });
 };
 
 // obtener certificado por id

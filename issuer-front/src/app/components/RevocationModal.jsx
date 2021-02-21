@@ -1,46 +1,37 @@
 import React, { useState } from "react";
-import moment from "moment";
-import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@material-ui/core";
-import Cookie from "js-cookie";
-import CertificateService from "../../services/CertificateService";
-import KeyValue from "./KeyValue";
-import { DATE_FORMAT } from "../../constants/Constants";
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from "@material-ui/core";
 import { REVOCATION_REASONS } from "../../constants/CertificateDefinitions";
 import FormSelect from "./FormSelect";
+import PropTypes from "prop-types";
+import DefaultButton from "../setting/default-button";
 
-const RevocationModal = ({ cert, open, onClose, onSuccess, onFail, toggleModal }) => {
+const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, title, children }) => {
 	const [revokeReason, setRevokeReason] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const handleRevokeConfirm = () => {
-		const token = Cookie.get("token");
+	const handleRevokeConfirm = async () => {
 		setLoading(true);
-		const result = CertificateService.revoke(token, cert._id, revokeReason, handleSuccess, onFail);
+		handleSubmit(revokeReason, handleSuccess, handleFail);
 	};
 
-	const handleSuccess = () => {
+	const handleSuccess = data => {
 		setLoading(false);
 		setRevokeReason("");
 		onSuccess();
 	};
 
+	const handleFail = () => {
+		setLoading(false);
+		setRevokeReason("");
+	};
+
 	return (
 		<Dialog open={open} onClose={onClose}>
 			<DialogTitle id="form-dialog-title">
-				<div>Estás por revocar la siguiente credencial:</div>
-				<div style={{ marginTop: 10 }}>
-					{cert && (
-						<>
-							<KeyValue field={"DID"} value={cert.did} />
-							<KeyValue field={"Nombre y Apellido"} value={`${cert.firstName} ${cert.lastName}`} />
-							<KeyValue field={"Certificado"} value={cert.name} />
-							<KeyValue field={"Fecha de creación"} value={moment(cert.createdOn).format(DATE_FORMAT)} />
-							<KeyValue field={"Fecha de emisión"} value={moment(cert.emmitedOn).format(DATE_FORMAT)} />
-						</>
-					)}
-				</div>
+				<div>{title}</div>
 			</DialogTitle>
 			<DialogContent style={{ margin: "0px 0 25px" }}>
+				<div style={{ marginBottom: 25 }}>{children}</div>
 				<FormSelect
 					label="Razón de revocación"
 					value={revokeReason}
@@ -49,15 +40,26 @@ const RevocationModal = ({ cert, open, onClose, onSuccess, onFail, toggleModal }
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={toggleModal} color="primary">
-					Cancelar
-				</Button>
-				<Button onClick={handleRevokeConfirm} color="secondary" variant="contained" disabled={!revokeReason}>
-					{loading ? <CircularProgress size={20} color="white" /> : "Revocar"}
-				</Button>
+				<DefaultButton funct={toggleModal} otherClass="CreateButtonOutlined" name="Cancelar" />
+				<DefaultButton
+					funct={handleRevokeConfirm}
+					otherClass="DangerButton"
+					disabled={!revokeReason}
+					loading={loading}
+					name="Revocar"
+				/>
 			</DialogActions>
 		</Dialog>
 	);
+};
+
+RevocationModal.propTypes = {
+	open: PropTypes.func.isRequired,
+	onClose: PropTypes.func.isRequired,
+	onSuccess: PropTypes.func.isRequired,
+	toggleModal: PropTypes.func.isRequired,
+	handleSubmit: PropTypes.func.isRequired,
+	children: PropTypes.node
 };
 
 export default RevocationModal;

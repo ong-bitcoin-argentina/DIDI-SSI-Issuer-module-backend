@@ -2,27 +2,41 @@ import React from "react";
 
 import Messages from "./Messages";
 import { Edit, Delete, AssignmentTurnedIn, Visibility, AssignmentLate } from "@material-ui/icons";
+import { validateAccess } from "./Roles";
+import Constants from "./Constants";
 
 const { LAST_NAME, NAME } = Messages.LIST.TABLE;
 const { EMMIT, DELETE, EDIT, VIEW, REVOKE } = Messages.LIST.BUTTONS;
 
+const { Write_Certs, Delete_Certs, Read_Certs } = Constants.ROLES;
+
 export const PENDING_ACTIONS = ({ cert, onEmmit, onEdit, onDelete }) => [
+	{
+		className: "EditAction",
+		action: () => onEdit(cert._id),
+		label: VIEW,
+		enabled: validateAccess(Read_Certs),
+		iconComponent: <Visibility fontSize="medium" />
+	},
 	{
 		className: "EmmitAction",
 		action: () => onEmmit(cert._id),
 		label: EMMIT,
+		enabled: validateAccess(Write_Certs),
 		iconComponent: <AssignmentTurnedIn fontSize="medium" />
 	},
 	{
 		className: "EditAction",
 		action: () => onEdit(cert._id),
 		label: EDIT,
+		enabled: validateAccess(Write_Certs),
 		iconComponent: <Edit fontSize="medium" />
 	},
 	{
 		className: "DeleteAction",
 		action: () => onDelete(cert._id),
 		label: DELETE,
+		enabled: validateAccess(Delete_Certs),
 		iconComponent: <Delete fontSize="medium" />
 	}
 ];
@@ -32,13 +46,15 @@ export const EMMITED_ACTIONS = ({ cert, onView, onRevoke }) => [
 		className: "EditAction",
 		action: () => onView(cert._id),
 		iconComponent: <Visibility fontSize="medium" />,
-		label: VIEW
+		label: VIEW,
+		enabled: true
 	},
 	{
 		className: "DeleteAction",
 		action: () => onRevoke(cert),
 		iconComponent: <AssignmentLate fontSize="medium" />,
-		label: REVOKE
+		label: REVOKE,
+		enabled: validateAccess(Delete_Certs)
 	}
 ];
 

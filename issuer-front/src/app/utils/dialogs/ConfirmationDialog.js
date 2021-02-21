@@ -2,7 +2,6 @@ import React, { Component } from "react";
 
 import Messages from "../../../constants/Messages";
 
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -10,6 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 import "./_Style.scss";
 import "../../../styles/GeneralStyles.scss";
+import DefaultButton from "../../setting/default-button";
 
 export default class ConfirmationDialog extends Component {
 	constructor(props) {
@@ -56,27 +56,26 @@ export default class ConfirmationDialog extends Component {
 			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
-					<div className="DeleteMessage">
-						<span class="material-icons">delete_outline</span>
-						{message}
-					</div>
+					{message && (
+						<div className="DeleteMessage">
+							<span class="material-icons" style={{ marginBottom: "25px" }}>
+								delete_outline
+							</span>
+							{message}
+						</div>
+					)}
 				</DialogContent>
 				<DialogActions>
 					{!hideClose && (
-						<Button className="CloseModalButton" onClick={this.close} color="primary">
-							{Messages.LIST.DIALOG.CANCEL}
-						</Button>
+						<DefaultButton funct={this.close} otherClass="DangerButtonOutlined" name={Messages.LIST.DIALOG.CANCEL} />
 					)}
-					<Button
-						className="CreateModalButton"
-						onClick={() => {
+					<DefaultButton
+						funct={() => {
 							if (onAccept) onAccept();
 							this.close();
 						}}
-						color="primary"
-					>
-						{confirm}
-					</Button>
+						name={confirm}
+					/>
 				</DialogActions>
 			</Dialog>
 		);

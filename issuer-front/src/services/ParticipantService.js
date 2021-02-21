@@ -24,6 +24,22 @@ export default class ParticipantService {
 			.catch(err => errCb(err));
 	}
 
+	static async getGlobalAsync(token) {
+		const data = {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				token: token
+			}
+		};
+
+		const response = await fetch(Constants.API_ROUTES.PARTICIPANTS.GET_GLOBAL, data);
+		const json = await response.json();
+
+		if (json.status === "success") return json.data;
+		throw json.data;
+	}
+
 	static getAll(token, templateId, cb, errCb) {
 		const data = {
 			method: "GET",

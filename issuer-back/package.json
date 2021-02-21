@@ -19,6 +19,7 @@
 	],
 	"dependencies": {
 		"@proyecto-didi/didi-ssi-logger": "0.0.6",
+		"@proyecto-didi/didi-blockchain-manager": "1.1.5",
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
 		"bcrypt": "5.0.0",
@@ -37,7 +38,7 @@
 		"jsonwebtoken": "8.5.1",
 		"lodash.pick": "4.4.0",
 		"mongoose": "5.9.2",
-		"node-fetch": "2.6.0",
+		"node-fetch": "2.6.1",
 		"node-pre-gyp": "0.14.0",
 		"node-rsa": "1.0.7",
 		"nodemon": "2.0.2",

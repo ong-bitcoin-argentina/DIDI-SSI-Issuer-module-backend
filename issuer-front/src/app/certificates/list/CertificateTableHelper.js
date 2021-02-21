@@ -1,6 +1,6 @@
 import React from "react";
 import Messages from "../../../constants/Messages";
-import { DATE_FORMAT } from "../../../constants/Constants";
+import Constants, { DATE_FORMAT } from "../../../constants/Constants";
 
 import Checkbox from "@material-ui/core/Checkbox";
 import TableHeadCheck from "../../components/TableHeadCheck";
@@ -18,34 +18,50 @@ import {
 } from "../../../constants/CertificateDefinitions";
 import moment from "moment";
 import { Tooltip } from "@material-ui/core";
+import { validateAccess } from "../../../constants/Roles";
 
-const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION } = Messages.LIST.TABLE;
-const { VIEW } = Messages.LIST.BUTTONS;
+const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE } = Messages.LIST.TABLE;
 
 class CertificateTableHelper {
 	static baseCells = cert => ({
 		_id: cert._id,
+		blockchain: cert.blockchain ? cert.blockchain.toUpperCase() : "RSK",
 		certName: cert.name,
 		createdOn: cert.emmitedOn ? moment(cert.emmitedOn).format(DATE_FORMAT) : "-",
 		firstName: cert.firstName,
-		lastName: cert.lastName
+		lastName: cert.lastName,
+		did: cert.did
 	});
 
 	// genera las columnas de la tabla de credencial
 	static getCertificatesPendingData(cert, selectedCertificates, onSelectToggle, onEmmit, onEdit, onDelete, isLoading) {
+		const { createdOn, blockchain } = cert;
 		const ACTIONS = PENDING_ACTIONS({ cert, onEmmit, onEdit, onDelete });
+		const onToggle = (_, value) => {
+			onSelectToggle(cert._id, value);
+		};
 
 		return {
 			...this.baseCells(cert),
+			createdOn: createdOn ? moment(createdOn).format(DATE_FORMAT) : "-",
+			blockchain: blockchain ? blockchain.toUpperCase() : "-",
+			select: (validateAccess(Constants.ROLES.Delete_Certs) || validateAccess(Constants.ROLES.Write_Certs)) && (
+				<div className="Actions">
+					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
+				</div>
+			),
 			actions: (
 				<div className="Actions">
-					{ACTIONS.map((item, index) => (
-						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip arrow title={item.label} placement="top">
-								{item.iconComponent}
-							</Tooltip>
-						</div>
-					))}
+					{ACTIONS.map(
+						(item, index) =>
+							item.enabled && (
+								<div className={item.className} onClick={item.action} key={index}>
+									<Tooltip arrow title={item.label} placement="top">
+										{item.iconComponent}
+									</Tooltip>
+								</div>
+							)
+					)}
 				</div>
 			)
 		};
@@ -60,20 +76,23 @@ class CertificateTableHelper {
 
 		return {
 			...this.baseCells(cert),
-			select: (
+			select: validateAccess(Constants.ROLES.Delete_Certs) && (
 				<div className="Actions">
-					<Checkbox checked={selectedCertificates[cert._id]} onChange={onToggle} />
+					<Checkbox checked={selectedCertificates[cert._id] || false} onChange={onToggle} />
 				</div>
 			),
 			actions: (
 				<div className="Actions">
-					{ACTIONS.map((item, index) => (
-						<div className={item.className} onClick={item.action} key={index}>
-							<Tooltip title={item.label} placement="top" arrow>
-								{item.iconComponent}
-							</Tooltip>
-						</div>
-					))}
+					{ACTIONS.map(
+						(item, index) =>
+							item.enabled && (
+								<div className={item.className} onClick={item.action} key={index}>
+									<Tooltip title={item.label} placement="top" arrow>
+										{item.iconComponent}
+									</Tooltip>
+								</div>
+							)
+					)}
 				</div>
 			)
 		};
@@ -109,13 +128,14 @@ class CertificateTableHelper {
 		onTemplateFilterChange,
 		onFirstNameFilterChange,
 		onLastNameFilterChange,
+		onBlockchainFilterChange,
 		isLoading
 	) {
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
 
 		const COLUMNS = EMMITED_COLUMNS({ onLastNameFilterChange, onFirstNameFilterChange });
 
-		return [
+		const LIST_COLUMNS = [
 			...COLUMNS.map(item => ({
 				Header: (
 					<div className="SelectionTable">
@@ -134,6 +154,18 @@ class CertificateTableHelper {
 			},
 			{
 				Header: (
+					<div className="SelectionTable">
+						<CustomSelect options={Constants.BLOCKCHAINS} label={BLOCKCHAIN} onChange={onBlockchainFilterChange} />
+					</div>
+				),
+				accessor: "blockchain"
+			},
+			{
+				Header: CRATED_DATE,
+				accessor: "createdOn"
+			},
+			{
+				Header: (
 					<div className="HeaderText">
 						<p>Acciones</p>
 					</div>
@@ -141,6 +173,18 @@ class CertificateTableHelper {
 				accessor: "actions"
 			}
 		];
+
+		const select = {
+			Header: (
+				<TableHeadCheck selected={selectedCerts} all={allSelectedCerts} onChange={onCertificateSelectAllToggle} />
+			),
+			accessor: "select"
+		};
+
+		if (validateAccess(Constants.ROLES.Delete_Certs) || validateAccess(Constants.ROLES.Write_Certs))
+			LIST_COLUMNS.push(select);
+
+		return LIST_COLUMNS;
 	}
 
 	static getCertEmmitedColumns(
@@ -154,7 +198,7 @@ class CertificateTableHelper {
 		// TODO: refactor this to get templates names from backend
 		const certNames = [...new Set(certificates.map(cert => cert.certName))];
 
-		return [
+		const LIST_COLUMNS = [
 			...BASE_COLUMNS.map(item => ({
 				Header: <InputFilter label={item.label} onChange={onFilterChange} field={item.accessor} />,
 				accessor: item.accessor
@@ -168,18 +212,36 @@ class CertificateTableHelper {
 				accessor: "certName"
 			},
 			{
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect
+							options={Constants.BLOCKCHAINS}
+							label={BLOCKCHAIN}
+							onChange={onFilterChange}
+							field="blockchain"
+						/>
+					</div>
+				),
+				accessor: "blockchain"
+			},
+			{
 				Header: <DateRangeFilter label={`${EMISSION_DATE} ${EMISSION_DATE2}`} onChange={onDateRangeFilterChange} />,
 				accessor: "createdOn"
 			},
 			{
 				Header: "Acciones",
 				accessor: "actions"
-			},
-			{
-				Header: <TableHeadCheck selected={selectedRows} all={isAllSelected} onChange={onSelectAllToggle} />,
-				accessor: "select"
 			}
 		];
+
+		const select = {
+			Header: <TableHeadCheck selected={selectedRows} all={isAllSelected} onChange={onSelectAllToggle} />,
+			accessor: "select"
+		};
+
+		if (validateAccess(Constants.ROLES.Delete_Certs)) LIST_COLUMNS.push(select);
+
+		return LIST_COLUMNS;
 	}
 
 	static getCertRevokedColumns(certificates, onFilterChange) {
@@ -202,6 +264,19 @@ class CertificateTableHelper {
 					</div>
 				),
 				accessor: "certName"
+			},
+			{
+				Header: (
+					<div className="SelectionTable">
+						<CustomSelect
+							options={Constants.BLOCKCHAINS}
+							label={BLOCKCHAIN}
+							onChange={onFilterChange}
+							field="blockchain"
+						/>
+					</div>
+				),
+				accessor: "blockchain"
 			},
 			{
 				Header: `${EMISSION_DATE} ${EMISSION_DATE2}`,

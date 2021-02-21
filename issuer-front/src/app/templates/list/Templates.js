@@ -12,17 +12,41 @@ import Spinner from "../../utils/Spinner";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import MaterialIcon from "material-icons-react";
+import RegisterService from "../../../services/RegisterService";
+import Cookie from "js-cookie";
+import DefautValueService from "../../../services/DefaultValueService";
+import { validateAccess } from "../../../constants/Roles";
 
 class Templates extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			registers: []
+		};
 	}
 
 	// generar referencia para abrirlo desde el padre
 	componentDidMount() {
+		this.getAllRegister();
+		this.getDefaultRegister();
 		this.props.onRef(this);
+	}
+
+	async getAllRegister() {
+		const token = Cookie.get("token");
+		try {
+			const registers = await RegisterService.getAll()(token);
+			this.setState({ registers });
+		} catch (error) {
+			this.setState({ registers: [] });
+		}
+	}
+
+	async getDefaultRegister() {
+		const token = Cookie.get("token");
+		const { data } = await DefautValueService.get(token);
+		this.setState({ registerId: data?.registerId });
 	}
 
 	// borrar referencia
@@ -45,8 +69,8 @@ class Templates extends Component {
 				{this.renderSectionButtons(loading)}
 				{this.renderDeleteDialog()}
 				{this.renderCreateDialog()}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}
@@ -58,7 +82,21 @@ class Templates extends Component {
 				onRef={ref => (this.createDialog = ref)}
 				title={Messages.LIST.DIALOG.CREATE_TEMPLATE_TITLE}
 				fieldNames={["name"]}
-				onAccept={this.props.onCreate}
+				selectNames={[
+					{
+						name: "registerId",
+						label: "Emisor",
+						options: this.state.registers
+					}
+				]}
+				registerIdDefault={this.state.registerId}
+				onAccept={async values => {
+					if (!values.registerId) {
+						await this.props.onCreate({ ...values, registerId: this.state.registerId });
+					} else {
+						await this.props.onCreate(values);
+					}
+				}}
 			/>
 		);
 	};
@@ -69,7 +107,7 @@ class Templates extends Component {
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
 				title={Messages.LIST.DIALOG.DELETE_TEMPLATE_TITLE}
-				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION("el Modelo")}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
 			/>
@@ -81,7 +119,7 @@ class Templates extends Component {
 		const selected = this.props.selected;
 		return (
 			<div className="HeadButtons">
-				{selected && (
+				{selected && validateAccess(Constants.ROLES.Write_Templates) && (
 					<button
 						className="CreateButton TemplateCreateButton"
 						disabled={loading}

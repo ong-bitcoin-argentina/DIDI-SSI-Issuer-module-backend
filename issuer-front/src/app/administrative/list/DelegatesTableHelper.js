@@ -1,5 +1,7 @@
 import React from "react";
+import Constants from "../../../constants/Constants";
 import Messages from "../../../constants/Messages";
+import { validateAccess } from "../../../constants/Roles";
 
 class DelegatesTableHelpers {
 	// genera las columnas de la tabla de modelos de delegados
@@ -7,7 +9,7 @@ class DelegatesTableHelpers {
 		return {
 			did: delegate.did,
 			name: delegate.name,
-			actions: (
+			actions: validateAccess(Constants.ROLES.Write_Delegates) && (
 				<div className="Actions">
 					<div
 						className="DeleteAction"

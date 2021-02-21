@@ -13,6 +13,7 @@ module.exports = {
 			CERT: "Datos de la Credencial",
 			PART: "Datos del Participante",
 			OTHER: "Otros Datos",
+			EMISOR: "Emisor",
 
 			MICRO_CRED_NAME: "Nombre de la Micro",
 			MICRO_CRED_FIELDS: "Campos de la Micro"
@@ -55,7 +56,7 @@ module.exports = {
 			ADD_PARTICIPANTS: "Nuevo Participante",
 			LOAD_PARTICIPANTS: "Cargar Participantes",
 			RENAME_ISSUER: "Renombrar Emisor",
-			CREATE: "NUEVO CAMPO",
+			CREATE: "Nuevo Campo",
 			SEND: "Enviar",
 			SAVE: "Guardar",
 			CANCEL: "Cancelar",
@@ -74,7 +75,7 @@ module.exports = {
 			ISSUER_RENAME_TITLE: name => {
 				return "Renombrar emisor (El nombre actual es '" + name + "'):";
 			},
-			DELETE_CONFIRMATION: "¿Esta seguro que desea eliminar el Credencial?",
+			DELETE_CONFIRMATION: title => `¿Está seguro que desea eliminar ${title}?`,
 			DELETE_CERT_TITLE: "Borrar Credencial",
 			DELETE_TEMPLATE_TITLE: "Borrar Modelo",
 			DELETE_DELEGATE_TITLE: "Borrar Delegado",
@@ -104,10 +105,12 @@ module.exports = {
 			PREV: "ANTERIOR",
 			NEXT: "SIGUIENTE",
 			EMISSION_DATE: "FECHA DE",
-			EMISSION_DATE2: "EMISION",
+			EMISSION_DATE2: "EMISIÓN",
+			CRATED_DATE: "FECHA DE CREACIÓN",
 			REVOCATION: "REVOCACIÓN",
 			SELECT: "SELECCIONAR",
-			ACTIONS: "ACCIONES"
+			ACTIONS: "ACCIONES",
+			BLOCKCHAIN: "BLOCKCHAIN"
 		},
 		BUTTONS: {
 			CREATE_DELEGATE: "Crear Delegado",
@@ -118,14 +121,18 @@ module.exports = {
 			TO_REVOKED_CERTIFICATES: "Credenciales Revocadas",
 			TO_TEMPLATES: "Templates",
 			CREATE_TEMPLATE: "Crear Modelo de Credencial",
-			CREATE_CERT: "Emitir Credencial",
+			CREATE_CERT: "Crear Credencial",
 			EMMIT_SELECTED: "Emitir Seleccionados",
+			DELETE_SELECETED: "Eliminar Credenciales Seleccionadas",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
 			EDIT: "Editar",
 			DELETE: "Borrar",
 			REVOKE: "Revocar",
-			EXIT: "Salir"
+			EXIT: "Salir",
+			USERS: "Usuarios",
+			CONFIG: "Configuración",
+			PROFILE: "Perfiles"
 		}
 	},
 	QR: {
@@ -134,12 +141,12 @@ module.exports = {
 		},
 		DID_SELECT: "DID",
 		CERTIFICATE_SELECT: "Credencial A PEDIR",
-		TEMPLATE_SELECT: "MODELO DE Credencial",
+		TEMPLATE_SELECT: "Modelo de Credencial",
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
 		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de Credencial para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
-		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
-		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de Credencial actual",
+		QR_MESSAGE: "Escanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
+		QR_PD: "Nota: Los datos obtenidos a partir del Qr serán accessibles solo para el modelo de Credencial actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
 			REQUEST: "Solicitar Credenciales",

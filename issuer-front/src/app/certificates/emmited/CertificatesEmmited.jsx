@@ -10,7 +10,11 @@ import Cookie from "js-cookie";
 import { useHistory } from "react-router-dom";
 import { filter, filterByDates } from "../../../services/utils";
 import Notification from "../../components/Notification";
-import RevocationModal from "../../components/RevocationModal";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import RevocationSingleModal from "../../components/RevocationSingleModal";
+import RevocationAllModal from "../../components/RevocationAllModal";
+import { validateAccess } from "../../../constants/Roles";
+import DefaultButton from "../../setting/default-button";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -24,25 +28,23 @@ const CertificatesEmmited = () => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
 	const [activeCert, setActiveCert] = useState({});
+	const [certsToRevoke, setCertsToRevoke] = useState([]);
+	const [modalRevokeAllOpen, setModalRevokeAllOpen] = useState(false);
 	const [revokeSuccess, setRevokeSuccess] = useState(false);
 	const [revokeFail, setRevokeFail] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState({});
 	const history = useHistory();
+	const [allCheckboxSelected, setAllCheckboxSelected] = useState(false);
+	const [page, setPage] = useState(0);
+	const [isPageSelected, setIsPageSelected] = useState(false);
 
 	useEffect(() => {
 		if (data.length) {
-			const localColumns = CertificateTableHelper.getCertEmmitedColumns(
-				data,
-				selected,
-				allSelected,
-				handleSelectAllToggle,
-				onFilterChange,
-				onDateRangeFilterChange
-			);
-			setColumns(localColumns);
+			updateColumns(selected);
+			setFilteredData(data);
+			setLoading(false);
 		}
-		setFilteredData(data);
-		setLoading(false);
 	}, [data]);
 
 	useEffect(() => {
@@ -50,46 +52,73 @@ const CertificatesEmmited = () => {
 	}, []);
 
 	useEffect(() => {
-		const { firstName, lastName, certName, start, end } = filters;
+		updateFilterData(filteredData, selected);
+
+		const value = isAllPageSelected(page);
+		setIsPageSelected(value);
+	}, [selected]);
+
+	useEffect(() => {
+		getDataByPage(page).forEach(({ _id }) => handleSelectOne(_id, allCheckboxSelected));
+		setIsPageSelected(allCheckboxSelected);
+	}, [allCheckboxSelected, allSelected]);
+
+	useEffect(() => {
+		setPage(page);
+
+		const value = isAllPageSelected(page);
+		setIsPageSelected(value);
+		setAllCheckboxSelected(false);
+	}, [page]);
+
+	useEffect(() => {
+		updateColumns(selected);
+	}, [isPageSelected]);
+
+	useEffect(() => {
+		const { firstName, lastName, certName, start, end, blockchain } = filters;
 		const result = data.filter(
 			row =>
 				filter(row, "firstName", firstName) &&
 				filter(row, "lastName", lastName) &&
 				filter(row, "certName", certName) &&
+				filter(row, "blockchain", blockchain) &&
 				filterByDates(row, start, end)
 		);
-		setFilteredData(result);
+		updateFilterData(result, selected);
 	}, [filters]);
-
-	useEffect(() => {
-		const generated = {};
-		filteredData.forEach(item => (generated[item._id] = allSelected));
-		setSelected(generated);
-	}, [allSelected]);
 
 	useEffect(() => {
 		if (revokeSuccess || revokeFail) {
 			setActiveCert(null);
-			toggleModal();
+			setCertsToRevoke([]);
+			setModalOpen(false);
+			setModalRevokeAllOpen(false);
 		}
 	}, [revokeSuccess, revokeFail]);
 
+	const isAllPageSelected = page => {
+		const toRevoke = Object.keys(selected).filter(k => selected[k]);
+		return !loading && getDataByPage(page).every(({ _id }) => toRevoke.includes(_id));
+	};
+
+	const getDataByPage = page => {
+		const start = page * PAGE_SIZE;
+		const end = start + PAGE_SIZE;
+
+		return filteredData.slice(start, end);
+	};
+
 	const getData = async () => {
 		setLoading(true);
-		const token = Cookie.get("token");
-		let certificates = await CertificateService.getEmmited(token);
-
-		setData(
-			certificates.map(item => {
-				return CertificateTableHelper.getCertificatesEmmitedData(
-					item,
-					selected,
-					handleSelectOne,
-					handleView,
-					handleRevokeOne
-				);
-			})
-		);
+		try {
+			const token = Cookie.get("token");
+			const certificates = await CertificateService.getEmmited(token);
+			updateCertificates(certificates, selected, setData);
+		} catch (error) {
+			setError(error.data);
+		}
+		setLoading(false);
 	};
 
 	const onFilterChange = (e, key) => {
@@ -102,7 +131,37 @@ const CertificatesEmmited = () => {
 	};
 
 	const handleSelectOne = (id, checked) => {
-		setSelected({ ...selected, [id]: checked });
+		setSelected(selected => ({ ...selected, [id]: checked }));
+	};
+
+	const updateFilterData = (certs, selectedCerts) => {
+		updateCertificates(certs, selectedCerts, setFilteredData);
+		updateColumns(selectedCerts);
+	};
+
+	const updateColumns = selectedCerts => {
+		const localColumns = CertificateTableHelper.getCertEmmitedColumns(
+			data,
+			selectedCerts,
+			isPageSelected,
+			handleSelectAllToggle,
+			onFilterChange,
+			onDateRangeFilterChange
+		);
+		setColumns(localColumns);
+	};
+
+	const updateCertificates = (certs, selectedCerts, updateState) => {
+		const data_ = certs.map(item => {
+			return CertificateTableHelper.getCertificatesEmmitedData(
+				{ ...item, name: item.certName || item.name, emmitedOn: item.createdOn, blockchain: item.blockchain },
+				selectedCerts,
+				handleSelectOne,
+				handleView,
+				handleRevokeOne
+			);
+		});
+		updateState(data_);
 	};
 
 	const handleView = id => {
@@ -117,7 +176,45 @@ const CertificatesEmmited = () => {
 	const onRevokeSuccess = () => {
 		setRevokeSuccess(true);
 		getData();
+		setFilters({});
 	};
+
+	const catchError = async (previousFunction, handleFail) => {
+		try {
+			await previousFunction();
+		} catch (error) {
+			handleFail();
+			onRevokeFail();
+			setError(error);
+		}
+	};
+
+	const handleSubmit = (revokeReason, onSuccess, handleFail) =>
+		catchError(async () => {
+			const token = Cookie.get("token");
+			await CertificateService.revoke(activeCert._id, revokeReason)(token);
+			setActiveCert({});
+			onSuccess();
+		}, handleFail);
+
+	const handleSubmitAll = (revokeReason, onSuccess, handleFail) =>
+		catchError(async () => {
+			const token = Cookie.get("token");
+			for (const cert of certsToRevoke) {
+				await CertificateService.revoke(cert._id, revokeReason)(token);
+				const certsRemoved = certsToRevoke.map(c => {
+					if (c._id === cert._id) {
+						c.revoked = true;
+					}
+					return c;
+				});
+				setCertsToRevoke(certsRemoved);
+			}
+			setCertsToRevoke([]);
+			setSelected({});
+			onSuccess();
+			onRevokeSuccess();
+		}, handleFail);
 
 	const onRevokeFail = errorData => {
 		setRevokeFail(true);
@@ -135,34 +232,36 @@ const CertificatesEmmited = () => {
 		}
 	};
 
-	const toggleModal = () => {
-		setModalOpen(!modalOpen);
+	const handleRevokeSelected = () => {
+		const keysToRevoke = Object.keys(selected).filter(key => selected[key]);
+		if (keysToRevoke.length === 0) return;
+
+		const certsToRevoke = data.filter(t => keysToRevoke.indexOf(t._id) > -1);
+		setCertsToRevoke(certsToRevoke);
+		setModalRevokeAllOpen(true);
 	};
 
-	// const handleRevokeSelected = () => {
-	// 	console.log("revoke selected");
-	// };
-
 	const handleSelectAllToggle = val => {
+		setAllCheckboxSelected(val);
 		setAllSelected(val);
 	};
 
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
-				<Grid item xs={12} className="flex-end">
-					{/*
-					TODO: use when multiple revoke is available 
-					<button
-						className="DangerButton"
-						onClick={handleRevokeSelected}
-						disabled={!Object.values(selected).some(val => val)}
-					>
-						<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-						Revocar Credenciales Seleccionadas
-					</button> 
-					*/}
-				</Grid>
+				{validateAccess(Constants.ROLES.Delete_Certs) && (
+					<Grid item xs={12} className="flex-end">
+						<DefaultButton
+							name="Revocar Credenciales Seleccionadas"
+							otherClass="DangerButton"
+							funct={handleRevokeSelected}
+							disabled={!Object.keys(selected).filter(key => selected[key])[0]}
+						>
+							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
+						</DefaultButton>
+					</Grid>
+				)}
+				{error.message && <div className="errMsg">{error.message}</div>}
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable
@@ -173,6 +272,7 @@ const CertificatesEmmited = () => {
 							columns={columns}
 							defaultPageSize={PAGE_SIZE}
 							minRows={MIN_ROWS}
+							onPageChange={setPage}
 						/>
 					) : (
 						<CircularProgress />
@@ -180,12 +280,19 @@ const CertificatesEmmited = () => {
 				</Grid>
 			</Grid>
 
-			<RevocationModal
-				cert={activeCert}
+			<RevocationSingleModal
+				activeCert={activeCert}
 				onSuccess={onRevokeSuccess}
-				onFail={onRevokeFail}
 				open={modalOpen}
-				toggleModal={toggleModal}
+				handleSubmit={handleSubmit}
+				toggleModal={() => setModalOpen(false)}
+			/>
+
+			<RevocationAllModal
+				certs={certsToRevoke}
+				open={modalRevokeAllOpen}
+				handleSubmit={handleSubmitAll}
+				toggleModal={() => setModalRevokeAllOpen(false)}
 			/>
 
 			<Notification open={revokeSuccess} message="La credencial se revocó con éxito." onClose={onCloseRevokeSuccess} />
@@ -193,7 +300,7 @@ const CertificatesEmmited = () => {
 			<Notification
 				open={revokeFail}
 				severity="error"
-				message="Ocurrió un error la revocar la credencial."
+				message={error.message}
 				time={3500}
 				onClose={onCloseRevokeFail}
 			/>

@@ -15,7 +15,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
@@ -39,7 +39,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Read_Templates],
 			isHead: true
 		}
 	]),
@@ -65,17 +65,21 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
-		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] }
+		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const name = req.body.name;
+		const { name, registerId } = req.body;
 
 		try {
-			const template = await TemplateService.create(name);
+			const template = await TemplateService.create(name, registerId);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -91,7 +95,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{
@@ -109,19 +113,22 @@ router.put(
 		{
 			name: "type",
 			validate: [Constants.VALIDATION_TYPES.IS_STRING]
+		},
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
 		const data = JSON.parse(req.body.data);
-		const preview = req.body.preview;
-		const type = req.body.type;
+		const { preview, type, registerId } = req.body;
 
 		const category = req.body.category || "";
 		const id = req.params.id;
 
 		try {
-			let template = await TemplateService.edit(id, data, preview, type, category);
+			let template = await TemplateService.edit(id, data, preview, type, category, registerId);
 			return ResponseHandler.sendRes(res, template);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -137,7 +144,7 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Delete_Templates],
 			isHead: true
 		}
 	]),
@@ -164,7 +171,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		},
 		{
@@ -174,13 +181,15 @@ router.post(
 		{
 			name: "certNames",
 			validate: [Constants.VALIDATION_TYPES.IS_ARRAY]
+		},
+		{
+			name: "registerId",
+			validate: [Constants.VALIDATION_TYPES.IS_STRING]
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const dids = req.body.dids;
-		const certNames = req.body.certNames;
-		const requestCode = req.params.requestCode;
+		const { dids, certNames, requestCode, registerId } = req.body;
 
 		try {
 			// llamar al metodo '/participant/${requestCode}' con el resultado
@@ -196,10 +205,10 @@ router.post(
 				verifiable: verifiable,
 				user_info: { "FULL NAME": { essential: true } }
 			};
-			const result = await MouroService.createShareRequest(claims, cb);
+			const result = await MouroService.createShareRequest(claims, cb, registerId);
 
 			// un pedido para cada usuario
-			for (let did of dids) await MouroService.sendShareRequest(did, result);
+			for (let did of dids) await MouroService.sendShareRequest(did, result, registerId);
 			return ResponseHandler.sendRes(res, result);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
@@ -211,18 +220,17 @@ router.post(
  *	Genera un QR para pedir info de participante para un template en particular
  */
 router.get(
-	"/:id/qr/:requestCode",
+	"/:id/qr/:requestCode/:registerId",
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.VALIDATION_TYPES.IS_ADMIN],
+			validate: [Constants.USER_TYPES.Write_Templates],
 			isHead: true
 		}
 	]),
 	Validator.checkValidationResult,
 	async function (req, res) {
-		const id = req.params.id;
-		const requestCode = req.params.requestCode;
+		const { id, requestCode, registerId } = req.params;
 		try {
 			const template = await TemplateService.getById(id);
 
@@ -253,7 +261,7 @@ router.get(
 				}
 			});
 
-			const cert = await MouroService.createShareRequest(claims, cb);
+			const cert = await MouroService.createShareRequest(claims, cb, registerId);
 			return ResponseHandler.sendRes(res, cert);
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);

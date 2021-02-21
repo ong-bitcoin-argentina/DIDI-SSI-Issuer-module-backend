@@ -14,6 +14,9 @@ const TemplateRoutes = require("./routes/TemplateRoutes");
 const CertRoutes = require("./routes/CertRoutes");
 const ParticipantRoutes = require("./routes/ParticipantRoutes");
 const DelegateRoutes = require("./routes/DelegateRoutes");
+const RegisterRoutes = require("./routes/RegisterRoutes");
+const DefaultRoutes = require("./routes/DefaultRoutes");
+const ProfileRoutes = require("./routes/ProfileRoutes");
 
 // inicializar cluster para workers, uno por cpu disponible
 var cluster = require("cluster");
@@ -24,13 +27,13 @@ var http = require("http");
 var server = http.createServer(app);
 
 // serve all files from public dir
-const path = require('path');
-const dir = path.join(__dirname, 'public');
+const path = require("path");
+const dir = path.join(__dirname, "public");
 app.use(express.static(dir));
 
 // sobreescribir log para agregarle el timestamp
 const log = console.log;
-console.log = function(data) {
+console.log = function (data) {
 	process.stdout.write(new Date().toISOString() + ": ");
 	log(data);
 };
@@ -60,7 +63,7 @@ mongoose
 app.get("/", (_, res) => res.send(`${Messages.INDEX.MSG.HELLO_WORLD} v${process.env.VERSION}`));
 
 // loggear llamadas
-app.use(function(req, _, next) {
+app.use(function (req, _, next) {
 	if (Constants.DEBUGG) {
 		console.log(req.method + " " + req.originalUrl);
 		process.stdout.write("body: ");
@@ -72,7 +75,7 @@ app.use(function(req, _, next) {
 app.use(cors());
 
 // loggear errores
-app.use(function(error, req, _, next) {
+app.use(function (error, req, _, next) {
 	console.log(error);
 	next();
 });
@@ -85,6 +88,9 @@ app.use(route + "/participant", ParticipantRoutes);
 app.use(route + "/template", TemplateRoutes);
 app.use(route + "/cert", CertRoutes);
 app.use(route + "/delegate", DelegateRoutes);
+app.use(route + "/register", RegisterRoutes);
+app.use(route + "/default", DefaultRoutes);
+app.use(route + "/profile", ProfileRoutes);
 
 // forkear workers
 if (cluster.isMaster) {
@@ -94,11 +100,11 @@ if (cluster.isMaster) {
 		cluster.fork();
 	}
 
-	cluster.on("online", function(worker) {
+	cluster.on("online", function (worker) {
 		console.log(Messages.INDEX.MSG.STARTED_WORKER(worker.process.pid));
 	});
 
-	cluster.on("exit", function(worker, code, signal) {
+	cluster.on("exit", function (worker, code, signal) {
 		console.log(Messages.INDEX.MSG.ENDED_WORKER(worker.process.pid, code, signal));
 		console.log(Messages.INDEX.MSG.STARTING_WORKER);
 		cluster.fork();

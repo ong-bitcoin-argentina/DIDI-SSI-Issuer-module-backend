@@ -9,6 +9,9 @@ const ISSUER_DELEGATOR_DID = process.env.ISSUER_DELEGATOR_DID;
 const ISSUER_SERVER_DID = process.env.ISSUER_SERVER_DID;
 const ISSUER_SERVER_NAME = process.env.ISSUER_SERVER_NAME;
 const ISSUER_SERVER_PRIVATE_KEY = process.env.ISSUER_SERVER_PRIVATE_KEY;
+const ISSUER_API_URL = process.env.ISSUER_API_URL;
+
+const ENABLE_INSECURE_ENDPOINTS = process.env.ENABLE_INSECURE_ENDPOINTS;
 
 const ADDRESS = process.env.ADDRESS;
 const PORT = process.env.PORT;
@@ -27,7 +30,140 @@ const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
 console.log(MONGO_URL);
 
-const USER_TYPES = { Admin: "Admin" };
+const BLOCKCHAIN_URL_MAIN = process.env.BLOCKCHAIN_URL_MAIN; // RSK
+const BLOCKCHAIN_URL_RSK = process.env.BLOCKCHAIN_URL_RSK; // RSK
+const BLOCKCHAIN_URL_LAC = process.env.BLOCKCHAIN_URL_LAC; // Lacchain
+const BLOCKCHAIN_URL_BFA = process.env.BLOCKCHAIN_URL_BFA; // BFA testnet
+
+// uPort SC ON
+const BLOCKCHAIN_CONTRACT_MAIN = process.env.BLOCKCHAIN_CONTRACT_MAIN; // RSK
+const BLOCKCHAIN_CONTRACT_RSK = process.env.BLOCKCHAIN_CONTRACT_RSK; // RSK
+const BLOCKCHAIN_CONTRACT_LAC = process.env.BLOCKCHAIN_CONTRACT_LAC; // Lacchain
+const BLOCKCHAIN_CONTRACT_BFA = process.env.BLOCKCHAIN_CONTRACT_BFA; // BFA
+
+const GAS_INCREMENT = process.env.GAS_INCREMENT || "1.1";
+
+const PROVIDER_CONFIG = {
+	networks: [
+		{
+			name: "mainnet",
+			rpcUrl: BLOCKCHAIN_URL_MAIN,
+			registry: BLOCKCHAIN_CONTRACT_MAIN
+		},
+		{
+			name: "lacchain",
+			rpcUrl: BLOCKCHAIN_URL_LAC,
+			registry: BLOCKCHAIN_CONTRACT_LAC
+		},
+		{
+			name: "bfa",
+			rpcUrl: BLOCKCHAIN_URL_BFA,
+			registry: BLOCKCHAIN_CONTRACT_BFA
+		},
+		{
+			name: "rsk",
+			rpcUrl: BLOCKCHAIN_URL_RSK,
+			registry: BLOCKCHAIN_CONTRACT_RSK
+		}
+	]
+};
+
+const USER_TYPES = {
+	Admin: "Admin",
+
+	// Permisos para Templates
+	Read_Templates: "Read_Templates",
+	Write_Templates: "Write_Templates",
+	Delete_Templates: "Delete_Templates",
+
+	// Permisos para Certificados
+	Read_Certs: "Read_Certs",
+	Write_Certs: "Write_Certs",
+	Delete_Certs: "Delete_Certs",
+
+	// Permisos para Delegaciones
+	Read_Delegates: "Read_Delegates",
+	Write_Delegates: "Write_Delegates",
+
+	// Permisos para Registro de DIDs
+	Read_Dids_Registers: "Read_Dids_Registers",
+	Write_Dids_Registers: "Write_Dids_Registers",
+
+	// Permisos para Perfiles
+	Read_Profiles: "Read_Profiles",
+	Write_Profiles: "Write_Profiles",
+	Delete_Profiles: "Delete_Profiles",
+
+	// Permisos para Usuarios
+	Read_Users: "Read_Users",
+	Write_Users: "Write_Users",
+	Delete_Users: "Delete_Users"
+};
+
+const {
+	Admin,
+	Read_Templates,
+	Write_Templates,
+	Delete_Templates,
+	Read_Certs,
+	Write_Certs,
+	Delete_Certs,
+	Read_Delegates,
+	Write_Delegates,
+	Read_Dids_Registers,
+	Write_Dids_Registers,
+	Read_Profiles,
+	Write_Profiles,
+	Delete_Profiles,
+	Read_Users,
+	Write_Users,
+	Delete_Users
+} = USER_TYPES;
+
+const ALLOWED_ROLES = {
+	Admin: [Admin],
+
+	// Permisos para Templates
+	Read_Templates: [Read_Templates, Write_Templates, Delete_Templates, Write_Certs, Read_Certs],
+	Write_Templates: [Write_Templates],
+	Delete_Templates: [Delete_Templates],
+
+	// Permisos para Certificados
+	Read_Certs: [Read_Certs, Write_Certs, Delete_Certs],
+	Write_Certs: [Write_Certs],
+	Delete_Certs: [Delete_Certs],
+
+	// Permisos para Delegaciones
+	Read_Delegates: [Read_Delegates, Write_Delegates],
+	Write_Delegates: [Write_Delegates],
+
+	// Permisos para Registro de DIDs
+	Read_Dids_Registers: [Read_Dids_Registers, Write_Dids_Registers, Read_Certs, Write_Certs],
+	Write_Dids_Registers: [Write_Dids_Registers],
+
+	// Permisos para Perfiles
+	Read_Profiles: [Read_Profiles, Write_Profiles, Delete_Profiles, Read_Users, Write_Users],
+	Write_Profiles: [Write_Profiles],
+	Delete_Profiles: [Delete_Profiles],
+
+	// Permisos para Usuarios
+	Read_Users: [Read_Users, Write_Users, Delete_Users],
+	Write_Users: [Write_Users],
+	Delete_Users: [Delete_Users]
+};
+
+const USER_CREATED_TYPES = Object.keys(USER_TYPES).filter(r => r !== Admin);
+
+const BLOCKCHAIN_MANAGER_MESSAGES = {
+	signatureInvalid: "Signature invalid for JWT",
+	invalidEthrDid: "Not a valid ethr DID"
+};
+
+const BLOCKCHAIN_MANAGER_CODES = {
+	[BLOCKCHAIN_MANAGER_MESSAGES.signatureInvalid]: "INVALID_PRIVATE_KEY",
+	[BLOCKCHAIN_MANAGER_MESSAGES.invalidEthrDid]: "INVALID_DID"
+};
+
 const CERT_FIELD_TYPES = {
 	Text: "Text",
 	Paragraph: "Paragraph",
@@ -49,6 +185,21 @@ const CERT_CATEGORY_MAPPING = {
 
 const DIDI_API = process.env.DIDI_API;
 
+const BLOCKCHAINS = ["rsk", "lacchain", "bfa"];
+
+const STATUS = {
+	CREATING: "Creando",
+	DONE: "Creado",
+	ERROR: "Error",
+	ERROR_RENEW: "Error al Renovar",
+	REVOKED: "Revocado",
+	REVOKING: "Revocando"
+};
+
+const STATUS_ALLOWED = Object.values(STATUS);
+
+BLOCK_CHAIN_DEFAULT = "rsk";
+
 module.exports = {
 	API_VERSION: "1.0",
 	DEBUGG: DEBUGG,
@@ -56,7 +207,6 @@ module.exports = {
 	VALIDATION_TYPES: {
 		TOKEN_MATCHES_USER_ID: "tokenMatchesUserId",
 		IS_ARRAY: "isArray",
-		IS_ADMIN: "isAdmin",
 		IS_STRING: "isString",
 		IS_BOOLEAN: "isBoolean",
 		IS_PASSWORD: "isPassword",
@@ -106,9 +256,12 @@ module.exports = {
 	},
 
 	USER_TYPES: USER_TYPES,
+	USER_CREATED_TYPES: USER_CREATED_TYPES,
 
 	CERT_CATEGORY_MAPPING: CERT_CATEGORY_MAPPING,
 	CERT_CATEGORY_TYPES: CERT_CATEGORY_TYPES,
+
+	ALLOWED_ROLES: ALLOWED_ROLES,
 
 	CERT_FIELD_TYPES: CERT_FIELD_TYPES,
 	CERT_FIELD_MANDATORY: {
@@ -127,11 +280,17 @@ module.exports = {
 	},
 
 	BLOCKCHAIN: {
+		PROVIDER_CONFIG: PROVIDER_CONFIG,
+		GAS_INCREMENT: GAS_INCREMENT,
 		BLOCK_CHAIN_URL: BLOCK_CHAIN_URL,
 		BLOCK_CHAIN_CONTRACT: BLOCK_CHAIN_CONTRACT,
 		DELEGATE_DURATION: DELEGATE_DURATION,
 		SET_ATTRIBUTE: SET_ATTRIBUTE
 	},
+
+	BLOCKCHAINS: BLOCKCHAINS,
+	STATUS: STATUS,
+	STATUS_ALLOWED: STATUS_ALLOWED,
 
 	RSA_PRIVATE_KEY: RSA_PRIVATE_KEY,
 	HASH_SALT: HASH_SALT,
@@ -142,8 +301,16 @@ module.exports = {
 	ISSUER_SERVER_DID: ISSUER_SERVER_DID,
 	ISSUER_SERVER_PRIVATE_KEY: ISSUER_SERVER_PRIVATE_KEY,
 	ISSUER_SERVER_NAME: ISSUER_SERVER_NAME,
+	ISSUER_API_URL: ISSUER_API_URL,
 	MONGO_URL: MONGO_URL,
 	PORT: PORT,
 	ADDRESS: ADDRESS,
-	FULL_URL: FULL_URL
+	FULL_URL: FULL_URL,
+
+	ENABLE_INSECURE_ENDPOINTS: ENABLE_INSECURE_ENDPOINTS,
+
+	BLOCK_CHAIN_DEFAULT: BLOCK_CHAIN_DEFAULT,
+
+	BLOCKCHAIN_MANAGER_MESSAGES: BLOCKCHAIN_MANAGER_MESSAGES,
+	BLOCKCHAIN_MANAGER_CODES: BLOCKCHAIN_MANAGER_CODES
 };

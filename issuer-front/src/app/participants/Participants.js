@@ -9,7 +9,6 @@ import ReactFileReader from "react-file-reader";
 
 import Spinner from "../utils/Spinner";
 import QrDialog from "../utils/dialogs/QrDialog";
-import ConfirmationDialog from "../utils/dialogs/ConfirmationDialog";
 
 import TemplateService from "../../services/TemplateService";
 import ParticipantService from "../../services/ParticipantService";
@@ -17,6 +16,11 @@ import Cookie from "js-cookie";
 
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
+import { validateAccess } from "../../constants/Roles";
+import DefaultButton from "../setting/default-button";
+import InputDialog from "../utils/dialogs/InputDialog";
+import RegisterService from "../../services/RegisterService";
+import Notification from "../components/Notification";
 
 let interval;
 class Participants extends Component {
@@ -25,7 +29,9 @@ class Participants extends Component {
 
 		this.state = {
 			loading: false,
-			requestSent: false
+			requestSent: false,
+			registers: [],
+			sendCredentialSuccess: false
 		};
 	}
 
@@ -56,6 +62,18 @@ class Participants extends Component {
 				self.props.onReload();
 			}
 		}, 10000);
+
+		this.getAllRegister();
+	}
+
+	async getAllRegister() {
+		const token = Cookie.get("token");
+		try {
+			const registers = await RegisterService.getAll()(token);
+			this.setState({ registers });
+		} catch (error) {
+			this.setState({ registers: [] });
+		}
 	}
 
 	// retorna true si hay algun elemento en la tabla seleccionado
@@ -74,7 +92,7 @@ class Participants extends Component {
 	};
 
 	// manda los pedidos correspondientes a los participantes/credenciales seleccionados
-	sendRequests = () => {
+	sendRequests = ({ registerId }) => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
 		const requests = {};
@@ -104,15 +122,21 @@ class Participants extends Component {
 				globalRequestCode,
 				function (_) {
 					self.setState({
-						requestSent: true
+						requestSent: true,
+						sendCredentialSuccess: true
 					});
 				},
 				function (err) {
 					self.setState({ error: err });
 					console.log(err);
-				}
+				},
+				registerId
 			);
 		}
+	};
+
+	showSenRequestsPopUp = () => {
+		this.reqSentDialog.open();
 	};
 
 	// generar csv de ejemplo para carga de participantes
@@ -192,6 +216,12 @@ class Participants extends Component {
 		}
 	};
 
+	onCloseSendCredentialSuccess = (e, reason) => {
+		if (reason !== "clickaway") {
+			this.setState({ sendCredentialSuccess: false });
+		}
+	};
+
 	// mostrar pantalla de carga de participantes
 	render() {
 		if (!Cookie.get("token")) {
@@ -203,11 +233,16 @@ class Participants extends Component {
 		return (
 			<div className={loading ? "QrReq Loading" : "QrReq"}>
 				{Spinner.render(loading)}
-				{this.renderRequestSentDialog()}
+				{this.renderCreateDialog()}
 				{this.renderQrDialog()}
 				{this.renderButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
+				<Notification
+					open={this.state.sendCredentialSuccess}
+					message="La solicitud se realizo con éxito."
+					onClose={this.onCloseSendCredentialSuccess}
+				/>
 			</div>
 		);
 	}
@@ -224,15 +259,21 @@ class Participants extends Component {
 		);
 	};
 
-	// muestra el dialogo de "pedido enviado"
-	renderRequestSentDialog = () => {
+	// muestra el dialogo para pedido enviado
+	renderCreateDialog = () => {
 		return (
-			<ConfirmationDialog
+			<InputDialog
 				onRef={ref => (this.reqSentDialog = ref)}
-				title={Messages.EDIT.DIALOG.QR.REQUEST_SENT}
-				message={""}
-				confirm={Messages.EDIT.BUTTONS.CLOSE}
-				hideClose={true}
+				title={"Solicitud de Credenciales"}
+				fieldNames={[]}
+				selectNames={[
+					{
+						name: "registerId",
+						label: "Emisor",
+						options: this.state.registers
+					}
+				]}
+				onAccept={this.sendRequests}
 			/>
 		);
 	};
@@ -261,33 +302,40 @@ class Participants extends Component {
 	renderButtons = loading => {
 		return (
 			<div className="QrRequestButtons my-2">
-				<div className="PartRequestRow">
-					<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
-						{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
-					</button>
+				{validateAccess(Constants.ROLES.Write_Dids_Registers) && (
+					<>
+						<div className="PartRequestRow">
+							<button disabled={loading} className="CreateButton SampleCsv" onClick={this.createSampleCsv}>
+								{Messages.EDIT.BUTTONS.SAMPLE_PART_FROM_CSV}
+							</button>
 
-					<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
-						<button disabled={loading} className="CreateButton LoadDidsFromCsv">
-							{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
-						</button>
-					</ReactFileReader>
+							<ReactFileReader handleFiles={this.LoadDidsFromCsv} fileTypes={".csv"}>
+								<button disabled={loading} className="CreateButton LoadDidsFromCsv">
+									{Messages.EDIT.BUTTONS.LOAD_DIDS_FROM_CSV}
+								</button>
+							</ReactFileReader>
 
-					<button
-						className="CreateButton QrDialogButton"
-						disabled={loading}
-						onClick={() => {
-							if (this.qrDialog) this.qrDialog.open();
-						}}
-					>
-						{Messages.QR.BUTTONS.QR_LOAD}
-					</button>
-				</div>
+							<button
+								className="CreateButton QrDialogButton"
+								disabled={loading}
+								onClick={() => {
+									if (this.qrDialog) this.qrDialog.open();
+								}}
+							>
+								{Messages.QR.BUTTONS.QR_LOAD}
+							</button>
+						</div>
 
-				<div className="QrButtonsRow">
-					<button className="PartRequestButton" disabled={!this.canSendRequest(loading)} onClick={this.sendRequests}>
-						{Messages.QR.BUTTONS.REQUEST}
-					</button>
-				</div>
+						<div className="QrButtonsRow">
+							{/* PartRequestButton */}
+							<DefaultButton
+								funct={this.showSenRequestsPopUp}
+								disabled={!this.canSendRequest(loading)}
+								name={Messages.QR.BUTTONS.REQUEST}
+							/>
+						</div>
+					</>
+				)}
 			</div>
 		);
 	};

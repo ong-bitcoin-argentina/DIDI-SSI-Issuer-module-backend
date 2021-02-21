@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Constants = require("../constants/Constants");
 const { cardSchema } = require("./dataTypes/CardSchema");
 const { getCardLayout } = require("./utils/Card");
+const ObjectId = mongoose.ObjectId;
 
 // Modelo de certificado a partir del cual se podran generar certificados particulares
 // define la data que tendra que agregarse a los mismos y la forma en que esta se mostrara en la app
@@ -47,6 +48,11 @@ const TemplateSchema = mongoose.Schema({
 		type: String,
 		enum: Constants.CERT_CATEGORY_TYPES
 	},
+	registerId: {
+		type: ObjectId,
+		required: true,
+		ref: "Register"
+	},
 	data: {
 		cert: [dataElement],
 		participant: [dataElement],
@@ -67,11 +73,12 @@ TemplateSchema.index({ name: 1 });
 TemplateSchema.add({ cardLayout: cardSchema });
 
 // modificar modelo de certificado
-TemplateSchema.methods.edit = async function (data, previewData, previewType, category) {
+TemplateSchema.methods.edit = async function (data, previewData, previewType, category, registerId) {
 	const updateQuery = { _id: this._id };
 	const updateAction = {
 		$set: {
 			category: category,
+			registerId,
 			previewData: previewData,
 			previewType: previewType,
 			cardLayout: getCardLayout(previewType),
@@ -108,7 +115,7 @@ const Template = mongoose.model("Template", TemplateSchema);
 module.exports = Template;
 
 // crear modelo de certificado "vacio" (con los campos por defecto)
-Template.generate = async function (name) {
+Template.generate = async function (name, registerId) {
 	try {
 		const query = { name: name, deleted: false };
 		const template = await Template.findOne(query);
@@ -120,6 +127,7 @@ Template.generate = async function (name) {
 
 	let template = new Template();
 	template.name = name;
+	template.registerId = registerId;
 	template.previewType = "1";
 	template.previewData = [Constants.CERT_FIELD_MANDATORY.FIRST_NAME, Constants.CERT_FIELD_MANDATORY.LAST_NAME];
 	template.cardLayout = getCardLayout(template.previewType);
@@ -184,7 +192,7 @@ Template.generate = async function (name) {
 Template.getAll = async function () {
 	try {
 		const query = { deleted: false };
-		const template = await Template.find(query).sort({ createdOn: -1 });
+		const template = await Template.find(query).populate("registerId").sort({ createdOn: -1 });
 		return Promise.resolve(template);
 	} catch (err) {
 		console.log(err);

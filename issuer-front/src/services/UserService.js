@@ -1,5 +1,7 @@
 import Constants from "../constants/Constants";
+import { fetchData, options, optionsBody } from "./utils";
 
+const { CREATE, GET_ALL } = Constants.API_ROUTES.USER;
 export default class UserService {
 	static login(user, pass, cb, errCb) {
 		const data = {
@@ -19,12 +21,27 @@ export default class UserService {
 			})
 			.then(data => {
 				if (data.status === "success") {
-					const token = data.data.token;
-					return cb(token);
+					return cb(data.data);
 				} else {
 					errCb(data.data);
 				}
 			})
 			.catch(err => errCb(err));
+	}
+
+	static getAll() {
+		return fetchData(options("GET"), GET_ALL);
+	}
+
+	static create(body) {
+		return fetchData(optionsBody("POST", body), CREATE);
+	}
+
+	static edit(body) {
+		return fetchData(optionsBody("PUT", body), Constants.API_ROUTES.USER.EDIT(body._id));
+	}
+
+	static delete(id) {
+		return fetchData(options("DELETE"), Constants.API_ROUTES.USER.DELETE(id));
 	}
 }

@@ -13,17 +13,28 @@ import Spinner from "../../utils/Spinner";
 import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
+import { validateAccess } from "../../../constants/Roles";
+import RegisterService from "../../../services/RegisterService";
 
 class Delegates extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			registers: []
+		};
 	}
 
 	// generar referencia para abrir dialogo de borrado desde el padre
 	componentDidMount() {
 		this.props.onRef(this);
+		this.getRegisters();
+	}
+
+	async getRegisters() {
+		const token = Cookie.get("token");
+		const registers = await RegisterService.getAll()(token);
+		this.setState({ registers });
 	}
 
 	// borrar referencia
@@ -51,8 +62,8 @@ class Delegates extends Component {
 				{this.renderDeleteDialog()}
 
 				{this.renderSectionButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}
@@ -64,6 +75,13 @@ class Delegates extends Component {
 				onRef={ref => (this.createDialog = ref)}
 				title={Messages.LIST.DIALOG.CREATE_DELEGATE_TITLE}
 				fieldNames={["name", "did"]}
+				selectNames={[
+					{
+						name: "registerId",
+						label: "Emisor",
+						options: this.state.registers
+					}
+				]}
 				onAccept={this.props.onCreate}
 			/>
 		);
@@ -75,7 +93,7 @@ class Delegates extends Component {
 			<ConfirmationDialog
 				onRef={ref => (this.deleteDialog = ref)}
 				title={Messages.LIST.DIALOG.DELETE_DELEGATE_TITLE}
-				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION}
+				message={Messages.LIST.DIALOG.DELETE_CONFIRMATION("el Delegado")}
 				confirm={Messages.LIST.DIALOG.DELETE}
 				onAccept={this.props.onDelete}
 			/>
@@ -84,11 +102,9 @@ class Delegates extends Component {
 
 	// mostrar boton de creacion
 	renderSectionButtons = loading => {
-		const selected = this.props.selected;
-		//const name = this.props.issuerName;
 		return (
 			<div className="HeadButtons">
-				{selected && (
+				{validateAccess(Constants.ROLES.Write_Delegates) && (
 					<button
 						disabled={loading}
 						className="CreateButton"
@@ -100,7 +116,6 @@ class Delegates extends Component {
 						<div className="CreateButtonText CreateDelegateText">{Messages.LIST.BUTTONS.CREATE_DELEGATE}</div>
 					</button>
 				)}
-				{/*name && <div className="IssuerName">{name}</div>*/}
 			</div>
 		);
 	};
