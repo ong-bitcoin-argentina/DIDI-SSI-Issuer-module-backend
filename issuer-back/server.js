@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { loggerManager } = require('./services/logger');
+require('./services/logger');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");

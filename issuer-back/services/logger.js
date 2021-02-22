@@ -12,5 +12,5 @@ const azureLogger = new AzureLogger({
 loggerManager.addLogger('azure', azureLogger);
 
 module.exports = {
-    loggerManager
+  loggerManager
 };
