@@ -146,6 +146,7 @@ export default class InputDialog extends Component {
 						name={Messages.LIST.DIALOG.CREATE}
 						disabled={Object.values(this.state.fields).indexOf("") >= 0}
 						funct={this.handleAccept}
+						loading={this.props.loading}
 					/>
 				</DialogActions>
 			</Dialog>

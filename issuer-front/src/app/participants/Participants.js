@@ -29,6 +29,7 @@ class Participants extends Component {
 
 		this.state = {
 			loading: false,
+			loadingSend: false,
 			requestSent: false,
 			registers: [],
 			sendCredentialSuccess: false
@@ -92,7 +93,7 @@ class Participants extends Component {
 	};
 
 	// manda los pedidos correspondientes a los participantes/credenciales seleccionados
-	sendRequests = ({ registerId }) => {
+	sendRequests = async ({ registerId }) => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
 		const requests = {};
@@ -109,30 +110,24 @@ class Participants extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
+		self.setState({ loadingSend: true });
 		for (let partId of Object.keys(requests)) {
 			const globalRequestCode = Math.random().toString(36).slice(-8);
 
 			if (self.reqSentDialog) self.reqSentDialog.open();
 
 			// mandar pedido
-			TemplateService.sendRequest(
-				token,
-				[partId],
-				requests[partId],
-				globalRequestCode,
-				function (_) {
-					self.setState({
-						requestSent: true,
-						sendCredentialSuccess: true
-					});
-				},
-				function (err) {
-					self.setState({ error: err });
-					console.log(err);
-				},
-				registerId
-			);
+			await TemplateService.sendRequest(
+				{ dids: [partId], certNames: requests[partId], registerId },
+				globalRequestCode
+			)(token);
+
+			self.setState({
+				requestSent: true,
+				sendCredentialSuccess: true
+			});
 		}
+		self.setState({ loadingSend: false });
 	};
 
 	showSenRequestsPopUp = () => {
@@ -274,6 +269,7 @@ class Participants extends Component {
 					}
 				]}
 				onAccept={this.sendRequests}
+				loading={this.state.loadingSend}
 			/>
 		);
 	};

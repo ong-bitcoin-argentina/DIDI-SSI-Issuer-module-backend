@@ -137,32 +137,36 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static sendRequest(token, dids, certs, code, cb, errCb, registerId) {
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				dids: dids,
-				certNames: certs,
-				registerId
-			})
-		};
+	// static sendRequest(token, dids, certs, code, cb, errCb, registerId) {
+	// 	const data = {
+	// 		method: "POST",
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 			token: token
+	// 		},
+	// 		body: JSON.stringify({
+	// 			dids: dids,
+	// 			certNames: certs,
+	// 			registerId
+	// 		})
+	// 	};
 
-		fetch(Constants.API_ROUTES.TEMPLATES.REQUEST(code), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	// 	fetch(Constants.API_ROUTES.TEMPLATES.REQUEST(code), data)
+	// 		.then(data => {
+	// 			return data.json();
+	// 		})
+	// 		.then(data => {
+	// 			if (data.status === "success") {
+	// 				return cb(data.data);
+	// 			} else {
+	// 				errCb(data.data);
+	// 			}
+	// 		})
+	// 		.catch(err => errCb(err));
+	// }
+
+	static sendRequest(data, code) {
+		return fetchData(optionsBody("POST", data), Constants.API_ROUTES.TEMPLATES.REQUEST(code));
 	}
 
 	static delete(token, id, cb, errCb) {
