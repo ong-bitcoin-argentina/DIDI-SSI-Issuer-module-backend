@@ -15,6 +15,7 @@ import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import DeleteAllCertsDialog from "./delete-all-certs-dialog";
 import { validateAccess } from "../../../constants/Roles";
 import DefaultButton from "../../setting/default-button";
+import TabDescription from "../../components/TabDescription";
 
 const { EMMIT_SELECTED, DELETE_SELECETED } = Messages.LIST.BUTTONS;
 
@@ -64,6 +65,7 @@ class Certificates extends Component {
 		return (
 			<div className={loading ? "Certificates Loading" : "Certificates"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="CERTIFICATES_PENDING" />
 				{this.renderDeleteDialog()}
 				{this.renderDeleteAllDialog()}
 				{this.renderRevocationDialog()}

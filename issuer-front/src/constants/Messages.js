@@ -153,5 +153,46 @@ module.exports = {
 			QR_LOAD: "Cargar DID por QR",
 			GENERATE: "Generar Qr"
 		}
+	},
+	TAB_TEXT: {
+		TEMPLATES: {
+			TITLE: "Templates",
+			DESCRIPTION: "Creación de modelos de credenciales que luego se utilizarán al crear y emitir una credencial."
+		},
+		CERTIFICATES_PENDING: {
+			TITLE: "Credenciales Pendientes",
+			DESCRIPTION:
+				"Listado de credenciales aún no emitidas. Desde esta pantalla se crean las credenciales para luego ser emitidas."
+		},
+		CERTIFICATES_EMMITED: {
+			TITLE: "Credenciales",
+			DESCRIPTION: "Listado de credenciales emitidas y no revocadas."
+		},
+		CERTIFICATES_REVOKED: {
+			TITLE: "Credenciales Revocadas",
+			DESCRIPTION: "Listado de credenciales revocadas."
+		},
+		REGISTER_DIDS: {
+			TITLE: "Registro de DIDs",
+			DESCRIPTION: "Registro de DIDs receptores para la emisión de credenciales."
+		},
+		DELEGATES: {
+			TITLE: "Delegados",
+			DESCRIPTION:
+				"Delegación de DIDs a los que se les desea otorgar el permiso de emitir credenciales como delegado de este emisor."
+		},
+		PROFILES: {
+			TITLE: "Perfiles",
+			DESCRIPTION: "Definición de perfiles de usuarios para la plataforma de emisores ai·di."
+		},
+		USERS: {
+			TITLE: "Usuarios",
+			DESCRIPTION: "Creación de usuarios para la plataforma de emisores ai·di."
+		},
+		SETTING: {
+			TITLE: "Configuración",
+			DESCRIPTION:
+				"Registro de DIDs de este emisor en la/s blockchain/s que se deseen verificar las credenciales a emitir."
+		}
 	}
 };

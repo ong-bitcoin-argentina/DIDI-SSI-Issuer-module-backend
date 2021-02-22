@@ -15,6 +15,7 @@ import RevocationSingleModal from "../../components/RevocationSingleModal";
 import RevocationAllModal from "../../components/RevocationAllModal";
 import { validateAccess } from "../../../constants/Roles";
 import DefaultButton from "../../setting/default-button";
+import TabDescription from "../../components/TabDescription";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -248,6 +249,7 @@ const CertificatesEmmited = () => {
 
 	return (
 		<>
+			<TabDescription tabName="CERTIFICATES_EMMITED" />
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				{validateAccess(Constants.ROLES.Delete_Certs) && (
 					<Grid item xs={12} className="flex-end">

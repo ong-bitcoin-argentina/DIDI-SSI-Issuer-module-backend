@@ -17,7 +17,7 @@ const { MIN_ROWS } = Constants.CERTIFICATES.TABLE;
 
 const BUTTON_MODAL_NAME = "Nuevo Perfil";
 const TITLE = "Perfiles";
-const DESCRIPTION = "Creá perfiles asignando distintos tipos de permisos";
+const DESCRIPTION = "Definición de perfiles de usuarios para la plataforma de emisores ai·di.";
 
 const Profile = () => {
 	const [loading, setLoading] = useState(false);

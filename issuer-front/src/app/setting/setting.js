@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
 import { CircularProgress } from "@material-ui/core";
 import ReactTable from "react-table-6";
-import Messages from "../../constants/Messages";
+import Messages, { TAB_TEXT } from "../../constants/Messages";
 import RegisterModal from "./register-modal";
 import NotRegistersData from "./not-registers-data";
 import OpenModalButton from "./open-modal-button";
@@ -15,9 +15,7 @@ import EditRegisterModal from "./edit-register-modal";
 import { filter, filterByDates } from "../../services/utils";
 import DescriptionGrid from "../components/DescriptionGrid";
 
-const TITLE = "Configuración";
-const DESCRIPTION =
-	"Registrate como Emisor de Credenciales en la/s blockchain/s que quieras verificar tus credenciales a emitir";
+const { TITLE, DESCRIPTION } = TAB_TEXT.SETTING;
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);

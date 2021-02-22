@@ -21,6 +21,7 @@ import DefaultButton from "../setting/default-button";
 import InputDialog from "../utils/dialogs/InputDialog";
 import RegisterService from "../../services/RegisterService";
 import Notification from "../components/Notification";
+import TabDescription from "../components/TabDescription";
 
 let interval;
 class Participants extends Component {
@@ -233,6 +234,7 @@ class Participants extends Component {
 		return (
 			<div className={loading ? "QrReq Loading" : "QrReq"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="REGISTER_DIDS" />
 				{this.renderCreateDialog()}
 				{this.renderQrDialog()}
 				{this.renderButtons(loading)}

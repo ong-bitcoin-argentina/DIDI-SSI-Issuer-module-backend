@@ -15,7 +15,7 @@ import { validateAccess } from "../../constants/Roles";
 import DescriptionGrid from "../components/DescriptionGrid";
 
 const TITLE = "Usuarios";
-const DESCRIPTION = "Creá, eliminá y editá los usuarios que tienen acceso al Issuer";
+const DESCRIPTION = "Creación de usuarios para la plataforma de emisores ai·di.";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);

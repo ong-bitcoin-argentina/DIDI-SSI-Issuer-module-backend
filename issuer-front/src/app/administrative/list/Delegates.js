@@ -15,6 +15,11 @@ import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import { validateAccess } from "../../../constants/Roles";
 import RegisterService from "../../../services/RegisterService";
+import TabDescription from "../../components/TabDescription";
+
+const TITLE = "Delegados";
+const DESCRIPTION =
+	"Delegación de DIDs a los que se les desea otorgar el permiso de emitir credenciales como delegado de este emisor.";
 
 class Delegates extends Component {
 	constructor(props) {
@@ -58,6 +63,7 @@ class Delegates extends Component {
 		return (
 			<div className={loading ? "Admin Loading" : "Admin"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="DELEGATES" />
 				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
 
