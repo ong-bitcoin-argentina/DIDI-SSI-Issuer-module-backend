@@ -16,6 +16,7 @@ import RegisterService from "../../../services/RegisterService";
 import Cookie from "js-cookie";
 import DefautValueService from "../../../services/DefaultValueService";
 import { validateAccess } from "../../../constants/Roles";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 class Templates extends Component {
 	constructor(props) {
@@ -66,6 +67,7 @@ class Templates extends Component {
 		return (
 			<div className={loading ? "Templates Loading" : "Templates"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="TEMPLATES" />
 				{this.renderSectionButtons(loading)}
 				{this.renderDeleteDialog()}
 				{this.renderCreateDialog()}

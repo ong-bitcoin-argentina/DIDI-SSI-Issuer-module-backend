@@ -9,6 +9,7 @@ import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { filter } from "../../../services/utils";
 import { useHistory } from "react-router-dom";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -75,6 +76,7 @@ const CertificatesRevoked = () => {
 
 	return (
 		<>
+			<TabDescription tabName="CERTIFICATES_REVOKED" />
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				{error.message && <div className="errMsg">{error.message}</div>}
 				<Grid item xs={12} style={{ textAlign: "center" }}>

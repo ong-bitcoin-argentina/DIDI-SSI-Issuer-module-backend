@@ -15,6 +15,7 @@ import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import { validateAccess } from "../../../constants/Roles";
 import RegisterService from "../../../services/RegisterService";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 class Delegates extends Component {
 	constructor(props) {
@@ -58,6 +59,7 @@ class Delegates extends Component {
 		return (
 			<div className={loading ? "Admin Loading" : "Admin"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="DELEGATES" />
 				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
 
