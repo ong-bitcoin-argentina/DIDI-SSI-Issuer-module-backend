@@ -21,7 +21,7 @@ import DefaultButton from "../setting/default-button";
 import InputDialog from "../utils/dialogs/InputDialog";
 import RegisterService from "../../services/RegisterService";
 import Notification from "../components/Notification";
-import TabDescription from "../components/TabDescription";
+import TabDescription from "../components/TabDescription/TabDescription";
 
 let interval;
 class Participants extends Component {

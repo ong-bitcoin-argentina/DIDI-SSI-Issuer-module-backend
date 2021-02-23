@@ -15,11 +15,7 @@ import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import { validateAccess } from "../../../constants/Roles";
 import RegisterService from "../../../services/RegisterService";
-import TabDescription from "../../components/TabDescription";
-
-const TITLE = "Delegados";
-const DESCRIPTION =
-	"Delegación de DIDs a los que se les desea otorgar el permiso de emitir credenciales como delegado de este emisor.";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 class Delegates extends Component {
 	constructor(props) {

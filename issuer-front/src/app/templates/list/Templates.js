@@ -16,7 +16,7 @@ import RegisterService from "../../../services/RegisterService";
 import Cookie from "js-cookie";
 import DefautValueService from "../../../services/DefaultValueService";
 import { validateAccess } from "../../../constants/Roles";
-import TabDescription from "../../components/TabDescription";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 class Templates extends Component {
 	constructor(props) {

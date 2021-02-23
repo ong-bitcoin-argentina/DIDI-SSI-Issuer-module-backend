@@ -15,7 +15,7 @@ import RevocationSingleModal from "../../components/RevocationSingleModal";
 import RevocationAllModal from "../../components/RevocationAllModal";
 import { validateAccess } from "../../../constants/Roles";
 import DefaultButton from "../../setting/default-button";
-import TabDescription from "../../components/TabDescription";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;

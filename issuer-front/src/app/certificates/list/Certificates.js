@@ -15,7 +15,7 @@ import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import DeleteAllCertsDialog from "./delete-all-certs-dialog";
 import { validateAccess } from "../../../constants/Roles";
 import DefaultButton from "../../setting/default-button";
-import TabDescription from "../../components/TabDescription";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 const { EMMIT_SELECTED, DELETE_SELECETED } = Messages.LIST.BUTTONS;
 

@@ -9,7 +9,7 @@ import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { filter } from "../../../services/utils";
 import { useHistory } from "react-router-dom";
-import TabDescription from "../../components/TabDescription";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
