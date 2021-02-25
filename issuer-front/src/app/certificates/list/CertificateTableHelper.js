@@ -235,12 +235,14 @@ class CertificateTableHelper {
 			}
 		];
 
+		const selectedQuantity = Object.values(selectedRows).filter(val => val).length;
+
 		const select = {
 			Header: (
 				<div className="SelectorHeader">
 					<div className="HeaderText">
 						<p>{SELECT}</p>
-						<p>{Object.values(selectedRows).filter(val => val).length}</p>
+						<p>{selectedQuantity}</p>
 					</div>
 					<div className="Actions">
 						<Checkbox checked={isAllSelected} onChange={onSelectAllToggle} indeterminate={isIndeterminated} />

@@ -160,11 +160,13 @@ const CertificatesEmmited = () => {
 	};
 
 	const updateColumns = selectedCerts => {
+		const isAnySelected = countPerPage > 0;
+		const isIndeterminated = isAnySelected && countPerPage !== pageSize;
 		const localColumns = CertificateTableHelper.getCertEmmitedColumns(
 			data,
 			selectedCerts,
-			countPerPage > 0,
-			countPerPage > 0 && countPerPage !== pageSize,
+			isAnySelected,
+			isIndeterminated,
 			handleSelectAllToggle,
 			onFilterChange,
 			onDateRangeFilterChange
