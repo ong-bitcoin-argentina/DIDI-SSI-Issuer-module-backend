@@ -24,7 +24,6 @@ const CertificatesEmmited = () => {
 	const [data, setData] = useState([]);
 	const [filters, setFilters] = useState({});
 	const [selected, setSelected] = useState({});
-	const [allSelected, setAllSelected] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
 	const [activeCert, setActiveCert] = useState({});
@@ -35,9 +34,10 @@ const CertificatesEmmited = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState({});
 	const history = useHistory();
-	const [allCheckboxSelected, setAllCheckboxSelected] = useState(false);
+
 	const [page, setPage] = useState(0);
-	const [isPageSelected, setIsPageSelected] = useState(false);
+	const [pageSize, setPageSize] = useState(PAGE_SIZE);
+	const [countPerPage, setCountPerPage] = useState(0);
 
 	useEffect(() => {
 		if (data.length) {
@@ -50,30 +50,6 @@ const CertificatesEmmited = () => {
 	useEffect(() => {
 		getData();
 	}, []);
-
-	useEffect(() => {
-		updateFilterData(filteredData, selected);
-
-		const value = isAllPageSelected(page);
-		setIsPageSelected(value);
-	}, [selected]);
-
-	useEffect(() => {
-		getDataByPage(page).forEach(({ _id }) => handleSelectOne(_id, allCheckboxSelected));
-		setIsPageSelected(allCheckboxSelected);
-	}, [allCheckboxSelected, allSelected]);
-
-	useEffect(() => {
-		setPage(page);
-
-		const value = isAllPageSelected(page);
-		setIsPageSelected(value);
-		setAllCheckboxSelected(false);
-	}, [page]);
-
-	useEffect(() => {
-		updateColumns(selected);
-	}, [isPageSelected]);
 
 	useEffect(() => {
 		const { firstName, lastName, certName, start, end, blockchain } = filters;
@@ -97,14 +73,58 @@ const CertificatesEmmited = () => {
 		}
 	}, [revokeSuccess, revokeFail]);
 
-	const isAllPageSelected = page => {
-		const toRevoke = Object.keys(selected).filter(k => selected[k]);
-		return !loading && getDataByPage(page).every(({ _id }) => toRevoke.includes(_id));
+	useEffect(() => {
+		// Obtengo los dato por pagina
+		const data = getDataByPage(page);
+
+		// Hago un conteo de cuantos estan seleccionados
+		const count = data.reduce((acc, { _id }) => (selected[_id] ? acc + 1 : acc), 0);
+		setCountPerPage(count);
+
+		// Hago un update de los datos que se muestran en la tabla
+		updateFilterData(filteredData, selected);
+	}, [selected]);
+
+	useEffect(() => {
+		updateFilterData(filteredData, selected);
+	}, [countPerPage]);
+
+	useEffect(() => {
+		setSelected({});
+	}, [pageSize]);
+
+	// Selecciono el checkboxAll
+	const handleSelectAllToggle = (_, value) => {
+		const data = getDataByPage(page);
+		changeSelectedValues(data, value);
 	};
 
+	// Cambio de pagina
+	const changePage = page_ => {
+		setPage(page_);
+
+		// Obtengo los dato por pagina
+		const data = getDataByPage(page_);
+
+		// Hago un conteo de cuantos estan seleccionados
+		const count = data.reduce((acc, { _id }) => (selected[_id] ? acc + 1 : acc), 0);
+		setCountPerPage(count);
+
+		if (count === 0 || count === pageSize) {
+			// Hago el cambio de todos
+			changeSelectedValues(data, count === pageSize);
+		}
+	};
+
+	// Cambio los selects de las columnas de las tablas
+	const changeSelectedValues = (data, value) => {
+		data.forEach(({ _id }) => handleSelectOne(_id, value));
+	};
+
+	// Obtengo los datos por pagina
 	const getDataByPage = page => {
-		const start = page * PAGE_SIZE;
-		const end = start + PAGE_SIZE;
+		const start = page * pageSize;
+		const end = start + pageSize;
 
 		return filteredData.slice(start, end);
 	};
@@ -143,7 +163,8 @@ const CertificatesEmmited = () => {
 		const localColumns = CertificateTableHelper.getCertEmmitedColumns(
 			data,
 			selectedCerts,
-			isPageSelected,
+			countPerPage > 0,
+			countPerPage > 0 && countPerPage !== pageSize,
 			handleSelectAllToggle,
 			onFilterChange,
 			onDateRangeFilterChange
@@ -241,11 +262,6 @@ const CertificatesEmmited = () => {
 		setModalRevokeAllOpen(true);
 	};
 
-	const handleSelectAllToggle = val => {
-		setAllCheckboxSelected(val);
-		setAllSelected(val);
-	};
-
 	return (
 		<>
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
@@ -272,7 +288,8 @@ const CertificatesEmmited = () => {
 							columns={columns}
 							defaultPageSize={PAGE_SIZE}
 							minRows={MIN_ROWS}
-							onPageChange={setPage}
+							onPageChange={changePage}
+							onPageSizeChange={setPageSize}
 						/>
 					) : (
 						<CircularProgress />

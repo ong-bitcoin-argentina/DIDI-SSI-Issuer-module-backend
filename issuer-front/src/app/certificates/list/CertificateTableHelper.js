@@ -20,7 +20,7 @@ import moment from "moment";
 import { Tooltip } from "@material-ui/core";
 import { validateAccess } from "../../../constants/Roles";
 
-const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE } = Messages.LIST.TABLE;
+const { CERT, EMISSION_DATE, EMISSION_DATE2, REVOCATION, BLOCKCHAIN, CRATED_DATE, SELECT } = Messages.LIST.TABLE;
 
 class CertificateTableHelper {
 	static baseCells = cert => ({
@@ -191,6 +191,7 @@ class CertificateTableHelper {
 		certificates,
 		selectedRows,
 		isAllSelected,
+		isIndeterminated,
 		onSelectAllToggle,
 		onFilterChange,
 		onDateRangeFilterChange
@@ -235,7 +236,17 @@ class CertificateTableHelper {
 		];
 
 		const select = {
-			Header: <TableHeadCheck selected={selectedRows} all={isAllSelected} onChange={onSelectAllToggle} />,
+			Header: (
+				<div className="SelectorHeader">
+					<div className="HeaderText">
+						<p>{SELECT}</p>
+						<p>{Object.values(selectedRows).filter(val => val).length}</p>
+					</div>
+					<div className="Actions">
+						<Checkbox checked={isAllSelected} onChange={onSelectAllToggle} indeterminate={isIndeterminated} />
+					</div>
+				</div>
+			),
 			accessor: "select"
 		};
 
