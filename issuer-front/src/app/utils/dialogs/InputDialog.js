@@ -90,7 +90,14 @@ export default class InputDialog extends Component {
 		const registerIdDefault = this.props.registerIdDefault;
 
 		return (
-			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
+			<Dialog
+				className="dialogBox"
+				open={this.state.isOpen}
+				onClose={() => {
+					if (!this.props.loading) this.close();
+				}}
+				aria-labelledby="form-dialog-title"
+			>
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
 					{fieldNames.length > 0 &&
@@ -141,10 +148,15 @@ export default class InputDialog extends Component {
 					{this.state.error && <div className="errMsg">{this.state.error}</div>}
 				</DialogContent>
 				<DialogActions>
-					<DefaultButton otherClass="DangerButtonOutlined" name={Messages.LIST.DIALOG.CANCEL} funct={this.close} />
+					<DefaultButton
+						otherClass="DangerButtonOutlined"
+						name={Messages.LIST.DIALOG.CANCEL}
+						funct={this.close}
+						disabled={this.props.loading}
+					/>
 					<DefaultButton
 						name={Messages.LIST.DIALOG.CREATE}
-						disabled={Object.values(this.state.fields).indexOf("") >= 0}
+						disabled={Object.values(this.state.fields).indexOf("") >= 0 || this.props.loading}
 						funct={this.handleAccept}
 						loading={this.props.loading}
 					/>
