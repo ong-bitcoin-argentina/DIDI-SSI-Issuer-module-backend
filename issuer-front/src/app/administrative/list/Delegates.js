@@ -22,7 +22,8 @@ class Delegates extends Component {
 		super(props);
 
 		this.state = {
-			registers: []
+			registers: [],
+			loading: false
 		};
 	}
 
@@ -70,6 +71,12 @@ class Delegates extends Component {
 		);
 	}
 
+	handleCreateDelegate = async data => {
+		this.setState({ loading: true });
+		await this.props.onCreate(data);
+		this.setState({ loading: false });
+	};
+
 	// muestra el dialogo de creacion
 	renderCreateDialog = () => {
 		return (
@@ -84,7 +91,8 @@ class Delegates extends Component {
 						options: this.state.registers
 					}
 				]}
-				onAccept={this.props.onCreate}
+				onAccept={this.handleCreateDelegate}
+				loading={this.state.loading}
 			/>
 		);
 	};
