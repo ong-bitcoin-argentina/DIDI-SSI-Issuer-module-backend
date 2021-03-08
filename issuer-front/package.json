@@ -54,5 +54,9 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"commitizen": "^4.2.3",
+		"cz-jira-smart-commit": "^3.0.0"
 	}
 }
