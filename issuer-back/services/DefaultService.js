@@ -1,14 +1,17 @@
 const DefaultValues = require("../models/DefaultValues");
 const Register = require("../models/Register");
 const Template = require("../models/Template");
+const sanitize = require("mongo-sanitize");
 
 const validate = async ({ templateId, registerId }) => {
 	// Verifico si existe el template
-	const template = await Template.findById(templateId);
+	const cleanedTemplateId = sanitize(templateId);
+	const template = await Template.findById(cleanedTemplateId);
 	if (!template) return Promise.reject(Messages.REGISTER.ERR.BLOCKCHAIN);
 
 	// Verifico si existe el registerId
-	const register = await Register.findById(registerId);
+	const cleanedRegisterId = sanitize(registerId);
+	const register = await Register.findById(cleanedRegisterId);
 	if (!register) return Promise.reject(Messages.REGISTER.ERR.BLOCKCHAIN);
 };
 

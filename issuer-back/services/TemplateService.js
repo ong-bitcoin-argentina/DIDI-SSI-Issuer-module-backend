@@ -33,7 +33,7 @@ module.exports.create = async function (name, registerId) {
 		// Verifico que el registro exista
 		await Register.getById(registerId);
 
-		const template = await Template.findOne({ name });
+		const template = await Template.findOne({ name: { $eq: name } });
 		if (template) return Promise.reject(Messages.TEMPLATE.ERR.UNIQUE_NAME);
 
 		return await Template.generate(name, registerId);

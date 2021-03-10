@@ -51,7 +51,7 @@ module.exports.create = async function (name, password, profileId) {
 		const profile = await Profile.getById(profileId);
 		if (!profile) return Promise.reject(Messages.PROFILE.ERR.GET);
 
-		const user = await User.findOne({ name });
+		const user = await User.findOne({ name: { $eq: name } });
 		if (user) {
 			if (!user.deleted) return Promise.reject(Messages.USER.ERR.UNIQUE_NAME);
 			return await user.edit({ name, password, profile, createdOn: Date.now() });
@@ -67,7 +67,7 @@ module.exports.create = async function (name, password, profileId) {
 // crear usuario admin en el issuer
 module.exports.createAdmin = async function (name, password) {
 	try {
-		const user = await User.findOne({ name });
+		const user = await User.findOne({ name: { $eq: name } });
 		if (user) return Promise.reject(Messages.USER.ERR.UNIQUE_NAME);
 
 		return await User.generate({ name, password, isAdmin: true });
@@ -122,7 +122,6 @@ module.exports.edit = async function (id, name, password, profileId) {
 		if (!user) return Promise.reject(Messages.USER.ERR.EDIT);
 		return Promise.resolve(user);
 	} catch (err) {
-		console.log(err);
 		return Promise.reject(err);
 	}
 };

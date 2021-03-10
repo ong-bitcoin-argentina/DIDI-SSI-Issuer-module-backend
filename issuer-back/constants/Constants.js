@@ -28,7 +28,6 @@ const SET_ATTRIBUTE = process.env.BLOCK_CHAIN_SET_ATTRIBUTE || "999999999";
 const URL = MONGO_DIR + ":" + MONGO_PORT + "/" + MONGO_DB;
 const MONGO_URL =
 	MONGO_USER && MONGO_PASSWORD ? "mongodb://" + MONGO_USER + ":" + MONGO_PASSWORD + "@" + URL : "mongodb://" + URL;
-console.log(MONGO_URL);
 
 const BLOCKCHAIN_URL_MAIN = process.env.BLOCKCHAIN_URL_MAIN; // RSK
 const BLOCKCHAIN_URL_RSK = process.env.BLOCKCHAIN_URL_RSK; // RSK
