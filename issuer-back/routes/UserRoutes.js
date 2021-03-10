@@ -6,6 +6,7 @@ const UserService = require("../services/UserService");
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const UserDTO = require("./utils/UserDTO");
+const { halfHourLimiter } = require("../policies/RateLimit");
 
 /**
  *	Genera un usuario para el issuer
@@ -55,6 +56,7 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
+	halfHourLimiter,
 	async function (req, res) {
 		try {
 			if (!Constants.ENABLE_INSECURE_ENDPOINTS) {

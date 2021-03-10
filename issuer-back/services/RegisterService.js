@@ -65,7 +65,8 @@ module.exports.newRegister = async function (did, key, name, token) {
 		if (byDIDExist) throw DID_EXISTS;
 
 		// Verifico que no exista el nombre en una misma blockchain
-		const repeatedRegister = await Register.findOne({ name, did: { $regex: blockchain, $options: "i" } });
+		const query = { name: { $eq: name }, did: { $regex: blockchain, $options: "i" } };
+		const repeatedRegister = await Register.findOne(query);
 		if (repeatedRegister) throw NAME_EXIST;
 
 		// Se envia el did a Didi
