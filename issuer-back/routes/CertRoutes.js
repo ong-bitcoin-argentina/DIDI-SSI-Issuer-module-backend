@@ -10,6 +10,7 @@ const TokenService = require("../services/TokenService");
 const TemplateService = require("../services/TemplateService");
 const MouroService = require("../services/MouroService");
 const { getDID, toDTO } = require("./utils/CertDTO");
+const Template = require("../models/Template");
 
 const { checkValidationResult, validate } = Validator;
 
@@ -172,7 +173,7 @@ router.put(
 /**
  * Marca un certificado como borrado y lo revoca en caso de haber sido emitido
  */
-router.delete("/:id", validate([CERT_REVOCATION]), checkValidationResult, async function (req, res) {
+router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
 	const { id } = req.params;
 	const { reason } = req.body;
 	const { token } = req.headers;
@@ -180,8 +181,9 @@ router.delete("/:id", validate([CERT_REVOCATION]), checkValidationResult, async 
 	try {
 		const { userId } = TokenService.getTokenData(token);
 		const cert = await CertService.deleteOrRevoke(id, reason, userId);
+		const { registerId } = await Template.findById(cert.templateId);
 		const did = getDID(cert);
-		const calls = cert.jwts.map(jwt => MouroService.revokeCertificate(jwt.data, jwt.hash, did));
+		const calls = cert.jwts.map(jwt => MouroService.revokeCertificate(jwt.data, jwt.hash, did, registerId));
 		await Promise.all(calls);
 		return ResponseHandler.sendRes(res, cert);
 	} catch (err) {
@@ -279,8 +281,10 @@ const generateFullCertificate = async function (credentials, template, cert, par
 			}
 		});
 
+		const { registerId } = template;
+
 		const resFull = await MouroService.createCertificate(data, expDate, did, template);
-		const savedFull = await MouroService.saveCertificate(resFull, true);
+		const savedFull = await MouroService.saveCertificate(resFull, true, registerId);
 		credentials.push(savedFull);
 
 		return Promise.resolve(credentials);
@@ -373,9 +377,10 @@ const generateCertificate = async function (credentials, template, cert, part) {
 		data[name] = MouroService.getSkeletonForEmmit(template, true);
 
 		const saveCertPromises = [];
+		const { registerId } = template;
 		for (let i = 0; i < microCredentials.length; i++) {
 			const microCred = microCredentials[i];
-			const saveCred = MouroService.saveCertificate(microCred, false);
+			const saveCred = MouroService.saveCertificate(microCred, false, registerId);
 			saveCertPromises.push(saveCred);
 
 			data[name].wrapped[generateCertNames[i]] = microCred;
@@ -392,7 +397,7 @@ const generateCertificate = async function (credentials, template, cert, part) {
 				credentials.push(res[i]);
 			} else {
 				// guardar macrocredencial
-				const savedFull = await MouroService.saveCertificate(res[i], true);
+				const savedFull = await MouroService.saveCertificate(res[i], true, registerId);
 				credentials.push(savedFull);
 			}
 		}

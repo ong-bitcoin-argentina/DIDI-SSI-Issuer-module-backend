@@ -11,9 +11,9 @@ import RegisterService from "../../services/RegisterService";
 import Constants from "../../constants/Constants";
 
 const BLOCKCHAIN_LABEL_NAME = "Blockchain de Verificación por defecto";
-const TEMPALTE_LABEL_NAME = "Template de Credenciales por defecto";
+const TEMPLATE_LABEL_NAME = "Template de Credenciales por defecto";
 const CREATE_MESSAGE = "Se creo exitosamente";
-const EDIT_MESSAGE = "Se edito exitosamente";
+const EDIT_MESSAGE = "Se editó exitosamente";
 
 const DefaultForm = ({ registers: register_ }) => {
 	const [defaultValue, setDefaultValue] = useState({});
@@ -103,7 +103,7 @@ const DefaultForm = ({ registers: register_ }) => {
 
 	const editDefaultFunction = () => handleError(DefautValueService.edit, changeNotification("edit", true));
 
-	const parseRegisterData = ({ name, did }) => `${name}  (${did.split(":")[2].toUpperCase()})`;
+	const parseRegisterData = ({ name, blockchain }) => `${name}  (${blockchain.toUpperCase()})`;
 	const parseTemplateData = ({ name, blockchain }) => name + (blockchain ? ` (${blockchain.toUpperCase()})` : "");
 
 	const handleChange = event => {
@@ -143,14 +143,22 @@ const DefaultForm = ({ registers: register_ }) => {
 								parseData={parseTemplateData}
 								options={templates}
 								loading={templateLoading}
-								label={TEMPALTE_LABEL_NAME}
+								label={TEMPLATE_LABEL_NAME}
 							/>
 							{error && <Alert color="error">{error}</Alert>}
 							<Grid item xs={12} style={{ margin: "25px 0 15px" }}>
 								{existDefault ? (
-									<DefaultButton funct={editDefaultFunction} name="Guardar Cambios" {...loading} />
+									<DefaultButton
+										funct={editDefaultFunction}
+										name="Guardar Cambios"
+										disabled={templateLoading || registerLoading}
+									/>
 								) : (
-									<DefaultButton funct={createDefaultValue} name="Crear" {...loading} />
+									<DefaultButton
+										funct={createDefaultValue}
+										name="Crear"
+										disabled={templateLoading || registerLoading}
+									/>
 								)}
 							</Grid>
 						</>

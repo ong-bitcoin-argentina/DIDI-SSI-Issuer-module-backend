@@ -6,7 +6,6 @@ import Messages from "../../../constants/Messages";
 import MaterialIcon from "material-icons-react";
 
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -15,8 +14,11 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 
-import './_Style.scss';
-import '../../../styles/GeneralStyles.scss';
+import "./_Style.scss";
+import "../../../styles/GeneralStyles.scss";
+import DefaultButton from "../../setting/default-button";
+
+const { CREATE, CLOSE } = Messages.EDIT.DIALOG.FIELD;
 
 export default class TemplateFieldAddDialog extends Component {
 	constructor(props) {
@@ -97,19 +99,15 @@ export default class TemplateFieldAddDialog extends Component {
 					{this.renderDialogRequired()}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={this.close} color="primary">
-						{Messages.EDIT.DIALOG.FIELD.CLOSE}
-					</Button>
-					<Button
-						onClick={this.createField}
+					<DefaultButton otherClass="DangerButtonOutlined" name={CLOSE} funct={this.close} />
+					<DefaultButton
+						funct={this.createField}
+						name={CREATE}
 						disabled={
 							!this.state.name ||
 							(this.state.dataType === Constants.TEMPLATES.TYPES.CHECKBOX && !this.state.options.length)
 						}
-						color="primary"
-					>
-						{Messages.EDIT.DIALOG.FIELD.CREATE}
-					</Button>
+					/>
 				</DialogActions>
 			</Dialog>
 		);

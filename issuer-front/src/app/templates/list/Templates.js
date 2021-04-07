@@ -16,6 +16,7 @@ import RegisterService from "../../../services/RegisterService";
 import Cookie from "js-cookie";
 import DefautValueService from "../../../services/DefaultValueService";
 import { validateAccess } from "../../../constants/Roles";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 class Templates extends Component {
 	constructor(props) {
@@ -66,11 +67,12 @@ class Templates extends Component {
 		return (
 			<div className={loading ? "Templates Loading" : "Templates"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="TEMPLATES" />
 				{this.renderSectionButtons(loading)}
 				{this.renderDeleteDialog()}
 				{this.renderCreateDialog()}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}
@@ -90,11 +92,11 @@ class Templates extends Component {
 					}
 				]}
 				registerIdDefault={this.state.registerId}
-				onAccept={values => {
+				onAccept={async values => {
 					if (!values.registerId) {
-						this.props.onCreate({ ...values, registerId: this.state.registerId });
+						await this.props.onCreate({ ...values, registerId: this.state.registerId });
 					} else {
-						this.props.onCreate(values);
+						await this.props.onCreate(values);
 					}
 				}}
 			/>

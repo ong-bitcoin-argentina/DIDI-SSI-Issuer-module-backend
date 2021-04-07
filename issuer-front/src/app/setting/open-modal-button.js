@@ -1,15 +1,12 @@
-import { Button } from "@material-ui/core";
+import MaterialIconsReact from "material-icons-react";
 import React from "react";
+import Constants from "../../constants/Constants";
 
 const OpenModalButton = ({ setModalOpen, title }) => (
-	<Button
-		variant="contained"
-		color="primary"
-		style={{ background: "#256EE0", color: "#fff" }}
-		onClick={() => setModalOpen(true)}
-	>
-		{title}
-	</Button>
+	<button className="CreateButton" onClick={() => setModalOpen(true)}>
+		<MaterialIconsReact icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+		<div className="CreateButtonText">{title}</div>
+	</button>
 );
 
 export default OpenModalButton;

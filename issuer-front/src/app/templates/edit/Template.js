@@ -20,12 +20,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
-import logoApp from "../../../images/ai-di-logo.svg";
 import Header from "../../components/Header";
 import RegisterService from "../../../services/RegisterService";
 import BlockchainName from "../../utils/dialogs/blockchainName";
 import { validateAccess } from "../../../constants/Roles";
-import { getRegisterData } from "../../setting/register-table-helper";
+
+const { Write_Templates } = Constants.ROLES;
 
 class Template extends Component {
 	constructor(props) {
@@ -157,7 +157,7 @@ class Template extends Component {
 				// self.props.history.push(Constants.ROUTES.TEMPLATES);
 			},
 			function (err) {
-				self.setState({ error: err });
+				self.setState({ error: err, loading: false });
 				console.log(err);
 			}
 		);
@@ -172,6 +172,7 @@ class Template extends Component {
 				<Select
 					className="CategoriesPicker"
 					displayEmpty
+					disabled={!validateAccess(Write_Templates)}
 					value={registerId ? registerId : ""}
 					onChange={event => {
 						template.registerId = event.target.value;
@@ -197,20 +198,21 @@ class Template extends Component {
 		}
 		const loading = this.state.loading;
 		return (
-			<div className={`${loading && "Loading"} Template mb-2`}>
+			<>
 				<Header />
-
 				{Spinner.render(loading)}
-				{this.renderDialog()}
-				<div className="container">
-					{!loading && this.renderTemplateCategory()}
-					{!loading && this.renderBlockchainRegister()}
-					{!loading && this.renderTemplate()}
-					{!loading && this.renderTemplateType()}
-					{this.renderButtons()}
-					{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
+				<div className={`${loading && "Loading"} Template mb-2`}>
+					{this.renderDialog()}
+					<div className="container">
+						{!loading && this.renderTemplateCategory()}
+						{!loading && this.renderBlockchainRegister()}
+						{!loading && this.renderTemplate()}
+						{!loading && this.renderTemplateType()}
+						{!loading && this.renderButtons()}
+						{this.state.error && <div className="errMsg">{this.state.error.message}</div>}
+					</div>
 				</div>
-			</div>
+			</>
 		);
 	}
 
@@ -237,6 +239,7 @@ class Template extends Component {
 					className="CategoriesPicker"
 					displayEmpty
 					value={template.category ? template.category : ""}
+					disabled={!validateAccess(Write_Templates)}
 					onChange={event => {
 						template.category = event.target.value;
 						this.setState({ template: template });
@@ -282,17 +285,32 @@ class Template extends Component {
 						}}
 					>
 						<div className="PreviewFieldItem">
-							<FormControlLabel value="1" checked={radioValue === "1"} control={<Radio />} />
+							<FormControlLabel
+								disabled={!validateAccess(Write_Templates)}
+								value="1"
+								checked={radioValue === "1"}
+								control={<Radio />}
+							/>
 							<img src={require("./Preview/1.png")} className="PreviewFieldTypeImage" alt="type 1" />
 						</div>
 
 						<div className="PreviewFieldItem">
-							<FormControlLabel value="2" checked={radioValue === "2"} control={<Radio />} />
+							<FormControlLabel
+								disabled={!validateAccess(Write_Templates)}
+								value="2"
+								checked={radioValue === "2"}
+								control={<Radio />}
+							/>
 							<img src={require("./Preview/2.png")} className="PreviewFieldTypeImage" alt="type 2" />
 						</div>
 
 						<div className="PreviewFieldItem">
-							<FormControlLabel value="3" checked={radioValue === "3"} control={<Radio />} />
+							<FormControlLabel
+								disabled={!validateAccess(Write_Templates)}
+								value="3"
+								checked={radioValue === "3"}
+								control={<Radio />}
+							/>
 							<img src={require("./Preview/3.png")} className="PreviewFieldTypeImage" alt="type 3" />
 						</div>
 					</RadioGroup>
@@ -302,6 +320,7 @@ class Template extends Component {
 						className="PreviewFieldsSelect"
 						multiple
 						displayEmpty
+						disabled={!validateAccess(Write_Templates)}
 						value={this.state.template.previewData}
 						onChange={this.onPreviewFieldsSelected}
 						renderValue={selected => selected.join(", ")}
@@ -356,7 +375,7 @@ class Template extends Component {
 							<div className="DataName">{dataElem.name}</div>
 
 							<div className="DataElem">
-								{DataRenderer.renderData(dataElem, type, true, this.setDefaultValue, true)}
+								{DataRenderer.renderData(dataElem, type, validateAccess(Write_Templates), this.setDefaultValue, true)}
 								<div className="options">
 									{DataRenderer.renderRequired(dataElem, type, this.toggleRequired, true)}
 									{DataRenderer.renderDelete(dataElem, type, this.deleteField, true)}
@@ -375,15 +394,17 @@ class Template extends Component {
 	renderSectionButtons = type => {
 		return (
 			<div className="SectionButtons">
-				<button
-					className="AddButton"
-					onClick={() => {
-						if (this.templateFieldAddDialog) this.templateFieldAddDialog.open(type);
-					}}
-				>
-					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
-				</button>
+				{validateAccess(Write_Templates) && (
+					<button
+						className="AddButton"
+						onClick={() => {
+							if (this.templateFieldAddDialog) this.templateFieldAddDialog.open(type);
+						}}
+					>
+						<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+						<div className="AddButtonText">{Messages.EDIT.BUTTONS.CREATE}</div>
+					</button>
+				)}
 			</div>
 		);
 	};
@@ -392,7 +413,7 @@ class Template extends Component {
 	renderButtons = () => {
 		return (
 			<div className="TemplateButtons">
-				{validateAccess(Constants.ROLES.Write_Templates) && (
+				{validateAccess(Write_Templates) && (
 					<button className="SaveButton" onClick={this.onSave}>
 						{Messages.EDIT.BUTTONS.SAVE}
 					</button>

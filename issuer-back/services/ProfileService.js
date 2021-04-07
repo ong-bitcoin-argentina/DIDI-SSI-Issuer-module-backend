@@ -4,7 +4,7 @@ const Profile = require("../models/Profile");
 const User = require("../models/User");
 
 const { TYPE } = Messages.USER.ERR;
-const { GET, IS_USED } = Messages.PROFILE.ERR;
+const { GET, IS_USED, NAME_NOT_UNIQUE } = Messages.PROFILE.ERR;
 const { USER_CREATED_TYPES } = Constants;
 
 const validateTypes = types => {
@@ -13,10 +13,17 @@ const validateTypes = types => {
 
 module.exports.createProfile = async body => {
 	try {
-		const { types } = body;
+		const { types, name } = body;
 
 		// Valido que los tipos de permisos son correctos
 		validateTypes(types);
+
+		// Valido que el nombre no exista, y si existe y esta como borrado, lo edito
+		const profile = await Profile.getByName(name);
+		if (profile) {
+			if (!profile.deleted) throw NAME_NOT_UNIQUE;
+			return await profile.edit({ ...body, deleted: false });
+		}
 
 		return await Profile.generate(body);
 	} catch (err) {

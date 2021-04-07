@@ -14,17 +14,29 @@ import MaterialIcon from "material-icons-react";
 import InputDialog from "../../utils/dialogs/InputDialog";
 import ConfirmationDialog from "../../utils/dialogs/ConfirmationDialog";
 import { validateAccess } from "../../../constants/Roles";
+import RegisterService from "../../../services/RegisterService";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 class Delegates extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			registers: [],
+			loading: false
+		};
 	}
 
 	// generar referencia para abrir dialogo de borrado desde el padre
 	componentDidMount() {
 		this.props.onRef(this);
+		this.getRegisters();
+	}
+
+	async getRegisters() {
+		const token = Cookie.get("token");
+		const registers = await RegisterService.getAll()(token);
+		this.setState({ registers });
 	}
 
 	// borrar referencia
@@ -48,15 +60,22 @@ class Delegates extends Component {
 		return (
 			<div className={loading ? "Admin Loading" : "Admin"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="DELEGATES" />
 				{this.renderCreateDialog()}
 				{this.renderDeleteDialog()}
 
 				{this.renderSectionButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}
+
+	handleCreateDelegate = async data => {
+		this.setState({ loading: true });
+		await this.props.onCreate(data);
+		this.setState({ loading: false });
+	};
 
 	// muestra el dialogo de creacion
 	renderCreateDialog = () => {
@@ -65,7 +84,15 @@ class Delegates extends Component {
 				onRef={ref => (this.createDialog = ref)}
 				title={Messages.LIST.DIALOG.CREATE_DELEGATE_TITLE}
 				fieldNames={["name", "did"]}
-				onAccept={this.props.onCreate}
+				selectNames={[
+					{
+						name: "registerId",
+						label: "Emisor",
+						options: this.state.registers
+					}
+				]}
+				onAccept={this.handleCreateDelegate}
+				loading={this.state.loading}
 			/>
 		);
 	};

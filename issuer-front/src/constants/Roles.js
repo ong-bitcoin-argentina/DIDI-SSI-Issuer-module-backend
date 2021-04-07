@@ -12,7 +12,13 @@ const {
 	Read_Delegates,
 	Write_Delegates,
 	Read_Dids_Registers,
-	Write_Dids_Registers
+	Write_Dids_Registers,
+	Read_Profiles,
+	Write_Profiles,
+	Delete_Profiles,
+	Read_Users,
+	Write_Users,
+	Delete_Users
 } = Constants.ROLES;
 
 const ACCESS_ALLOWED = {
@@ -34,7 +40,17 @@ const ACCESS_ALLOWED = {
 
 	// Permisos para Registro de DIDs
 	Read_Dids_Registers: [Read_Dids_Registers, Write_Dids_Registers],
-	Write_Dids_Registers: [Write_Dids_Registers]
+	Write_Dids_Registers: [Write_Dids_Registers],
+
+	// Permisos para Perfiles
+	Read_Profiles: [Read_Profiles, Write_Profiles, Delete_Profiles],
+	Write_Profiles: [Write_Profiles],
+	Delete_Profiles: [Delete_Profiles],
+
+	// Permisos para Usuarios
+	Read_Users: [Read_Users, Write_Users, Delete_Users],
+	Write_Users: [Write_Users],
+	Delete_Users: [Delete_Users]
 };
 
 export const validateAccess = role => {

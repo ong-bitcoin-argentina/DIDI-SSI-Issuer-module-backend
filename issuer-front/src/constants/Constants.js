@@ -20,9 +20,7 @@ module.exports = {
 		DEFAULT_VALUE: API + "/default",
 		TEMPLATES: {
 			GET_ALL: API + "/template/all",
-			GET_QR: (id, code) => {
-				return API + "/template/" + id + "/qr/" + code;
-			},
+			GET_QR: (id, code, registerId) => `${API}/template/${id}/qr/${code}/${registerId}`,
 			REQUEST: code => {
 				return API + "/template/request/" + code;
 			},
@@ -140,7 +138,7 @@ module.exports = {
 			},
 			TYPING_TIMEOUT: 1000
 		},
-		CATEGORIES: ["EDUCACION", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS", "LABORAL"],
+		CATEGORIES: ["EDUCACIÓN", "FINANZAS", "VIVIENDA", "IDENTIDAD", "BENEFICIOS", "LABORAL"],
 		TYPES: {
 			TEXT: "Text",
 			PARAGRAPH: "Paragraph",
@@ -222,7 +220,7 @@ module.exports = {
 			},
 			EXP_DATE_INVALID: {
 				err: "EXP_DATE_INVALID",
-				message: "La fecha de expiracion debe ser mayor a la fecha actual."
+				message: "La fecha de expiración debe ser mayor a la fecha actual."
 			}
 		},
 		MANDATORY_DATA: {
@@ -267,7 +265,17 @@ module.exports = {
 
 		// Permisos para Registro de DIDs
 		Read_Dids_Registers: "Read_Dids_Registers",
-		Write_Dids_Registers: "Write_Dids_Registers"
+		Write_Dids_Registers: "Write_Dids_Registers",
+
+		// Permisos para Perfiles
+		Read_Profiles: "Read_Profiles",
+		Write_Profiles: "Write_Profiles",
+		Delete_Profiles: "Delete_Profiles",
+
+		// Permisos para Usuarios
+		Read_Users: "Read_Users",
+		Write_Users: "Write_Users",
+		Delete_Users: "Delete_Users"
 	},
 
 	ROLES_TRANSLATE: {
@@ -289,7 +297,17 @@ module.exports = {
 
 		// Permisos para Registro de DIDs
 		Read_Dids_Registers: "Visualizar Registros de Dids",
-		Write_Dids_Registers: "Crear/Editar Registros de Dids"
+		Write_Dids_Registers: "Crear/Editar Registros de Dids",
+
+		// Permisos para Perfiles
+		Read_Profiles: "Visualizar Perfiles",
+		Write_Profiles: "Crear/Editar Perfiles",
+		Delete_Profiles: "Eliminar Perfiles",
+
+		// Permisos para Usuarios
+		Read_Users: "Visualizar Usuarios",
+		Write_Users: "Crear/Editar Usuarios",
+		Delete_Users: "Eliminar Usuarios"
 	},
 
 	BLOCKCHAINS: ["BFA", "RSK", "LACCHAIN"],
@@ -297,8 +315,10 @@ module.exports = {
 	STATUS: {
 		DONE: "Creado",
 		ERROR: "Error",
-		PENDING: "Pendiente",
+		CREATING: "Creando",
 		EXPIRED: "Expirado",
-		ERROR_RENEW: "Error al Renovar"
+		ERROR_RENEW: "Error al Renovar",
+		REVOKED: "Revocado",
+		REVOKING: "Revocando"
 	}
 };

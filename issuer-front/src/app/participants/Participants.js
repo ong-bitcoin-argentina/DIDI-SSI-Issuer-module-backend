@@ -9,7 +9,6 @@ import ReactFileReader from "react-file-reader";
 
 import Spinner from "../utils/Spinner";
 import QrDialog from "../utils/dialogs/QrDialog";
-import ConfirmationDialog from "../utils/dialogs/ConfirmationDialog";
 
 import TemplateService from "../../services/TemplateService";
 import ParticipantService from "../../services/ParticipantService";
@@ -18,6 +17,11 @@ import Cookie from "js-cookie";
 import Constants from "../../constants/Constants";
 import Messages from "../../constants/Messages";
 import { validateAccess } from "../../constants/Roles";
+import DefaultButton from "../setting/default-button";
+import InputDialog from "../utils/dialogs/InputDialog";
+import RegisterService from "../../services/RegisterService";
+import Notification from "../components/Notification";
+import TabDescription from "../components/TabDescription/TabDescription";
 
 let interval;
 class Participants extends Component {
@@ -26,7 +30,10 @@ class Participants extends Component {
 
 		this.state = {
 			loading: false,
-			requestSent: false
+			loadingSend: false,
+			requestSent: false,
+			registers: [],
+			sendCredentialSuccess: false
 		};
 	}
 
@@ -57,6 +64,18 @@ class Participants extends Component {
 				self.props.onReload();
 			}
 		}, 10000);
+
+		this.getAllRegister();
+	}
+
+	async getAllRegister() {
+		const token = Cookie.get("token");
+		try {
+			const registers = await RegisterService.getAll()(token);
+			this.setState({ registers });
+		} catch (error) {
+			this.setState({ registers: [] });
+		}
 	}
 
 	// retorna true si hay algun elemento en la tabla seleccionado
@@ -75,7 +94,7 @@ class Participants extends Component {
 	};
 
 	// manda los pedidos correspondientes a los participantes/credenciales seleccionados
-	sendRequests = () => {
+	sendRequests = async ({ registerId }) => {
 		const partIds = this.props.participants.map(part => part.did);
 		const selectedParticipants = this.props.selectedParticipants;
 		const requests = {};
@@ -92,28 +111,28 @@ class Participants extends Component {
 		const token = Cookie.get("token");
 		const self = this;
 
+		self.setState({ loadingSend: true });
 		for (let partId of Object.keys(requests)) {
 			const globalRequestCode = Math.random().toString(36).slice(-8);
 
 			if (self.reqSentDialog) self.reqSentDialog.open();
 
 			// mandar pedido
-			TemplateService.sendRequest(
-				token,
-				[partId],
-				requests[partId],
-				globalRequestCode,
-				function (_) {
-					self.setState({
-						requestSent: true
-					});
-				},
-				function (err) {
-					self.setState({ error: err });
-					console.log(err);
-				}
-			);
+			await TemplateService.sendRequest(
+				{ dids: [partId], certNames: requests[partId], registerId },
+				globalRequestCode
+			)(token);
+
+			self.setState({
+				requestSent: true,
+				sendCredentialSuccess: true
+			});
 		}
+		self.setState({ loadingSend: false });
+	};
+
+	showSenRequestsPopUp = () => {
+		this.reqSentDialog.open();
 	};
 
 	// generar csv de ejemplo para carga de participantes
@@ -193,6 +212,12 @@ class Participants extends Component {
 		}
 	};
 
+	onCloseSendCredentialSuccess = (e, reason) => {
+		if (reason !== "clickaway") {
+			this.setState({ sendCredentialSuccess: false });
+		}
+	};
+
 	// mostrar pantalla de carga de participantes
 	render() {
 		if (!Cookie.get("token")) {
@@ -204,11 +229,17 @@ class Participants extends Component {
 		return (
 			<div className={loading ? "QrReq Loading" : "QrReq"}>
 				{Spinner.render(loading)}
-				{this.renderRequestSentDialog()}
+				<TabDescription tabName="REGISTER_DIDS" />
+				{this.renderCreateDialog()}
 				{this.renderQrDialog()}
 				{this.renderButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
+				<Notification
+					open={this.state.sendCredentialSuccess}
+					message="La solicitud se realizo con éxito."
+					onClose={this.onCloseSendCredentialSuccess}
+				/>
 			</div>
 		);
 	}
@@ -225,15 +256,22 @@ class Participants extends Component {
 		);
 	};
 
-	// muestra el dialogo de "pedido enviado"
-	renderRequestSentDialog = () => {
+	// muestra el dialogo para pedido enviado
+	renderCreateDialog = () => {
 		return (
-			<ConfirmationDialog
+			<InputDialog
 				onRef={ref => (this.reqSentDialog = ref)}
-				title={Messages.EDIT.DIALOG.QR.REQUEST_SENT}
-				message={""}
-				confirm={Messages.EDIT.BUTTONS.CLOSE}
-				hideClose={true}
+				title={"Solicitud de Credenciales"}
+				fieldNames={[]}
+				selectNames={[
+					{
+						name: "registerId",
+						label: "Emisor",
+						options: this.state.registers
+					}
+				]}
+				onAccept={this.sendRequests}
+				loading={this.state.loadingSend}
 			/>
 		);
 	};
@@ -287,13 +325,12 @@ class Participants extends Component {
 						</div>
 
 						<div className="QrButtonsRow">
-							<button
-								className="PartRequestButton"
+							{/* PartRequestButton */}
+							<DefaultButton
+								funct={this.showSenRequestsPopUp}
 								disabled={!this.canSendRequest(loading)}
-								onClick={this.sendRequests}
-							>
-								{Messages.QR.BUTTONS.REQUEST}
-							</button>
+								name={Messages.QR.BUTTONS.REQUEST}
+							/>
 						</div>
 					</>
 				)}

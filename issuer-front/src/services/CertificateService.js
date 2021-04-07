@@ -1,5 +1,6 @@
 import Constants from "../constants/Constants";
 import { options } from "../constants/Requests";
+import { fetchData, options as fetchOptions, optionsBody } from "./utils";
 const { GET_ALL, GET_EMMITED, GET_PENDING, GET_REVOKED, DELETE } = Constants.API_ROUTES.CERTIFICATES;
 
 export default class CertificateService {
@@ -186,19 +187,11 @@ export default class CertificateService {
 			.catch(err => errCb(err));
 	}
 
-	static delete(token, id) {
-		const options = {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			}
-		};
-
-		return fetch(DELETE(id), options);
+	static delete(id) {
+		return fetchData(fetchOptions("DELETE"), DELETE(id));
 	}
 
-	static revoke(token, id, reason) {
-		return fetch(DELETE(id), options(token, "DELETE", { reason }));
+	static revoke(id, reason) {
+		return fetchData(optionsBody("DELETE", { reason }), DELETE(id));
 	}
 }

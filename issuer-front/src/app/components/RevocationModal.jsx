@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@material-ui/core";
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from "@material-ui/core";
 import { REVOCATION_REASONS } from "../../constants/CertificateDefinitions";
 import FormSelect from "./FormSelect";
 import PropTypes from "prop-types";
+import DefaultButton from "../setting/default-button";
 
 const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, title, children }) => {
 	const [revokeReason, setRevokeReason] = useState("");
@@ -39,12 +40,14 @@ const RevocationModal = ({ open, onClose, onSuccess, toggleModal, handleSubmit, 
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={toggleModal} color="primary" disabled={loading}>
-					Cancelar
-				</Button>
-				<Button onClick={handleRevokeConfirm} color="secondary" variant="contained" disabled={!revokeReason}>
-					{loading ? <CircularProgress size={20} color="white" /> : "Revocar"}
-				</Button>
+				<DefaultButton funct={toggleModal} otherClass="CreateButtonOutlined" name="Cancelar" />
+				<DefaultButton
+					funct={handleRevokeConfirm}
+					otherClass="DangerButton"
+					disabled={!revokeReason}
+					loading={loading}
+					name="Revocar"
+				/>
 			</DialogActions>
 		</Dialog>
 	);

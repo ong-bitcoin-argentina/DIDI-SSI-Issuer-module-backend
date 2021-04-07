@@ -59,7 +59,15 @@ const {
 	PROFILE
 } = Messages.LIST.BUTTONS;
 
-const { Admin, Read_Templates, Read_Certs, Read_Delegates, Read_Dids_Registers } = Constants.ROLES;
+const {
+	Admin,
+	Read_Templates,
+	Read_Certs,
+	Read_Delegates,
+	Read_Dids_Registers,
+	Read_Profiles,
+	Read_Users
+} = Constants.ROLES;
 
 class Main extends Component {
 	constructor(props) {
@@ -110,21 +118,7 @@ class Main extends Component {
 			}
 
 			if (validateAccess(Read_Templates)) {
-				let templates = await TemplateService.getAllAsync(token);
-				templates = templates.map(template => {
-					return TemplateTableHelper.getTemplateData(
-						template,
-						self.onTemplateEdit,
-						self.onTemplateDeleteDialogOpen,
-						() => self.state.loading
-					);
-				});
-				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-				self.setState({
-					templates: templates,
-					templateColumns: templateColumns,
-					loading: false
-				});
+				self.getTemplatesData();
 			}
 
 			if (validateAccess(Read_Certs)) {
@@ -155,9 +149,9 @@ class Main extends Component {
 				});
 			}
 		} catch (err) {
-			self.setState({ error: err });
-			console.log(err);
+			self.setState({ error: err, loading: false });
 		}
+		self.setState({ loading: false });
 	};
 
 	// cargar credenciales
@@ -293,7 +287,7 @@ class Main extends Component {
 		self.setState({ certs: self.state.certificates, loading: true });
 
 		try {
-			await CertificateService.delete(token, id);
+			await CertificateService.delete(id)(token);
 			const certs = self.state.certs.filter(t => t._id !== cert._id);
 			self.setState({
 				certs: certs,
@@ -327,7 +321,7 @@ class Main extends Component {
 
 		for (const id of selectedCerts) {
 			try {
-				await CertificateService.delete(token, id);
+				await CertificateService.delete(id)(token);
 			} catch (error) {
 				errors.push(error.message);
 			}
@@ -556,32 +550,32 @@ class Main extends Component {
 		this.props.history.push(Constants.ROUTES.EDIT_CERT + id);
 	};
 
-	// crear templates
-	onTemplateCreate = data => {
+	getTemplatesData = async () => {
 		const token = Cookie.get("token");
 		const self = this;
-		self.setState({ loading: true });
-		TemplateService.create(
-			token,
-			data,
-			async function (template) {
-				const templates = self.state.templates;
-				const data = TemplateTableHelper.getTemplateData(
-					template,
-					self.onTemplateEdit,
-					self.onTemplateDeleteDialogOpen,
-					() => self.state.loading
-				);
-				templates.push(data);
-
-				const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
-				self.setState({ templates: templates, templateColumns: templateColumns, loading: false, error: false });
-			},
-			function (err) {
-				self.setState({ loading: false, error: err });
-				console.log(err);
-			}
+		const templates = (await TemplateService.getAllAsync(token)).map(template =>
+			TemplateTableHelper.getTemplateData(
+				template,
+				self.onTemplateEdit,
+				self.onTemplateDeleteDialogOpen,
+				() => self.state.loading
+			)
 		);
+		const templateColumns = TemplateTableHelper.getTemplateColumns(templates);
+		self.setState({
+			templates: templates,
+			templateColumns: templateColumns,
+			loading: false
+		});
+	};
+
+	// crear templates
+	onTemplateCreate = async data => {
+		const token = Cookie.get("token");
+		const self = this;
+
+		await TemplateService.create(data)(token);
+		self.getTemplatesData();
 	};
 
 	// abrir dialogo de borrado
@@ -706,33 +700,19 @@ class Main extends Component {
 	};
 
 	// crear delegacion
-	onDelegateCreate = data => {
-		const did = data.did;
-		const name = data.name;
-
+	onDelegateCreate = async data => {
 		const token = Cookie.get("token");
 		const self = this;
-		self.setState({ loading: true });
-		DelegateService.create(
-			token,
-			did,
-			name,
-			async function (delegate) {
-				const delegates = self.state.delegates;
-				const data = DelegatesTableHelper.getDelegatesData(
-					delegate,
-					self.onDelegateDeleteDialogOpen,
-					() => self.state.loading
-				);
-				delegates.push(data);
-				const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
-				self.setState({ delegates: delegates, delegateColumns: delegateColumns, loading: false, error: false });
-			},
-			function (err) {
-				self.setState({ loading: false, error: err });
-				console.log(err);
-			}
+		const delegate = await DelegateService.create(data)(token);
+		const delegates = self.state.delegates;
+		const data_ = DelegatesTableHelper.getDelegatesData(
+			delegate,
+			self.onDelegateDeleteDialogOpen,
+			() => self.state.loading
 		);
+		delegates.push(data_);
+		const delegateColumns = DelegatesTableHelper.getDelegatesColumns();
+		self.setState({ delegates: delegates, delegateColumns: delegateColumns });
 	};
 
 	// borrar delegacion
@@ -775,11 +755,21 @@ class Main extends Component {
 		);
 	};
 
+	getSelectedCerts = () => {
+		const keys = Object.keys(this.state.selectedCerts);
+		return keys.filter(key => this.state.selectedCerts[key]);
+	};
+
 	// a pantalla de login
 	onLogout = () => {
+		Cookie.set("_id", "");
 		Cookie.set("token", "");
 		Cookie.set("roles", []);
 		this.props.history.push(Constants.ROUTES.LOGIN);
+	};
+
+	resetTab = () => {
+		this.setState({ tabIndex: 0 });
 	};
 
 	// mostrar pantalla principal con tabs para las distintas secciones
@@ -793,7 +783,7 @@ class Main extends Component {
 
 		return (
 			<div className="MainContent">
-				<Header onRenameModalOpen={this.onRenameModalOpen} />
+				<Header onRenameModalOpen={this.onRenameModalOpen} resetTab={this.resetTab} />
 				<Tabs selectedIndex={selectedIndex} onSelect={tabIndex => this.setState({ tabIndex, error: false })}>
 					{this.renderRenameDialog()}
 					{this.renderActions(loading)}
@@ -805,8 +795,8 @@ class Main extends Component {
 						{validateAccess(Read_Certs) && <Tab disabled={loading && tabIndex !== 3}>{TO_REVOKED_CERTIFICATES}</Tab>}
 						{validateAccess(Read_Dids_Registers) && <Tab disabled={loading && tabIndex !== 4}>{TO_QR}</Tab>}
 						{validateAccess(Read_Delegates) && <Tab disabled={loading && tabIndex !== 5}>{DELEGATES}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 6}>{PROFILE}</Tab>}
-						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 7}>{USERS}</Tab>}
+						{validateAccess(Read_Profiles) && <Tab disabled={loading && tabIndex !== 6}>{PROFILE}</Tab>}
+						{validateAccess(Read_Users) && <Tab disabled={loading && tabIndex !== 7}>{USERS}</Tab>}
 						{validateAccess(Admin) && <Tab disabled={loading && tabIndex !== 8}>{CONFIG}</Tab>}
 					</TabList>
 
@@ -837,7 +827,7 @@ class Main extends Component {
 									onDelete={this.onCertificateDelete}
 									error={error}
 									onDeleteSelects={this.onDeleteSelects}
-									selectedCerts={this.state.selectedCerts}
+									selectedCerts={this.getSelectedCerts()}
 									allCertificates={this.state.certificates}
 								/>
 							</TabPanel>
@@ -879,18 +869,20 @@ class Main extends Component {
 							/>
 						</TabPanel>
 					)}
+					{validateAccess(Read_Profiles) && (
+						<TabPanel>
+							<Profile />
+						</TabPanel>
+					)}
+					{validateAccess(Read_Users) && (
+						<TabPanel>
+							<UserList />
+						</TabPanel>
+					)}
 					{validateAccess(Admin) && (
-						<>
-							<TabPanel>
-								<Profile />
-							</TabPanel>
-							<TabPanel>
-								<UserList />
-							</TabPanel>
-							<TabPanel>
-								<Setting />
-							</TabPanel>
-						</>
+						<TabPanel>
+							<Setting />
+						</TabPanel>
 					)}
 				</Tabs>
 			</div>

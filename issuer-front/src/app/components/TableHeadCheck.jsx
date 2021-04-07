@@ -7,12 +7,13 @@ const TableHeadCheck = ({ all, selected, onChange }) => {
 	const [checked, setChecked] = useState(all);
 
 	useEffect(() => {
-		onChange(checked);
-	}, [checked]);
-
-	useEffect(() => {
 		setChecked(all);
 	}, [all]);
+
+	const setValue = (e, val) => {
+		setChecked(val);
+		onChange(val);
+	};
 
 	return (
 		<div className="SelectorHeader">
@@ -21,7 +22,7 @@ const TableHeadCheck = ({ all, selected, onChange }) => {
 				<p>{Object.values(selected).filter(val => val).length}</p>
 			</div>
 			<div className="Actions">
-				<Checkbox checked={checked} onChange={(e, val) => setChecked(val)} />
+				<Checkbox checked={checked} onChange={setValue} />
 			</div>
 		</div>
 	);

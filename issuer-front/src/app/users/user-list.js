@@ -8,8 +8,14 @@ import UserService from "../../services/UserService";
 import CreateUserModal from "../components/CreateUserModal";
 import Cookie from "js-cookie";
 import { getUserAllColumns, getUserData } from "./user-table-helper";
-import { filter } from "../../services/utils";
+import { filter, filterByDates } from "../../services/utils";
 import DeleteAbstractModal from "./delete-abstract-modal";
+import ProfileService from "../../services/ProfileService";
+import { validateAccess } from "../../constants/Roles";
+import DescriptionGrid from "../components/DescriptionGrid";
+
+const TITLE = "Usuarios";
+const DESCRIPTION = "Creación de usuarios para la plataforma de emisores ai·di.";
 
 const UserList = () => {
 	const [loading, setLoading] = useState(false);
@@ -20,27 +26,40 @@ const UserList = () => {
 	const [userSelected, setUserSelected] = useState({});
 	const [openDelete, setOpenDelete] = useState(false);
 
+	const [profiles, setProfiles] = useState([]);
+
 	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState([]);
 
 	useEffect(() => {
 		setError("");
 		getUsersData();
+		getProfilesData();
 	}, []);
 
 	useEffect(() => {
-		const { name } = filters;
-		const result = users.filter(row => filter(row, "name", name));
+		const { name, profile, start, end } = filters;
+		const result = users.filter(
+			row => filter(row, "name", name) && filter(row, "profile", profile) && filterByDates(row, start, end)
+		);
 		setFilteredData(result);
 	}, [filters]);
+
+	const getProfilesData = async () => {
+		const token = Cookie.get("token");
+		const profiles = await ProfileService.getAll()(token);
+
+		setProfiles(profiles);
+	};
 
 	const getUsersData = async () => {
 		const token = Cookie.get("token");
 		setLoading(true);
 		try {
-			const { data } = await UserService.getAll(token);
-			setUsers(data);
-			setFilteredData(data);
+			const users_ = await UserService.getAll()(token);
+			setUsers(users_);
+			setFilteredData(users_);
+			setError(null);
 		} catch (error) {
 			setError(error.message);
 		}
@@ -48,31 +67,22 @@ const UserList = () => {
 	};
 
 	const createUser = async user => {
-		try {
-			const token = Cookie.get("token");
-			await UserService.create(token, user);
-			await getUsersData();
-		} catch (error) {
-			setError(error.message);
-		}
+		const token = Cookie.get("token");
+		await UserService.create(user)(token);
+		await getUsersData();
 	};
 
 	const editUser = async user => {
-		try {
-			const token = Cookie.get("token");
-			await UserService.edit(token, user);
-			await getUsersData();
-		} catch (error) {
-			setError(error.message);
-		}
+		const token = Cookie.get("token");
+		await UserService.edit(user)(token);
+		await getUsersData();
 	};
 
 	const deleteUser = async () => {
 		try {
 			const token = Cookie.get("token");
-			await UserService.delete(token, userSelected._id);
+			await UserService.delete(userSelected._id)(token);
 			await getUsersData();
-			setError("");
 			setUserSelected({});
 			setOpenDelete(false);
 		} catch (error) {
@@ -95,14 +105,23 @@ const UserList = () => {
 		setFilters(prev => ({ ...prev, [key]: val }));
 	};
 
+	const onDateRangeFilterChange = ({ start, end }) => {
+		setFilters(prev => ({ ...prev, start, end }));
+	};
+
 	return (
 		<>
 			<div className="HeadButtons">
-				<button className="CreateButton" onClick={() => setModalOpen(true)}>
-					<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
-					<div className="CreateButtonText">Crear Usuario</div>
-				</button>
+				{validateAccess(Constants.ROLES.Write_Users) && (
+					<DescriptionGrid title={TITLE} description={DESCRIPTION}>
+						<button className="CreateButton" onClick={() => setModalOpen(true)}>
+							<MaterialIcon icon={Constants.TEMPLATES.ICONS.ADD_BUTTON} />
+							<div className="CreateButtonText">Crear Usuario</div>
+						</button>
+					</DescriptionGrid>
+				)}
 			</div>
+			{error && <div className="errMsg">{error}</div>}
 			{(loading && (
 				<div style={{ display: "flex", justifyContent: "center" }}>
 					<CircularProgress />
@@ -113,16 +132,16 @@ const UserList = () => {
 					previousText={Messages.LIST.TABLE.PREV}
 					nextText={Messages.LIST.TABLE.NEXT}
 					data={filteredData.map(user => getUserData(user, onDelete, onEdit))}
-					columns={getUserAllColumns(onFilterChange)}
+					columns={getUserAllColumns(onFilterChange, profiles, onDateRangeFilterChange)}
 					minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
 				/>
 			)}
-			{error && <div className="errMsg">{error}</div>}
 			<CreateUserModal
 				title="Crear"
 				open={modalOpen}
 				close={() => setModalOpen(false)}
 				onSubmit={createUser}
+				profiles={profiles}
 				required
 			/>
 			<CreateUserModal
@@ -131,6 +150,7 @@ const UserList = () => {
 				userData={userSelected}
 				close={() => setOpenEdit(false)}
 				onSubmit={editUser}
+				profiles={profiles}
 			/>
 			<DeleteAbstractModal title="Usuario" open={openDelete} setOpen={setOpenDelete} onAccept={deleteUser} />
 		</>

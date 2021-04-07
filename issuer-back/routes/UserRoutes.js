@@ -6,6 +6,7 @@ const UserService = require("../services/UserService");
 const Validator = require("./utils/Validator");
 const Constants = require("../constants/Constants");
 const UserDTO = require("./utils/UserDTO");
+const { halfHourLimiter } = require("../policies/RateLimit");
 
 /**
  *	Genera un usuario para el issuer
@@ -15,7 +16,7 @@ router.post(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
+			validate: [Constants.USER_TYPES.Write_Users],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -55,10 +56,11 @@ router.post(
 		}
 	]),
 	Validator.checkValidationResult,
+	halfHourLimiter,
 	async function (req, res) {
 		try {
 			if (!Constants.ENABLE_INSECURE_ENDPOINTS) {
-				return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 404);
+				return ResponseHandler.sendErrWithStatus(res, new Error("Disabled endpoint"), 403);
 			}
 
 			const { name, password } = req.body;
@@ -89,8 +91,8 @@ router.post(
 		const name = req.body.name;
 		const password = req.body.password;
 		try {
-			const user = await UserService.login(name, password);
-			return ResponseHandler.sendRes(res, user);
+			const { user, token } = await UserService.login(name, password);
+			return ResponseHandler.sendRes(res, { ...UserDTO.toDTO(user), token });
 		} catch (err) {
 			return ResponseHandler.sendErr(res, err);
 		}
@@ -105,7 +107,7 @@ router.delete(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
+			validate: [Constants.USER_TYPES.Delete_Users],
 			isHead: true
 		}
 	]),
@@ -129,7 +131,7 @@ router.get(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
+			validate: [Constants.USER_TYPES.Read_Users],
 			isHead: true
 		}
 	]),
@@ -154,7 +156,7 @@ router.put(
 	Validator.validate([
 		{
 			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
+			validate: [Constants.USER_TYPES.Write_Users],
 			isHead: true
 		},
 		{ name: "name", validate: [Constants.VALIDATION_TYPES.IS_STRING] },

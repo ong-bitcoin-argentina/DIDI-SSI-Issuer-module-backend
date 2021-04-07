@@ -3,15 +3,15 @@ import React, { Component } from "react";
 import Messages from "../../../constants/Messages";
 
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "./_Style.scss";
 import "../../../styles/GeneralStyles.scss";
-import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from "@material-ui/core";
+import { Grid, InputLabel, MenuItem, Select } from "@material-ui/core";
 import BlockchainName from "./blockchainName";
+import DefaultButton from "../../setting/default-button";
 
 export default class InputDialog extends Component {
 	constructor(props) {
@@ -22,7 +22,8 @@ export default class InputDialog extends Component {
 
 		this.state = {
 			isOpen: false,
-			fields: { ...fields }
+			fields: { ...fields },
+			error: ""
 		};
 	}
 
@@ -60,7 +61,8 @@ export default class InputDialog extends Component {
 	close = () => {
 		this.cleanData();
 		this.setState({
-			isOpen: false
+			isOpen: false,
+			error: ""
 		});
 	};
 
@@ -71,19 +73,34 @@ export default class InputDialog extends Component {
 		this.setState({ fields: fields });
 	};
 
+	handleAccept = async () => {
+		try {
+			await this.props.onAccept(this.state.fields);
+			this.close();
+		} catch (error) {
+			this.setState({ error: error.message });
+		}
+	};
+
 	// retorna dialogo
 	render = () => {
 		const title = this.props.title;
-		const onAccept = this.props.onAccept;
 		const fieldNames = this.props.fieldNames;
 		const selectNames = this.props.selectNames || [];
 		const registerIdDefault = this.props.registerIdDefault;
 
 		return (
-			<Dialog className="dialogBox" open={this.state.isOpen} onClose={this.close} aria-labelledby="form-dialog-title">
+			<Dialog
+				className="dialogBox"
+				open={this.state.isOpen}
+				onClose={() => {
+					if (!this.props.loading) this.close();
+				}}
+				aria-labelledby="form-dialog-title"
+			>
 				<DialogTitle id="DialogTitle">{title}</DialogTitle>
 				<DialogContent>
-					{fieldNames.length &&
+					{fieldNames.length > 0 &&
 						fieldNames.map((name, key) => {
 							return (
 								<TextField
@@ -128,22 +145,21 @@ export default class InputDialog extends Component {
 								</Grid>
 							);
 						})}
+					{this.state.error && <div className="errMsg">{this.state.error}</div>}
 				</DialogContent>
 				<DialogActions>
-					<Button className="CloseButton" onClick={this.close} color="primary">
-						{Messages.LIST.DIALOG.CANCEL}
-					</Button>
-					<Button
-						className="CreateModalButton"
-						onClick={() => {
-							onAccept(this.state.fields);
-							this.close();
-						}}
-						disabled={Object.values(this.state.fields).indexOf("") >= 0}
-						color="primary"
-					>
-						{Messages.LIST.DIALOG.CREATE}
-					</Button>
+					<DefaultButton
+						otherClass="DangerButtonOutlined"
+						name={Messages.LIST.DIALOG.CANCEL}
+						funct={this.close}
+						disabled={this.props.loading}
+					/>
+					<DefaultButton
+						name={Messages.LIST.DIALOG.CREATE}
+						disabled={Object.values(this.state.fields).indexOf("") >= 0 || this.props.loading}
+						funct={this.handleAccept}
+						loading={this.props.loading}
+					/>
 				</DialogActions>
 			</Dialog>
 		);

@@ -10,15 +10,14 @@ import Cookie from "js-cookie";
 import ProfileService from "../../services/ProfileService";
 import { filter } from "../../services/utils";
 import DeleteAbstractModal from "../users/delete-abstract-modal";
-
-const token = Cookie.get("token");
+import { validateAccess } from "../../constants/Roles";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS } = Constants.CERTIFICATES.TABLE;
 
 const BUTTON_MODAL_NAME = "Nuevo Perfil";
 const TITLE = "Perfiles";
-const DESCRIPTION = "Crea perfiles asignando distintos tipos de permisos";
+const DESCRIPTION = "Definición de perfiles de usuarios para la plataforma de emisores ai·di.";
 
 const Profile = () => {
 	const [loading, setLoading] = useState(false);
@@ -37,10 +36,15 @@ const Profile = () => {
 	}, []);
 
 	useEffect(() => {
-		const { name } = filters;
-		const result = profiles.filter(row => filter(row, "name", name));
+		const { name, type } = filters;
+		const result = profiles.filter(row => filter(row, "name", name) && filterTypes(row, type));
 		setFilteredData(result);
 	}, [filters]);
+
+	const filterTypes = (row, type) => {
+		const types = row && row.types;
+		return !type || types.some(t => Constants.ROLES_TRANSLATE[t] === type);
+	};
 
 	const handle = async next => {
 		try {
@@ -55,6 +59,7 @@ const Profile = () => {
 
 	const getProfilesData = () =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			setLoading(true);
 			const profiles = await ProfileService.getAll()(token);
 
@@ -64,12 +69,14 @@ const Profile = () => {
 
 	const createProfile = newProfile =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			await ProfileService.create(newProfile)(token);
 			await getProfilesData();
 		});
 
 	const editProfile = ({ _id, ...rest }) =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			await ProfileService.edit(_id, rest)(token);
 			await getProfilesData();
 		});
@@ -86,6 +93,7 @@ const Profile = () => {
 
 	const handleDelete = async () =>
 		handle(async () => {
+			const token = Cookie.get("token");
 			await ProfileService.delete(profileSelected._id)(token);
 			await getProfilesData();
 		});
@@ -104,16 +112,23 @@ const Profile = () => {
 							<h1 style={{ margin: "0", padding: "0" }}>{TITLE}</h1>
 							<p>{DESCRIPTION}</p>
 						</Grid>
-						<Grid item xs={4} container justify="flex-end" alignItems="center">
-							<OpenModalButton setModalOpen={setModalOpen} title={BUTTON_MODAL_NAME} />
-						</Grid>
+						{validateAccess(Constants.ROLES.Write_Profiles) && (
+							<Grid item xs={4} container justify="flex-end" alignItems="center">
+								<OpenModalButton setModalOpen={setModalOpen} title={BUTTON_MODAL_NAME} />
+							</Grid>
+						)}
 					</Grid>
+					{error && (
+						<div className="errMsg" style={{ width: "100%" }}>
+							{error}
+						</div>
+					)}
 					<ReactTable
 						sortable
 						previousText={PREV}
 						columns={getProfileAllColumns(onFilterChange)}
 						minRows={MIN_ROWS}
-						pageSize={5}
+						defaultPageSize={5}
 						nextText={NEXT}
 						data={filteredData.map(profile => getProfileData(profile, onEdit, onDelete))}
 					/>
@@ -131,11 +146,6 @@ const Profile = () => {
 				onSubmit={editProfile}
 				profileData={profileSelected}
 			/>
-			{error && (
-				<div className="errMsg" style={{ width: "100%" }}>
-					{error}
-				</div>
-			)}
 			<DeleteAbstractModal title="Perfil" open={openDelete} setOpen={setOpenDelete} onAccept={handleDelete} />
 		</>
 	);

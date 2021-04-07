@@ -27,12 +27,16 @@ body {
 
 .errMsg {
 	color: $black;
-	margin-top: 1em;
+	margin: 1em 0;
 	background-color: #ffeaeb;
 	padding: 1em 2em;
 	border-radius: 5px;
 	border-left: 5px solid #ff2d3b;
 	display: inline-block;
+}
+
+.ReactTable .rt-resizer {
+	z-index: 0 !important;
 }
 
 .MuiInput-root {

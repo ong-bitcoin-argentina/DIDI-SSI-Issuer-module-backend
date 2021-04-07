@@ -1,26 +1,16 @@
-const appInsights = require('applicationinsights');
+const { LoggerManager, AzureLogger } = require("@proyecto-didi/didi-ssi-logger");
 
-const ikey = process.env.APP_INSIGTHS_IKEY;
-
-appInsights.setup(ikey)
-    .setAutoDependencyCorrelation(true)
-    .setAutoCollectRequests(true)
-    .setAutoCollectPerformance(true, true)
-    .setAutoCollectExceptions(true)
-    .setAutoCollectDependencies(true)
-    .setUseDiskRetryCaching(true)
-    .setSendLiveMetrics(true)
-    .setDistributedTracingMode(appInsights.DistributedTracingModes.AI)
-
-appInsights.defaultClient.commonProperties = {
+const loggerManager = new LoggerManager();
+const azureLogger = new AzureLogger({
+    aiCloudRole: process.env.NAME,
+    aiCloudRoleInstance: process.env.ENVIRONMENT,
+    disableAppInsights: process.env.DISABLE_TELEMETRY_CLIENT,
     environment: process.env.ENVIRONMENT,
-};
+    ikey: process.env.APP_INSIGTHS_IKEY,
+  })
 
-appInsights.defaultClient.config.disableAppInsights =  process.env.DISABLE_TELEMETRY_CLIENT;
-
-appInsights.defaultClient.context.tags["ai.cloud.role"] = process.env.NAME;
-appInsights.defaultClient.context.tags["ai.cloud.roleInstance"] = process.env.ENVIRONMENT;
+loggerManager.addLogger('azure', azureLogger);
 
 module.exports = {
-    logger : appInsights
-}
+  loggerManager
+};

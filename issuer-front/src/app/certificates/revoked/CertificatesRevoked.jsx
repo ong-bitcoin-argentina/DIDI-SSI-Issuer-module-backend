@@ -9,6 +9,7 @@ import CertificateService from "../../../services/CertificateService";
 import Cookie from "js-cookie";
 import { filter } from "../../../services/utils";
 import { useHistory } from "react-router-dom";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -20,6 +21,7 @@ const CertificatesRevoked = () => {
 	const [filters, setFilters] = useState({});
 	const [filteredData, setFilteredData] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState({});
 	const history = useHistory();
 
 	const onFilterChange = (e, key) => {
@@ -42,13 +44,18 @@ const CertificatesRevoked = () => {
 	const getData = async () => {
 		const token = Cookie.get("token");
 		setLoading(true);
-		let certificates = await CertificateService.getRevoked(token);
+		try {
+			let certificates = await CertificateService.getRevoked(token);
+			setLoading(false);
+			setData(
+				certificates.map(item => {
+					return CertificateTableHelper.getCertificatesRevokedData(item, handleView);
+				})
+			);
+		} catch (error) {
+			setError(error.data);
+		}
 		setLoading(false);
-		setData(
-			certificates.map(item => {
-				return CertificateTableHelper.getCertificatesRevokedData(item, handleView);
-			})
-		);
 	};
 
 	useEffect(() => {
@@ -69,7 +76,9 @@ const CertificatesRevoked = () => {
 
 	return (
 		<>
+			<TabDescription tabName="CERTIFICATES_REVOKED" />
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
+				{error.message && <div className="errMsg">{error.message}</div>}
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable

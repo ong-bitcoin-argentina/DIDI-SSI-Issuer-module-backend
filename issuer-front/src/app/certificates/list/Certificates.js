@@ -14,6 +14,10 @@ import MaterialIcon from "material-icons-react";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import DeleteAllCertsDialog from "./delete-all-certs-dialog";
 import { validateAccess } from "../../../constants/Roles";
+import DefaultButton from "../../setting/default-button";
+import TabDescription from "../../components/TabDescription/TabDescription";
+
+const { EMMIT_SELECTED, DELETE_SELECETED } = Messages.LIST.BUTTONS;
 
 class Certificates extends Component {
 	constructor(props) {
@@ -61,12 +65,13 @@ class Certificates extends Component {
 		return (
 			<div className={loading ? "Certificates Loading" : "Certificates"}>
 				{Spinner.render(loading)}
+				<TabDescription tabName="CERTIFICATES_PENDING" />
 				{this.renderDeleteDialog()}
 				{this.renderDeleteAllDialog()}
 				{this.renderRevocationDialog()}
 				{this.renderSectionButtons(loading)}
-				{this.renderTable()}
 				{error && <div className="errMsg">{error.message}</div>}
+				{this.renderTable()}
 			</div>
 		);
 	}
@@ -150,9 +155,6 @@ class Certificates extends Component {
 	};
 
 	openDeleteAllDialog = () => {
-		const keys = Object.keys(this.props.selectedCerts);
-		const selectedCerts = keys.filter(key => this.props.selectedCerts[key]);
-		if (selectedCerts.length === 0) return;
 		this.setState({ openDeleteAll: true });
 	};
 
@@ -162,17 +164,24 @@ class Certificates extends Component {
 			<>
 				{validateAccess(Constants.ROLES.Delete_Certs) && (
 					<div className="CertButtons mr-2">
-						<button className="DangerButton" onClick={this.openDeleteAllDialog}>
+						<DefaultButton
+							name={DELETE_SELECETED}
+							otherClass="DangerButton"
+							funct={this.openDeleteAllDialog}
+							disabled={!this.props.selectedCerts[0]}
+						>
 							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-							Eliminar Credenciales Seleccionadas
-						</button>
+						</DefaultButton>
 					</div>
 				)}
 				{validateAccess(Constants.ROLES.Write_Certs) && (
 					<div className="CertButtons mr-2">
-						<button disabled={loading} className="CreateButton EmmitSelectedButton" onClick={this.props.onMultiEmmit}>
-							<div className="CreateButtonText">{Messages.LIST.BUTTONS.EMMIT_SELECTED}</div>
-						</button>
+						<DefaultButton
+							name={EMMIT_SELECTED}
+							otherClass="EmmitSelectedButton"
+							funct={this.props.onMultiEmmit}
+							disabled={loading || !this.props.selectedCerts[0]}
+						/>
 					</div>
 				)}
 			</>

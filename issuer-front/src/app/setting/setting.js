@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
-import { CircularProgress, Grid } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import ReactTable from "react-table-6";
-import Messages from "../../constants/Messages";
+import Messages, { TAB_TEXT } from "../../constants/Messages";
 import RegisterModal from "./register-modal";
 import NotRegistersData from "./not-registers-data";
 import OpenModalButton from "./open-modal-button";
@@ -12,7 +12,10 @@ import { getRegisterAllColumns, getRegisterData } from "./register-table-helper"
 import ModalDetail from "./modal-detail";
 import DefaultForm from "./default-form";
 import EditRegisterModal from "./edit-register-modal";
-import { filter } from "../../services/utils";
+import { filter, filterByDates } from "../../services/utils";
+import DescriptionGrid from "../components/DescriptionGrid";
+
+const { TITLE, DESCRIPTION } = TAB_TEXT.SETTING;
 
 const Setting = () => {
 	const [loading, setLoading] = useState(false);
@@ -31,8 +34,16 @@ const Setting = () => {
 	const ifNotElements = data.length === 0;
 
 	useEffect(() => {
-		const { name } = filters;
-		const result = data.filter(row => filter(row, "name", name));
+		const { name, created, expired, blockchain, did, status } = filters;
+		const result = data.filter(
+			row =>
+				filter(row, "name", name) &&
+				filterByDates(row, created?.start, created?.end) &&
+				filterByDates(row, expired?.start, expired?.end, "expireOn") &&
+				filter(row, "did", did) &&
+				filter(row, "status", status) &&
+				filter(row, "blockchain", blockchain)
+		);
 		setFilteredData(result);
 	}, [filters]);
 
@@ -79,11 +90,27 @@ const Setting = () => {
 		getBlockchains();
 	}, []);
 
+	const reset = () => {
+		getRegisters();
+		setFilters({});
+	};
+
 	const handleRefresh = async did => {
 		try {
 			const token = Cookie.get("token");
 			await RegisterService.refresh(did)(token);
-			getRegisters();
+			reset();
+			setDetailModalOpen(false);
+		} catch (error) {
+			setError(error.message);
+		}
+	};
+
+	const handleRevoke = async did => {
+		try {
+			const token = Cookie.get("token");
+			await RegisterService.revoke(did)(token);
+			reset();
 			setDetailModalOpen(false);
 		} catch (error) {
 			setError(error.message);
@@ -95,21 +122,21 @@ const Setting = () => {
 		setModalFn(true);
 	};
 
+	const onDateRangeFilterChange = (value, key) => {
+		setFilters(prev => ({ ...prev, [key]: value }));
+	};
+
 	return (
 		<>
 			{!loading && !ifNotElements && (
-				<Grid container xs={12} style={{ margin: "10px 0" }}>
-					<Grid item xs={8} container direction="column" style={{ textAlign: "start" }}>
-						<h1 style={{ margin: "0", padding: "0" }}>Configuración</h1>
-						<p>
-							Registrate como Emisor de Credenciales en la/s blockchain/s que quieras verificar tus credenciales a
-							emitir
-						</p>
-					</Grid>
-					<Grid item xs={4} container justify="flex-end" alignItems="center">
-						<OpenModalButton setModalOpen={setModalOpen} title="Nuevo Registro" />
-					</Grid>
-				</Grid>
+				<DescriptionGrid title={TITLE} description={DESCRIPTION}>
+					<OpenModalButton setModalOpen={setModalOpen} title="Nuevo Registro" />
+				</DescriptionGrid>
+			)}
+			{error && (
+				<div className="errMsg" style={{ width: "100%" }}>
+					{error}
+				</div>
 			)}
 			{(loading && (
 				<div style={{ display: "flex", justifyContent: "center" }}>
@@ -124,25 +151,16 @@ const Setting = () => {
 						data={filteredData.map(register =>
 							getRegisterData(register, selectRegister(setDetailModalOpen), selectRegister(setEditModalOpen), onRetry)
 						)}
-						columns={getRegisterAllColumns(onFilterChange)}
+						columns={getRegisterAllColumns(onFilterChange, onDateRangeFilterChange)}
 						minRows={Constants.CERTIFICATES.TABLE.MIN_ROWS}
-						pageSize={5}
+						defaultPageSize={5}
 					/>
 				)}
 			<DefaultForm registers={data} />
-			{error && (
-				<div className="errMsg" style={{ width: "100%" }}>
-					{error}
-				</div>
-			)}
-			<RegisterModal
-				modalOpen={modalOpen}
-				setModalOpen={setModalOpen}
-				onSuccess={getRegisters}
-				blockchains={blockchains}
-			/>
+			<RegisterModal modalOpen={modalOpen} setModalOpen={setModalOpen} onSuccess={reset} blockchains={blockchains} />
 			<ModalDetail
 				handleRefresh={handleRefresh}
+				handleRevoke={handleRevoke}
 				modalOpen={detailModalOpen}
 				setModalOpen={setDetailModalOpen}
 				register={registerSelected}
@@ -151,7 +169,7 @@ const Setting = () => {
 				modalOpen={editModalOpen}
 				setModalOpen={setEditModalOpen}
 				register={registerSelected}
-				onAccept={getRegisters}
+				onAccept={reset}
 			/>
 		</>
 	);

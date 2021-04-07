@@ -31,15 +31,15 @@ module.exports.getAll = async function () {
 module.exports.create = async function (name, registerId) {
 	try {
 		// Verifico que el registro exista
-		const register = await Register.getById(registerId);
-		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
+		await Register.getById(registerId);
 
-		const template = await Template.generate(name, registerId);
-		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
-		return Promise.resolve(template);
+		const template = await Template.findOne({ name: { $eq: name } });
+		if (template) return Promise.reject(Messages.TEMPLATE.ERR.UNIQUE_NAME);
+
+		return await Template.generate(name, registerId);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.CREATE);
+		return Promise.reject(err);
 	}
 };
 
@@ -50,15 +50,14 @@ module.exports.edit = async function (id, data, previewData, previewType, catego
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.GET);
 
 		// Verifico que el registro exista
-		const register = await Register.getById(registerId);
-		if (!register) return Promise.reject(Messages.REGISTER.ERR.GET);
+		await Register.getById(registerId);
 
 		template = await template.edit(data, previewData, previewType, category, registerId);
 		if (!template) return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
 		return Promise.resolve(template);
 	} catch (err) {
 		console.log(err);
-		return Promise.reject(Messages.TEMPLATE.ERR.EDIT);
+		return Promise.reject(err);
 	}
 };
 

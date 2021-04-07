@@ -14,6 +14,8 @@ import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import RevocationSingleModal from "../../components/RevocationSingleModal";
 import RevocationAllModal from "../../components/RevocationAllModal";
 import { validateAccess } from "../../../constants/Roles";
+import DefaultButton from "../../setting/default-button";
+import TabDescription from "../../components/TabDescription/TabDescription";
 
 const { PREV, NEXT } = Messages.LIST.TABLE;
 const { MIN_ROWS, PAGE_SIZE } = Constants.CERTIFICATES.TABLE;
@@ -23,7 +25,6 @@ const CertificatesEmmited = () => {
 	const [data, setData] = useState([]);
 	const [filters, setFilters] = useState({});
 	const [selected, setSelected] = useState({});
-	const [allSelected, setAllSelected] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [filteredData, setFilteredData] = useState([]);
 	const [activeCert, setActiveCert] = useState({});
@@ -32,7 +33,12 @@ const CertificatesEmmited = () => {
 	const [revokeSuccess, setRevokeSuccess] = useState(false);
 	const [revokeFail, setRevokeFail] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState({});
 	const history = useHistory();
+
+	const [page, setPage] = useState(0);
+	const [pageSize, setPageSize] = useState(PAGE_SIZE);
+	const [countPerPage, setCountPerPage] = useState(0);
 
 	useEffect(() => {
 		if (data.length) {
@@ -45,10 +51,6 @@ const CertificatesEmmited = () => {
 	useEffect(() => {
 		getData();
 	}, []);
-
-	useEffect(() => {
-		updateFilterData(filteredData, selected);
-	}, [selected]);
 
 	useEffect(() => {
 		const { firstName, lastName, certName, start, end, blockchain } = filters;
@@ -64,12 +66,6 @@ const CertificatesEmmited = () => {
 	}, [filters]);
 
 	useEffect(() => {
-		const generated = {};
-		filteredData.forEach(item => (generated[item._id] = allSelected));
-		setSelected(generated);
-	}, [allSelected]);
-
-	useEffect(() => {
 		if (revokeSuccess || revokeFail) {
 			setActiveCert(null);
 			setCertsToRevoke([]);
@@ -78,11 +74,72 @@ const CertificatesEmmited = () => {
 		}
 	}, [revokeSuccess, revokeFail]);
 
+	useEffect(() => {
+		// Obtengo los dato por pagina
+		const data = getDataByPage(page);
+
+		// Hago un conteo de cuantos estan seleccionados
+		const count = data.reduce((acc, { _id }) => (selected[_id] ? acc + 1 : acc), 0);
+		setCountPerPage(count);
+
+		// Hago un update de los datos que se muestran en la tabla
+		updateFilterData(filteredData, selected);
+	}, [selected]);
+
+	useEffect(() => {
+		updateFilterData(filteredData, selected);
+	}, [countPerPage]);
+
+	useEffect(() => {
+		setSelected({});
+	}, [pageSize]);
+
+	// Selecciono el checkboxAll
+	const handleSelectAllToggle = (_, value) => {
+		const data = getDataByPage(page);
+		changeSelectedValues(data, value);
+	};
+
+	// Cambio de pagina
+	const changePage = page_ => {
+		setPage(page_);
+
+		// Obtengo los dato por pagina
+		const data = getDataByPage(page_);
+
+		// Hago un conteo de cuantos estan seleccionados
+		const count = data.reduce((acc, { _id }) => (selected[_id] ? acc + 1 : acc), 0);
+		setCountPerPage(count);
+
+		if (count === 0 || count === pageSize) {
+			// Hago el cambio de todos
+			changeSelectedValues(data, count === pageSize);
+		}
+	};
+
+	// Cambio los selects de las columnas de las tablas
+	const changeSelectedValues = (data, value) => {
+		data.forEach(({ _id }) => handleSelectOne(_id, value));
+	};
+
+	// Obtengo los datos por pagina
+	const getDataByPage = page => {
+		const start = page * pageSize;
+		const end = start + pageSize;
+
+		return filteredData.slice(start, end);
+	};
+
 	const getData = async () => {
 		setLoading(true);
-		const token = Cookie.get("token");
-		const certificates = await CertificateService.getEmmited(token);
-		updateCertificates(certificates, selected, setData);
+		try {
+			const token = Cookie.get("token");
+			const certificates = await CertificateService.getEmmited(token);
+			updateCertificates(certificates, selected, setData);
+		} catch (error) {
+			setError(error.data);
+		}
+		setLoading(false);
 	};
 
 	const onFilterChange = (e, key) => {
@@ -104,10 +161,13 @@ const CertificatesEmmited = () => {
 	};
 
 	const updateColumns = selectedCerts => {
+		const isAnySelected = countPerPage > 0;
+		const isIndeterminated = isAnySelected && countPerPage !== pageSize;
 		const localColumns = CertificateTableHelper.getCertEmmitedColumns(
 			data,
 			selectedCerts,
-			allSelected,
+			isAnySelected,
+			isIndeterminated,
 			handleSelectAllToggle,
 			onFilterChange,
 			onDateRangeFilterChange
@@ -146,16 +206,17 @@ const CertificatesEmmited = () => {
 	const catchError = async (previousFunction, handleFail) => {
 		try {
 			await previousFunction();
-		} catch (_) {
+		} catch (error) {
 			handleFail();
 			onRevokeFail();
+			setError(error);
 		}
 	};
 
 	const handleSubmit = (revokeReason, onSuccess, handleFail) =>
 		catchError(async () => {
 			const token = Cookie.get("token");
-			await CertificateService.revoke(token, activeCert._id, revokeReason);
+			await CertificateService.revoke(activeCert._id, revokeReason)(token);
 			setActiveCert({});
 			onSuccess();
 		}, handleFail);
@@ -164,7 +225,7 @@ const CertificatesEmmited = () => {
 		catchError(async () => {
 			const token = Cookie.get("token");
 			for (const cert of certsToRevoke) {
-				await CertificateService.revoke(token, cert._id, revokeReason, () => {});
+				await CertificateService.revoke(cert._id, revokeReason)(token);
 				const certsRemoved = certsToRevoke.map(c => {
 					if (c._id === cert._id) {
 						c.revoked = true;
@@ -204,25 +265,23 @@ const CertificatesEmmited = () => {
 		setModalRevokeAllOpen(true);
 	};
 
-	const handleSelectAllToggle = val => {
-		setAllSelected(val);
-	};
-
 	return (
 		<>
+			<TabDescription tabName="CERTIFICATES_EMMITED" />
 			<Grid container spacing={3} className="flex-end" style={{ marginBottom: 10 }}>
 				{validateAccess(Constants.ROLES.Delete_Certs) && (
 					<Grid item xs={12} className="flex-end">
-						<button
-							className="DangerButton"
-							onClick={handleRevokeSelected}
-							disabled={!Object.values(selected).some(val => val)}
+						<DefaultButton
+							name="Revocar Credenciales Seleccionadas"
+							otherClass="DangerButton"
+							funct={handleRevokeSelected}
+							disabled={!Object.keys(selected).filter(key => selected[key])[0]}
 						>
 							<RemoveCircleIcon fontSize="small" style={{ marginRight: 6 }} />
-							Revocar Credenciales Seleccionadas
-						</button>
+						</DefaultButton>
 					</Grid>
 				)}
+				{error.message && <div className="errMsg">{error.message}</div>}
 				<Grid item xs={12} style={{ textAlign: "center" }}>
 					{!loading ? (
 						<ReactTable
@@ -233,6 +292,8 @@ const CertificatesEmmited = () => {
 							columns={columns}
 							defaultPageSize={PAGE_SIZE}
 							minRows={MIN_ROWS}
+							onPageChange={changePage}
+							onPageSizeChange={setPageSize}
 						/>
 					) : (
 						<CircularProgress />
@@ -260,7 +321,7 @@ const CertificatesEmmited = () => {
 			<Notification
 				open={revokeFail}
 				severity="error"
-				message="Ocurrió un error la revocar la credencial."
+				message={error.message}
 				time={3500}
 				onClose={onCloseRevokeFail}
 			/>

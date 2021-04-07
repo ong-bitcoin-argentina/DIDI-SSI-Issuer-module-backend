@@ -1,19 +1,19 @@
-import { Chip } from "@material-ui/core";
+import { Chip, Grid } from "@material-ui/core";
 import React from "react";
 import Constants from "../../constants/Constants";
 import { Edit, Delete } from "@material-ui/icons";
 import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
+import CustomSelect from "../components/CustomSelect";
+import { validateAccess } from "../../constants/Roles";
+import CustomChip from "../components/CustomChip";
 
 const EDIT_COLOR = "#5FCDD7";
 const DELETE_COLOR = "#EB5757";
 
+const { Write_Profiles, Delete_Profiles } = Constants.ROLES;
+
 const COLUMNS_NAME = [
-	{
-		title: "tipos",
-		name: "types",
-		width: 1100
-	},
 	{
 		title: "acciones",
 		name: "actions"
@@ -36,6 +36,18 @@ export const getProfileAllColumns = handleFilter => {
 			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
 			accessor: "name"
 		},
+		{
+			Header: (
+				<CustomSelect
+					options={Object.values(Constants.ROLES_TRANSLATE)}
+					field="type"
+					label="Tipos"
+					onChange={handleFilter}
+				/>
+			),
+			accessor: "types",
+			width: 1100
+		},
 		...getProfileColumns
 	];
 };
@@ -43,16 +55,21 @@ export const getProfileAllColumns = handleFilter => {
 export const getProfileData = (profile, onEdit, onDelete) => {
 	return {
 		...profile,
-		types: profile.types.map(role => (
-			<Chip
-				style={{ marginRight: "5px", fontSize: "12px", fontWeight: "500" }}
-				label={Constants.ROLES_TRANSLATE[role]}
-			/>
-		)),
+		types: (
+			<Grid container justify="flex-start">
+				{profile.types.map(role => (
+					<CustomChip title={Constants.ROLES_TRANSLATE[role]} />
+				))}
+			</Grid>
+		),
 		actions: (
 			<div className="Actions">
-				<Action handle={() => onEdit(profile)} title="Editar" Icon={Edit} color={EDIT_COLOR} />
-				<Action handle={() => onDelete(profile)} title="Borrar" Icon={Delete} color={DELETE_COLOR} />
+				{validateAccess(Write_Profiles) && (
+					<Action handle={() => onEdit(profile)} title="Editar" Icon={Edit} color={EDIT_COLOR} />
+				)}
+				{validateAccess(Delete_Profiles) && (
+					<Action handle={() => onDelete(profile)} title="Borrar" Icon={Delete} color={DELETE_COLOR} />
+				)}
 			</div>
 		)
 	};

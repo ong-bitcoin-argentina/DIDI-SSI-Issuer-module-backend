@@ -56,7 +56,7 @@ module.exports = {
 			ADD_PARTICIPANTS: "Nuevo Participante",
 			LOAD_PARTICIPANTS: "Cargar Participantes",
 			RENAME_ISSUER: "Renombrar Emisor",
-			CREATE: "NUEVO CAMPO",
+			CREATE: "Nuevo Campo",
 			SEND: "Enviar",
 			SAVE: "Guardar",
 			CANCEL: "Cancelar",
@@ -105,7 +105,7 @@ module.exports = {
 			PREV: "ANTERIOR",
 			NEXT: "SIGUIENTE",
 			EMISSION_DATE: "FECHA DE",
-			EMISSION_DATE2: "EMISION",
+			EMISSION_DATE2: "EMISIÓN",
 			CRATED_DATE: "FECHA DE CREACIÓN",
 			REVOCATION: "REVOCACIÓN",
 			SELECT: "SELECCIONAR",
@@ -123,6 +123,7 @@ module.exports = {
 			CREATE_TEMPLATE: "Crear Modelo de Credencial",
 			CREATE_CERT: "Crear Credencial",
 			EMMIT_SELECTED: "Emitir Seleccionados",
+			DELETE_SELECETED: "Eliminar Credenciales Seleccionadas",
 			EMMIT: "Emitir",
 			VIEW: "Ver",
 			EDIT: "Editar",
@@ -130,7 +131,7 @@ module.exports = {
 			REVOKE: "Revocar",
 			EXIT: "Salir",
 			USERS: "Usuarios",
-			CONFIG: "Configuracion",
+			CONFIG: "Configuración",
 			PROFILE: "Perfiles"
 		}
 	},
@@ -140,17 +141,58 @@ module.exports = {
 		},
 		DID_SELECT: "DID",
 		CERTIFICATE_SELECT: "Credencial A PEDIR",
-		TEMPLATE_SELECT: "MODELO DE Credencial",
+		TEMPLATE_SELECT: "Modelo de Credencial",
 		TEMPLATE_PART_SELECT_MESSAGE: "Elige el usuario a el que se pediran los datos:",
 		TEMPLATE_SELECT_MESSAGE: "Elige el modelo de Credencial para el que se pediran los datos:",
 		QR_MESSAGE_CERT: "O alternativamente ecanea el qr con la aplicacion para cargar los datos:",
-		QR_MESSAGE: "Ecanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
-		QR_PD: "Nota: Los datos obtenidos a partir del Qr seran accessibles solo para el modelo de Credencial actual",
+		QR_MESSAGE: "Escanear el qr con la aplicacion para cargar los datos requeridos por el modelo de Credencial:",
+		QR_PD: "Nota: Los datos obtenidos a partir del Qr serán accessibles solo para el modelo de Credencial actual",
 		FULL_NAME: "NOMBRE COMPLETO",
 		BUTTONS: {
 			REQUEST: "Solicitar Credenciales",
 			QR_LOAD: "Cargar DID por QR",
 			GENERATE: "Generar Qr"
+		}
+	},
+	TAB_TEXT: {
+		TEMPLATES: {
+			TITLE: "Templates",
+			DESCRIPTION: "Creación de modelos de credenciales que luego se utilizarán al crear y emitir una credencial."
+		},
+		CERTIFICATES_PENDING: {
+			TITLE: "Credenciales Pendientes",
+			DESCRIPTION:
+				"Listado de credenciales aún no emitidas. Desde esta pantalla se crean las credenciales para luego ser emitidas."
+		},
+		CERTIFICATES_EMMITED: {
+			TITLE: "Credenciales",
+			DESCRIPTION: "Listado de credenciales emitidas y no revocadas."
+		},
+		CERTIFICATES_REVOKED: {
+			TITLE: "Credenciales Revocadas",
+			DESCRIPTION: "Listado de credenciales revocadas."
+		},
+		REGISTER_DIDS: {
+			TITLE: "Registro de DIDs",
+			DESCRIPTION: "Registro de DIDs receptores para la emisión de credenciales."
+		},
+		DELEGATES: {
+			TITLE: "Delegados",
+			DESCRIPTION:
+				"Delegación de DIDs a los que se les desea otorgar el permiso de emitir credenciales como delegado de este emisor."
+		},
+		PROFILES: {
+			TITLE: "Perfiles",
+			DESCRIPTION: "Definición de perfiles de usuarios para la plataforma de emisores ai·di."
+		},
+		USERS: {
+			TITLE: "Usuarios",
+			DESCRIPTION: "Creación de usuarios para la plataforma de emisores ai·di."
+		},
+		SETTING: {
+			TITLE: "Configuración",
+			DESCRIPTION:
+				"Registro de DIDs de este emisor en la/s blockchain/s que se deseen verificar las credenciales a emitir."
 		}
 	}
 };

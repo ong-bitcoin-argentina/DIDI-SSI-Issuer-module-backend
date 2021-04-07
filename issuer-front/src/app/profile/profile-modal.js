@@ -1,7 +1,5 @@
 import {
-	Button,
 	Checkbox,
-	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -14,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import Constants from "../../constants/Constants";
 import PropTypes from "prop-types";
 import ModalTitle from "../utils/modal-title";
+import DefaultButton from "../setting/default-button";
 
 const TITLE = "Perfil";
 
@@ -27,18 +26,28 @@ const {
 	Read_Dids_Registers,
 	Write_Dids_Registers,
 	Read_Delegates,
-	Write_Delegates
+	Write_Delegates,
+	Read_Profiles,
+	Write_Profiles,
+	Delete_Profiles,
+	Read_Users,
+	Write_Users,
+	Delete_Users
 } = Constants.ROLES;
 
 const GROUPS = {
 	"Gestión de Templates de Credenciales:": [Read_Templates, Write_Templates, Delete_Templates],
 	"Gestión de Credenciales:": [Read_Certs, Write_Certs, Delete_Certs],
 	"Registro de DIDs:": [Read_Dids_Registers, Write_Dids_Registers],
-	"Gestor de Delegados:": [Read_Delegates, Write_Delegates]
+	"Gestor de Delegados:": [Read_Delegates, Write_Delegates],
+	"Gestor de Perfiles:": [Read_Profiles, Write_Profiles, Delete_Profiles],
+	"Gestor de Usuarios:": [Read_Users, Write_Users, Delete_Users]
 };
 
 const READ_ROLES = {
 	Certs: { options: [Write_Certs, Delete_Certs], value: Read_Certs },
+	Users: { options: [Write_Users, Delete_Users], value: Read_Users },
+	Profiles: { options: [Write_Profiles, Delete_Profiles], value: Read_Profiles },
 	Templates: { options: [Write_Templates, Delete_Templates], value: Read_Templates },
 	Registers: { options: [Write_Dids_Registers], value: Read_Dids_Registers },
 	Delegates: { options: [Write_Delegates], value: Read_Delegates }
@@ -51,6 +60,7 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 	const [error, setError] = useState("");
 
 	useEffect(() => {
+		setRoles({});
 		setNewProfile(profileData);
 		if (profileData.types) {
 			profileData.types.forEach(role => setRoles(roles_ => ({ ...roles_, [role]: true })));
@@ -184,12 +194,8 @@ const ProfileModal = ({ open, close, onSubmit, profileData, title }) => {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" type="reset" disabled={loading}>
-						Cancelar
-					</Button>
-					<Button color="primary" variant="contained" type="submit" disabled={loading}>
-						{loading ? <CircularProgress size={20} color="white" /> : title}
-					</Button>
+					<DefaultButton otherClass="DangerButtonOutlined" name="Cancelar" type="reset" disabled={loading} />
+					<DefaultButton name={title} type="submit" disabled={loading} loading={loading} />
 				</DialogActions>
 			</form>
 		</Dialog>

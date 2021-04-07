@@ -6,44 +6,28 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import EditIcon from "@material-ui/icons/Edit";
 import InputFilter from "../components/InputFilter";
 import Action from "../utils/Action";
+import CustomSelect from "../components/CustomSelect";
+import DateRangeFilter from "../components/DateRangeFilter/DateRangeFilter";
 
-const { ERROR, PENDING, DONE, EXPIRED, ERROR_RENEW } = Constants.STATUS;
+const { ERROR, CREATING, DONE, EXPIRED, ERROR_RENEW, REVOKED, REVOKING } = Constants.STATUS;
 
 const EDIT_COLOR = "#5FCDD7";
 const RETRY_COLOR = "#AED67B";
 
 const COLUMNS_NAME = [
 	{
-		title: "Blockchain",
-		name: "blockchain"
-	},
-	{
-		title: "DID registrado",
-		name: "did",
-		width: 425
-	},
-	{
-		title: "Fecha de Registro",
-		name: "onCreated"
-	},
-	{
-		title: "Fecha de Expiración",
-		name: "expireOn"
-	},
-	{
-		title: "Estado",
-		name: "status"
-	},
-	{
 		title: "Acciones",
-		name: "actions"
+		name: "actions",
+		width: 130
 	}
 ];
 
 const COLORES = {
 	[ERROR]: "#EB5757",
-	[PENDING]: "#F2994A",
+	[CREATING]: "#F2994A",
+	[REVOKING]: "#F2994A",
 	[DONE]: "#43D19D",
+	[REVOKED]: "#808080",
 	[EXPIRED]: "#EB5757",
 	[ERROR_RENEW]: "#EB5757"
 };
@@ -58,11 +42,42 @@ export const getRegisterColumns = COLUMNS_NAME.map(({ name, title, width }) => (
 	width
 }));
 
-export const getRegisterAllColumns = handleFilter => {
+export const getRegisterAllColumns = (handleFilter, onDateRangeFilterChange) => {
 	return [
 		{
-			Header: <InputFilter label="Nombre" onChange={handleFilter} field="name" />,
+			Header: <InputFilter label="nombre" onChange={handleFilter} field="name" />,
 			accessor: "name"
+		},
+		{
+			Header: (
+				<CustomSelect options={Constants.BLOCKCHAINS} field="blockchain" label="Blockchain" onChange={handleFilter} />
+			),
+			accessor: "blockchain"
+		},
+		{
+			Header: <InputFilter label="did registrado" onChange={handleFilter} field="did" />,
+			accessor: "did",
+			width: 370
+		},
+		{
+			Header: (
+				<DateRangeFilter label="fecha de registro" onChange={value => onDateRangeFilterChange(value, "created")} />
+			),
+			accessor: "onCreated",
+			width: 220
+		},
+		{
+			Header: (
+				<DateRangeFilter label="fecha de expiración" onChange={value => onDateRangeFilterChange(value, "expired")} />
+			),
+			accessor: "expireOn",
+			width: 220
+		},
+		{
+			Header: (
+				<CustomSelect options={Object.values(Constants.STATUS)} field="status" label="Estado" onChange={handleFilter} />
+			),
+			accessor: "status"
 		},
 		...getRegisterColumns
 	];
@@ -71,10 +86,9 @@ export const getRegisterAllColumns = handleFilter => {
 const formatDate = date => (date ? moment(date).format(DATE_FORMAT) : "-");
 
 export const getRegisterData = (register, onView, onEdit, onRetry) => {
-	const { did, createdOn, expireOn } = register;
+	const { did, createdOn, expireOn, blockchain } = register;
 	const partsOfDid = did.split(":");
-	const blockchain = partsOfDid[2];
-	const keyDid = partsOfDid[3];
+	const keyDid = partsOfDid[partsOfDid.length - 1];
 	const isExpireOn = expireOn ? new Date(expireOn) < new Date() : false;
 	const status = isExpireOn ? EXPIRED : register.status;
 
@@ -87,11 +101,11 @@ export const getRegisterData = (register, onView, onEdit, onRetry) => {
 		status: <div style={{ textAlign: "center", textTransform: "uppercase", color: COLORES[status] }}>{status}</div>,
 		actions: (
 			<div className="Actions">
-				<Action handle={() => onEdit(register)} title="Editar" Icon={EditIcon} color={EDIT_COLOR} />
-				<Action handle={() => onView(register)} title="Ver" Icon={VisibilityIcon} color={EDIT_COLOR} />
 				{status === STATUS.ERROR && (
 					<Action handle={() => onRetry(did)} title="Re-intentar" Icon={RefreshIcon} color={RETRY_COLOR} />
 				)}
+				<Action handle={() => onEdit(register)} title="Editar" Icon={EditIcon} color={EDIT_COLOR} />
+				<Action handle={() => onView(register)} title="Ver" Icon={VisibilityIcon} color={EDIT_COLOR} />
 			</div>
 		)
 	};

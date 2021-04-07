@@ -4,7 +4,8 @@ const Constants = require("../constants/Constants");
 const ProfileSchema = mongoose.Schema({
 	name: {
 		type: String,
-		required: true
+		required: true,
+		unique: true
 	},
 	types: [
 		{
@@ -73,6 +74,16 @@ Profile.getAll = async function () {
 Profile.getById = async function (id) {
 	try {
 		const query = { _id: id, deleted: false };
+		return await Profile.findOne(query);
+	} catch (err) {
+		console.log(err);
+		return Promise.reject(err);
+	}
+};
+
+Profile.getByName = async function (name) {
+	try {
+		const query = { name };
 		return await Profile.findOne(query);
 	} catch (err) {
 		console.log(err);

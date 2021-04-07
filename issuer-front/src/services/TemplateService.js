@@ -1,32 +1,9 @@
 import Constants from "../constants/Constants";
+import { fetchData, optionsBody } from "./utils";
 
 export default class TemplateService {
-	static create(token, data_, cb, errCb) {
-		const { name, registerId } = data_;
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				name,
-				registerId
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.CREATE, data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	static create(data) {
+		return fetchData(optionsBody("POST", data), Constants.API_ROUTES.TEMPLATES.CREATE);
 	}
 
 	static save(token, template, cb, errCb) {
@@ -137,7 +114,7 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static getQrPetition(token, id, code, cb, errCb) {
+	static getQrPetition(token, id, code, cb, errCb, registerId) {
 		const data = {
 			method: "GET",
 			headers: {
@@ -146,7 +123,7 @@ export default class TemplateService {
 			}
 		};
 
-		fetch(Constants.API_ROUTES.TEMPLATES.GET_QR(id, code), data)
+		fetch(Constants.API_ROUTES.TEMPLATES.GET_QR(id, code, registerId), data)
 			.then(data => {
 				return data.json();
 			})
@@ -160,31 +137,8 @@ export default class TemplateService {
 			.catch(err => errCb(err));
 	}
 
-	static sendRequest(token, dids, certs, code, cb, errCb) {
-		const data = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				token: token
-			},
-			body: JSON.stringify({
-				dids: dids,
-				certNames: certs
-			})
-		};
-
-		fetch(Constants.API_ROUTES.TEMPLATES.REQUEST(code), data)
-			.then(data => {
-				return data.json();
-			})
-			.then(data => {
-				if (data.status === "success") {
-					return cb(data.data);
-				} else {
-					errCb(data.data);
-				}
-			})
-			.catch(err => errCb(err));
+	static sendRequest(data, code) {
+		return fetchData(optionsBody("POST", data), Constants.API_ROUTES.TEMPLATES.REQUEST(code));
 	}
 
 	static delete(token, id, cb, errCb) {

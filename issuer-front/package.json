@@ -26,7 +26,7 @@
 		"react-file-reader": "1.1.4",
 		"react-numeric-input": "2.2.3",
 		"react-router-dom": "5.1.2",
-		"react-scripts": "3.4.0",
+		"react-scripts": "4.0.1",
 		"react-spinners": "0.8.0",
 		"react-table-6": "6.11.0",
 		"react-tabs": "3.0.0",
@@ -54,5 +54,9 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"commitizen": "^4.2.3",
+		"cz-jira-smart-commit": "^3.0.0"
 	}
 }

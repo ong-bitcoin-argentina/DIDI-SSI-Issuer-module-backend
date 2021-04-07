@@ -1,7 +1,5 @@
-import React, { isValidElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-	Button,
-	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -17,11 +15,12 @@ import RegisterService from "../../services/RegisterService";
 import Cookie from "js-cookie";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import ModalTitle from "../utils/modal-title";
+import ClipBoardInput from "../components/ClipBoardInput";
+import DefaultButton from "./default-button";
 
 const TITLE = "Registro de Emisor";
 
 const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
-	const [identity, setIdentity] = useState({});
 	const [newRegister, setNewRegister] = useState({});
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
@@ -30,17 +29,10 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		const identity_ = Credentials.createIdentity();
 		const did = identity_.did.split(":")[2];
 		const key = identity_.privateKey;
-		setIdentity({ did });
-		setNewRegister({ key });
+		setNewRegister({ key, did });
 	}, [modalOpen]);
 
 	const INPUTS = [
-		{
-			name: "did",
-			placeholder: "DID asignado",
-			disabled: true,
-			initial: identity.did
-		},
 		{
 			name: "name",
 			placeholder: "Nombre",
@@ -51,15 +43,10 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 
 	const handleChange = event => {
 		const { name, value } = event.target;
-		if (name === "blockchain") {
-			setNewRegister(register => ({ ...register, did: `did:ethr:${value}:${identity.did}` }));
-		} else {
-			setNewRegister(register => ({ ...register, [name]: value }));
-		}
+		setNewRegister(register => ({ ...register, [name]: value }));
 	};
 
 	const resetForm = () => {
-		setIdentity({});
 		setNewRegister({});
 		setError("");
 		setModalOpen(false);
@@ -76,7 +63,11 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 		setLoading(true);
 		try {
 			const token = Cookie.get("token");
-			await RegisterService.create(newRegister)(token);
+			const { did, blockchain } = newRegister;
+			await RegisterService.create({
+				...newRegister,
+				did: `did:ethr:${blockchain}:${did}`
+			})(token);
 			resetForm();
 			onSuccess();
 		} catch (error) {
@@ -113,7 +104,7 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 							<Grid item xs={10} style={{ padding: "10px", textAlign: "center" }}>
 								<Typography variant="body2">
 									Completá los siguientes campos para registrarte como Emisor de Credenciales en Blockchain que quieras
-									uitilizar.
+									utilizar.
 								</Typography>
 							</Grid>
 						</Grid>
@@ -128,12 +119,26 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 						>
 							<Grid item xs={12} style={{ padding: "10px", textAlign: "center" }}>
 								<Typography variant="body2">
-									La ejecución de esta operación puede demorar varios minutos. El registro quedará en estado PENDIENTE
-									hasta tanto se confirme la transacción.
+									La ejecución de esta operación puede demorar. El registro quedará en estado CREANDO hasta tanto se
+									confirme la transacción.
 								</Typography>
 							</Grid>
 						</Grid>
-						<Grid item xs={8}>
+						<Grid item xs={10}>
+							<ClipBoardInput
+								label="Did Asignado"
+								value={newRegister.did}
+								name="did"
+								handleChange={handleChange}
+								type="text"
+							/>
+							<ClipBoardInput
+								label="Clave Privada"
+								value={newRegister.key}
+								name="key"
+								handleChange={handleChange}
+								type="password"
+							/>
 							{INPUTS.map(({ name, placeholder, disabled, initial }, index) => (
 								<TextField
 									disabled={disabled}
@@ -165,12 +170,8 @@ const RegisterModal = ({ modalOpen, setModalOpen, onSuccess, blockchains }) => {
 					</Grid>
 				</DialogContent>
 				<DialogActions>
-					<Button color="secondary" type="reset" disabled={loading}>
-						Cancelar
-					</Button>
-					<Button color="primary" variant="contained" type="submit" disabled={loading}>
-						{loading ? <CircularProgress size={20} color="white" /> : "Registrarme"}
-					</Button>
+					<DefaultButton otherClass="DangerButtonOutlined" name="Cancelar" type="reset" disabled={loading} />
+					<DefaultButton name="Registrarme" type="submit" disabled={loading} loading={loading} />
 				</DialogActions>
 			</form>
 		</Dialog>

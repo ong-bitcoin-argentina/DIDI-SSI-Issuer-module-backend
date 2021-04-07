@@ -23,7 +23,11 @@ module.exports = {
 	REGISTER: {
 		ERR: {
 			CREATE: { code: "REGISTER_CREATE", message: "El registro no pudo ser creado." },
-			EDIT: { code: "REGISTER_EDIT", message: "El modelo de registro no pudo ser editado." },
+			NOT_EXIST: { code: "NOT_EXIST", message: "El registro no existe" },
+			EDIT: {
+				code: "REGISTER_EDIT",
+				message: "El modelo de registro no pudo ser editado. Verifique que el registro haya sido creado con éxito."
+			},
 			BLOCKCHAIN: { code: "NOT_EXIST_BLOCKCHAIN", message: "No existe la blockchain elegida." },
 			GET: { code: "REGISTER_GET", message: "El registro no pudo ser obtenido." },
 			DID_EXISTS: { code: "DID_EXISTS", message: "Ya existe un registro con ese did." },
@@ -38,21 +42,42 @@ module.exports = {
 				message:
 					"Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template."
 			},
-			REFRESH_STATUS: {
-				code: "REFRESH_STATUS_NOT_VALID",
+			STATUS_NOT_VALID: {
+				code: "STATUS_NOT_VALID",
 				message: "No se puede realizar esta accion, debido al estado del registro."
 			},
 			REFRESH: {
 				code: "REGISTER_REFRESH",
 				message: "No se pudo actualizar el registro."
+			},
+			NAME_EXIST: {
+				code: "NAME_EXIST",
+				message: "Ya existe el nombre para la misma blockchain."
+			},
+			INVALID_DID: {
+				code: "INVALID_DID",
+				message: "El did es inválido."
+			},
+			INVALID_PRIVATE_KEY: {
+				code: "INVALID_PRIVATE_KEY",
+				message: "La clave privada es inválida."
+			},
+			INVALID_DID_AND_KEY: {
+				code: "INVALID_DID_AND_KEY",
+				message: "Hubo un error al validar el did y la clave privada."
 			}
 		}
 	},
 	DELEGATE: {
 		ERR: {
+			NOT_EXIST: { code: "NOT_EXIST", message: "El delegado no existe." },
 			SET_NAME: { code: "SET_NAME", message: "No se pudo actualizar el nombre del emisor." },
 			GET_NAME: { code: "GET_NAME", message: "No se pudo obtener el nombre del emisor." },
-			DELEGATE: { code: "DELEGATE", message: "No se pudo realizar la delegación." },
+			DELEGATE: {
+				code: "DELEGATE",
+				message:
+					"No se pudo realizar la delegación. Por favor, compruebe que el DID emisor tiene tokens disponibles para ejecutar la transacción en la blockchain"
+			},
 			CREATE: { code: "DELEGATE_CREATE", message: "El delegado no pudo ser creado." },
 			GET: { code: "DELEGATE_GET", message: "El delegado no pudo ser obtenido." },
 			DELETE: { code: "DELEGATE_DELETE", message: "El delegado no pudo ser borrado." }
@@ -61,6 +86,7 @@ module.exports = {
 	PROFILE: {
 		ERR: {
 			GET: { code: "PROFILE_GET", message: "No se encontro el Perfil." },
+			NAME_NOT_UNIQUE: { code: "NAME_NOT_UNIQUE", message: "El nombre del perfil ya existe." },
 			IS_USED: {
 				code: "PROFILE_IS_USED",
 				message: "El perfil que se desea borrar lo estan usando los siguientes usuarios: "
@@ -74,6 +100,7 @@ module.exports = {
 			GET: { code: "USER_GET", message: "El usuario no pudo ser obtenido." },
 			SET_NAME: { code: "DELEGATE_SET_NAME", message: "El delegado no pudo ser verificado." },
 			GET_NAME: { code: "DELEGATE_GET_NAME", message: "El nombre del emisor no pudo ser obtenido." },
+			UNIQUE_NAME: { code: "UNIQUE_NAME", message: "El nombre del usuario ya existe." },
 			TYPE: { code: "INVALID_TYPE", message: "El tipo elegido para el usuario no es valido." },
 			DELETE: { code: "USER_DELETE", message: "El modelo de usuario no pudo ser borrado." },
 			EDIT: { code: "USER_EDIT", message: "El modelo de usuario no pudo ser editado." }
@@ -108,7 +135,12 @@ module.exports = {
 			CREATE: { code: "TEMPLATE_CREATE", message: "El modelo de certificado no pudo ser creado." },
 			GET: { code: "TEMPLATE_GET", message: "El modelo de certificado no pudo ser obtenido." },
 			EDIT: { code: "TEMPLATE_EDIT", message: "El modelo de certificado no pudo ser modificado." },
-			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado." }
+			DELETE: { code: "TEMPLATE_DELETE", message: "El modelo de certificado no pudo ser borrado." },
+			UNIQUE_NAME: {
+				code: "UNIQUE_NAME",
+				message:
+					"Error al Crear el Template: El nombre elegido ya existe. Por favor, vuelva a intentarlo con un nombre diferente."
+			}
 		}
 	},
 	CERTIFICATE: {
@@ -143,7 +175,7 @@ module.exports = {
 		TEMPLATE_DATA: {
 			INVALID_TEMPLATE_PREVIEW_TYPE: {
 				code: "INVALID_TEMPLATE_PREVIEW_TYPE",
-				message: "Se permiten actalmetne solo 2, 4 o 6 campos para previsualizar."
+				message: "Se permiten actualmente solo 2, 4 o 6 campos para previsualizar."
 			},
 			INVALID_TEMPLATE_ID: { code: "INVALID_TEMPLATE_ID", message: "No existe modelo de certificado con ese id." },
 			INVALID_TEMPLATE_PREVIEW_DATA: {
