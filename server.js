@@ -3,6 +3,8 @@ require('./services/logger');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const cors = require("cors");
 
@@ -60,6 +62,41 @@ mongoose
 		console.log(Messages.INDEX.ERR.CONNECTION + err.message);
 	});
 
+/**
+ * Config de Swagger
+ */
+ const options = {
+	definition: {
+	  openapi: '3.0.0',
+	  info: {
+		"title": process.env.ISSUER_SERVER_NAME,
+		"description": `Environment: ${process.env.ENVIRONMENT}`,
+		"version": `${process.env.VERSION}`,
+	  },
+	},
+	apis: ['./*.js', './routes/*.js'], // files containing annotations as above
+};
+const apiSpecification = swaggerJsdoc(options);
+/**
+ * @openapi
+ * /api-docs:
+ *   get:
+ *     description: Welcome to the jungle!
+ *     responses:
+ *       200:
+ *         description: Returns a mysterious webpage.
+ */
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpecification));
+
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     description: Bienvenido a DIDI Issuer Backend!
+ *     responses:
+ *       200:
+ *         description: Returns a mysterious string.
+ */
 app.get("/", (_, res) => res.send(`${Messages.INDEX.MSG.HELLO_WORLD} v${process.env.VERSION}`));
 
 // loggear llamadas
