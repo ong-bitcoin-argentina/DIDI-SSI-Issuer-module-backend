@@ -69,9 +69,9 @@ mongoose
 	definition: {
 	  openapi: '3.0.0',
 	  info: {
-		"title": process.env.ISSUER_SERVER_NAME,
+		"title": process.env.NAME,
 		"description": `Environment: ${process.env.ENVIRONMENT}`,
-		"version": `${process.env.VERSION}`,
+		"version": process.env.VERSION,
 	  },
 	},
 	apis: ['./*.js', './routes/*.js'], // files containing annotations as above
