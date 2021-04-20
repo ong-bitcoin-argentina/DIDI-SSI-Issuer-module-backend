@@ -48,6 +48,8 @@
 	},
 	"devDependencies": {
 		"commitizen": "^4.2.3",
-		"cz-jira-smart-commit": "^3.0.0"
+		"cz-jira-smart-commit": "^3.0.0",
+		"swagger-jsdoc": "6.0.0",
+		"swagger-ui-express": "^4.1.6"
 	}
 }
