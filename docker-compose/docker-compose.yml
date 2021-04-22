@@ -40,12 +40,6 @@ services:
       - db
     ports:
       - "127.0.0.1:3500:${ISSUER_BACKEND_PORT}"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.issuer-backend.rule=Host(`issuer.api.${ENVIRONMENT}.didi.org.ar`)"
-      - "traefik.http.routers.issuer-backend.entrypoints=web-secure"
-      - "traefik.http.routers.issuer-backend.tls=true"
-      - "traefik.http.routers.issuer-backend.tls.certresolver=le"
   db:
     image: mongo:4.4.0
     environment:
