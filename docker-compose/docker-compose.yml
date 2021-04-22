@@ -1,0 +1,65 @@
+version: "3"
+services:
+  issuer-backend:
+    image: aidi00.azurecr.io/didi-issuer-back:dev
+    environment:
+      - VERSION=${VERSION}
+      - DEBUGG_MODE=${DEBUGG_MODE}
+      - ISSUER_SERVER_DID=${ISSUER_SERVER_DID}
+      - ISSUER_SERVER_PRIVATE_KEY=${ISSUER_SERVER_PRIVATE_KEY}
+      - ISSUER_SERVER_NAME=${ISSUER_SERVER_NAME}
+      - MONGO_DIR=${MONGO_DIR}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_USERNAME=${ISSUER_MONGO_USERNAME}
+      - MONGO_PASSWORD=${ISSUER_MONGO_PASSWORD}
+      - MONGO_DB=${ISSUER_MONGO_DB}
+      - REACT_APP_API_URL=${REACT_APP_API_URL} # ????
+      - DIDI_API=${DIDI_API} # ????
+      - ADDRESS=${ADDRESS}
+      - BLOCK_CHAIN_CONTRACT=${BLOCKCHAIN_CONTRACT_RSK}
+      - BLOCK_CHAIN_URL=${BLOCKCHAIN_URL_RSK} # dir de la blockchain rsk
+      - HASH_SALT=${HASH_SALT} # salt para usarse con los datos indexables (tel,mail,etc)
+      - RSA_PRIVATE_KEY=${RSA_PRIVATE_KEY} # clave privada rsa para encriptar del lado del issuer
+      - BLOCK_CHAIN_DELEGATE_DURATION=${BLOCK_CHAIN_DELEGATE_DURATION} # cuando vence la delegacion (1 año por ejemplo)
+      - PORT=${ISSUER_BACKEND_PORT}
+      - APP_INSIGTHS_IKEY=${APP_INSIGTHS_IKEY}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - ENABLE_INSECURE_ENDPOINTS=${ISSUER_ENABLE_INSECURE_ENDPOINTS}
+      - NAME=${ISSUER_BACKEND_NAME}
+      - DISABLE_TELEMETRY_CLIENT=${DISABLE_TELEMETRY_CLIENT} # ????
+      - ISSUER_API_URL=${ISSUER_API_URL}
+      - BLOCKCHAIN_URL_MAIN=${BLOCKCHAIN_URL_MAIN}
+      - BLOCKCHAIN_URL_RSK=${BLOCKCHAIN_URL_RSK}
+      - BLOCKCHAIN_URL_LAC=${BLOCKCHAIN_URL_LAC}
+      - BLOCKCHAIN_URL_BFA=${BLOCKCHAIN_URL_BFA}
+      - BLOCKCHAIN_CONTRACT_MAIN=${BLOCKCHAIN_CONTRACT_MAIN}
+      - BLOCKCHAIN_CONTRACT_RSK=${BLOCKCHAIN_CONTRACT_RSK}
+      - BLOCKCHAIN_CONTRACT_LAC=${BLOCKCHAIN_CONTRACT_LAC}
+      - BLOCKCHAIN_CONTRACT_BFA=${BLOCKCHAIN_CONTRACT_BFA}
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:3500:${ISSUER_BACKEND_PORT}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.issuer-backend.rule=Host(`issuer.api.${ENVIRONMENT}.didi.org.ar`)"
+      - "traefik.http.routers.issuer-backend.entrypoints=web-secure"
+      - "traefik.http.routers.issuer-backend.tls=true"
+      - "traefik.http.routers.issuer-backend.tls.certresolver=le"
+  db:
+    image: mongo:4.4.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${ADMIN_DB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${ADMIN_DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${ADMIN_DB}
+      - DIDI_SERVER_MONGO_DB=${DIDI_SERVER_MONGO_DB}
+      - DIDI_SERVER_MONGO_USER=${DIDI_SERVER_MONGO_USER}
+      - DIDI_SERVER_MONGO_PASSWORD=${DIDI_SERVER_MONGO_PASSWORD}
+      - ISSUER_MONGO_DB=${ISSUER_MONGO_DB}
+      - ISSUER_MONGO_USERNAME=${ISSUER_MONGO_USERNAME}
+      - ISSUER_MONGO_PASSWORD=${ISSUER_MONGO_PASSWORD}
+    volumes:
+      - "/didi/db-data:/data/db"
+      - "/configs:/docker-entrypoint-initdb.d/mongo-init.js:ro"
+    ports:
+      - 127.0.0.1:27017:27017
