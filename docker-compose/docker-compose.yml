@@ -53,7 +53,7 @@ services:
       - ISSUER_MONGO_USERNAME=${ISSUER_MONGO_USERNAME}
       - ISSUER_MONGO_PASSWORD=${ISSUER_MONGO_PASSWORD}
     volumes:
-      - "/didi/db-data:/data/db"
-      - "/configs:/docker-entrypoint-initdb.d/mongo-init.js:ro"
+      - "./db-data:/data/db"
+      - "./configs:/docker-entrypoint-initdb.d/mongo-init.js:ro"
     ports:
       - 127.0.0.1:27017:27017
