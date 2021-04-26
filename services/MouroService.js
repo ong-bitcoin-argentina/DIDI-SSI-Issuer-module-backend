@@ -12,7 +12,7 @@ const { Resolver } = require("did-resolver");
 const { getResolver } = require("ethr-did-resolver");
 const Register = require("../models/Register");
 const resolver = new Resolver(
-	getResolver({ rpcUrl: Constants.BLOCKCHAIN.BLOCK_CHAIN_URL, registry: Constants.BLOCKCHAIN.BLOCK_CHAIN_CONTRACT })
+	getResolver({ rpcUrl: Constants.BLOCKCHAIN.URL, registry: Constants.BLOCKCHAIN.CONTRACT })
 );
 
 // decodifica el certificado, retornando la info (independientemente de si el certificado es valido o no)

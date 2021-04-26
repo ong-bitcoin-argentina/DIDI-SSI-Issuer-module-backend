@@ -16,8 +16,6 @@ services:
       - REACT_APP_API_URL=${REACT_APP_API_URL} # ????
       - DIDI_API=${DIDI_API} # ????
       - ADDRESS=${ADDRESS}
-      - BLOCK_CHAIN_CONTRACT=${BLOCKCHAIN_CONTRACT_RSK}
-      - BLOCK_CHAIN_URL=${BLOCKCHAIN_URL_RSK} # dir de la blockchain rsk
       - HASH_SALT=${HASH_SALT} # salt para usarse con los datos indexables (tel,mail,etc)
       - RSA_PRIVATE_KEY=${RSA_PRIVATE_KEY} # clave privada rsa para encriptar del lado del issuer
       - BLOCK_CHAIN_DELEGATE_DURATION=${BLOCK_CHAIN_DELEGATE_DURATION} # cuando vence la delegacion (1 año por ejemplo)
