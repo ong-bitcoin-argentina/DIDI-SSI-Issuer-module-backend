@@ -6,8 +6,35 @@ const Constants = require("../constants/Constants");
 const DefaultService = require("../services/DefaultService");
 
 /**
- * Registra un nuevo default
+ * @openapi
+ *   /default:
+ *   post:
+ *     summary: Registra un nuevo default.
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required:
+ *         - templateId
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               templateId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
+
 router.post(
 	"/",
 	Validator.validate([
@@ -33,9 +60,26 @@ router.post(
 	}
 );
 
-/*
- *	retorna el default
+/**
+ * @openapi
+ *   /default:
+ *   get:
+ *     summary: Retorna el default.
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
+
 router.get(
 	"/",
 	Validator.validate([
@@ -57,8 +101,37 @@ router.get(
 	}
 );
 
-/*
- * Cambia el default
+/**
+ * @openapi
+ *   /default:
+ *   put:
+ *     summary: Cambia el default.
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required:
+ *         - registerId
+ *         - templateId
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               registerId:
+ *                 type: string
+ *               templateId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 
 router.put(
