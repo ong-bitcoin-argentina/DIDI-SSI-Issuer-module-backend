@@ -73,6 +73,9 @@ mongoose
 		"description": `Environment: ${process.env.ENVIRONMENT}`,
 		"version": process.env.VERSION,
 	  },
+	  servers: [{
+		url: '/api/1.0/didi_issuer'
+	  }],
 	},
 	apis: ['./*.js', './routes/*.js'], // files containing annotations as above
 };
