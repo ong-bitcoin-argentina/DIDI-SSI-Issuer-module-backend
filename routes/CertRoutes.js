@@ -257,9 +257,6 @@ router.post(
 );
 
 /**
- * Modifica un certificado con los datos recibidos
- */
-/**
  * @openapi
  *   /cert/:{id}:
  *   put:
