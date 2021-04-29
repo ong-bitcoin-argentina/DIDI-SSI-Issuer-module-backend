@@ -77,7 +77,7 @@ router.get("/find", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResu
  * @openapi
  *   /cert/:{id}:
  *   get:
- *     summary: Listar certificados emitidos
+ *     summary: Retornar un certificado a partir de su id
  *     parameters:
  *       - in: header
  *         name: token
