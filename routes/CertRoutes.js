@@ -50,7 +50,7 @@ router.get("/all", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResul
  *   /cert/find:
  *   get:
  *     summary: Listar certificados emitidos
- *     description: Si se ingresa una fecha en el campo emmited, devuelve los certificados emitidos en dicha fecha. Si se ingresa la variable revoke, devuelve los certificados revocados.
+ *     description: Si se ingresa una fecha en el campo emmited, devuelve los certificados emitidos en dicha fecha. Si se ingresa la variable revoke, devuelve los certificados revocados. No se deben ingresar ambos parametros.
  *     parameters:
  *       - in: header
  *         name: token
