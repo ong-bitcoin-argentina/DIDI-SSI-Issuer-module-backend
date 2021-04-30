@@ -50,12 +50,22 @@ router.get("/all", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResul
  *   /cert/find:
  *   get:
  *     summary: Listar certificados emitidos
+ *     description: Si se ingresa una fecha en el campo emmited, devuelve los certificados emitidos en dicha fecha. Si se ingresa la variable revoke, devuelve los certificados revocados.
  *     parameters:
  *       - in: header
  *         name: token
  *         schema:
  *           type: string
  *         required: true
+ *       - in: query
+ *         name: emmited
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: revoked
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
@@ -131,7 +141,7 @@ router.get(
 /**
  * @openapi
  *   /cert:
- *   get:
+ *   post:
  *     summary: Generar un nuevo certificado a partir de la data y el modelo de certificado
  *     parameters:
  *       - in: header
@@ -505,7 +515,7 @@ router.post(
  * @openapi
  *   /cert/updateAllDeleted:
  *   post:
- *     summary: Recuperar todas las credenciales marcadas como eliminadas
+ *     summary: Actualizar el estado de los certificados eliminados(deleted=true) a un estado de revocados (revocation= fecha de emisión)
  *     description: Usar con precaución
  *     parameters:
  *       - in: header
