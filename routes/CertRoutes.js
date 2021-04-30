@@ -65,7 +65,7 @@ router.get("/all", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResul
  *       - in: query
  *         name: revoked
  *         schema:
- *           type: string
+ *           type: boolean
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
