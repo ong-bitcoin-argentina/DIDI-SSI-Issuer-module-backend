@@ -144,7 +144,6 @@ router.get(
  *         - templateId
  *         - data
  *         - split
- *         - microCedentials
  *       content:
  *         application/json:
  *           schema:
@@ -277,7 +276,6 @@ router.post(
  *         - templateId
  *         - data
  *         - split
- *         - microCedentials
  *       content:
  *         application/json:
  *           schema:
