@@ -9,7 +9,40 @@ const UserDTO = require("./utils/UserDTO");
 const { halfHourLimiter } = require("../policies/RateLimit");
 
 /**
- *	Genera un usuario para el issuer
+ * @openapi
+ *   /user:
+ *   post:
+ *     summary: Generar un usuario para el issuer
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - password
+ *         - did
+ *         - profileId
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               profileId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/",
@@ -43,7 +76,37 @@ router.post(
 );
 
 /**
- *	Genera un usuario ADMIN para el issuer (Valido si la variable de entorno "ENABLE_INSECURE_ENDPOINTS" esta habilitada)
+ * @openapi
+ *   /user/admin:
+ *   post:
+ *     summary: Generar un usuario ADMIN para el issuer
+ *     description: Valido si la variable de entorno "ENABLE_INSECURE_ENDPOINTS" esta habilitada
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - password
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/admin",
@@ -73,8 +136,37 @@ router.post(
 );
 
 /**
- *	Valida que la contraseña se corresponda con la del usuario,
- *	no genera ningún token ni información útil.
+ * @openapi
+ *   /user/login:
+ *   post:
+ *     summary: Valida que la contraseña se corresponda con la del usuario
+ *     description: No genera ningún token ni información útil.
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - password
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/login",
@@ -100,7 +192,28 @@ router.post(
 );
 
 /**
- *	Marca un usuario como borrado
+ * @openapi
+ *   /user/:id:
+ *   delete:
+ *     summary: Marca un usuario como borrado
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.delete(
 	"/:id",
@@ -123,8 +236,24 @@ router.delete(
 	}
 );
 
-/*
- *	retorna la lista de todos los usuarios
+/**
+ * @openapi
+ *   /user/all:
+ *   get:
+ *     summary: Obtener la lista de todos los usuarios
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.get(
 	"/all",
@@ -148,8 +277,44 @@ router.get(
 	}
 );
 
-/*
- *	edita un usuario
+/**
+ * @openapi
+ *   /user/:id:
+ *   put:
+ *     summary: Editar un usuario
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - password
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               profileId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.put(
 	"/:id",
