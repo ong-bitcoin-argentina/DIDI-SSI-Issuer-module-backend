@@ -22,7 +22,33 @@ const validations = role => [
 ];
 
 /**
- * Registra un nuevo perfil
+ * @openapi
+ *   /profile:
+ *   post:
+ *     summary: Registra un nuevo perfil
+ *     description: Los tipos de usuarios a ingresar en el arreglo de types se encuentran en constants/Constats.js como USER_TYPES
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - types
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               types:
+ *                 type: array    
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/",
@@ -40,7 +66,23 @@ router.post(
 );
 
 /**
- * Obtiene todos los perfiles
+ * @openapi
+ *   /profile:
+ *   get:
+ *     summary: Listar todos los perfiles
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.get(
 	"/",
@@ -58,7 +100,44 @@ router.get(
 );
 
 /**
- * Edita un perfil
+ * @openapi
+ *   /profile/:{id}:
+ *   put:
+ *     summary: Editar un perfil
+ *     description: Los tipos de usuarios a ingresar en el arreglo de types se encuentran en constants/Constats.js como USER_TYPES
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - types
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               types:
+ *                 type: array    
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.put(
 	"/:id",
@@ -77,7 +156,28 @@ router.put(
 );
 
 /**
- * Borra un perfil
+ * @openapi
+ *   /profile/:{id}:
+ *   delete:
+ *     summary: Borrar un perfil
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.delete(
 	"/:id",
