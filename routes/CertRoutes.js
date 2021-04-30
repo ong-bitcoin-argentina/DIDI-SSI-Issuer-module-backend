@@ -15,7 +15,24 @@ const Template = require("../models/Template");
 const { checkValidationResult, validate } = Validator;
 
 /**
- *	retorna la lista con info de los certificados generados por el issuer para mostrarse en la tabla de certificados
+ * @openapi
+ *   /cert/all:
+ *   get:
+ *     summary: Obtener la lista con info de los certificados generados por el issuer
+ *     description: La lista se muestra en una tabla de certificados
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.get("/all", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResult, async function (_, res) {
 	try {
@@ -29,7 +46,33 @@ router.get("/all", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResul
 });
 
 /**
- *	lista de certificados emitidos
+ * @openapi
+ *   /cert/find:
+ *   get:
+ *     summary: Listar certificados emitidos
+ *     description: Si se ingresa una fecha en el campo emmited, devuelve los certificados emitidos en dicha fecha. Si se ingresa la variable revoke, devuelve los certificados revocados. No se deben ingresar ambos parametros.
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: query
+ *         name: emmited
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: revoked
+ *         schema:
+ *           type: boolean
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.get("/find", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResult, async function (req, res) {
 	try {
@@ -41,7 +84,28 @@ router.get("/find", validate([TOKEN_VALIDATION.Read_Certs]), checkValidationResu
 });
 
 /**
- *	retorna un certificado a partir de su id
+ * @openapi
+ *   /cert/:{id}:
+ *   get:
+ *     summary: Retornar un certificado a partir de su id
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.get(
 	"/:id",
@@ -75,7 +139,80 @@ router.get(
 );
 
 /**
- * Genera un nuevo certificado a partir de la data y el modelo de certificado
+ * @openapi
+ *   /cert:
+ *   post:
+ *     summary: Generar un nuevo certificado a partir de la data y el modelo de certificado
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required:
+ *         - templateId
+ *         - data
+ *         - split
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               templateId:
+ *                 type: string
+ *               split:
+ *                 type: boolean
+ *               data:
+ *                 type: object
+ *                 properties:
+ *                   cert:
+ *                     type: array    
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                         value:
+ *                           type: string
+ *                   participant:
+ *                     type: array    
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           value:
+ *                             type: string
+ *                   others:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                         value:
+ *                           type: string
+ *               microCredentials:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                     names:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/",
@@ -129,7 +266,85 @@ router.post(
 );
 
 /**
- * Modifica un certificado con los datos recibidos
+ * @openapi
+ *   /cert/:{id}:
+ *   put:
+ *     summary: Modifica un certificado con los datos recibidos
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     requestBody:
+ *       required:
+ *         - templateId
+ *         - data
+ *         - split
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               templateId:
+ *                 type: string
+ *               split:
+ *                 type: boolean
+ *               data:
+ *                 type: object
+ *                 properties:
+ *                   cert:
+ *                     type: array    
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                         value:
+ *                           type: string
+ *                   participant:
+ *                     type: array    
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           value:
+ *                             type: string
+ *                   others:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                         value:
+ *                           type: string
+ *               microCredentials:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                     names:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.put(
 	"/:id",
@@ -173,6 +388,40 @@ router.put(
 /**
  * Marca un certificado como borrado y lo revoca en caso de haber sido emitido
  */
+/**
+ * @openapi
+ *   /cert/:{id}:
+ *   delete:
+ *     summary: Marca un certificado como borrado y lo revoca en caso de haber sido emitido
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     requestBody:
+ *       required:
+ *         - reason
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reason:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
+ */
 router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async function (req, res) {
 	const { id } = req.params;
 	const { reason } = req.body;
@@ -192,7 +441,28 @@ router.delete("/:id", validate(CERT_REVOCATION), checkValidationResult, async fu
 });
 
 /**
- * permite crear un certificado y enviarlo al didi-server para ser emitido
+ * @openapi
+ *   /cert/:{id}/emmit:
+ *   post:
+ *     summary: Dado un id enviar certificado a didi-server para ser emitido
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/:id/emmit",
@@ -242,7 +512,24 @@ router.post(
 );
 
 /**
- * usar con precaucion
+ * @openapi
+ *   /cert/updateAllDeleted:
+ *   post:
+ *     summary: Actualizar el estado de los certificados eliminados(deleted=true) a un estado de revocados (revocation= fecha de emisión)
+ *     description: Usar con precaución
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401: 
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
  */
 router.post(
 	"/updateAllDeleted",
