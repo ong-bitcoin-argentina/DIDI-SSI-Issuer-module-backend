@@ -70,7 +70,7 @@ mongoose
 	  openapi: '3.0.0',
 	  info: {
 		"title": process.env.NAME,
-		"description": `Environment: ${process.env.ENVIRONMENT}`,
+		"description": `Corriendo en el ambiente: ${process.env.ENVIRONMENT}. Para más información, visite la [documentación](https://docs.didi.org.ar/).`,
 		"version": process.env.VERSION,
 	  },
 	  servers: [{
