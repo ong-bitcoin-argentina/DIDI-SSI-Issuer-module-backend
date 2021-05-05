@@ -1,4 +1,4 @@
-if (process.env.DEBUGG == null || process.env.DEBUGG == '') throw new Error('No esta definida la varibale DEBUGG');
+if (process.env.DEBUGG_MODE == null || process.env.DEBUGG_MODE == '') throw new Error('No esta definida la varibale DEBUGG_MODE');
 if (process.env.MONGO_DIR == null || process.env.MONGO_DIR == '') throw new Error('No esta definida la varibale MONGO_DIR');
 if (process.env.MONGO_PORT == null || process.env.MONGO_PORT == '') throw new Error('No esta definida la varibale MONGO_PORT');
 if (process.env.MONGO_DB == null || process.env.MONGO_DB == '') throw new Error('No esta definida la varibale MONGO_DB');
@@ -15,8 +15,6 @@ if (process.env.FULL_URL == null || process.env.FULL_URL == '') throw new Error(
 
 if (process.env.RSA_PRIVATE_KEY == null || process.env.RSA_PRIVATE_KEY == '') throw new Error('No esta definida la varibale RSA_PRIVATE_KEY');
 if (process.env.HASH_SALT == null || process.env.HASH_SALT == '') throw new Error('No esta definida la varibale HASH_SALT');
-
-if (process.env.URL == null || process.env.URL == '') throw new Error('No esta definida la varibale URL');
 
 if (process.env.BLOCKCHAIN_URL_MAIN == null || process.env.BLOCKCHAIN_URL_MAIN == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_MAIN');
 if (process.env.BLOCKCHAIN_URL_RSK == null || process.env.BLOCKCHAIN_URL_RSK == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_RSK');
