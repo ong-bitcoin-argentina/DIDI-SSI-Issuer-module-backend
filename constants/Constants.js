@@ -16,10 +16,7 @@ if (process.env.FULL_URL == null || process.env.FULL_URL == '') throw new Error(
 if (process.env.RSA_PRIVATE_KEY == null || process.env.RSA_PRIVATE_KEY == '') throw new Error('No esta definida la varibale RSA_PRIVATE_KEY');
 if (process.env.HASH_SALT == null || process.env.HASH_SALT == '') throw new Error('No esta definida la varibale HASH_SALT');
 
-if (process.env.DELEGATE_DURATION == null || process.env.DELEGATE_DURATION == '') throw new Error('No esta definida la varibale DELEGATE_DURATION');
-
 if (process.env.URL == null || process.env.URL == '') throw new Error('No esta definida la varibale URL');
-if (process.env.MONGO_URL == null || process.env.MONGO_URL == '') throw new Error('No esta definida la varibale MONGO_URL');
 
 if (process.env.BLOCKCHAIN_URL_MAIN == null || process.env.BLOCKCHAIN_URL_MAIN == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_MAIN');
 if (process.env.BLOCKCHAIN_URL_RSK == null || process.env.BLOCKCHAIN_URL_RSK == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_RSK');
