@@ -1,5 +1,6 @@
 .DS_Store
+.env*
 node_modules/
 data/
+coverage/
 docker-compose/db-data
-.env
