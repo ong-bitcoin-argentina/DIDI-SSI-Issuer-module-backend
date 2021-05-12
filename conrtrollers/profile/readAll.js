@@ -2,7 +2,7 @@
 const ResponseHandler = require('../../routes/utils/ResponseHandler');
 const ProfileService = require('../../services/ProfileService');
 
-const read = async (req, res) => {
+const readAll = async (req, res) => {
   try {
     const profiles = await ProfileService.getAllProfiles();
     return ResponseHandler.sendRes(res, profiles);
@@ -13,5 +13,5 @@ const read = async (req, res) => {
 };
 
 module.exports = {
-  read,
+  readAll,
 };

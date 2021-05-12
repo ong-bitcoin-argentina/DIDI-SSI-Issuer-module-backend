@@ -1,11 +1,11 @@
 const { create } = require('./create');
-const { read } = require('./read');
+const { readAll } = require('./readAll');
 const { update } = require('./update');
 const { remove } = require('./remove');
 
 module.exports = {
   create,
-  read,
+  readAll,
   update,
   remove,
 };
