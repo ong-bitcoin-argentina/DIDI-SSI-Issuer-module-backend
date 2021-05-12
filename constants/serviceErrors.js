@@ -55,4 +55,20 @@ module.exports = {
     code: '#service-missingTemplate',
     message: 'Falta el parámetro TEMPLATE.',
   },
+  missingDid: {
+    code: '#service-missingDid',
+    message: 'Falta el parámetro DID.',
+  },
+  missingRequestCode: {
+    code: '#service-missingRequestCode',
+    message: 'Falta el parámetro REQUESTCODE.',
+  },
+  missingName: {
+    code: '#service-missingName',
+    message: 'Falta el parámetro NAME.',
+  },
+  missingCode: {
+    code: '#service-missingCode',
+    message: 'Falta el parámetro CODE.',
+  },
 };
