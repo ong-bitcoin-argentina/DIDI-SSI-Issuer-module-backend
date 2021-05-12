@@ -55,4 +55,8 @@ module.exports = {
     code: '#service-missingTemplate',
     message: 'Falta el parámetro TEMPLATE.',
   },
+  missingBody: {
+    code: '#service-missingBody',
+    message: 'Falta el parámetro BODY.',
+  },
 };

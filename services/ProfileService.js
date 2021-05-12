@@ -4,6 +4,7 @@ const Constants = require('../constants/Constants');
 const Messages = require('../constants/Messages');
 const Profile = require('../models/Profile');
 const User = require('../models/User');
+const { missingId, missingBody } = require('../constants/serviceErrors');
 
 const { TYPE } = Messages.USER.ERR;
 const { GET, IS_USED, NAME_NOT_UNIQUE } = Messages.PROFILE.ERR;
@@ -14,6 +15,7 @@ const validateTypes = (types) => {
 };
 
 module.exports.createProfile = async (body) => {
+  if (!body) throw missingBody;
   try {
     const { types, name } = body;
 
@@ -44,6 +46,8 @@ module.exports.getAllProfiles = async () => {
 };
 
 module.exports.editProfile = async (id, body) => {
+  if (!id) throw missingId;
+  if (!body) throw missingBody;
   try {
     const { types } = body;
 
@@ -62,6 +66,7 @@ module.exports.editProfile = async (id, body) => {
 };
 
 module.exports.delete = async (id) => {
+  if (!id) throw missingId;
   try {
     const users = await User.getAllByProfile(id);
 
