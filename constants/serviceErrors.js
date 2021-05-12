@@ -7,6 +7,14 @@ module.exports = {
     code: '#service-missingOtherDID',
     message: 'Falta el parámetro OTHERDID.',
   },
+  missingDid: {
+    code: '#service-missingDid',
+    message: 'Falta el parámetro DID',
+  },
+  missingName: {
+    code: '#service-missingName',
+    message: 'Falta el parámetro NAME',
+  },
   missingJwt: {
     code: '#service-missingJwt',
     message: 'Falta el parámetro JWT.',
@@ -30,10 +38,6 @@ module.exports = {
   missingExpDate: {
     code: '#service-missingExpDate',
     message: 'Falta el parámetro EXPDATE',
-  },
-  missingDid: {
-    code: '#service-missingDid',
-    message: 'Fata el parámetro DID',
   },
   missingTemplate: {
     code: '#service-missingTemplate',
@@ -98,10 +102,6 @@ module.exports = {
   missingRequestCode: {
     code: '#service-missingRequestCode',
     message: 'Falta el parámetro REQUESTCODE.',
-  },
-  missingName: {
-    code: '#service-missingName',
-    message: 'Falta el parámetro NAME.',
   },
   missingCode: {
     code: '#service-missingCode',
