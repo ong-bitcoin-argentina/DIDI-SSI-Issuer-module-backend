@@ -107,4 +107,8 @@ module.exports = {
     code: '#service-missingCode',
     message: 'Falta el parámetro CODE.',
   },
+  missingBody: {
+    code: '#service-missingBody',
+    message: 'Falta el parámetro BODY.',
+  },
 };
