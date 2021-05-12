@@ -4,7 +4,9 @@ const {
 } = require('../../constants/serviceErrors');
 
 describe('Should be green', () => {
-  // registra una nueva delegacion en la base de datos local
+  /**
+   * create
+   */
   test('Expect create to throw on missing did', async () => {
     try {
       await create(undefined, 'name', 'registerId');
@@ -28,7 +30,9 @@ describe('Should be green', () => {
       expect(e.code).toMatch(missingRegisterId.code);
     }
   });
-  // marca la delegacion como borrada en la base de datos local
+  /**
+   * delete
+   */
   test('Expect delete to throw on missing did', async () => {
     try {
       await remove(undefined);
