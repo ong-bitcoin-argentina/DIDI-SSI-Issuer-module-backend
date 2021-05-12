@@ -4,7 +4,9 @@
 	"license": "SEE LICENSE IN LICENSE",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 0",
+		"test": "jest",
+		"lint": "eslint --ext .js __tests__/ constants/ controllers/ jobs/ middlewares/ models/ policies/ services/ utils/ routes/",
+		"lint:fix": "eslint --fix --ext .js __tests__/ constants/ controllers/ jobs/ middlewares/ models/ policies/ services/ utils/ routes/",
 		"local": "node ./runLocal.js",
 		"start": "nodemon server.js"
 	},
@@ -48,11 +50,13 @@
 	},
 	"devDependencies": {
 		"commitizen": "^4.2.3",
+		"coveralls": "^3.1.0",
 		"cz-jira-smart-commit": "^3.0.0",
 		"eslint": "^7.26.0",
 		"eslint-config-airbnb-base": "^14.2.1",
 		"eslint-plugin-import": "^2.22.1",
 		"eslint-plugin-jest": "^24.3.6",
+		"jest": "^26.6.3",
 		"swagger-jsdoc": "6.0.0",
 		"swagger-ui-express": "^4.1.6"
 	}
