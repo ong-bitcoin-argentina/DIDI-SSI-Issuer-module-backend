@@ -7,6 +7,54 @@ module.exports = {
     code: '#service-missingOtherDID',
     message: 'Falta el parámetro OTHERDID.',
   },
+  missingJwt: {
+    code: '#service-missingJwt',
+    message: 'Falta el parámetro JWT.',
+  },
+  missingErrMsg: {
+    code: '#service-missingErrMsg',
+    message: 'Falta el parámetro ERRMSG.',
+  },
+  missingClaims: {
+    code: '#service-missingClaims',
+    message: 'Falta el parámetro CLAIMS.',
+  },
+  missingCb: {
+    code: '#service-missingCb',
+    message: 'Falta el parámetro CB',
+  },
+  missingSubject: {
+    code: '#service-missingSubject',
+    message: 'Falta el parámetro SUBJECT',
+  },
+  missingExpDate: {
+    code: '#service-missingExpDate',
+    message: 'Falta el parámetro EXPDATE',
+  },
+  missingDid: {
+    code: '#service-missingDid',
+    message: 'Fata el parámetro DID',
+  },
+  missingTemplate: {
+    code: '#service-missingTemplate',
+    message: 'Fata el parámetro TEMPLATE',
+  },
+  missingCert: {
+    code: '#service-missingCert',
+    message: 'Fata el parámetro CERT',
+  },
+  missingSendPush: {
+    code: '#service-missingSendPush',
+    message: 'Fata el parámetro SENDPUSH',
+  },
+  missingHash: {
+    code: '#service-missingHash',
+    message: 'Fata el parámetro HASH',
+  },
+  missingSub: {
+    code: '#service-missingSub',
+    message: 'Fata el parámetro SUB',
+  },
   missingId: {
     code: '#service-missingId',
     message: 'Falta el parámetro ID.',
@@ -35,10 +83,6 @@ module.exports = {
     code: '#service-missingMicroCredentials',
     message: 'Falta el parámetro MICROCREDENTIALS.',
   },
-  missingCert: {
-    code: '#service-missingCert',
-    message: 'Falta el parámetro CERT.',
-  },
   missingCreds: {
     code: '#service-missingCreds',
     message: 'Falta el parámetro CREDS.',
@@ -50,14 +94,6 @@ module.exports = {
   missingUserId: {
     code: '#service-missingUserId',
     message: 'Falta el parámetro USERID.',
-  },
-  missingTemplate: {
-    code: '#service-missingTemplate',
-    message: 'Falta el parámetro TEMPLATE.',
-  },
-  missingDid: {
-    code: '#service-missingDid',
-    message: 'Falta el parámetro DID.',
   },
   missingRequestCode: {
     code: '#service-missingRequestCode',
