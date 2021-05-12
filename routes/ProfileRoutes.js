@@ -79,7 +79,7 @@ router.get(
   '/',
   Validator.validate([validateToken(Read_Profiles)]),
   Validator.checkValidationResult,
-  profile.read,
+  profile.readAll,
 );
 
 /**
