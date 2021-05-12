@@ -111,4 +111,16 @@ module.exports = {
     code: '#service-missingBody',
     message: 'Falta el parámetro BODY.',
   },
+  missingPreviewData: {
+    code: '#service-missingPreviewData',
+    message: 'Falta el parámetro PREVIEWDATA.',
+  },
+  missingPreviewType: {
+    code: '#service-missingPreviewType',
+    message: 'Falta el parámetro PREVIEWTYPE.',
+  },
+  missingCategory: {
+    code: '#service-missingCategory',
+    message: 'Falta el parámetro CATEGORY.',
+  },
 };
