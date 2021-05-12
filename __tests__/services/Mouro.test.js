@@ -6,7 +6,7 @@ const {
 const {
   missingJwt, missingErrMsg, missingClaims, missingCb, missingRegisterId, missingSubject,
   missingExpDate, missingDid, missingTemplate, missingCert, missingSendPush, missingHash,
-  missingSub, missingWrapped,
+  missingSub,
 } = require('../../constants/serviceErrors');
 
 describe('Should be green', () => {
@@ -188,14 +188,6 @@ describe('Should be green', () => {
       await getSkeletonForEmmit(undefined, 'wrapped');
     } catch (e) {
       expect(e.code).toMatch(missingTemplate.code);
-    }
-  });
-
-  test('Expect getSkeletonForEmmit to throw on missing wrapped', async () => {
-    try {
-      await getSkeletonForEmmit('template', undefined);
-    } catch (e) {
-      expect(e.code).toMatch(missingWrapped.code);
     }
   });
 });

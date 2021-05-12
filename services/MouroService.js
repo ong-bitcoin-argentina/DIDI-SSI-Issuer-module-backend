@@ -13,10 +13,11 @@ const { getResolver } = require('ethr-did-resolver');
 const Messages = require('../constants/Messages');
 const Constants = require('../constants/Constants');
 const Register = require('../models/Register');
+
 const {
   missingJwt, missingErrMsg, missingClaims, missingCb, missingRegisterId, missingSubject,
   missingExpDate, missingDid, missingTemplate, missingCert, missingSendPush, missingHash,
-  missingSub, missingWrapped,
+  missingSub,
 } = require('../constants/serviceErrors');
 
 const resolver = new Resolver(
@@ -88,7 +89,7 @@ createCertificate(subject, expDate, did, template) {
     privateKey: key,
   });
 
-  const date = expDate ? (new Date(expDate).getTime() / 1000) | 0 : undefined;
+  const date = (new Date(expDate).getTime() / 1000) | 0;
 
   const vcPayload = {
     sub: did,
@@ -198,7 +199,6 @@ module.exports.sendShareRequest = async function sendShareRequest(did, cert, reg
 
 module.exports.getSkeletonForEmmit = function getSkeletonForEmmit(template, wrapped = false) {
   if (!template) throw missingTemplate;
-  if (!template) throw missingWrapped;
   const result = {
     category: Constants.CERT_CATEGORY_MAPPING[template.category],
     preview: {

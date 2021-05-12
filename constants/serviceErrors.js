@@ -55,10 +55,6 @@ module.exports = {
     code: '#service-missingSub',
     message: 'Fata el parámetro SUB',
   },
-  missingWrapped: {
-    code: '#service-missingWrapped',
-    message: 'Fata el parámetro WRAPPED',
-  },
   missingId: {
     code: '#service-missingId',
     message: 'Falta el parámetro ID.',
@@ -98,5 +94,17 @@ module.exports = {
   missingUserId: {
     code: '#service-missingUserId',
     message: 'Falta el parámetro USERID.',
+  },
+  missingRequestCode: {
+    code: '#service-missingRequestCode',
+    message: 'Falta el parámetro REQUESTCODE.',
+  },
+  missingName: {
+    code: '#service-missingName',
+    message: 'Falta el parámetro NAME.',
+  },
+  missingCode: {
+    code: '#service-missingCode',
+    message: 'Falta el parámetro CODE.',
   },
 };
