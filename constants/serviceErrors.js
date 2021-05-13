@@ -127,4 +127,12 @@ module.exports = {
     code: '#service-missingToken',
     message: 'Falta el parámetro TOKEN.',
   },
+  missingPassword: {
+    code: '#service-missingPassword',
+    message: 'Falta el parámetro PASSWORD.',
+  },
+  missingProfileId: {
+    code: '#service-missingProfileId',
+    message: 'Falta el parámetro PROFILEID.',
+  },
 };
