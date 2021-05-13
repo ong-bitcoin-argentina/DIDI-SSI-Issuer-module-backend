@@ -1,13 +1,11 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-plusplus */
-/* eslint-disable no-shadow */
-/* eslint-disable default-case */
 /* eslint-disable no-console */
 /* eslint-disable no-await-in-loop */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-undef */
 /* eslint-disable max-len */
 const ResponseHandler = require('../../routes/utils/ResponseHandler');
+const Constants = require('../../constants/Constants');
+const MouroService = require('../../services/MouroService');
 const CertService = require('../../services/CertService');
 const TemplateService = require('../../services/TemplateService');
 
@@ -56,6 +54,8 @@ const generateCertificate = async function generateCertificate(credentials, temp
         case Constants.CERT_FIELD_MANDATORY.EXPIRATION_DATE:
           expDate = dataElem.value;
           break;
+        default:
+          break;
       }
 
       for (const microCredData of cert.microCredentials) {
@@ -70,12 +70,12 @@ const generateCertificate = async function generateCertificate(credentials, temp
     });
 
     const extra = [];
-    allNames.forEach((name) => {
-      if (usedNames.indexOf(name) < 0) extra.push(name);
+    allNames.forEach((n) => {
+      if (usedNames.indexOf(n) < 0) extra.push(n);
     });
 
-    extra.forEach((name) => {
-      const dataElem = allData.find((elem) => elem.name === name);
+    extra.forEach((n) => {
+      const dataElem = allData.find((elem) => elem.name === n);
       if (dataElem) {
         if (!microCreds['Otros Datos']) microCreds['Otros Datos'] = [];
         microCreds['Otros Datos'].push(dataElem);
@@ -85,8 +85,8 @@ const generateCertificate = async function generateCertificate(credentials, temp
     const generateCertPromises = [];
     const generateCertNames = Object.keys(microCreds);
     for (const microCredsName of generateCertNames) {
-      const cert = generatePartialCertificate(microCredsName, microCreds[microCredsName], expDate, did);
-      generateCertPromises.push(cert);
+      const partialCert = generatePartialCertificate(microCredsName, microCreds[microCredsName], expDate, did);
+      generateCertPromises.push(partialCert);
     }
 
     // crear las microcredenciales
@@ -175,6 +175,7 @@ const emmitById = async (req, res) => {
     const credentials = [];
     // para cada participante, generar un cert, sus micro y guardarlos en mouro
     for (const part of partData) {
+      // eslint-disable-next-line no-unused-expressions
       cert.split
         ? await generateCertificate(credentials, template, cert, part)
         : await generateFullCertificate(credentials, template, cert, part);

@@ -1,6 +1,5 @@
-/* eslint-disable prefer-const */
-/* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 const ResponseHandler = require('../../routes/utils/ResponseHandler');
 const CertService = require('../../services/CertService');
@@ -14,14 +13,13 @@ const create = async (req, res) => {
 
     const result = [];
     for (const participantData of data.participant) {
-      let cert;
       const certData = {
         cert: data.cert,
         participant: [participantData],
         others: data.others,
       };
 
-      cert = await CertService.create(certData, templateId, split, microCredentials);
+      const cert = await CertService.create(certData, templateId, split, microCredentials);
       if (cert) result.push(cert);
     }
     return ResponseHandler.sendRes(res, result);
