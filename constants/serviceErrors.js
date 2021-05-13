@@ -123,4 +123,8 @@ module.exports = {
     code: '#service-missingCategory',
     message: 'Falta el parámetro CATEGORY.',
   },
+  missingToken: {
+    code: '#service-missingToken',
+    message: 'Falta el parámetro TOKEN.',
+  },
 };
