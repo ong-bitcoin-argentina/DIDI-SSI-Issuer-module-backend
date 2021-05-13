@@ -127,6 +127,14 @@ module.exports = {
     code: '#service-missingToken',
     message: 'Falta el parámetro TOKEN.',
   },
+  missingKey: {
+    code: '#service-missingKey',
+    message: 'Falta el parámetro KEY.',
+  },
+  missingFilter: {
+    code: '#service-missingFilter',
+    message: 'Falta el parámetro FILTER.',
+  },
   missingPassword: {
     code: '#service-missingPassword',
     message: 'Falta el parámetro PASSWORD.',
