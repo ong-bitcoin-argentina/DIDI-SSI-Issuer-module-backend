@@ -135,4 +135,12 @@ module.exports = {
     code: '#service-missingFilter',
     message: 'Falta el parámetro FILTER.',
   },
+  missingPassword: {
+    code: '#service-missingPassword',
+    message: 'Falta el parámetro PASSWORD.',
+  },
+  missingProfileId: {
+    code: '#service-missingProfileId',
+    message: 'Falta el parámetro PROFILEID.',
+  },
 };
