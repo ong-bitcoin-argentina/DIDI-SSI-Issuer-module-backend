@@ -1,15 +1,8 @@
-const router = require("express").Router();
-const ResponseHandler = require("./utils/ResponseHandler");
-
-const Validator = require("./utils/Validator");
-const Constants = require("../constants/Constants");
-const RegisterService = require("../services/RegisterService");
-const { CERT_REVOCATION, TOKEN_VALIDATION } = require("../constants/Validators");
-
-const TokenService = require("../services/TokenService");
-const RegisterDTO = require("./utils/RegisterDTO");
-
-const { checkValidationResult, validate } = Validator;
+/* eslint-disable max-len */
+const router = require('express').Router();
+const register = require('../conrtrollers/register');
+const Validator = require('./utils/Validator');
+const Constants = require('../constants/Constants');
 
 /**
  * @openapi
@@ -41,42 +34,31 @@ const { checkValidationResult, validate } = Validator;
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.post(
-	"/",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
-			isHead: true
-		},
-		{ name: "did", validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-		{
-			name: "name",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
-		},
-		{
-			name: "key",
-			validate: [Constants.VALIDATION_TYPES.IS_STRING]
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			const { did, name, key } = req.body;
-			const { token } = req.headers;
-
-			const register = await RegisterService.newRegister(did, key, name, token);
-			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
-		} catch (err) {
-			console.log(err);
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+    { name: 'did', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    {
+      name: 'name',
+      validate: [Constants.VALIDATION_TYPES.IS_STRING],
+    },
+    {
+      name: 'key',
+      validate: [Constants.VALIDATION_TYPES.IS_STRING],
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.create,
 );
 
 /**
@@ -98,31 +80,22 @@ router.post(
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.get(
-	"/",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Read_Templates],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			const registers = await RegisterService.getAll(req.query);
-			const result = registers.map(register => RegisterDTO.toDTO(register));
-			return ResponseHandler.sendRes(res, result);
-		} catch (err) {
-			console.log(err);
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Read_Templates],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.readAll,
 );
 
 /**
@@ -139,29 +112,22 @@ router.get(
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.get(
-	"/all/blockchain",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			return ResponseHandler.sendRes(res, Constants.BLOCKCHAINS);
-		} catch (err) {
-			console.log(err);
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/all/blockchain',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.readAllBlockchains,
 );
 
 /**
@@ -194,30 +160,22 @@ router.get(
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.put(
-	"/:did",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			const { did } = req.params;
-			const register = await RegisterService.editRegister(did, req.body);
-			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/:did',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.updateByDid,
 );
 
 /**
@@ -239,31 +197,22 @@ router.put(
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.post(
-	"/:did/retry",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			const { did } = req.params;
-			const { token } = req.headers;
-			const register = await RegisterService.retryRegister(did, token);
-			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/:did/retry',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.retryByDid,
 );
 
 /**
@@ -285,36 +234,24 @@ router.post(
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.post(
-	"/:did/refresh",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			const { did } = req.params;
-			const { token } = req.headers;
-			const register = await RegisterService.refreshRegister(did, token);
-			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/:did/refresh',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.refreshByDid,
 );
 
-/*
- * Revoca un registro
- */
 /**
  * @openapi
  *   /register/:{did}:
@@ -334,31 +271,22 @@ router.post(
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
- *       401: 
+ *       401:
  *         description: Acción no autorizada
  *       500:
  *         description: Error interno del servidor
  */
 router.delete(
-	"/:did",
-	Validator.validate([
-		{
-			name: "token",
-			validate: [Constants.USER_TYPES.Admin],
-			isHead: true
-		}
-	]),
-	Validator.checkValidationResult,
-	async function (req, res) {
-		try {
-			const { did } = req.params;
-			const { token } = req.headers;
-			const register = await RegisterService.revoke(did, token);
-			return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
-		} catch (err) {
-			return ResponseHandler.sendErr(res, err);
-		}
-	}
+  '/:did',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.removeByDid,
 );
 
 module.exports = router;
