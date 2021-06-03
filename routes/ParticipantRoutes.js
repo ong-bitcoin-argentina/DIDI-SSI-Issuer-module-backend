@@ -288,8 +288,6 @@ router.post(
  *             properties:
  *               name:
  *                 type: string
- *               templateId:
- *                 type: string
  *               data:
  *                 type: array
  *                 items:
@@ -314,8 +312,6 @@ router.post(
  *                               type: string
  *                             value:
  *                               type: string
- *                     templateId:
- *                       type: string
  *                     requestCode:
  *                       type: string
  *                     new:
@@ -342,7 +338,6 @@ router.put(
       isHead: true,
     },
     { name: 'name', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
-    { name: 'templateId', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
     {
       name: 'data',
       validate: [Constants.VALIDATION_TYPES.IS_PART_DATA],

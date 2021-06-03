@@ -24,7 +24,6 @@ const Constants = require('../constants/Constants');
  *       500:
  *         description: Error interno del servidor
  */
-
 router.get(
   '/all',
   Validator.validate([
@@ -73,7 +72,6 @@ router.get(
  *       500:
  *         description: Error interno del servidor
  */
-
 router.post(
   '/',
   Validator.validate([
@@ -125,7 +123,6 @@ router.post(
  *       500:
  *         description: Error interno del servidor
  */
-
 router.delete(
   '/',
   Validator.validate([
@@ -169,7 +166,6 @@ router.delete(
  *       500:
  *         description: Error interno del servidor
  */
-
 router.post(
   '/didDelegationValid',
   Validator.validate([

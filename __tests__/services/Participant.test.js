@@ -89,14 +89,6 @@ describe('Should be green', () => {
     }
   });
 
-  test('Expect create to throw on missing templateId', async () => {
-    try {
-      await create('name', 'did', 'data', undefined, 'code');
-    } catch (e) {
-      expect(e.code).toMatch(missingTemplateId.code);
-    }
-  });
-
   test('Expect create to throw on missing code', async () => {
     try {
       await create('name', 'did', 'data', 'templateId', undefined);

@@ -7,11 +7,9 @@ const {
 } = require('../routes/utils/CertDTO');
 const {
   missingId,
-  missingEmmited,
   missingData,
   missingTemplateId,
   missingSplit,
-  missingMicroCredentials,
   missingCert,
   missingCreds,
   missingReason,
@@ -49,7 +47,6 @@ module.exports.findBy = async function findBy({
   emmited,
   revoked,
 }) {
-  if (!emmited) throw missingEmmited;
   let certs;
   if (revoked) {
     certs = await Cert.getRevokeds();
@@ -64,7 +61,6 @@ module.exports.create = async function create(data, templateId, split, microCred
   if (!data) throw missingData;
   if (!templateId) throw missingTemplateId;
   if (!split) throw missingSplit;
-  if (!microCredentials) throw missingMicroCredentials;
   try {
     const cert = await Cert.generate(data, templateId, split, microCredentials);
     if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
@@ -80,7 +76,6 @@ module.exports.edit = async function edit(id, data, split, microCredentials) {
   if (!id) throw missingId;
   if (!data) throw missingData;
   if (!split) throw missingSplit;
-  if (!microCredentials) throw missingMicroCredentials;
   try {
     let cert = await getById(id);
     cert = await cert.edit(data, split, microCredentials);
