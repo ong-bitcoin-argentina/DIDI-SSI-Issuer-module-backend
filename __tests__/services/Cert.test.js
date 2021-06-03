@@ -1,6 +1,5 @@
 const {
   getById,
-  findBy,
   create,
   edit,
   addTemplateDataToCert,
@@ -9,12 +8,8 @@ const {
 } = require('../../services/CertService');
 const {
   missingId,
-  missingEmmited,
-  missingRevoked,
   missingData,
-  missingTemplateId,
   missingSplit,
-  missingMicroCredentials,
   missingCert,
   missingCreds,
   missingReason,
@@ -35,25 +30,6 @@ describe('Should be green', () => {
   });
 
   /**
-   * findBy
-   */
-  test('Expect findBy to throw on missing emmited', async () => {
-    try {
-      await findBy({ emmited: undefined, revoked: 'revoked' });
-    } catch (e) {
-      expect(e.code).toMatch(missingEmmited.code);
-    }
-  });
-
-  test('Expect findBy to throw on missing revoked', async () => {
-    try {
-      await findBy({ emmited: 'emmited', revoked: undefined });
-    } catch (e) {
-      expect(e.code).toMatch(missingRevoked.code);
-    }
-  });
-
-  /**
    * create
    */
   test('Expect create to throw on missing data', async () => {
@@ -64,27 +40,11 @@ describe('Should be green', () => {
     }
   });
 
-  test('Expect create to throw on missing templateId', async () => {
-    try {
-      await create('data', undefined, 'split', 'microCredentials');
-    } catch (e) {
-      expect(e.code).toMatch(missingTemplateId.code);
-    }
-  });
-
   test('Expect create to throw on missing split', async () => {
     try {
       await create('data', 'templateId', undefined, 'microCredentials');
     } catch (e) {
       expect(e.code).toMatch(missingSplit.code);
-    }
-  });
-
-  test('Expect create to throw on missing microCredentials', async () => {
-    try {
-      await create('data', 'templateId', 'split', undefined);
-    } catch (e) {
-      expect(e.code).toMatch(missingMicroCredentials.code);
     }
   });
 
@@ -112,14 +72,6 @@ describe('Should be green', () => {
       await edit('id', 'data', undefined, 'microCredentials');
     } catch (e) {
       expect(e.code).toMatch(missingSplit.code);
-    }
-  });
-
-  test('Expect edit to throw on missing microCredentials', async () => {
-    try {
-      await edit('id', 'data', 'split', undefined);
-    } catch (e) {
-      expect(e.code).toMatch(missingMicroCredentials.code);
     }
   });
 

@@ -70,12 +70,6 @@ router.post(
  *   post:
  *     summary: Generar un usuario ADMIN para el issuer
  *     description: Valido si la variable de entorno "ENABLE_INSECURE_ENDPOINTS" esta habilitada
- *     parameters:
- *       - in: header
- *         name: token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required:
  *         - name
@@ -118,12 +112,6 @@ router.post(
  *   post:
  *     summary: Valida que la contraseña se corresponda con la del usuario
  *     description: No genera ningún token ni información útil.
- *     parameters:
- *       - in: header
- *         name: token
- *         schema:
- *           type: string
- *         required: true
  *     requestBody:
  *       required:
  *         - name

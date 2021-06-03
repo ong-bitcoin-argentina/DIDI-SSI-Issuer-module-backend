@@ -63,14 +63,6 @@ module.exports = {
     code: '#service-missingId',
     message: 'Falta el parámetro ID.',
   },
-  missingEmmited: {
-    code: '#service-missingEmmited',
-    message: 'Falta el parámetro EMMITED.',
-  },
-  missingRevoked: {
-    code: '#service-missingRevoked',
-    message: 'Falta el parámetro REVOKED.',
-  },
   missingData: {
     code: '#service-missingData',
     message: 'Falta el parámetro DATA.',
@@ -82,10 +74,6 @@ module.exports = {
   missingSplit: {
     code: '#service-missingSplit',
     message: 'Falta el parámetro SPLIT.',
-  },
-  missingMicroCredentials: {
-    code: '#service-missingMicroCredentials',
-    message: 'Falta el parámetro MICROCREDENTIALS.',
   },
   missingCreds: {
     code: '#service-missingCreds',
