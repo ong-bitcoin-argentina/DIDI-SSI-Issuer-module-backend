@@ -67,10 +67,6 @@ module.exports = {
     code: '#service-missingEmmited',
     message: 'Falta el parámetro EMMITED.',
   },
-  missingRevoked: {
-    code: '#service-missingRevoked',
-    message: 'Falta el parámetro REVOKED.',
-  },
   missingData: {
     code: '#service-missingData',
     message: 'Falta el parámetro DATA.',

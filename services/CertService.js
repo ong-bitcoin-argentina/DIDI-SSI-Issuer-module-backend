@@ -8,7 +8,6 @@ const {
 const {
   missingId,
   missingEmmited,
-  missingRevoked,
   missingData,
   missingTemplateId,
   missingSplit,
@@ -51,7 +50,6 @@ module.exports.findBy = async function findBy({
   revoked,
 }) {
   if (!emmited) throw missingEmmited;
-  if (!revoked) throw missingRevoked;
   let certs;
   if (revoked) {
     certs = await Cert.getRevokeds();

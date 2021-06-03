@@ -10,7 +10,6 @@ const {
 const {
   missingId,
   missingEmmited,
-  missingRevoked,
   missingData,
   missingTemplateId,
   missingSplit,
@@ -42,14 +41,6 @@ describe('Should be green', () => {
       await findBy({ emmited: undefined, revoked: 'revoked' });
     } catch (e) {
       expect(e.code).toMatch(missingEmmited.code);
-    }
-  });
-
-  test('Expect findBy to throw on missing revoked', async () => {
-    try {
-      await findBy({ emmited: 'emmited', revoked: undefined });
-    } catch (e) {
-      expect(e.code).toMatch(missingRevoked.code);
     }
   });
 
