@@ -130,10 +130,12 @@ CertSchema.methods.emmit = async function emmit(creds) {
 };
 
 // copiar los campos de 'data' al formato requerido por el certificado
-const copyData = function copyData(data) {
+// TODO: Refactorizar
+const copyData = function copyData(certData) {
   return {
-    cert: data.cert
+    cert: certData.cert
       .map((data) => {
+        // eslint-disable-next-line no-param-reassign
         if (data.name === Constants.CERT_FIELD_MANDATORY.DID) data.name = data.name.trim();
         return {
           name: data.name,
@@ -141,10 +143,10 @@ const copyData = function copyData(data) {
         };
       })
       .filter((data) => data.value !== ''),
-    participant: data.participant
+    participant: certData.participant
       .map((array) => array.map((data) => ({ name: data.name, value: data.value ? data.value : '' })))
       .filter((data) => data.value !== ''),
-    others: data.others
+    others: certData.others
       .map((data) => ({ name: data.name, value: data.value ? data.value : '' }))
       .filter((data) => data.value !== ''),
   };
