@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable max-len */
 const router = require('express').Router();
-const profile = require('../conrtrollers/profile');
+const profile = require('../controllers/profile');
 const Validator = require('./utils/Validator');
 const Constants = require('../constants/Constants');
 

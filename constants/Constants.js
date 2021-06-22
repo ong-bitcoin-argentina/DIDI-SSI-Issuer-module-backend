@@ -44,17 +44,21 @@ if (BLOCKCHAIN_CONTRACT_BFA == null || BLOCKCHAIN_CONTRACT_BFA == '') throw new 
 // MongoDB
 const MONGO_USER = process.env.MONGO_USERNAME;
 const {
-  MONGO_DIR, MONGO_PASSWORD, MONGO_DB, MONGO_PORT,
+  MONGO_DIR, MONGO_PASSWORD, MONGO_DB, MONGO_PORT, MONGO_URI,
 } = process.env;
+let MONGO_URL;
 
-if (MONGO_DIR == null || MONGO_DIR == '') throw new Error('No esta definida la varibale MONGO_DIR');
-if (MONGO_USER == null || MONGO_USER == '') throw new Error('No esta definida la varibale MONGO_USER');
-if (MONGO_PASSWORD == null || MONGO_PASSWORD == '') throw new Error('No esta definida la varibale MONGO_PASSWORD');
-if (MONGO_DB == null || MONGO_DB == '') throw new Error('No esta definida la varibale MONGO_DB');
-if (MONGO_PORT == null || MONGO_PORT == '') throw new Error('No esta definida la varibale MONGO_PORT');
-
-const URL = `${MONGO_DIR}:${MONGO_PORT}/${MONGO_DB}`;
-const MONGO_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${URL}`;
+if (!MONGO_URI) {
+  if (MONGO_DIR == null || MONGO_DIR == '') throw new Error('No esta definida la varibale MONGO_DIR');
+  if (MONGO_USER == null || MONGO_USER == '') throw new Error('No esta definida la varibale MONGO_USER');
+  if (MONGO_PASSWORD == null || MONGO_PASSWORD == '') throw new Error('No esta definida la varibale MONGO_PASSWORD');
+  if (MONGO_DB == null || MONGO_DB == '') throw new Error('No esta definida la varibale MONGO_DB');
+  if (MONGO_PORT == null || MONGO_PORT == '') throw new Error('No esta definida la varibale MONGO_PORT');
+  const URL = `${MONGO_DIR}:${MONGO_PORT}/${MONGO_DB}`;
+  MONGO_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${URL}`;
+} else {
+  MONGO_URL = MONGO_URI;
+}
 
 // ETHR
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = process.env;

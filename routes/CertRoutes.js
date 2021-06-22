@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 const router = require('express').Router();
-const cert = require('../conrtrollers/cert');
+const cert = require('../controllers/cert');
 const Validator = require('./utils/Validator');
 const Constants = require('../constants/Constants');
 const { CERT_REVOCATION, TOKEN_VALIDATION } = require('../constants/Validators');

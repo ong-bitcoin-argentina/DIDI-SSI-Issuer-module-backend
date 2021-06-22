@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const defaultValue = require('../conrtrollers/default');
+const defaultValue = require('../controllers/default');
 const Validator = require('./utils/Validator');
 const Constants = require('../constants/Constants');
 
