@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 /* eslint-disable eqeqeq */
-require('dotenv').config();
 // General
 const DEBUGG = process.env.DEBUGG_MODE == 'true';
 const ENABLE_INSECURE_ENDPOINTS = process.env.ENABLE_INSECURE_ENDPOINTS == 'true';
