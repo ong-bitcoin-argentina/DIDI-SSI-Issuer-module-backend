@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 /* eslint-disable import/no-extraneous-dependencies */
-require('dotenv').config();
+require('dotenv-flow').config();
 require('./services/logger');
 const express = require('express');
 const bodyParser = require('body-parser');

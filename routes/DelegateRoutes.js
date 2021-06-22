@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 const router = require('express').Router();
 
-const delegate = require('../conrtrollers/delegate');
+const delegate = require('../controllers/delegate');
 const Validator = require('./utils/Validator');
 const Constants = require('../constants/Constants');
 

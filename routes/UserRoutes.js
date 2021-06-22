@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const user = require('../conrtrollers/user');
+const user = require('../controllers/user');
 const Validator = require('./utils/Validator');
 const Constants = require('../constants/Constants');
 const { halfHourLimiter } = require('../policies/RateLimit');

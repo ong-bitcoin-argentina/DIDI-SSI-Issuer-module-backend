@@ -1,12 +1,12 @@
 {
-	"name": "DIDI-SSI-Issuer-module-backend",
+	"name": "issuer-api",
 	"version": "2.0.0",
 	"license": "SEE LICENSE IN LICENSE",
 	"main": "index.js",
 	"scripts": {
 		"test": "jest",
-		"lint": "eslint --ext .js __tests__/ constants/ controllers/ jobs/ middlewares/ models/ policies/ services/ utils/ routes/",
-		"lint:fix": "eslint --fix --ext .js __tests__/ constants/ controllers/ jobs/ middlewares/ models/ policies/ services/ utils/ routes/",
+		"lint": "eslint --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
+		"lint:fix": "eslint --fix --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
 		"local": "node ./runLocal.js",
 		"start": "nodemon server.js"
 	},
@@ -29,6 +29,7 @@
 		"did-jwt": "4.0.0",
 		"did-jwt-vc": "0.1.3",
 		"dotenv": "8.2.0",
+		"dotenv-flow": "^3.2.0",
 		"ethereumjs-tx": "1.3.7",
 		"ethr-did": "1.1.0",
 		"ethr-did-resolver": "2.2.0",

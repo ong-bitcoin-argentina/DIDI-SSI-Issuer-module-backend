@@ -2,4 +2,15 @@ language: node_js
 cache:
   npm: false
 script:
-  - npm run test
+- npm run test
+- npm run lint
+before_install:
+- openssl aes-256-cbc -K $encrypted_c589161bbc05_key -iv $encrypted_c589161bbc05_iv
+  -in .env.test.enc -out .env.test -d
+- openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv
+  -in id_rsa.enc -out /home/travis/.ssh/id_rsa -d
+- chmod 600 /home/travis/.ssh/id_rsa
+- eval "$(ssh-agent -s)"
+- ssh-add /home/travis/.ssh/id_rsa
+- git config --global user.email "travis.ci@didi.org.ar"
+- git config --global user.name "didi-ssi-travis-bot"
