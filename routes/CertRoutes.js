@@ -72,7 +72,7 @@ router.get(
 
 /**
  * @openapi
- *   /cert/:{id}:
+ *   /cert/{id}:
  *   get:
  *     summary: Retornar un certificado a partir de su id
  *     parameters:
@@ -212,7 +212,7 @@ router.post(
 
 /**
  * @openapi
- *   /cert/:{id}:
+ *   /cert/{id}:
  *   put:
  *     summary: Modifica un certificado con los datos recibidos
  *     parameters:
@@ -320,7 +320,7 @@ router.put(
 
 /**
  * @openapi
- *   /cert/:{id}:
+ *   /cert/{id}:
  *   delete:
  *     summary: Marca un certificado como borrado y lo revoca en caso de haber sido emitido
  *     parameters:
@@ -361,7 +361,7 @@ router.delete(
 
 /**
  * @openapi
- *   /cert/:{id}/emmit:
+ *   /cert/{id}/emmit:
  *   post:
  *     summary: Dado un id enviar certificado a didi-server para ser emitido
  *     parameters:

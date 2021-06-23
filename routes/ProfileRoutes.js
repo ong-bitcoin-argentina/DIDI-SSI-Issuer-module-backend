@@ -84,7 +84,7 @@ router.get(
 
 /**
  * @openapi
- *   /profile/:{id}:
+ *   /profile/{id}:
  *   put:
  *     summary: Editar un perfil
  *     description: Los tipos de usuarios a ingresar en el arreglo de types se encuentran en constants/Constats.js como USER_TYPES
@@ -131,7 +131,7 @@ router.put(
 
 /**
  * @openapi
- *   /profile/:{id}:
+ *   /profile/{id}:
  *   delete:
  *     summary: Borrar un perfil
  *     parameters:

@@ -71,7 +71,7 @@ router.get(
 
 /**
  * @openapi
- *   /participant/all/:{templateId}:
+ *   /participant/all/{templateId}:
  *   get:
  *     summary: Retorna los participantes con informacion vinculada a un modelo de certificado.
  *     parameters:
@@ -108,7 +108,7 @@ router.get(
 
 /**
  * @openapi
- *   /participant/new/:{requestCode}:
+ *   /participant/new/{requestCode}:
  *   get:
  *     summary: Retorna la informacion del participante con el codigo indicado, si la data fue modificada.
  *     parameters:
@@ -145,7 +145,7 @@ router.get(
 
 /**
  * @openapi
- *   /participant/:{did}:
+ *   /participant/{did}:
  *   get:
  *     summary: Retorna la info de participante asociada a un usuario en particular.
  *     parameters:
@@ -182,7 +182,7 @@ router.get(
 
 /**
  * @openapi
- *   /participant/new/:
+ *   /participant/new:
  *   post:
  *     summary: Inicializa la data de participante con unicamente el did y nombre.
  *     description: Carga por csv.
@@ -262,7 +262,7 @@ router.post(
 
 /**
  * @openapi
- *   /participant/:{id}/:
+ *   /participant/{id}:
  *   put:
  *     summary: Modifica la data de participante con los datos recibidos.
  *     parameters:
@@ -349,7 +349,7 @@ router.put(
 
 /**
  * @openapi
- *   /participant/:{id}:
+ *   /participant/{id}:
  *   delete:
  *     summary: Marca la data de participante como borrada.
  *     parameters:
@@ -388,7 +388,7 @@ router.delete(
 
 /**
  * @openapi
- *   /participant/:{requestCode}:
+ *   /participant/{requestCode}:
  *   post:
  *     summary: Carga de info de participante global a partir de un pedido de certificado realizado con "/template/request/:requestCode".
  *     parameters:
@@ -424,7 +424,7 @@ router.post(
 
 /**
  * @openapi
- *   /participant/:{templateId}/:{requestCode}:
+ *   /participant/{templateId}/{requestCode}:
  *   post:
  *     summary: Carga de info de participante para un template en particular a partir del QR generado en "/template/:id/qr/:requestCode".
  *     parameters:

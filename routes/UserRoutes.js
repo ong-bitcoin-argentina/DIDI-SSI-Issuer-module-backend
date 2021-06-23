@@ -149,7 +149,7 @@ router.post(
 
 /**
  * @openapi
- *   /user/:id:
+ *   /user/{id}:
  *   delete:
  *     summary: Marca un usuario como borrado
  *     parameters:
@@ -218,7 +218,7 @@ router.get(
 
 /**
  * @openapi
- *   /user/:id:
+ *   /user/{id}:
  *   put:
  *     summary: Editar un usuario
  *     parameters:
