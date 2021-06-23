@@ -39,7 +39,7 @@ router.get(
 
 /**
  * @openapi
- *   /template/:{id}:
+ *   /template/{id}:
  *   get:
  *     summary: Retorna un modelo de certificado a partir del id.
  *     parameters:
@@ -126,7 +126,7 @@ router.post(
 
 /**
  * @openapi
- *   /template/:{id}/:
+ *   /template/{id}:
  *   put:
  *     summary: Modifica un modelo de certificado con los datos recibidos.
  *     description: Las definiciones de type se encuentran en el archivo constants/Constants.js objeto "CERT_FIELD_TYPES"
@@ -282,7 +282,7 @@ router.put(
 
 /**
  * @openapi
- *   /template/:{id}:
+ *   /template/{id}:
  *   delete:
  *     summary: Marca un modelo de certificado como borrado.
  *     parameters:
@@ -334,7 +334,7 @@ router.delete(
 
 /**
  * @openapi
- *   /template/request/:{requestCode}:
+ *   /template/request/{requestCode}:
  *   post:
  *     summary: Emite un pedido de info de participante global a partir de un pedido de certificado.
  *     parameters:
@@ -407,7 +407,7 @@ router.post(
 
 /**
  * @openapi
- *   /template/:{id}/qr/:{requestCode}/:{registerId}:
+ *   /template/{id}/qr/{requestCode}/{registerId}:
  *   get:
  *     summary: Genera un QR para pedir info de participante para un template en particular.
  *     parameters:

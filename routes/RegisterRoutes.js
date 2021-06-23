@@ -132,8 +132,8 @@ router.get(
 
 /**
  * @openapi
- *   /register/:{did}:
- *   post:
+ *   /register/{did}:
+ *   put:
  *     summary: Editar un registro
  *     description: Las definiciones de status se encuentran en elarchivo constants/Constants.js
  *     parameters:
@@ -180,7 +180,7 @@ router.put(
 
 /**
  * @openapi
- *   /register/:{did}/retry:
+ *   /register/{did}/retry:
  *   post:
  *     summary: Vuelve a intentar el delegate del Registro en DIDI
  *     parameters:
@@ -217,7 +217,7 @@ router.post(
 
 /**
  * @openapi
- *   /register/:{did}/refresh:
+ *   /register/{did}/refresh:
  *   post:
  *     summary: Refrescar registro en DIDI
  *     parameters:
@@ -254,7 +254,7 @@ router.post(
 
 /**
  * @openapi
- *   /register/:{did}:
+ *   /register/{did}:
  *   delete:
  *     summary: Revocar un registro
  *     parameters:
