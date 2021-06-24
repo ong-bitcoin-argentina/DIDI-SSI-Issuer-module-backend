@@ -1,5 +1,5 @@
 {
-	"name": "issuer-api",
+	"name": "@proyecto-didi/issuer-api",
 	"version": "2.0.0",
 	"license": "SEE LICENSE IN LICENSE",
 	"main": "index.js",
@@ -19,7 +19,7 @@
 		"express"
 	],
 	"dependencies": {
-		"@proyecto-didi/didi-blockchain-manager": "1.1.5",
+		"@proyecto-didi/didi-blockchain-manager": "1.2.0",
 		"@proyecto-didi/didi-ssi-logger": "0.0.7",
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
