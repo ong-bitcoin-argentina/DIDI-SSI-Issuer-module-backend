@@ -60,7 +60,7 @@ module.exports.findBy = async function findBy({
 module.exports.create = async function create(data, templateId, split, microCredentials) {
   if (!data) throw missingData;
   if (!templateId) throw missingTemplateId;
-  if (!split) throw missingSplit;
+  if (split === undefined || split === null) throw missingSplit;
   try {
     const cert = await Cert.generate(data, templateId, split, microCredentials);
     if (!cert) return Promise.reject(Messages.CERT.ERR.CREATE);
@@ -75,7 +75,7 @@ module.exports.create = async function create(data, templateId, split, microCred
 module.exports.edit = async function edit(id, data, split, microCredentials) {
   if (!id) throw missingId;
   if (!data) throw missingData;
-  if (!split) throw missingSplit;
+  if (split === undefined || split === null) throw missingSplit;
   try {
     let cert = await getById(id);
     cert = await cert.edit(data, split, microCredentials);
