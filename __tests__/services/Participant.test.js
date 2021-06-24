@@ -14,7 +14,6 @@ const {
   missingRequestCode,
   missingName,
   missingData,
-  missingCode,
 } = require('../../constants/serviceErrors');
 
 describe('Should be green', () => {
@@ -86,14 +85,6 @@ describe('Should be green', () => {
       await create('name', 'did', undefined, 'templateId', 'code');
     } catch (e) {
       expect(e.code).toMatch(missingData.code);
-    }
-  });
-
-  test('Expect create to throw on missing code', async () => {
-    try {
-      await create('name', 'did', 'data', 'templateId', undefined);
-    } catch (e) {
-      expect(e.code).toMatch(missingCode.code);
     }
   });
 

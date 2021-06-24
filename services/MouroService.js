@@ -16,7 +16,7 @@ const Register = require('../models/Register');
 
 const {
   missingJwt, missingErrMsg, missingClaims, missingCb, missingRegisterId, missingSubject,
-  missingExpDate, missingDid, missingTemplate, missingCert, missingSendPush, missingHash,
+  missingDid, missingTemplate, missingCert, missingSendPush, missingHash,
   missingSub,
 } = require('../constants/serviceErrors');
 
@@ -72,7 +72,6 @@ module.exports.createShareRequest = async function createShareRequest(claims, cb
 module.exports.createCertificate = async function
 createCertificate(subject, expDate, did, template) {
   if (!subject) throw missingSubject;
-  if (!expDate) throw missingExpDate;
   if (!did) throw missingDid;
   if (!template) throw missingTemplate;
   const { registerId } = template;

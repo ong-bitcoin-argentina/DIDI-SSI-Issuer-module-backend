@@ -5,7 +5,7 @@ const {
 
 const {
   missingJwt, missingErrMsg, missingClaims, missingCb, missingRegisterId, missingSubject,
-  missingExpDate, missingDid, missingTemplate, missingCert, missingSendPush, missingHash,
+  missingDid, missingTemplate, missingCert, missingSendPush, missingHash,
   missingSub,
 } = require('../../constants/serviceErrors');
 
@@ -64,14 +64,6 @@ describe('Should be green', () => {
       await createCertificate(undefined, 'expDate', 'did', 'template');
     } catch (e) {
       expect(e.code).toMatch(missingSubject.code);
-    }
-  });
-
-  test('Expect createCertificate to throw on missing expDate', async () => {
-    try {
-      await createCertificate('subject', undefined, 'did', 'template');
-    } catch (e) {
-      expect(e.code).toMatch(missingExpDate.code);
     }
   });
 
