@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-return-await */
 /* eslint-disable no-console */
 /* eslint-disable no-use-before-define */
@@ -115,8 +116,8 @@ Register.getById = async function getById(_id) {
 Register.getCredentials = async function getCredentials(_id) {
   const register = await Register.findOne({ _id });
   if (!register) throw Messages.REGISTER.ERR.NOT_EXIST;
-  const { did, privateKey } = register;
+  const { did, private_key } = register;
 
-  const key = await Encryption.decript(privateKey);
+  const key = await Encryption.decript(private_key);
   return { did, key };
 };

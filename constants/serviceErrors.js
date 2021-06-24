@@ -35,10 +35,6 @@ module.exports = {
     code: '#service-missingSubject',
     message: 'Falta el parámetro SUBJECT',
   },
-  missingExpDate: {
-    code: '#service-missingExpDate',
-    message: 'Falta el parámetro EXPDATE',
-  },
   missingTemplate: {
     code: '#service-missingTemplate',
     message: 'Fata el parámetro TEMPLATE',
@@ -90,10 +86,6 @@ module.exports = {
   missingRequestCode: {
     code: '#service-missingRequestCode',
     message: 'Falta el parámetro REQUESTCODE.',
-  },
-  missingCode: {
-    code: '#service-missingCode',
-    message: 'Falta el parámetro CODE.',
   },
   missingBody: {
     code: '#service-missingBody',

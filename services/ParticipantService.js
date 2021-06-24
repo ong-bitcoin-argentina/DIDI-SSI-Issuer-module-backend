@@ -9,7 +9,6 @@ const {
   missingRequestCode,
   missingName,
   missingData,
-  missingCode,
 } = require('../constants/serviceErrors');
 
 // retorna la info de participante asociada a un usuario en particular
@@ -93,7 +92,6 @@ module.exports.create = async function create(name, did, data, templateId, code)
   if (!name) throw missingName;
   if (!did) throw missingDid;
   if (!data) throw missingData;
-  if (!code) throw missingCode;
   try {
     const participant = await Participant.generate(name, did, data, templateId, code);
     if (!participant) return Promise.reject(Messages.PARTICIPANT.ERR.CREATE);
