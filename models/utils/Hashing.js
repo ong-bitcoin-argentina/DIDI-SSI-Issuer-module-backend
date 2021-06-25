@@ -16,11 +16,11 @@ class Hashing {
     const saltRounds = 11;
     const randomSalt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(data, randomSalt);
-    return { randomSalt, hash };
+    return { salt: randomSalt, hash };
   }
 
   // compara el dato hasheado con el original para validarlo
-  static validateHash(data, hashData) {
+  static async validateHash(data, hashData) {
     return bcrypt.compare(data, hashData.hash);
   }
 }
