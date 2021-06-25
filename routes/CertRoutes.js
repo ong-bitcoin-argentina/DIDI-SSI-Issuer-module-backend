@@ -356,7 +356,7 @@ router.delete(
   '/:id',
   validate(CERT_REVOCATION),
   checkValidationResult,
-  cert.updateById,
+  cert.removeById,
 );
 
 /**

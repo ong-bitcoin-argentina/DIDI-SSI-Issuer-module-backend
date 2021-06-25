@@ -7,7 +7,6 @@
 		"test": "jest",
 		"lint": "eslint --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
 		"lint:fix": "eslint --fix --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
-		"local": "node ./runLocal.js",
 		"start": "nodemon server.js"
 	},
 	"keywords": [
