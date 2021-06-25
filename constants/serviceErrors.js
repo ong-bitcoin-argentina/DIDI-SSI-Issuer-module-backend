@@ -75,10 +75,6 @@ module.exports = {
     code: '#service-missingCreds',
     message: 'Falta el parámetro CREDS.',
   },
-  missingReason: {
-    code: '#service-missingReason',
-    message: 'Falta el parámetro REASON.',
-  },
   missingUserId: {
     code: '#service-missingUserId',
     message: 'Falta el parámetro USERID.',

@@ -12,8 +12,6 @@ const {
   missingSplit,
   missingCert,
   missingCreds,
-  missingReason,
-  missingUserId,
   missingTemplate,
 } = require('../constants/serviceErrors');
 
@@ -157,8 +155,6 @@ module.exports.emmit = async function emmit(cert, creds) {
 // marcar certificado como borrado o lo revoca dependiendo su emisión
 module.exports.deleteOrRevoke = async function deleteOrRevoke(id, reason, userId) {
   if (!id) throw missingId;
-  if (!reason) throw missingReason;
-  if (!userId) throw missingUserId;
   try {
     let cert = await getById(id);
     if (cert.emmitedOn) {

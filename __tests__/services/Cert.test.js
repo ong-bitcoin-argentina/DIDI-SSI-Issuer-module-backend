@@ -12,8 +12,6 @@ const {
   missingSplit,
   missingCert,
   missingCreds,
-  missingReason,
-  missingUserId,
   missingTemplate,
 } = require('../../constants/serviceErrors');
 
@@ -121,22 +119,6 @@ describe('Should be green', () => {
       await deleteOrRevoke(undefined, 'reason', 'userId');
     } catch (e) {
       expect(e.code).toMatch(missingId.code);
-    }
-  });
-
-  test('Expect deleteOrRevoke to throw on missing reason', async () => {
-    try {
-      await deleteOrRevoke('id', undefined, 'userId');
-    } catch (e) {
-      expect(e.code).toMatch(missingReason.code);
-    }
-  });
-
-  test('Expect deleteOrRevoke to throw on missing userId', async () => {
-    try {
-      await deleteOrRevoke('id', 'reason', undefined);
-    } catch (e) {
-      expect(e.code).toMatch(missingUserId.code);
     }
   });
 });
