@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable consistent-return */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-shadow */
@@ -193,7 +194,7 @@ const _doValidate = function _doValidate(param, isHead) {
         if (!date.toISOString().match(regex)) return Promise.reject(err);
         break;
       case Constants.CERT_FIELD_TYPES.Number:
-        if (value.isNaN()) return Promise.reject(err);
+        if (isNaN(value)) return Promise.reject(err);
         break;
       case Constants.CERT_FIELD_TYPES.Paragraph:
         if (!value) return Promise.reject(err);
