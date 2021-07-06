@@ -88,7 +88,7 @@ createCertificate(subject, expDate, did, template) {
     privateKey: key,
   });
 
-  const date = (new Date(expDate).getTime() / 1000) | 0;
+  const date = expDate ? (new Date(expDate).getTime() / 1000) | 0 : undefined;
 
   const vcPayload = {
     sub: did,
