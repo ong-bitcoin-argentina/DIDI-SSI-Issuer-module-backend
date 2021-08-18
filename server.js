@@ -79,7 +79,7 @@ const options = {
       version: process.env.VERSION,
     },
     servers: [{
-      url: '/api/1.0/didi_issuer',
+      url: '/',
     }],
   },
   apis: ['./*.js', './routes/*.js'], // files containing annotations as above
@@ -125,17 +125,14 @@ app.use((error, req, _, next) => {
   next();
 });
 
-const route = `/api/${Constants.API_VERSION}/didi_issuer`;
-if (Constants.DEBUGG) console.log(`route: ${route}`);
-
-app.use(`${route}/user`, UserRoutes);
-app.use(`${route}/participant`, ParticipantRoutes);
-app.use(`${route}/template`, TemplateRoutes);
-app.use(`${route}/cert`, CertRoutes);
-app.use(`${route}/delegate`, DelegateRoutes);
-app.use(`${route}/register`, RegisterRoutes);
-app.use(`${route}/default`, DefaultRoutes);
-app.use(`${route}/profile`, ProfileRoutes);
+app.use('/user', UserRoutes);
+app.use('/participant', ParticipantRoutes);
+app.use('/template', TemplateRoutes);
+app.use('/cert', CertRoutes);
+app.use('/delegate', DelegateRoutes);
+app.use('/register', RegisterRoutes);
+app.use('/default', DefaultRoutes);
+app.use('/profile', ProfileRoutes);
 
 // forkear workers
 if (cluster.isMaster) {

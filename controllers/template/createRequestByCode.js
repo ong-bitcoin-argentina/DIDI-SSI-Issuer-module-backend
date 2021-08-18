@@ -12,7 +12,7 @@ const createRequestByCode = async (req, res) => {
 
   try {
     // llamar al metodo '/participant/${requestCode}' con el resultado
-    const cb = `${Constants.ADDRESS}:${Constants.PORT}/api/1.0/didi_issuer/participant/${requestCode}`;
+    const cb = `${Constants.ADDRESS}:${Constants.PORT}/participant/${requestCode}`;
     const verifiable = {};
 
     // pedir todos los certificados en 'certNames' a los usuarios cuyos dids se correspondan con 'dids'
