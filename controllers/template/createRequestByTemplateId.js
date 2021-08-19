@@ -10,7 +10,7 @@ const createRequestByTemplateId = async (req, res) => {
     const template = await TemplateService.getById(id);
 
     // llamar al metodo 'participant/${templateId}/${requestCode}' con el resultado
-    const cb = `${Constants.ADDRESS}:${Constants.PORT}/api/1.0/didi_issuer/participant/${template._id}/${requestCode}`;
+    const cb = `${Constants.ADDRESS}:${Constants.PORT}/participant/${template._id}/${requestCode}`;
 
     const claims = {
       user_info: { 'FULL NAME': { essential: true } },
