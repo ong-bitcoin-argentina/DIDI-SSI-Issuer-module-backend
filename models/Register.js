@@ -13,6 +13,10 @@ const RegisterSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
   did: {
     type: String,
     required: true,
@@ -64,12 +68,13 @@ const Register = mongoose.model('Register', RegisterSchema);
 module.exports = Register;
 
 // crea un nuevo registro
-Register.generate = async function generate(did, key, name) {
+Register.generate = async function generate(did, key, name, description) {
   let register;
   try {
     register = new Register();
 
     register.name = name;
+    register.description = description;
     const keyEncripted = await Encryption.encrypt(key);
     register.private_key = keyEncripted;
     register.did = did;

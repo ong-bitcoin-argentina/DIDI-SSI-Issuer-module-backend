@@ -19,6 +19,7 @@ const Constants = require('../constants/Constants');
  *       required:
  *         - did
  *         - name
+ *         - description
  *         - key
  *       content:
  *         application/json:
@@ -28,6 +29,8 @@ const Constants = require('../constants/Constants');
  *               did:
  *                 type: string
  *               name:
+ *                 type: string
+ *               description:
  *                 type: string
  *               key:
  *                 type: string
@@ -50,6 +53,10 @@ router.post(
     { name: 'did', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
     {
       name: 'name',
+      validate: [Constants.VALIDATION_TYPES.IS_STRING],
+    },
+    {
+      name: 'description',
       validate: [Constants.VALIDATION_TYPES.IS_STRING],
     },
     {

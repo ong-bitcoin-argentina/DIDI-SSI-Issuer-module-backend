@@ -4,10 +4,12 @@ const RegisterService = require('../../services/RegisterService');
 
 const create = async (req, res) => {
   try {
-    const { did, name, key } = req.body;
+    const {
+      did, name, key, description,
+    } = req.body;
     const { token } = req.headers;
 
-    const register = await RegisterService.newRegister(did, key, name, token);
+    const register = await RegisterService.newRegister(did, key, name, token, description);
     return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
   } catch (err) {
     // eslint-disable-next-line no-console

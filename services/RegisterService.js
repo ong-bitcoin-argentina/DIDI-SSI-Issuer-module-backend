@@ -36,6 +36,7 @@ const {
   missingKey,
   missingFilter,
   missingBody,
+  missingDescription,
 } = require('../constants/serviceErrors');
 
 /*
@@ -98,21 +99,23 @@ const sendEditNameToDidi = async function sendEditNameToDidi(did, name) {
   return defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, 'PUT', { name });
 };
 
-const sendDidToDidi = async function sendDidToDidi(did, name, token) {
+const sendDidToDidi = async function sendDidToDidi(did, name, token, description) {
   return defaultFetch(`${Constants.DIDI_API}/issuer`, 'POST', {
     did,
     name,
-    token,
+    description,
     callbackUrl: `${Constants.ISSUER_API_URL}/register`,
+    token,
   });
 };
 
 // crear un nuevo registro en la blockchain
-module.exports.newRegister = async function newRegister(did, key, name, token) {
+module.exports.newRegister = async function newRegister(did, key, name, token, description) {
   if (!did) throw missingDid;
   if (!key) throw missingKey;
   if (!name) throw missingName;
   if (!token) throw missingToken;
+  if (!description) throw missingDescription;
   try {
     const blockchain = did.split(':')[2];
 
@@ -132,9 +135,9 @@ module.exports.newRegister = async function newRegister(did, key, name, token) {
     if (repeatedRegister) throw NAME_EXIST;
 
     // Se envia el did a Didi
-    sendDidToDidi(did, name, token);
+    sendDidToDidi(did, name, token, description);
 
-    const CreateRegister = await Register.generate(did, key, name);
+    const CreateRegister = await Register.generate(did, key, name, description);
     if (!CreateRegister) throw CREATE;
     return CreateRegister;
   } catch (err) {
