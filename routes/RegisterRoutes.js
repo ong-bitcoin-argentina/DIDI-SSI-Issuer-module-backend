@@ -22,7 +22,7 @@ const Constants = require('../constants/Constants');
  *         - description
  *         - key
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -34,6 +34,9 @@ const Constants = require('../constants/Constants');
  *                 type: string
  *               key:
  *                 type: string
+ *               file:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
@@ -65,6 +68,7 @@ router.post(
     },
   ]),
   Validator.checkValidationResult,
+  Validator.validateFile,
   register.create,
 );
 

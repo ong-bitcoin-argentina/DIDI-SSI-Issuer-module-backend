@@ -489,3 +489,13 @@ module.exports.validate = function validate(params) {
   });
   return validations;
 };
+
+module.exports.validateFile = function validateFile(req, res, next) {
+  if (req.file) {
+    const { size } = req.file;
+    if (size > Constants.MAX_MB * 1000000) {
+      return ResponseHandler.sendErrWithStatus(res, Messages.IMAGE.ERR.INVALID_SIZE);
+    }
+  }
+  return next();
+};

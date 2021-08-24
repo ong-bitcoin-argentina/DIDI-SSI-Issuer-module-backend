@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
-const fetch = require('node-fetch');
 const { Resolver } = require('did-resolver');
 const { SimpleSigner, createJWT, verifyJWT } = require('did-jwt');
 const { getResolver } = require('ethr-did-resolver');
@@ -8,6 +7,13 @@ const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
 const Constants = require('../constants/Constants');
 const { BLOCKCHAIN_MANAGER_CODES } = require('../constants/Constants');
+const { createImage, getImageUrl } = require('./utils/imageHandler');
+const {
+  sendRevokeToDidi,
+  sendRefreshToDidi,
+  sendEditNameToDidi,
+  sendDidToDidi,
+} = require('./utils/fetchs');
 
 const {
   INVALID_STATUS,
@@ -62,55 +68,8 @@ const validateDidAndKey = async (did, key) => {
   }
 };
 
-const defaultFetch = async function defaultFetch(url, method, body) {
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    const jsonResp = await response.json();
-    if (jsonResp.status === 'error') throw jsonResp;
-
-    return jsonResp.data;
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
-};
-
-const sendRevokeToDidi = async function sendRevokeToDidi(did, token) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer`, 'DELETE', {
-    token,
-    did,
-    callbackUrl: `${Constants.ISSUER_API_URL}/register`,
-  });
-};
-
-const sendRefreshToDidi = async function sendRefreshToDidi(did, token) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}/refresh`, 'POST', {
-    token,
-    callbackUrl: `${Constants.ISSUER_API_URL}/register`,
-  });
-};
-
-const sendEditNameToDidi = async function sendEditNameToDidi(did, name) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, 'PUT', { name });
-};
-
-const sendDidToDidi = async function sendDidToDidi(did, name, token, description) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer`, 'POST', {
-    did,
-    name,
-    description,
-    callbackUrl: `${Constants.ISSUER_API_URL}/register`,
-    token,
-  });
-};
-
 // crear un nuevo registro en la blockchain
-module.exports.newRegister = async function newRegister(did, key, name, token, description) {
+module.exports.newRegister = async function newRegister(did, key, name, token, description, file) {
   if (!did) throw missingDid;
   if (!key) throw missingKey;
   if (!name) throw missingName;
@@ -134,10 +93,18 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
     const repeatedRegister = await Register.findOne(query);
     if (repeatedRegister) throw NAME_EXIST;
 
-    // Se envia el did a Didi
-    sendDidToDidi(did, name, token, description);
+    // Si existe se crea la imagen
+    let imageId;
+    if (file) {
+      const { mimetype, path } = file;
+      imageId = await createImage(path, mimetype);
+    }
+    const imageUrl = await getImageUrl(imageId);
 
-    const CreateRegister = await Register.generate(did, key, name, description);
+    // Se envia el did a Didi
+    await sendDidToDidi(did, name, token, description, imageUrl);
+
+    const CreateRegister = await Register.generate(did, key, name, description, imageId);
     if (!CreateRegister) throw CREATE;
     return CreateRegister;
   } catch (err) {
@@ -191,7 +158,7 @@ module.exports.retryRegister = async function retryRegister(did, token) {
     if (status !== ERROR) throw INVALID_STATUS;
 
     // Se envia a DIDI
-    sendDidToDidi(did, name, token);
+    await sendDidToDidi(did, name, token);
 
     // Modifico el estado a Pendiente
     return await register.edit({ status: CREATING, messageError: '' });
@@ -214,7 +181,7 @@ module.exports.refreshRegister = async function refreshRegister(did, token) {
     if (DISALLOW_WITH_THESE.includes(status)) throw STATUS_NOT_VALID;
 
     // Se envia a DIDI
-    sendRefreshToDidi(did, token);
+    await sendRefreshToDidi(did, token);
 
     // Modifico el estado a Pendiente
     return await register.edit({
@@ -240,7 +207,7 @@ module.exports.revoke = async function revoke(did, token) {
     if (DISALLOW_WITH_THESE.includes(status)) throw STATUS_NOT_VALID;
 
     // Se envia el revoke a DIDI
-    sendRevokeToDidi(did, token);
+    await sendRevokeToDidi(did, token);
 
     // Modifico el estado a Revocando
     return await register.edit({ status: REVOKING, messageError: '' });

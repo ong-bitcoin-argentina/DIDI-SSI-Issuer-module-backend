@@ -5,6 +5,7 @@ require('dotenv-flow').config();
 require('./services/logger');
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const mongoose = require('mongoose');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -124,6 +125,15 @@ app.use((error, req, _, next) => {
   console.log(error);
   next();
 });
+
+app.use(
+  multer({
+    dest: './uploads/',
+    rename: function rename(_fieldname, filename) {
+      return filename;
+    },
+  }).single('file'),
+);
 
 app.use('/user', UserRoutes);
 app.use('/participant', ParticipantRoutes);

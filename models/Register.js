@@ -26,6 +26,9 @@ const RegisterSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  imageId: {
+    type: String,
+  },
   messageError: {
     type: String,
   },
@@ -68,7 +71,7 @@ const Register = mongoose.model('Register', RegisterSchema);
 module.exports = Register;
 
 // crea un nuevo registro
-Register.generate = async function generate(did, key, name, description) {
+Register.generate = async function generate(did, key, name, description, imageId) {
   let register;
   try {
     register = new Register();
@@ -80,6 +83,7 @@ Register.generate = async function generate(did, key, name, description) {
     register.did = did;
     register.deleted = false;
     register.createdOn = new Date();
+    register.imageId = imageId;
 
     register = await register.save();
     return Promise.resolve(register);

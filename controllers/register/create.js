@@ -8,8 +8,9 @@ const create = async (req, res) => {
       did, name, key, description,
     } = req.body;
     const { token } = req.headers;
+    const file = req.file && ({ mimetype: req.file.mimetype, path: req.file.path });
 
-    const register = await RegisterService.newRegister(did, key, name, token, description);
+    const register = await RegisterService.newRegister(did, key, name, token, description, file);
     return ResponseHandler.sendRes(res, RegisterDTO.toDTO(register));
   } catch (err) {
     // eslint-disable-next-line no-console
