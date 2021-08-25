@@ -144,7 +144,7 @@ router.get(
 /**
  * @openapi
  *   /register/{did}:
- *   put:
+ *   patch:
  *     summary: Editar un registro
  *     description: Las definiciones de status se encuentran en elarchivo constants/Constants.js
  *     parameters:
@@ -166,6 +166,11 @@ router.get(
  *             properties:
  *               name:
  *                 type: string
+ *               description:
+ *                 type: string
+ *               file:
+ *                 type: string
+ *                 format: binary
  *               status:
  *                 type: string
  *     responses:
@@ -176,7 +181,7 @@ router.get(
  *       500:
  *         description: Error interno del servidor
  */
-router.put(
+router.patch(
   '/:did',
   Validator.validate([
     {

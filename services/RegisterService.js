@@ -11,7 +11,7 @@ const { createImage, getImageUrl } = require('./utils/imageHandler');
 const {
   sendRevokeToDidi,
   sendRefreshToDidi,
-  sendEditNameToDidi,
+  sendEditDataToDidi,
   sendDidToDidi,
 } = require('./utils/fetchs');
 
@@ -41,7 +41,6 @@ const {
   missingToken,
   missingKey,
   missingFilter,
-  missingBody,
   missingDescription,
 } = require('../constants/serviceErrors');
 
@@ -124,19 +123,26 @@ module.exports.getAll = async function getAll(filter) {
   }
 };
 
-module.exports.editRegister = async function editRegister(did, body) {
+module.exports.editRegister = async function editRegister(did, body, file) {
   if (!did) throw missingDid;
-  if (!body) throw missingBody;
   try {
     const register = await Register.getByDID(did);
     if (!register) throw GET;
 
-    const { status, name } = body;
+    const { status, name, description } = body;
     if (status && !Constants.STATUS_ALLOWED.includes(status)) throw STATUS;
 
-    if (name) await sendEditNameToDidi(did, name);
+    // Si existe se crea la imagen
+    let imageId;
+    if (file) {
+      const { mimetype, path } = file;
+      imageId = await createImage(path, mimetype);
+    }
+    const imageUrl = await getImageUrl(imageId);
 
-    return await register.edit(body);
+    await sendEditDataToDidi(did, body, imageUrl);
+
+    return await register.edit({ name, description, imageId });
   } catch (err) {
     console.log(err);
     throw EDIT;
