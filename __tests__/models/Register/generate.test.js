@@ -30,7 +30,7 @@ describe('models/Register/generate.test.js', () => {
     try {
       await generate(did, key, name, description, imageId);
     } catch (error) {
-      expect(error.toString()).toBe(errMsj);
+      expect(error.toString()).toMatch(errMsj);
     }
   });
 });

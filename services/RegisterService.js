@@ -75,22 +75,22 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
   if (!token) throw missingToken;
   if (!description) throw missingDescription;
   try {
-    const blockchain = did.split(':')[2];
+    // const blockchain = did.split(':')[2];
 
     // Verifico si esta bien creado el did y la key
     await validateDidAndKey(did, key);
 
     // Verifico si la blockchain es correcta
-    if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
+    // if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
 
     // Verifico que el did no exista
     const byDIDExist = await Register.getByDID(did);
     if (byDIDExist) throw DID_EXISTS;
 
-    // Verifico que no exista el nombre en una misma blockchain
+    /* Verifico que no exista el nombre en una misma blockchain
     const query = { name: { $eq: name }, did: { $regex: blockchain, $options: 'i' } };
     const repeatedRegister = await Register.findOne(query);
-    if (repeatedRegister) throw NAME_EXIST;
+    if (repeatedRegister) throw NAME_EXIST; */
 
     // Si existe se crea la imagen
     let imageId;

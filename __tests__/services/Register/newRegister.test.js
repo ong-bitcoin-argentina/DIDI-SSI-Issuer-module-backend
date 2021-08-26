@@ -4,11 +4,11 @@ const { newRegister } = require('../../../services/RegisterService');
 const {
   missingDid, missingName, missingDescription, missingKey, missingToken,
 } = require('../../../constants/serviceErrors');
-const { data } = require('./constants');
+const { data, errors } = require('./constants');
 
 describe('services/Register/newRegister.test.js', () => {
   const {
-    did, name, description, token, key,
+    did, name, description, token, key, file, secondDidKey, secondDid, secondName,
   } = data;
   beforeAll(async () => {
     await mongoose
@@ -20,8 +20,7 @@ describe('services/Register/newRegister.test.js', () => {
       });
   });
   afterAll(async () => {
-    // await revoke(did, token);
-    // await mongoose.connection.db.dropCollection('registers');
+    await mongoose.connection.db.dropCollection('registers');
     await mongoose.connection.close();
   });
 
@@ -65,8 +64,35 @@ describe('services/Register/newRegister.test.js', () => {
     }
   });
 
-  test.skip('Expect newRegister to success without image', async () => {
+  test('Expect newRegister to success without image', async () => {
     const response = await newRegister(did, key, name, token, description);
-    expect(response).not.toBe(null);
+    expect(response.status).toBe('Creando');
+    expect(response.did).toBe(did);
+  });
+
+  test('Expect newRegister to throw on existing did', async () => {
+    try {
+      await newRegister(did, key, name, token, description);
+    } catch (e) {
+      expect(e.code).toMatch(errors.did.code);
+      expect(e.message).toMatch(errors.did.message);
+    }
+  });
+
+  test.skip('Expect newRegister to throw on existing name', async () => {
+    try {
+      await newRegister(secondDid, secondDidKey, name, token, description);
+    } catch (e) {
+      expect(e.code).toMatch(errors.name.code);
+      expect(e.message).toMatch(errors.name.message);
+    }
+  });
+
+  test('Expect newRegister to success with image', async () => {
+    const response = await newRegister(
+      secondDid, secondDidKey, secondName, token, description, file,
+    );
+    expect(response.status).toBe('Creando');
+    expect(response.did).toBe(secondDid);
   });
 });

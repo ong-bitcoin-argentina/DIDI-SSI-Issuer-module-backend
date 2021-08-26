@@ -1,6 +1,6 @@
 const data = {
-  did: 'did:ethr:lacchain:0x13a6adef6cbe389685b0582c3c6446bb48fe40a4',
-  key: '03ef74a4bd76cbd29db96ab99ae18a064ddfd54f4df49101ffbe9363d6049c93',
+  did: 'did:ethr:0x45d3e0ea66f13be8b3e5daae4ed5c785bdd5b548',
+  key: 'ff0f597a4be7c8de0e62fd2e7dfd2601c04ba0a2f7356414ee5d486662f3d2e0',
   secondDid: 'did:ethr:lacchain:0x042dd636a4b797aa097c5ea9a25f0c8c1f6517b3',
   secondDidKey: 'ee9f7f948def67ce0106aa533fc0082660d6fd45b8f1992a9900d9c06951fce8',
   name: 'Issuer Name',
@@ -16,6 +16,18 @@ const data = {
   },
 };
 
+const errors = {
+  did: {
+    code: 'DID_EXISTS',
+    message: 'Ya existe un registro con ese did.',
+  },
+  name: {
+    code: 'NAME_EXIST',
+    message: 'Ya existe el nombre para la misma blockchain.',
+  },
+};
+
 module.exports = {
   data,
+  errors,
 };
