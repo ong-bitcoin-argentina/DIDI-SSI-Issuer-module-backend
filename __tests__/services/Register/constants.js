@@ -16,6 +16,22 @@ const data = {
   },
 };
 
+const successBody = {
+  status: 'success',
+  data: {
+    _id: '60d379508d84ce00159c02da',
+    did: data.did,
+    name: data.name,
+    action: 'CREATE',
+    __v: 0,
+  },
+};
+
+const failureBody = {
+  status: 'fail',
+  data: {},
+};
+
 const errors = {
   did: {
     code: 'DID_EXISTS',
@@ -30,4 +46,10 @@ const errors = {
 module.exports = {
   data,
   errors,
+  successResp: {
+    json: () => successBody,
+  },
+  failureResp: {
+    json: () => failureBody,
+  },
 };

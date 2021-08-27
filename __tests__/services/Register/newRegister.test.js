@@ -1,10 +1,12 @@
+jest.mock('node-fetch');
+const fetch = require('node-fetch');
 const mongoose = require('mongoose');
 const { MONGO_URL } = require('../../../constants/Constants');
 const { newRegister } = require('../../../services/RegisterService');
 const {
   missingDid, missingName, missingDescription, missingKey, missingToken,
 } = require('../../../constants/serviceErrors');
-const { data, errors } = require('./constants');
+const { data, errors, successResp } = require('./constants');
 
 describe('services/Register/newRegister.test.js', () => {
   const {
@@ -65,12 +67,18 @@ describe('services/Register/newRegister.test.js', () => {
   });
 
   test('Expect newRegister to success without image', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
     const response = await newRegister(did, key, name, token, description);
     expect(response.status).toBe('Creando');
     expect(response.did).toBe(did);
   });
 
   test('Expect newRegister to throw on existing did', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
     try {
       await newRegister(did, key, name, token, description);
     } catch (e) {
@@ -80,6 +88,9 @@ describe('services/Register/newRegister.test.js', () => {
   });
 
   test.skip('Expect newRegister to throw on existing name', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
     try {
       await newRegister(secondDid, secondDidKey, name, token, description);
     } catch (e) {
@@ -89,6 +100,9 @@ describe('services/Register/newRegister.test.js', () => {
   });
 
   test('Expect newRegister to success with image', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
     const response = await newRegister(
       secondDid, secondDidKey, secondName, token, description, file,
     );

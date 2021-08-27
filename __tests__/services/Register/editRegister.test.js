@@ -1,8 +1,10 @@
+jest.mock('node-fetch');
+const fetch = require('node-fetch');
 const mongoose = require('mongoose');
 const { MONGO_URL } = require('../../../constants/Constants');
 const { newRegister, editRegister } = require('../../../services/RegisterService');
 const { missingDid } = require('../../../constants/serviceErrors');
-const { data } = require('./constants');
+const { data, successResp } = require('./constants');
 
 describe('services/Register/editRegister.test.js', () => {
   const {
@@ -16,6 +18,9 @@ describe('services/Register/editRegister.test.js', () => {
         useUnifiedTopology: true,
         useNewUrlParser: true,
       });
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
     await newRegister(did, key, name, token, description, file);
   });
   afterAll(async () => {
@@ -32,6 +37,9 @@ describe('services/Register/editRegister.test.js', () => {
   });
 
   test('Expect editRegister to success', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
     const newName = 'new name';
     const newDescription = 'new description';
     const response = await editRegister(did, { name: newName, description: newDescription });

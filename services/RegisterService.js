@@ -96,10 +96,10 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
       const { mimetype, path } = file;
       imageId = await createImage(path, mimetype);
     }
-    // const imageUrl = await getImageUrl(imageId);
+    const imageUrl = await getImageUrl(imageId);
 
     // Se envia el did a Didi
-    // await sendDidToDidi(did, name, token, description, imageUrl);
+    await sendDidToDidi(did, name, token, description, imageUrl);
 
     const CreateRegister = await Register.generate(did, key, name, description, imageId);
     if (!CreateRegister) throw CREATE;
@@ -114,7 +114,7 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
 module.exports.getAll = async function getAll(filter) {
   if (!filter) throw missingFilter;
   try {
-    return await Register.getAll(filter);
+    return Register.getAll(filter);
   } catch (err) {
     console.log(err);
     throw GET;
@@ -140,7 +140,7 @@ module.exports.editRegister = async function editRegister(did, body, file) {
 
     await sendEditDataToDidi(did, body, imageUrl);
 
-    return await register.edit({
+    return register.edit({
       status, name, description, imageId,
     });
   } catch (err) {
@@ -167,7 +167,7 @@ module.exports.retryRegister = async function retryRegister(did, token) {
     await sendDidToDidi(did, name, token);
 
     // Modifico el estado a Pendiente
-    return await register.edit({ status: CREATING, messageError: '' });
+    return register.edit({ status: CREATING, messageError: '' });
   } catch (err) {
     console.log(err);
     throw err;
@@ -190,7 +190,7 @@ module.exports.refreshRegister = async function refreshRegister(did, token) {
     await sendRefreshToDidi(did, token);
 
     // Modifico el estado a Pendiente
-    return await register.edit({
+    return register.edit({
       status: CREATING, blockHash: '', messageError: '', expireOn: undefined,
     });
   } catch (err) {
@@ -216,7 +216,7 @@ module.exports.revoke = async function revoke(did, token) {
     await sendRevokeToDidi(did, token);
 
     // Modifico el estado a Revocando
-    return await register.edit({ status: REVOKING, messageError: '' });
+    return register.edit({ status: REVOKING, messageError: '' });
   } catch (err) {
     console.log(err);
     throw new Error(err);
