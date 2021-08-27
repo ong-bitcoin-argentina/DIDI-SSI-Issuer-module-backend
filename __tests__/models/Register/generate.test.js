@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 const { MONGO_URL } = require('../../../constants/Constants');
 const { generate } = require('../../../models/Register');
 const { data } = require('./constants');
+const { mongoDuplicatedKey } = require('../../mongoErrors');
 
 describe('models/Register/generate.test.js', () => {
   const {
-    did, name, description, key, imageId, errMsj,
+    did, name, description, key, imageId,
   } = data;
   beforeAll(async () => {
     await mongoose
@@ -29,8 +30,8 @@ describe('models/Register/generate.test.js', () => {
   test('Expect generate to throw error on existent did', async () => {
     try {
       await generate(did, key, name, description, imageId);
-    } catch (error) {
-      expect(error.toString()).toMatch(errMsj);
+    } catch (e) {
+      expect(e.code).toBe(mongoDuplicatedKey);
     }
   });
 });

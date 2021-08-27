@@ -5,7 +5,6 @@ const data = {
   name: 'Issuer Name',
   description: 'Descripcion del issuer',
   imageId: '012346789',
-  errMsj: 'MongoError: E11000 duplicate key error collection: myFirstDatabase.registers index: did_1 dup key: { did: "did:ethr:lacchain:0x13a6adef6cbe389685b0582c3c6446bb48fe40a4" }',
 };
 
 module.exports = {
