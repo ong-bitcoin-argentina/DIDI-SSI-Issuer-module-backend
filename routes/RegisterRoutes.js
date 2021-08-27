@@ -191,6 +191,7 @@ router.patch(
     },
   ]),
   Validator.checkValidationResult,
+  Validator.validateFile,
   register.updateByDid,
 );
 

@@ -58,9 +58,8 @@ RegisterSchema.methods.edit = async function edit(data) {
   const updateAction = {
     $set: data,
   };
-
   try {
-    return await Register.findOneAndUpdate(updateQuery, updateAction);
+    return await Register.findOneAndUpdate(updateQuery, updateAction, { new: true });
   } catch (err) {
     console.log(err);
     return Promise.reject(err);

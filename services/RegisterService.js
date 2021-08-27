@@ -18,14 +18,12 @@ const {
 const {
   INVALID_STATUS,
   GET,
-  BLOCKCHAIN,
   EDIT,
   CREATE,
   DID_EXISTS,
   STATUS,
   STATUS_NOT_VALID,
   REFRESH,
-  NAME_EXIST,
   INVALID_DID_AND_KEY,
 } = Messages.REGISTER.ERR;
 const {
@@ -98,10 +96,10 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
       const { mimetype, path } = file;
       imageId = await createImage(path, mimetype);
     }
-    const imageUrl = await getImageUrl(imageId);
+    // const imageUrl = await getImageUrl(imageId);
 
     // Se envia el did a Didi
-    await sendDidToDidi(did, name, token, description, imageUrl);
+    // await sendDidToDidi(did, name, token, description, imageUrl);
 
     const CreateRegister = await Register.generate(did, key, name, description, imageId);
     if (!CreateRegister) throw CREATE;
@@ -142,7 +140,9 @@ module.exports.editRegister = async function editRegister(did, body, file) {
 
     await sendEditDataToDidi(did, body, imageUrl);
 
-    return await register.edit({ name, description, imageId });
+    return await register.edit({
+      status, name, description, imageId,
+    });
   } catch (err) {
     console.log(err);
     throw EDIT;
