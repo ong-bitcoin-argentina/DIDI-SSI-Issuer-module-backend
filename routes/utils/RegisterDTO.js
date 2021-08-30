@@ -1,10 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 const { getBlockchainName } = require('./GetBlockchain');
-const { getImageUrl } = require('../../services/utils/imageHandler');
 
 const toDTO = async (register) => {
   const blockchain = getBlockchainName(register);
-  const imageUrl = await getImageUrl(register.imageId);
 
   return {
     _id: register._id,
@@ -17,8 +15,8 @@ const toDTO = async (register) => {
     status: register.status,
     messageError: register.messageError,
     blockHash: register.blockHash,
+    imageUrl: register.imageUrl,
     blockchain,
-    imageUrl,
   };
 };
 

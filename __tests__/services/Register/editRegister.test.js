@@ -8,7 +8,7 @@ const { data, successResp } = require('./constants');
 
 describe('services/Register/editRegister.test.js', () => {
   const {
-    did, name, description, token, key, file,
+    secondDid, name, description, token, secondDidKey, file,
   } = data;
   beforeAll(async () => {
     await mongoose
@@ -21,7 +21,7 @@ describe('services/Register/editRegister.test.js', () => {
     fetch.mockReturnValue(
       Promise.resolve(successResp),
     );
-    await newRegister(did, key, name, token, description, file);
+    await newRegister(secondDid, secondDidKey, name, token, description, file);
   });
   afterAll(async () => {
     await mongoose.connection.db.dropCollection('registers');
@@ -42,7 +42,7 @@ describe('services/Register/editRegister.test.js', () => {
     );
     const newName = 'new name';
     const newDescription = 'new description';
-    const response = await editRegister(did, { name: newName, description: newDescription });
+    const response = await editRegister(secondDid, { name: newName, description: newDescription });
     expect(response.name).toMatch(newName);
     expect(response.description).toMatch(newDescription);
   });

@@ -23,6 +23,7 @@ describe('services/Register/newRegister.test.js', () => {
   });
   afterAll(async () => {
     await mongoose.connection.db.dropCollection('registers');
+    await mongoose.connection.db.dropCollection('images');
     await mongoose.connection.close();
   });
 

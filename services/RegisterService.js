@@ -5,9 +5,9 @@ const { SimpleSigner, createJWT, verifyJWT } = require('did-jwt');
 const { getResolver } = require('ethr-did-resolver');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
+const Image = require('../models/Image');
 const Constants = require('../constants/Constants');
 const { BLOCKCHAIN_MANAGER_CODES } = require('../constants/Constants');
-const { createImage, getImageUrl } = require('./utils/imageHandler');
 const {
   sendRevokeToDidi,
   sendRefreshToDidi,
@@ -92,11 +92,13 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
 
     // Si existe se crea la imagen
     let imageId;
+    let imageUrl;
     if (file) {
       const { mimetype, path } = file;
-      imageId = await createImage(path, mimetype);
+      const image = await Image.generate(path, mimetype);
+      imageId = image.imageId;
+      imageUrl = image.imageUrl;
     }
-    const imageUrl = await getImageUrl(imageId);
 
     // Se envia el did a Didi
     await sendDidToDidi(did, name, token, description, imageUrl);
@@ -132,11 +134,13 @@ module.exports.editRegister = async function editRegister(did, body, file) {
 
     // Si existe se crea la imagen
     let imageId;
+    let imageUrl;
     if (file) {
       const { mimetype, path } = file;
-      imageId = await createImage(path, mimetype);
+      const image = await Image.generate(path, mimetype);
+      imageId = image.imageId;
+      imageUrl = image.imageUrl;
     }
-    const imageUrl = await getImageUrl(imageId);
 
     await sendEditDataToDidi(did, body, imageUrl);
 
