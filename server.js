@@ -29,6 +29,7 @@ const DelegateRoutes = require('./routes/DelegateRoutes');
 const RegisterRoutes = require('./routes/RegisterRoutes');
 const DefaultRoutes = require('./routes/DefaultRoutes');
 const ProfileRoutes = require('./routes/ProfileRoutes');
+const ImageRoutes = require('./routes/ImageRoutes');
 
 // inicializar cluster para workers, uno por cpu disponible
 
@@ -143,6 +144,7 @@ app.use('/delegate', DelegateRoutes);
 app.use('/register', RegisterRoutes);
 app.use('/default', DefaultRoutes);
 app.use('/profile', ProfileRoutes);
+app.use('/image', ImageRoutes);
 
 // forkear workers
 if (cluster.isMaster) {

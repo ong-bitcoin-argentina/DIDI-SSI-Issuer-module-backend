@@ -92,16 +92,17 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
 
     // Si existe se crea la imagen
     let imageId;
-    let imageUrl;
+    let url;
     if (file) {
       const { mimetype, path } = file;
       const image = await Image.generate(path, mimetype);
-      imageId = image.imageId;
-      imageUrl = image.imageUrl;
+      const { _id, imageUrl } = image;
+      imageId = _id;
+      url = imageUrl;
     }
 
     // Se envia el did a Didi
-    await sendDidToDidi(did, name, token, description, imageUrl);
+    await sendDidToDidi(did, name, token, description, url);
 
     const CreateRegister = await Register.generate(did, key, name, description, imageId);
     if (!CreateRegister) throw CREATE;
@@ -134,15 +135,16 @@ module.exports.editRegister = async function editRegister(did, body, file) {
 
     // Si existe se crea la imagen
     let imageId;
-    let imageUrl;
+    let url;
     if (file) {
       const { mimetype, path } = file;
       const image = await Image.generate(path, mimetype);
-      imageId = image.imageId;
-      imageUrl = image.imageUrl;
+      const { _id, imageUrl } = image;
+      imageId = _id;
+      url = imageUrl;
     }
 
-    await sendEditDataToDidi(did, body, imageUrl);
+    await sendEditDataToDidi(did, body, url);
 
     return register.edit({
       status, name, description, imageId,

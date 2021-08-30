@@ -35,7 +35,7 @@ Image.generate = async function generate(path, contentType) {
     image.img = buffer;
     image.contentType = contentType;
 
-    return await image.save();
+    return image.save();
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
@@ -46,7 +46,7 @@ Image.generate = async function generate(path, contentType) {
 Image.getById = async function getById(id) {
   try {
     const query = { _id: id };
-    return await Image.findOne(query);
+    return Image.findOne(query);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);

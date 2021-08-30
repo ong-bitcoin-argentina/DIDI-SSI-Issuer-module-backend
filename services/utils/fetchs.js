@@ -38,7 +38,7 @@ const sendRefreshToDidi = async function sendRefreshToDidi(did, token) {
 const sendEditDataToDidi = async function sendEditDataToDidi(did, body, imageUrl) {
   const { name, description } = body;
   return defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, 'PATCH', {
-    name, description, file: imageUrl,
+    name, description, imageUrl,
   });
 };
 
@@ -49,7 +49,7 @@ const sendDidToDidi = async function sendDidToDidi(did, name, token, description
     description,
     callbackUrl: `${Constants.ISSUER_API_URL}/register`,
     token,
-    file: imageUrl,
+    imageUrl,
   });
 };
 

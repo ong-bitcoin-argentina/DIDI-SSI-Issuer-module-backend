@@ -120,7 +120,7 @@ module.exports = {
     message: 'Falta el parámetro PROFILEID.',
   },
   missingDescription: {
-    code: '#s#service-newRegister-missingDescription',
+    code: '#service-newRegister-missingDescription',
     message: 'Falta el parámetro DESCRIPTION.',
   },
 };
