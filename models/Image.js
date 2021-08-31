@@ -46,7 +46,9 @@ Image.generate = async function generate(path, contentType) {
 Image.getById = async function getById(id) {
   try {
     const query = { _id: id };
-    return Image.findOne(query);
+    const image = await Image.findOne(query);
+    if (!image) throw new Error('No existe la imagen');
+    return image;
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
