@@ -102,6 +102,7 @@ module.exports = {
     ERR: {
       NOT_EXIST: { code: 'NOT_EXIST', message: 'No existe la imagen.' },
     },
+    DELETE: { code: 'IMG_DELETE', message: 'Imagen eliminada.' },
   },
   CERT: {
     ERR: {

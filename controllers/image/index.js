@@ -1,5 +1,11 @@
-const { readImageById } = require('./readImageById');
+const { readById } = require('./readById');
+const { create } = require('./create');
+const { updateById } = require('./updateById');
+const { deleteById } = require('./deleteById');
 
 module.exports = {
-  readImageById,
+  readById,
+  create,
+  updateById,
+  deleteById,
 };

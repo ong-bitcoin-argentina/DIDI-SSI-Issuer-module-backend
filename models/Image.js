@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
 const fs = require('fs');
@@ -38,7 +39,6 @@ Image.generate = async function generate(path, contentType) {
 
     return image.save();
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.log(err);
     return Promise.reject(err);
   }
@@ -51,8 +51,39 @@ Image.getById = async function getById(id) {
     if (!image) throw Messages.IMAGE.ERR.NOT_EXIST;
     return image;
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.log(err);
     return Promise.reject(err);
+  }
+};
+
+Image.update = async function update(id, path, contentType) {
+  try {
+    const oldImage = await Image.findOne({ _id: id });
+    if (!oldImage) throw Messages.IMAGE.ERR.NOT_EXIST;
+
+    const cleanedPath = sanitize(path);
+    const img = fs.readFileSync(cleanedPath);
+    const encodedImage = img.toString('base64');
+    const buffer = Buffer.from(encodedImage, 'base64');
+
+    oldImage.img = buffer;
+    oldImage.contentType = contentType;
+
+    return oldImage.save();
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
+Image.remove = async function remove(id) {
+  try {
+    const image = await Image.findOne({ _id: id });
+    if (!image) throw Messages.IMAGE.ERR.NOT_EXIST;
+
+    return image.delete();
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(Messages.USER.ERR.DELETE);
   }
 };
