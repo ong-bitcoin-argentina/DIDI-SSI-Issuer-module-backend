@@ -1,7 +1,5 @@
 const router = require('express').Router();
-const Validator = require('./utils/Validator');
 const image = require('../controllers/image/index');
-const Constants = require('../constants/Constants');
 
 /**
  * @openapi
@@ -29,14 +27,6 @@ const Constants = require('../constants/Constants');
  */
 router.get(
   '/:id',
-  Validator.validate([
-    {
-      name: 'token',
-      validate: [Constants.USER_TYPES.Write_Dids_Registers],
-      isHead: true,
-    },
-  ]),
-  Validator.checkValidationResult,
   image.readImageById,
 );
 

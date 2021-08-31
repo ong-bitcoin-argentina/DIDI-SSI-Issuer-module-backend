@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const sanitize = require('mongo-sanitize');
 const { ADDRESS } = require('../constants/Constants');
+const Messages = require('../constants/Messages');
 
 const ImageSchema = mongoose.Schema({
   img: { type: Buffer, contentType: String },
@@ -47,7 +48,7 @@ Image.getById = async function getById(id) {
   try {
     const query = { _id: id };
     const image = await Image.findOne(query);
-    if (!image) throw new Error('No existe la imagen');
+    if (!image) throw Messages.IMAGE.ERR.NOT_EXIST;
     return image;
   } catch (err) {
     // eslint-disable-next-line no-console
