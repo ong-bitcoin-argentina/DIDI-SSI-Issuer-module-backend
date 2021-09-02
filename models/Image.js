@@ -58,7 +58,8 @@ Image.getById = async function getById(id) {
 
 Image.update = async function update(id, path, contentType) {
   try {
-    const oldImage = await Image.findOne({ _id: id });
+    const query = { _id: { $eq: id } };
+    const oldImage = await Image.findOne(query);
     if (!oldImage) throw Messages.IMAGE.ERR.NOT_EXIST;
 
     const cleanedPath = sanitize(path);
