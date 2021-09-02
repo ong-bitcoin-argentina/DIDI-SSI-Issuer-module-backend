@@ -98,6 +98,12 @@ module.exports = {
       EDIT: { code: 'USER_EDIT', message: 'El modelo de usuario no pudo ser editado.' },
     },
   },
+  IMAGE: {
+    ERR: {
+      NOT_EXIST: { code: 'NOT_EXIST', message: 'No existe la imagen.' },
+    },
+    DELETE: { code: 'IMG_DELETE', message: 'Imagen eliminada.' },
+  },
   CERT: {
     ERR: {
       EMMIT: { code: 'CERT_EMMIT', message: 'El certificado no pudo ser emitido.' },

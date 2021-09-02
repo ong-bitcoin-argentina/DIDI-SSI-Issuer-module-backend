@@ -19,9 +19,10 @@ const Constants = require('../constants/Constants');
  *       required:
  *         - did
  *         - name
+ *         - description
  *         - key
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -29,8 +30,13 @@ const Constants = require('../constants/Constants');
  *                 type: string
  *               name:
  *                 type: string
+ *               description:
+ *                 type: string
  *               key:
  *                 type: string
+ *               file:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
@@ -53,11 +59,16 @@ router.post(
       validate: [Constants.VALIDATION_TYPES.IS_STRING],
     },
     {
+      name: 'description',
+      validate: [Constants.VALIDATION_TYPES.IS_STRING],
+    },
+    {
       name: 'key',
       validate: [Constants.VALIDATION_TYPES.IS_STRING],
     },
   ]),
   Validator.checkValidationResult,
+  Validator.validateFile,
   register.create,
 );
 
@@ -133,7 +144,7 @@ router.get(
 /**
  * @openapi
  *   /register/{did}:
- *   put:
+ *   patch:
  *     summary: Editar un registro
  *     description: Las definiciones de status se encuentran en elarchivo constants/Constants.js
  *     parameters:
@@ -149,12 +160,17 @@ router.get(
  *         required: true
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               name:
  *                 type: string
+ *               description:
+ *                 type: string
+ *               file:
+ *                 type: string
+ *                 format: binary
  *               status:
  *                 type: string
  *     responses:
@@ -165,7 +181,7 @@ router.get(
  *       500:
  *         description: Error interno del servidor
  */
-router.put(
+router.patch(
   '/:did',
   Validator.validate([
     {
@@ -175,6 +191,7 @@ router.put(
     },
   ]),
   Validator.checkValidationResult,
+  Validator.validateFile,
   register.updateByDid,
 );
 

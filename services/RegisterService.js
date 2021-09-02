@@ -1,25 +1,29 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
-const fetch = require('node-fetch');
 const { Resolver } = require('did-resolver');
 const { SimpleSigner, createJWT, verifyJWT } = require('did-jwt');
 const { getResolver } = require('ethr-did-resolver');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
+const Image = require('../models/Image');
 const Constants = require('../constants/Constants');
 const { BLOCKCHAIN_MANAGER_CODES } = require('../constants/Constants');
+const {
+  sendRevokeToDidi,
+  sendRefreshToDidi,
+  sendEditDataToDidi,
+  sendDidToDidi,
+} = require('./utils/fetchs');
 
 const {
   INVALID_STATUS,
   GET,
-  BLOCKCHAIN,
   EDIT,
   CREATE,
   DID_EXISTS,
   STATUS,
   STATUS_NOT_VALID,
   REFRESH,
-  NAME_EXIST,
   INVALID_DID_AND_KEY,
 } = Messages.REGISTER.ERR;
 const {
@@ -35,7 +39,7 @@ const {
   missingToken,
   missingKey,
   missingFilter,
-  missingBody,
+  missingDescription,
 } = require('../constants/serviceErrors');
 
 /*
@@ -61,80 +65,46 @@ const validateDidAndKey = async (did, key) => {
   }
 };
 
-const defaultFetch = async function defaultFetch(url, method, body) {
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    const jsonResp = await response.json();
-    if (jsonResp.status === 'error') throw jsonResp;
-
-    return jsonResp.data;
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
-};
-
-const sendRevokeToDidi = async function sendRevokeToDidi(did, token) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer`, 'DELETE', {
-    token,
-    did,
-    callbackUrl: `${Constants.ISSUER_API_URL}/register`,
-  });
-};
-
-const sendRefreshToDidi = async function sendRefreshToDidi(did, token) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}/refresh`, 'POST', {
-    token,
-    callbackUrl: `${Constants.ISSUER_API_URL}/register`,
-  });
-};
-
-const sendEditNameToDidi = async function sendEditNameToDidi(did, name) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, 'PUT', { name });
-};
-
-const sendDidToDidi = async function sendDidToDidi(did, name, token) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer`, 'POST', {
-    did,
-    name,
-    token,
-    callbackUrl: `${Constants.ISSUER_API_URL}/register`,
-  });
-};
-
 // crear un nuevo registro en la blockchain
-module.exports.newRegister = async function newRegister(did, key, name, token) {
+module.exports.newRegister = async function newRegister(did, key, name, token, description, file) {
   if (!did) throw missingDid;
   if (!key) throw missingKey;
   if (!name) throw missingName;
   if (!token) throw missingToken;
+  if (!description) throw missingDescription;
   try {
-    const blockchain = did.split(':')[2];
+    // const blockchain = did.split(':')[2];
 
     // Verifico si esta bien creado el did y la key
     await validateDidAndKey(did, key);
 
     // Verifico si la blockchain es correcta
-    if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
+    // if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
 
     // Verifico que el did no exista
     const byDIDExist = await Register.getByDID(did);
     if (byDIDExist) throw DID_EXISTS;
 
-    // Verifico que no exista el nombre en una misma blockchain
+    /* Verifico que no exista el nombre en una misma blockchain
     const query = { name: { $eq: name }, did: { $regex: blockchain, $options: 'i' } };
     const repeatedRegister = await Register.findOne(query);
-    if (repeatedRegister) throw NAME_EXIST;
+    if (repeatedRegister) throw NAME_EXIST; */
+
+    // Si existe se crea la imagen
+    let imageId;
+    let url;
+    if (file) {
+      const { mimetype, path } = file;
+      const image = await Image.generate(path, mimetype);
+      const { _id, imageUrl } = image;
+      imageId = _id;
+      url = imageUrl;
+    }
 
     // Se envia el did a Didi
-    sendDidToDidi(did, name, token);
+    await sendDidToDidi(did, name, token, description, url);
 
-    const CreateRegister = await Register.generate(did, key, name);
+    const CreateRegister = await Register.generate(did, key, name, description, imageId);
     if (!CreateRegister) throw CREATE;
     return CreateRegister;
   } catch (err) {
@@ -147,26 +117,38 @@ module.exports.newRegister = async function newRegister(did, key, name, token) {
 module.exports.getAll = async function getAll(filter) {
   if (!filter) throw missingFilter;
   try {
-    return await Register.getAll(filter);
+    return Register.getAll(filter);
   } catch (err) {
     console.log(err);
     throw GET;
   }
 };
 
-module.exports.editRegister = async function editRegister(did, body) {
+module.exports.editRegister = async function editRegister(did, body, file) {
   if (!did) throw missingDid;
-  if (!body) throw missingBody;
   try {
     const register = await Register.getByDID(did);
     if (!register) throw GET;
 
-    const { status, name } = body;
+    const { status, name, description } = body;
     if (status && !Constants.STATUS_ALLOWED.includes(status)) throw STATUS;
 
-    if (name) await sendEditNameToDidi(did, name);
+    // Si existe se crea la imagen
+    let imageId;
+    let url;
+    if (file) {
+      const { mimetype, path } = file;
+      const image = await Image.generate(path, mimetype);
+      const { _id, imageUrl } = image;
+      imageId = _id;
+      url = imageUrl;
+    }
 
-    return await register.edit(body);
+    await sendEditDataToDidi(did, body, url);
+
+    return register.edit({
+      status, name, description, imageId,
+    });
   } catch (err) {
     console.log(err);
     throw EDIT;
@@ -188,10 +170,10 @@ module.exports.retryRegister = async function retryRegister(did, token) {
     if (status !== ERROR) throw INVALID_STATUS;
 
     // Se envia a DIDI
-    sendDidToDidi(did, name, token);
+    await sendDidToDidi(did, name, token);
 
     // Modifico el estado a Pendiente
-    return await register.edit({ status: CREATING, messageError: '' });
+    return register.edit({ status: CREATING, messageError: '' });
   } catch (err) {
     console.log(err);
     throw err;
@@ -211,10 +193,10 @@ module.exports.refreshRegister = async function refreshRegister(did, token) {
     if (DISALLOW_WITH_THESE.includes(status)) throw STATUS_NOT_VALID;
 
     // Se envia a DIDI
-    sendRefreshToDidi(did, token);
+    await sendRefreshToDidi(did, token);
 
     // Modifico el estado a Pendiente
-    return await register.edit({
+    return register.edit({
       status: CREATING, blockHash: '', messageError: '', expireOn: undefined,
     });
   } catch (err) {
@@ -237,10 +219,10 @@ module.exports.revoke = async function revoke(did, token) {
     if (DISALLOW_WITH_THESE.includes(status)) throw STATUS_NOT_VALID;
 
     // Se envia el revoke a DIDI
-    sendRevokeToDidi(did, token);
+    await sendRevokeToDidi(did, token);
 
     // Modifico el estado a Revocando
-    return await register.edit({ status: REVOKING, messageError: '' });
+    return register.edit({ status: REVOKING, messageError: '' });
   } catch (err) {
     console.log(err);
     throw new Error(err);

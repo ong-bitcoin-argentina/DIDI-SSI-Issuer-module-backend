@@ -5,6 +5,7 @@ require('dotenv-flow').config();
 require('./services/logger');
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const mongoose = require('mongoose');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -28,6 +29,7 @@ const DelegateRoutes = require('./routes/DelegateRoutes');
 const RegisterRoutes = require('./routes/RegisterRoutes');
 const DefaultRoutes = require('./routes/DefaultRoutes');
 const ProfileRoutes = require('./routes/ProfileRoutes');
+const ImageRoutes = require('./routes/ImageRoutes');
 
 // inicializar cluster para workers, uno por cpu disponible
 
@@ -125,6 +127,15 @@ app.use((error, req, _, next) => {
   next();
 });
 
+app.use(
+  multer({
+    dest: './uploads/',
+    rename: function rename(_fieldname, filename) {
+      return filename;
+    },
+  }).single('file'),
+);
+
 app.use('/user', UserRoutes);
 app.use('/participant', ParticipantRoutes);
 app.use('/template', TemplateRoutes);
@@ -133,6 +144,7 @@ app.use('/delegate', DelegateRoutes);
 app.use('/register', RegisterRoutes);
 app.use('/default', DefaultRoutes);
 app.use('/profile', ProfileRoutes);
+app.use('/image', ImageRoutes);
 
 // forkear workers
 if (cluster.isMaster) {

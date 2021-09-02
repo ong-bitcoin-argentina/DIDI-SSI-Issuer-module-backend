@@ -13,6 +13,10 @@ const RegisterSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
   did: {
     type: String,
     required: true,
@@ -21,6 +25,9 @@ const RegisterSchema = mongoose.Schema({
   private_key: {
     type: String,
     required: true,
+  },
+  imageId: {
+    type: String,
   },
   messageError: {
     type: String,
@@ -51,9 +58,8 @@ RegisterSchema.methods.edit = async function edit(data) {
   const updateAction = {
     $set: data,
   };
-
   try {
-    return await Register.findOneAndUpdate(updateQuery, updateAction);
+    return await Register.findOneAndUpdate(updateQuery, updateAction, { new: true });
   } catch (err) {
     console.log(err);
     return Promise.reject(err);
@@ -64,17 +70,19 @@ const Register = mongoose.model('Register', RegisterSchema);
 module.exports = Register;
 
 // crea un nuevo registro
-Register.generate = async function generate(did, key, name) {
+Register.generate = async function generate(did, key, name, description, imageId) {
   let register;
   try {
     register = new Register();
 
     register.name = name;
+    register.description = description;
     const keyEncripted = await Encryption.encrypt(key);
     register.private_key = keyEncripted;
     register.did = did;
     register.deleted = false;
     register.createdOn = new Date();
+    register.imageId = imageId;
 
     register = await register.save();
     return Promise.resolve(register);
