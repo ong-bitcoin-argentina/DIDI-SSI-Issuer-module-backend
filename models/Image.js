@@ -62,8 +62,7 @@ Image.update = async function update(id, path, contentType) {
     const oldImage = await Image.findOne(query);
     if (!oldImage) throw Messages.IMAGE.ERR.NOT_EXIST;
 
-    const cleanedPath = sanitize(path);
-    const img = fs.readFileSync(cleanedPath);
+    const img = fs.readFileSync(path);
     const encodedImage = img.toString('base64');
     const buffer = Buffer.from(encodedImage, 'base64');
 

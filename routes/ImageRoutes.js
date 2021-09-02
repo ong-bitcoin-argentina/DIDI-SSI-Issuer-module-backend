@@ -84,7 +84,7 @@ router.get(
  *         schema:
  *           type: string
  *         required: true
-*       - name: id
+ *       - name: id
  *         in: path
  *         required: true
  *         schema:

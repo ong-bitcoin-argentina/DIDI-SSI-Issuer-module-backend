@@ -1,3 +1,4 @@
+const sanitize = require('mongo-sanitize');
 const ResponseHandler = require('../../routes/utils/ResponseHandler');
 const Image = require('../../models/Image');
 
@@ -6,7 +7,7 @@ const updateById = async (req, res) => {
     const { id } = req.params;
     const { path, mimetype } = req.file;
 
-    const { img, contentType } = await Image.update(id, path, mimetype);
+    const { img, contentType } = await Image.update(id, sanitize(path), sanitize(mimetype));
     res.type(contentType);
     return res.send(img);
   } catch (err) {
