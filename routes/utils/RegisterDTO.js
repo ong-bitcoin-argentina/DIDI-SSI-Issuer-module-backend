@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 const { getBlockchainName } = require('./GetBlockchain');
 
-const toDTO = async (register) => {
+const toDTO = (register) => {
   const blockchain = getBlockchainName(register);
 
   return {

@@ -160,7 +160,7 @@ router.get(
  *         required: true
  *     requestBody:
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
