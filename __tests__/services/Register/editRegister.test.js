@@ -35,6 +35,24 @@ describe('services/Register/editRegister.test.js', () => {
       expect(e.code).toMatch(missingDid.code);
     }
   });
+  test('Expect editRegister status to success', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
+    const response = await editRegister(secondDid, { status: 'Creado' });
+    expect(response.status).toMatch('Creado');
+    expect(response.name).toMatch(name);
+  });
+
+  test('Expect editRegister with only name parameter to success', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
+    const newName = 'new name';
+    const response = await editRegister(secondDid, { name: newName });
+    expect(response.name).toMatch(newName);
+    expect(response.description).toMatch(description);
+  });
 
   test('Expect editRegister to success', async () => {
     fetch.mockReturnValue(
