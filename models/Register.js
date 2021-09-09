@@ -53,13 +53,16 @@ const RegisterSchema = mongoose.Schema({
 });
 
 RegisterSchema.index({ name: 1 });
+
 RegisterSchema.methods.edit = async function edit(data) {
   const updateQuery = { _id: this._id };
   const updateAction = {
     $set: data,
   };
   try {
-    return await Register.findOneAndUpdate(updateQuery, updateAction, { new: true });
+    return await Register.findOneAndUpdate(
+      updateQuery, updateAction, { new: true, omitUndefined: true },
+    );
   } catch (err) {
     console.log(err);
     return Promise.reject(err);

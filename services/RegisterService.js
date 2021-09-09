@@ -130,7 +130,9 @@ module.exports.editRegister = async function editRegister(did, body, file) {
     const register = await Register.getByDID(did);
     if (!register) throw GET;
 
-    const { status, name, description } = body;
+    const {
+      status, name, description, blockHash, expireOn,
+    } = body;
     if (status && !Constants.STATUS_ALLOWED.includes(status)) throw STATUS;
 
     // Si existe se crea la imagen
@@ -147,7 +149,7 @@ module.exports.editRegister = async function editRegister(did, body, file) {
     await sendEditDataToDidi(did, body, url);
 
     return register.edit({
-      status, name, description, imageId,
+      status, name, description, imageId, blockHash, expireOn,
     });
   } catch (err) {
     console.log(err);

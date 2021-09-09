@@ -20,7 +20,7 @@ const ImageSchema = mongoose.Schema({
 
 // Devuelve al url donde esta guardada la imagen de un issuer segun su imageID
 ImageSchema.virtual('imageUrl').get(function imageUrl() {
-  return `${ADDRESS}/uploads/${this._id}`;
+  return `${ADDRESS}/image/${this._id}`;
 });
 
 const Image = mongoose.model('Image', ImageSchema);
