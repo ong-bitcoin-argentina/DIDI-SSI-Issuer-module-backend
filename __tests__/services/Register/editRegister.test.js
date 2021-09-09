@@ -39,7 +39,7 @@ describe('services/Register/editRegister.test.js', () => {
     fetch.mockReturnValue(
       Promise.resolve(successResp),
     );
-    const response = await editRegister(secondDid, { status: 'Creado' });
+    const response = await editRegister(secondDid, { status: 'Creado', name: undefined });
     expect(response.status).toMatch('Creado');
     expect(response.name).toMatch(name);
   });
@@ -49,7 +49,7 @@ describe('services/Register/editRegister.test.js', () => {
       Promise.resolve(successResp),
     );
     const newName = 'new name';
-    const response = await editRegister(secondDid, { name: newName });
+    const response = await editRegister(secondDid, { name: newName, description: undefined });
     expect(response.name).toMatch(newName);
     expect(response.description).toMatch(description);
   });
