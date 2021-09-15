@@ -24,19 +24,15 @@ const DELEGATE_DURATION = process.env.BLOCK_CHAIN_DELEGATE_DURATION || '1300000'
 const SET_ATTRIBUTE = process.env.BLOCK_CHAIN_SET_ATTRIBUTE || '999999999';
 const GAS_INCREMENT = process.env.GAS_INCREMENT || '1.1';
 
-const {
-  BLOCKCHAIN_URL_MAIN, BLOCKCHAIN_URL_RSK, BLOCKCHAIN_URL_LAC, BLOCKCHAIN_URL_BFA,
-  BLOCKCHAIN_CONTRACT_MAIN, BLOCKCHAIN_CONTRACT_RSK, BLOCKCHAIN_CONTRACT_LAC,
-  BLOCKCHAIN_CONTRACT_BFA,
-} = process.env;
+const { BLOCKCHAIN_URL_RSK, BLOCKCHAIN_URL_LAC, BLOCKCHAIN_URL_BFA } = process.env;
+const { BLOCKCHAIN_CONTRACT_MAIN, BLOCKCHAIN_CONTRACT_LAC, BLOCKCHAIN_CONTRACT_BFA } = process.env;
+const { INFURA_KEY } = process.env;
 
-if (BLOCKCHAIN_URL_MAIN == null || BLOCKCHAIN_URL_MAIN == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_MAIN');
 if (BLOCKCHAIN_URL_RSK == null || BLOCKCHAIN_URL_RSK == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_RSK');
 if (BLOCKCHAIN_URL_LAC == null || BLOCKCHAIN_URL_LAC == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_LAC');
 if (BLOCKCHAIN_URL_BFA == null || BLOCKCHAIN_URL_BFA == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_BFA');
 
 if (BLOCKCHAIN_CONTRACT_MAIN == null || BLOCKCHAIN_CONTRACT_MAIN == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_MAIN');
-if (BLOCKCHAIN_CONTRACT_RSK == null || BLOCKCHAIN_CONTRACT_RSK == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_RSK');
 if (BLOCKCHAIN_CONTRACT_LAC == null || BLOCKCHAIN_CONTRACT_LAC == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_LAC');
 if (BLOCKCHAIN_CONTRACT_BFA == null || BLOCKCHAIN_CONTRACT_BFA == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_BFA');
 
@@ -71,11 +67,37 @@ const { APP_INSIGTHS_IKEY } = process.env;
 
 if (APP_INSIGTHS_IKEY == null || APP_INSIGTHS_IKEY == '') throw new Error('No esta definida la varibale APP_INSIGTHS_IKEY');
 
+// Provider
+// MAINNET SHOULD BE THE FIRST NETWORK
+// DID ROUTE EXAMPLE PREFIX:
+// MAINNET ==> did:ethr:
+// RSK ==> did:ethr:rsk:
+// LACCHAIN ==> did:ethr:lacchain:
 const PROVIDER_CONFIG = {
   networks: [
     {
       name: 'mainnet',
-      rpcUrl: BLOCKCHAIN_URL_MAIN,
+      rpcUrl: `https://mainnet.infura.io/v3/${INFURA_KEY}`,
+      registry: BLOCKCHAIN_CONTRACT_MAIN,
+    },
+    {
+      name: 'ropsten',
+      rpcUrl: `https://ropsten.infura.io/v3/${INFURA_KEY}`,
+      registry: BLOCKCHAIN_CONTRACT_MAIN,
+    },
+    {
+      name: 'rinkeby',
+      rpcUrl: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
+      registry: BLOCKCHAIN_CONTRACT_MAIN,
+    },
+    {
+      name: 'goerli',
+      rpcUrl: `https://goerli.infura.io/v3/${INFURA_KEY}`,
+      registry: BLOCKCHAIN_CONTRACT_MAIN,
+    },
+    {
+      name: 'kovan',
+      rpcUrl: `https://kovan.infura.io/v3/${INFURA_KEY}`,
       registry: BLOCKCHAIN_CONTRACT_MAIN,
     },
     {
@@ -91,7 +113,7 @@ const PROVIDER_CONFIG = {
     {
       name: 'rsk',
       rpcUrl: BLOCKCHAIN_URL_RSK,
-      registry: BLOCKCHAIN_CONTRACT_RSK,
+      registry: BLOCKCHAIN_CONTRACT_MAIN,
     },
   ],
 };
@@ -309,7 +331,7 @@ module.exports = {
   BLOCKCHAIN: {
     PROVIDER_CONFIG,
     GAS_INCREMENT,
-    URL: BLOCKCHAIN_URL_MAIN,
+    URL: `https://mainnet.infura.io/v3/${INFURA_KEY}`,
     CONTRACT: BLOCKCHAIN_CONTRACT_MAIN,
     DELEGATE_DURATION,
     SET_ATTRIBUTE,
