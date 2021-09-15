@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable eqeqeq */
+const assert = require('assert');
 // General
 const DEBUGG = process.env.DEBUGG_MODE == 'true';
 const ENABLE_INSECURE_ENDPOINTS = process.env.ENABLE_INSECURE_ENDPOINTS == 'true';
@@ -8,16 +9,15 @@ const {
   PORT, FULL_URL, RSA_PRIVATE_KEY, HASH_SALT, DIDI_API,
 } = process.env;
 
-if (DEBUGG == null || DEBUGG == '') throw new Error('No esta definida la varibale DEBUGG_MODE');
-if (VERSION == null || VERSION == '') throw new Error('No esta definida la varibale VERSION');
-if (NAME == null || NAME == '') throw new Error('No esta definida la varibale NAME');
-if (ISSUER_API_URL == null || ISSUER_API_URL == '') throw new Error('No esta definida la varibale ISSUER_API_URL');
-if (ADDRESS == null || ADDRESS == '') throw new Error('No esta definida la varibale ADDRESS');
-if (PORT == null || PORT == '') throw new Error('No esta definida la varibale PORT');
-if (FULL_URL == null || FULL_URL == '') throw new Error('No esta definida la varibale FULL_URL');
-if (RSA_PRIVATE_KEY == null || RSA_PRIVATE_KEY == '') throw new Error('No esta definida la varibale RSA_PRIVATE_KEY');
-if (HASH_SALT == null || HASH_SALT == '') throw new Error('No esta definida la varibale HASH_SALT');
-if (DIDI_API == null || DIDI_API == '') throw new Error('No esta definida la varibale DIDI_API');
+assert.ok(NAME, 'No esta definida la varibale NAME');
+assert.ok(VERSION, 'No esta definida la varibale VERSION');
+assert.ok(ISSUER_API_URL, 'No esta definida la varibale ISSUER_API_URL');
+assert.ok(HASH_SALT, 'No esta definida la varibale HASH_SALT');
+assert.ok(ADDRESS, 'No esta definida la varibale ADDRESS');
+assert.ok(PORT, 'No esta definida la varibale PORT');
+assert.ok(FULL_URL, 'No esta definida la varibale FULL_URL');
+assert.ok(RSA_PRIVATE_KEY, 'No esta definida la varibale RSA_PRIVATE_KEY');
+assert.ok(DIDI_API, 'No esta definida la varibale DIDI_API');
 
 // Blockchain
 const DELEGATE_DURATION = process.env.BLOCK_CHAIN_DELEGATE_DURATION || '1300000';
@@ -28,13 +28,13 @@ const { BLOCKCHAIN_URL_RSK, BLOCKCHAIN_URL_LAC, BLOCKCHAIN_URL_BFA } = process.e
 const { BLOCKCHAIN_CONTRACT_MAIN, BLOCKCHAIN_CONTRACT_LAC, BLOCKCHAIN_CONTRACT_BFA } = process.env;
 const { INFURA_KEY } = process.env;
 
-if (BLOCKCHAIN_URL_RSK == null || BLOCKCHAIN_URL_RSK == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_RSK');
-if (BLOCKCHAIN_URL_LAC == null || BLOCKCHAIN_URL_LAC == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_LAC');
-if (BLOCKCHAIN_URL_BFA == null || BLOCKCHAIN_URL_BFA == '') throw new Error('No esta definida la varibale BLOCKCHAIN_URL_BFA');
+assert.ok(BLOCKCHAIN_URL_RSK, 'No esta definida la varibale BLOCKCHAIN_URL_RSK');
+assert.ok(BLOCKCHAIN_URL_LAC, 'No esta definida la varibale BLOCKCHAIN_URL_LAC');
+assert.ok(BLOCKCHAIN_URL_BFA, 'No esta definida la varibale BLOCKCHAIN_URL_BFA');
 
-if (BLOCKCHAIN_CONTRACT_MAIN == null || BLOCKCHAIN_CONTRACT_MAIN == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_MAIN');
-if (BLOCKCHAIN_CONTRACT_LAC == null || BLOCKCHAIN_CONTRACT_LAC == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_LAC');
-if (BLOCKCHAIN_CONTRACT_BFA == null || BLOCKCHAIN_CONTRACT_BFA == '') throw new Error('No esta definida la varibale BLOCKCHAIN_CONTRACT_BFA');
+assert.ok(BLOCKCHAIN_CONTRACT_MAIN, 'No esta definida la varibale BLOCKCHAIN_CONTRACT_MAIN');
+assert.ok(BLOCKCHAIN_CONTRACT_LAC, 'No esta definida la varibale BLOCKCHAIN_CONTRACT_LAC');
+assert.ok(BLOCKCHAIN_CONTRACT_BFA, 'No esta definida la varibale BLOCKCHAIN_CONTRACT_BFA');
 
 // MongoDB
 const MONGO_USER = process.env.MONGO_USERNAME;
@@ -44,11 +44,11 @@ const {
 let MONGO_URL;
 
 if (!MONGO_URI) {
-  if (MONGO_DIR == null || MONGO_DIR == '') throw new Error('No esta definida la varibale MONGO_DIR');
-  if (MONGO_USER == null || MONGO_USER == '') throw new Error('No esta definida la varibale MONGO_USER');
-  if (MONGO_PASSWORD == null || MONGO_PASSWORD == '') throw new Error('No esta definida la varibale MONGO_PASSWORD');
-  if (MONGO_DB == null || MONGO_DB == '') throw new Error('No esta definida la varibale MONGO_DB');
-  if (MONGO_PORT == null || MONGO_PORT == '') throw new Error('No esta definida la varibale MONGO_PORT');
+  assert.ok(MONGO_DIR, 'No esta definida la varibale MONGO_DIR');
+  assert.ok(MONGO_USER, 'No esta definida la varibale MONGO_USER');
+  assert.ok(MONGO_PASSWORD, 'No esta definida la varibale MONGO_PASSWORD');
+  assert.ok(MONGO_DB, 'No esta definida la varibale MONGO_DB');
+  assert.ok(MONGO_PORT, 'No esta definida la varibale MONGO_PORT');
   const URL = `${MONGO_DIR}:${MONGO_PORT}/${MONGO_DB}`;
   MONGO_URL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${URL}`;
 } else {
@@ -58,14 +58,14 @@ if (!MONGO_URI) {
 // ETHR
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = process.env;
 
-if (ISSUER_SERVER_DID == null || ISSUER_SERVER_DID == '') throw new Error('No esta definida la varibale ISSUER_SERVER_DID');
-if (ISSUER_SERVER_PRIVATE_KEY == null || ISSUER_SERVER_PRIVATE_KEY == '') throw new Error('No esta definida la varibale ISSUER_SERVER_PRIVATE_KEY');
+assert.ok(ISSUER_SERVER_DID, 'No esta definida la varibale ISSUER_SERVER_DID');
+assert.ok(ISSUER_SERVER_PRIVATE_KEY, 'No esta definida la varibale ISSUER_SERVER_PRIVATE_KEY');
 
 // Application insigths
 const DISABLE_TELEMETRY_CLIENT = process.env.DISABLE_TELEMETRY_CLIENT === 'true';
 const { APP_INSIGTHS_IKEY } = process.env;
 
-if (APP_INSIGTHS_IKEY == null || APP_INSIGTHS_IKEY == '') throw new Error('No esta definida la varibale APP_INSIGTHS_IKEY');
+assert.ok(APP_INSIGTHS_IKEY, 'No esta definida la varibale APP_INSIGTHS_IKEY');
 
 // Provider
 // MAINNET SHOULD BE THE FIRST NETWORK
