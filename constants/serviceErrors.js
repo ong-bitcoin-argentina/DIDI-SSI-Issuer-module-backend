@@ -123,4 +123,16 @@ module.exports = {
     code: '#service-newRegister-missingDescription',
     message: 'Falta el parámetro DESCRIPTION.',
   },
+  missingIssuerDid: {
+    code: '#service-missingIssuerDid',
+    message: 'Falta el parámetro ISSUER-DID.',
+  },
+  missingPrivateKey: {
+    code: '#service-missingPrivateKey',
+    message: 'Falta el parámetro PRIVATE-KEY',
+  },
+  missingPayload: {
+    code: '#service-missingPayload',
+    message: 'Falta el parámetro PAYLOAD',
+  },
 };
