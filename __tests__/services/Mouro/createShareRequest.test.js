@@ -44,7 +44,7 @@ describe('services/Mouro/createShareRequest.test.js', () => {
     }
   });
 
-  test('Expect createShareRequest to throw on registerId cb', async () => {
+  test('Expect createShareRequest to throw on missing registerId', async () => {
     try {
       await createShareRequest('claims', 'cb', undefined);
     } catch (e) {

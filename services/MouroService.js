@@ -68,23 +68,9 @@ createCertificate(subject, expDate, did, template) {
 
   const { did: registerDid, key } = await Register.getCredentials(registerId);
 
-  const date = expDate ? (new Date(expDate).getTime() / 1000) | 0 : undefined;
-
-  const vcPayload = {
-    sub: did,
-    exp: date,
-    vc: {
-      '@context': [Constants.CREDENTIALS.CONTEXT],
-      type: [Constants.CREDENTIALS.TYPES.VERIFIABLE],
-      credentialSubject: subject,
-    },
-  };
-
-  if (Constants.ISSUER_DELEGATOR_DID) vcPayload.delegator = `did:ethr:${Constants.ISSUER_DELEGATOR_DID}`;
-
   try {
     const result = await BlockchainService.createVerifiableCredential(
-      did, subject, date, registerDid, key,
+      did, subject, expDate, registerDid, key,
     );
     if (Constants.DEBUGG) console.log(result);
     console.log(Messages.CERTIFICATE.CREATED);
