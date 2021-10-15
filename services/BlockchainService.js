@@ -6,7 +6,15 @@ const Constants = require('../constants/Constants');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
 const Delegate = require('../models/Delegate');
-const { missingRegisterId, missingOtherDID } = require('../constants/serviceErrors');
+const {
+  missingRegisterId,
+  missingOtherDID,
+  missingIssuerDid,
+  missingPrivateKey,
+  missingPayload,
+  missingDid,
+  missingJwt,
+} = require('../constants/serviceErrors');
 
 // Instancia del Blockchain Manager
 const config = {
@@ -16,6 +24,9 @@ const config = {
 
 const blockchainManager = new BlockchainManager(config, Constants.BLOCKCHAIN.GAS_INCREMENT);
 
+/**
+ *  Realiza una delegación de "registerId" a "otherDID"
+ */
 module.exports.addDelegate = async function addDelegate(registerId, otherDID) {
   if (!registerId) throw missingRegisterId;
   if (!otherDID) throw missingOtherDID;
@@ -36,7 +47,9 @@ module.exports.addDelegate = async function addDelegate(registerId, otherDID) {
   }
 };
 
-// anula la delegacion de "userDID" a "otherDID" de existir esta
+/**
+ * En caso de existir, anula la delegación
+ */
 module.exports.removeDelegate = async function removeDelegate(otherDID) {
   if (!otherDID) throw missingOtherDID;
   try {
@@ -59,7 +72,9 @@ module.exports.removeDelegate = async function removeDelegate(otherDID) {
   }
 };
 
-// retorna true si "userDID" realizo una delegacion de DID a "otherDID"
+/**
+ * Retorna true si "registerId" realizo una delegacion de DID a "otherDID"
+ */
 module.exports.validDelegate = async function validDelegate(registerId, otherDid) {
   if (!registerId) throw missingRegisterId;
   if (!otherDid) throw missingOtherDID;
@@ -73,4 +88,75 @@ module.exports.validDelegate = async function validDelegate(registerId, otherDid
     console.log(err);
     throw Messages.DELEGATE.ERR.GET_DELEGATE;
   }
+};
+
+/**
+ * Cenera un certificado asociando la informacion recibida
+ */
+module.exports.createVerifiableCredential = function createCertificate(
+  subjectDid, subjectPayload, expirationDate, issuerDid, issuerPkey,
+) {
+  if (!issuerDid) throw missingIssuerDid;
+  if (!issuerPkey) throw missingPrivateKey;
+  if (!subjectPayload) throw missingPayload;
+  if (!subjectDid) throw missingDid;
+  try {
+    return blockchainManager.createCertificate(
+      subjectDid, subjectPayload, expirationDate, issuerDid, issuerPkey,
+    );
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(err);
+    throw Messages.CERTIFICATE.ERR.CREATE;
+  }
+};
+
+/**
+ * Crea un jwt a partir del payload con la informacion a codificar
+ */
+module.exports.createJWT = function createJWT(
+  issuerDID, privateKey, payload, expiration, audienceDID,
+) {
+  if (!issuerDID) throw missingIssuerDid;
+  if (!privateKey) throw missingPrivateKey;
+  if (!payload) throw missingPayload;
+  return blockchainManager.createJWT(issuerDID, privateKey, payload, expiration, audienceDID);
+};
+
+/**
+ * Decodifica un jwt y devuelve su contenido
+ */
+module.exports.decodeJWT = function decodeJWT(jwt) {
+  if (!jwt) throw missingJwt;
+  return blockchainManager.decodeJWT(jwt);
+};
+
+/**
+ * Verifica una credencial
+ */
+module.exports.verifyCertificate = function verifyCertificate(jwt) {
+  if (!jwt) throw missingJwt;
+  try {
+    return blockchainManager.verifyCertificate(jwt);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(err);
+    throw Messages.CERTIFICATE.ERR.VERIFY;
+  }
+};
+
+/**
+ * Verifica un jwt
+ */
+module.exports.verifyJWT = async function verifyJWT(jwt, audienceDID) {
+  if (!jwt) throw missingJwt;
+  return blockchainManager.verifyJWT(jwt, audienceDID);
+};
+
+/**
+ * Crea una firma valida a partir de la clave privada
+ */
+module.exports.getSigner = function getSigner(privateKey) {
+  if (!privateKey) throw missingPrivateKey;
+  return blockchainManager.getSigner(privateKey);
 };

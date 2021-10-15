@@ -1,15 +1,9 @@
 /* eslint-disable no-bitwise */
 /* eslint-disable no-console */
-const EthrDID = require('ethr-did');
-const { createVerifiableCredential } = require('did-jwt-vc');
-const { decodeJWT, SimpleSigner } = require('did-jwt');
 const fetch = require('node-fetch');
 
-const { Credentials } = require('uport-credentials');
-
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { Resolver } = require('did-resolver');
-const { getResolver } = require('ethr-did-resolver');
+const BlockchainService = require('./BlockchainService');
 const Messages = require('../constants/Messages');
 const Constants = require('../constants/Constants');
 const Register = require('../models/Register');
@@ -20,17 +14,13 @@ const {
   missingSub,
 } = require('../constants/serviceErrors');
 
-const resolver = new Resolver(
-  getResolver({ rpcUrl: Constants.BLOCKCHAIN.URL, registry: Constants.BLOCKCHAIN.CONTRACT }),
-);
-
 // decodifica el certificado, retornando la info
 // (independientemente de si el certificado es valido o no)
 module.exports.decodeCertificate = async function decodeCertificate(jwt, errMsg) {
   if (!jwt) throw missingJwt;
   if (!errMsg) throw missingErrMsg;
   try {
-    const result = await decodeJWT(jwt);
+    const result = await BlockchainService.decodeJWT(jwt);
     return Promise.resolve(result);
   } catch (err) {
     console.log(err);
@@ -57,11 +47,9 @@ module.exports.createShareRequest = async function createShareRequest(claims, cb
     };
     const { did, key } = await Register.getCredentials(registerId);
 
-    const signer = SimpleSigner(key);
-    const credentials = new Credentials({ did, signer, resolver });
-    const result = await credentials.signJWT(payload);
-    if (Constants.DEBUGG) console.log(result);
-    return Promise.resolve(result);
+    const shareRequest = await BlockchainService.createJWT(did, key, payload, exp);
+    if (Constants.DEBUGG) console.log(shareRequest);
+    return Promise.resolve(shareRequest);
   } catch (err) {
     console.log(err);
     return Promise.reject(Messages.SHARE_REQ.ERR.CREATE);
@@ -80,30 +68,10 @@ createCertificate(subject, expDate, did, template) {
 
   const { did: registerDid, key } = await Register.getCredentials(registerId);
 
-  const cleanDid = registerDid.split(':');
-  const prefixedDid = cleanDid.slice(2).join(':');
-
-  const vcissuer = new EthrDID({
-    address: prefixedDid,
-    privateKey: key,
-  });
-
-  const date = expDate ? (new Date(expDate).getTime() / 1000) | 0 : undefined;
-
-  const vcPayload = {
-    sub: did,
-    exp: date,
-    vc: {
-      '@context': [Constants.CREDENTIALS.CONTEXT],
-      type: [Constants.CREDENTIALS.TYPES.VERIFIABLE],
-      credentialSubject: subject,
-    },
-  };
-
-  if (Constants.ISSUER_DELEGATOR_DID) vcPayload.delegator = `did:ethr:${Constants.ISSUER_DELEGATOR_DID}`;
-
   try {
-    const result = await createVerifiableCredential(vcPayload, vcissuer);
+    const result = await BlockchainService.createVerifiableCredential(
+      did, subject, expDate, registerDid, key,
+    );
     if (Constants.DEBUGG) console.log(result);
     console.log(Messages.CERTIFICATE.CREATED);
     return Promise.resolve(result);
