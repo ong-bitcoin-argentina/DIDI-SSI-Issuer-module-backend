@@ -1,8 +1,5 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
-const { Resolver } = require('did-resolver');
-const { SimpleSigner, createJWT, verifyJWT } = require('did-jwt');
-const { getResolver } = require('ethr-did-resolver');
+const BlockchainService = require('./BlockchainService');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
 const Image = require('../models/Image');
@@ -31,8 +28,6 @@ const {
 } = Constants.STATUS;
 const DISALLOW_WITH_THESE = [CREATING, ERROR, REVOKED, ERROR_RENEW];
 
-const resolver = new Resolver(getResolver(Constants.BLOCKCHAIN.PROVIDER_CONFIG));
-
 const {
   missingDid,
   missingName,
@@ -48,14 +43,8 @@ const {
  */
 const validateDidAndKey = async (did, key) => {
   try {
-    const signer = SimpleSigner(key);
-    const jwt = await createJWT({}, { alg: 'ES256K-R', issuer: did, signer });
-
-    const options = {
-      resolver,
-    };
-
-    await verifyJWT(jwt, options);
+    const jwt = await BlockchainService.createJWT(did, key, {});
+    await BlockchainService.verifyJWT(jwt);
   } catch (error) {
     const { message } = error;
     console.log(message);
