@@ -173,6 +173,8 @@ router.get(
  *                 format: binary
  *               status:
  *                 type: string
+ *               newDelegate:
+ *                 type: boolean
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
