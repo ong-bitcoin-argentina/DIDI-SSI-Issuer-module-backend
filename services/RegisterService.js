@@ -120,7 +120,7 @@ module.exports.editRegister = async function editRegister(did, body, file) {
     if (!register) throw GET;
 
     const {
-      status, name, description, blockHash, expireOn,
+      status, name, description, blockHash, expireOn, newDelegate,
     } = body;
     if (status && !Constants.STATUS_ALLOWED.includes(status)) throw STATUS;
 
@@ -135,7 +135,7 @@ module.exports.editRegister = async function editRegister(did, body, file) {
       url = imageUrl;
     }
 
-    await sendEditDataToDidi(did, body, url);
+    if (!newDelegate) await sendEditDataToDidi(did, body, url);
 
     return register.edit({
       status, name, description, imageId, blockHash, expireOn,
