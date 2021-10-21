@@ -162,9 +162,8 @@ module.exports.edit = async function edit(id, name, password, profileId) {
   if (!password) throw missingPassword;
   if (!profileId) throw missingProfileId;
   try {
-    const passwordValidation = password && (Constants.COMMON_PASSWORDS.includes(password) || password.length < Constants.PASSWORD_MIN_LENGTH);
-
-    if (passwordValidation) throw Messages.VALIDATION.COMMON_PASSWORD;
+    if (Constants.COMMON_PASSWORDS.includes(password)) throw Messages.VALIDATION.COMMON_PASSWORD;
+    if (password.length < Constants.PASSWORD_MIN_LENGTH) throw Messages.VALIDATION.LENGTH_INVALID('password', 5);
 
     const profile = await Profile.getById(profileId);
     if (!profile) return Promise.reject(Messages.PROFILE.ERR.GET);
