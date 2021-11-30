@@ -113,6 +113,11 @@ const USER_TYPES = {
   Read_Delegates: 'Read_Delegates',
   Write_Delegates: 'Write_Delegates',
 
+  // Permisos para Presentaciones
+  Read_ShareRequest: 'Read_ShareRequest',
+  Write_ShareRequest: 'Write_ShareRequest',
+  Delete_ShareRequest: 'Delete_ShareRequest',
+
   // Permisos para Registro de DIDs
   Read_Dids_Registers: 'Read_Dids_Registers',
   Write_Dids_Registers: 'Write_Dids_Registers',
@@ -138,6 +143,9 @@ const {
   Delete_Certs,
   Read_Delegates,
   Write_Delegates,
+  Read_ShareRequest,
+  Write_ShareRequest,
+  Delete_ShareRequest,
   Read_Dids_Registers,
   Write_Dids_Registers,
   Read_Profiles,
@@ -164,6 +172,11 @@ const ALLOWED_ROLES = {
   // Permisos para Delegaciones
   Read_Delegates: [Read_Delegates, Write_Delegates],
   Write_Delegates: [Write_Delegates],
+
+  // Permisos para Presentaciones
+  Read_ShareRequest: [Read_ShareRequest, Write_ShareRequest],
+  Write_ShareRequest: [Write_ShareRequest],
+  Delete_ShareRequest: [Delete_ShareRequest],
 
   // Permisos para Registro de DIDs
   Read_Dids_Registers: [Read_Dids_Registers, Write_Dids_Registers, Read_Certs, Write_Certs],
@@ -210,6 +223,23 @@ const CERT_CATEGORY_MAPPING = {
   BENEFICIOS: 'benefit',
   LABORAL: 'work',
 };
+
+const CERT_CATEGORIES = [
+  'emailMain',
+  'mobilePhone',
+  'nationalId',
+  'legalAddress',
+  'realAddress',
+  'livingPlace',
+  'semillaIdTitular',
+  'semillaIdFamiliar',
+  'semillaEmprendimiento',
+  'semillaCrediticia',
+  'semillaSembTitular',
+  'semillaSembFamiliar',
+  'semillaSancorSalud',
+  'rondaFinalizada',
+];
 
 const BLOCKCHAINS = ['rsk', 'lacchain', 'bfa'];
 
@@ -287,6 +317,7 @@ module.exports = {
 
   CERT_CATEGORY_MAPPING,
   CERT_CATEGORY_TYPES,
+  CERT_CATEGORIES,
 
   ALLOWED_ROLES,
 
