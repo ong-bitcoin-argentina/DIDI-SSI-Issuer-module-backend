@@ -32,7 +32,7 @@ const RegisterRoutes = require('./routes/RegisterRoutes');
 const DefaultRoutes = require('./routes/DefaultRoutes');
 const ProfileRoutes = require('./routes/ProfileRoutes');
 const ImageRoutes = require('./routes/ImageRoutes');
-
+const ShareRequestRoutes = require('./routes/ShareRequestRoutes');
 // inicializar cluster para workers, uno por cpu disponible
 
 const app = express();
@@ -142,6 +142,7 @@ app.use('/register', RegisterRoutes);
 app.use('/default', DefaultRoutes);
 app.use('/profile', ProfileRoutes);
 app.use('/image', ImageRoutes);
+app.use('/shareRequest', ShareRequestRoutes);
 
 // forkear workers
 if (cluster.isMaster) {
