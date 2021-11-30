@@ -59,6 +59,10 @@ module.exports = {
         code: 'INVALID_DID_AND_KEY',
         message: 'Hubo un error al validar el did y la clave privada.',
       },
+      TOKEN: {
+        code: 'TOKEN_ERROR',
+        message: 'Hubo un error al crear del Token de autorización.',
+      },
     },
   },
   DELEGATE: {
@@ -126,6 +130,9 @@ module.exports = {
     ERR: {
       CREATE: { code: 'SHARE_REQ_CREATE', message: 'El pedido de certificados no pudo ser creado.' },
       SEND: { code: 'SHARE_REQ_SEND', message: 'El pedido de certificados no pudo ser enviado.' },
+      NOT_EXIST: { code: 'SHARE_REQ_NOT_EXIST', message: 'No existe el pedido de certificados.' },
+      DELETE: { code: 'SHARE_REQ_DELETE', message: 'El pedido de certificados no pudo ser borrado.' },
+      CERT_TYPES: { code: 'SHARE_REQ_CERT_TYPES', message: 'Una categoria de credencial no es valida' },
     },
   },
   TEMPLATE: {
