@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable func-names */
 /* eslint-disable import/no-extraneous-dependencies */
-require('dotenv-flow').config();
+require('dotenv-flow').config({
+  silent: true,
+});
 require('./services/logger');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -58,12 +60,7 @@ if (Constants.DEBUGG) console.log(Messages.INDEX.MSG.CONNECTING + Constants.MONG
 
 // configuracion de mongoose
 mongoose
-  .connect(Constants.MONGO_URL, {
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  })
+  .connect(Constants.MONGO_URL)
   .then(() => console.log(Messages.INDEX.MSG.CONNECTED))
   .catch((err) => {
     console.log(Messages.INDEX.ERR.CONNECTION + err.message);

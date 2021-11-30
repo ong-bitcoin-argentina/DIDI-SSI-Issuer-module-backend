@@ -12,12 +12,7 @@ describe('services/Register/editRegister.test.js', () => {
   } = data;
   beforeAll(async () => {
     await mongoose
-      .connect(MONGO_URL, {
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      });
+      .connect(MONGO_URL);
     fetch.mockReturnValue(
       Promise.resolve(successResp),
     );
