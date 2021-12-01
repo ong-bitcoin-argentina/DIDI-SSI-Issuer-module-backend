@@ -9,7 +9,7 @@ const readById = async (req, res) => {
 
     return ResponseHandler.sendRes(res, shareRequest);
   } catch (err) {
-    return ResponseHandler.sendErr(res, err);
+    return ResponseHandler.sendErrWithStatus(res, err);
   }
 };
 

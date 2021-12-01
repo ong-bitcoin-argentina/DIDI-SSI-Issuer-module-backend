@@ -53,9 +53,30 @@ const sendDidToDidi = async function sendDidToDidi(did, name, token, description
   });
 };
 
+const getShareRequestsFromDidi = async function getShareRequestsFromDidi(token) {
+  try {
+    const response = await fetch(`${Constants.DIDI_API}/shareRequest/list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${token}`,
+      },
+    });
+
+    const jsonResp = await response.json();
+    if (jsonResp.status === 'error') throw jsonResp;
+
+    return jsonResp.data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
 module.exports = {
   sendRevokeToDidi,
   sendRefreshToDidi,
   sendEditDataToDidi,
   sendDidToDidi,
+  getShareRequestsFromDidi,
 };

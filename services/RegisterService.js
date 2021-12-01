@@ -3,6 +3,8 @@ const BlockchainService = require('./BlockchainService');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
 const Image = require('../models/Image');
+const { createIssuerAuthToken } = require('./TokenService');
+const { getShareRequestsFromDidi } = require('./utils/fetchs');
 const Constants = require('../constants/Constants');
 const { BLOCKCHAIN_MANAGER_CODES } = require('../constants/Constants');
 const {
@@ -15,6 +17,7 @@ const {
 const {
   INVALID_STATUS,
   GET,
+  GET_SHARE_REQUEST,
   EDIT,
   CREATE,
   DID_EXISTS,
@@ -110,6 +113,18 @@ module.exports.getAll = async function getAll(filter) {
   } catch (err) {
     console.log(err);
     throw GET;
+  }
+};
+
+module.exports.getShareRequestsByDid = async function getShareRequestsByDid(did) {
+  if (!did) throw missingDid;
+  try {
+    const authToken = await createIssuerAuthToken(did);
+
+    return await getShareRequestsFromDidi(authToken);
+  } catch (err) {
+    console.log(err);
+    throw GET_SHARE_REQUEST;
   }
 };
 

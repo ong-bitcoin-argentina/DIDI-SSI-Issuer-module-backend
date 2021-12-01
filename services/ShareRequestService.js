@@ -28,6 +28,7 @@ module.exports.getById = async (id) => {
   try {
     return ShareRequest.getById(id);
   } catch (err) {
+    console.log(err);
     return Promise.reject(err);
   }
 };

@@ -7,7 +7,7 @@ const shareRequest = require('../controllers/shareRequest/index');
  * @openapi
  *   /shareRequest:
  *   post:
- *     summary: Manda un shareRequest a didi-server para ser guardarlo
+ *     summary: Manda un shareRequest a didi-server para ser guardado
  *     parameters:
  *       - in: header
  *         name: token
@@ -42,9 +42,10 @@ router.post(
       validate: [Constants.USER_TYPES.Write_ShareRequest],
       isHead: true,
     },
+    { name: 'name', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    { name: 'claims', validate: [Constants.VALIDATION_TYPES.IS_ARRAY] },
   ]),
   Validator.checkValidationResult,
-  Validator.validateFile,
   shareRequest.create,
 );
 

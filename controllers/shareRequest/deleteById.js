@@ -9,7 +9,7 @@ const deleteById = async (req, res) => {
 
     return ResponseHandler.sendRes(res, deletedShareReq);
   } catch (err) {
-    return ResponseHandler.sendErr(res, err);
+    return ResponseHandler.sendErrWithStatus(res, err);
   }
 };
 

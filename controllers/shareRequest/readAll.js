@@ -7,7 +7,7 @@ const readAll = async (req, res) => {
 
     return ResponseHandler.sendRes(res, ShareRequestsList);
   } catch (err) {
-    return ResponseHandler.sendErr(res, err);
+    return ResponseHandler.sendErrWithStatus(res, err);
   }
 };
 

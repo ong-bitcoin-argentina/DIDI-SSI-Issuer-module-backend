@@ -308,4 +308,36 @@ router.delete(
   register.removeByDid,
 );
 
+/**
+ * @openapi
+ *   /register/shareRequests/{did}:
+ *   get:
+ *     summary: Obtener la lista de todas las shareRequests de un emisor
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401:
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get(
+  '/shareRequests/:did',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.readShareRequestsByDid,
+);
+
 module.exports = router;
