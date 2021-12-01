@@ -5,7 +5,7 @@ const deleteById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedShareReq = ShareRequestService.delete(id);
+    const deletedShareReq = ShareRequestService.remove(id);
 
     return ResponseHandler.sendRes(res, deletedShareReq);
   } catch (err) {

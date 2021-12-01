@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 const mongoose = require('mongoose');
 const ClaimsData = require('./dataTypes/ClaimsData');
@@ -22,14 +23,14 @@ module.exports = ShareRequest;
 
 ShareRequest.generate = async function generate(name, claims) {
   let shareRequest = new ShareRequest();
-
+  shareRequest.claims = { verifiable: {} };
   const claimsEntries = claims.entries();
 
   try {
-    claimsEntries.forEach((key, value) => {
+    for (const [key, value] of claimsEntries) {
       if (!CERT_CATEGORIES.includes(key)) throw Messages.SHARE_REQ.ERR.CERT_TYPES;
       shareRequest.claims.verifiable[key] = value;
-    });
+    }
 
     shareRequest.name = name;
     shareRequest = await shareRequest.save();

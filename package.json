@@ -4,7 +4,7 @@
 	"license": "SEE LICENSE IN LICENSE",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest",
+		"test": "jest --runInBand",
 		"lint": "eslint --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
 		"lint:fix": "eslint --fix --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
 		"start": "nodemon server.js"

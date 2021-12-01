@@ -32,7 +32,7 @@ module.exports.getById = async (id) => {
   }
 };
 
-module.exports.delete = async (id) => {
+module.exports.remove = async (id) => {
   if (!id) throw missingId;
   try {
     return ShareRequest.remove(id);
