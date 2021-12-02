@@ -310,6 +310,64 @@ router.delete(
 
 /**
  * @openapi
+ *   register/shareRequest/{did}:
+ *   post:
+ *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: did
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     requestBody:
+ *       required:
+ *         - name
+ *         - callback
+ *         - claims
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               callback:
+ *                 type: string
+ *               claims:
+ *                 type: array
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401:
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.post(
+  '/shareRequests/:did',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+    { name: 'name', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    { name: 'callback', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    { name: 'claims', validate: [Constants.VALIDATION_TYPES.IS_ARRAY] },
+  ]),
+  Validator.checkValidationResult,
+  register.createShareRequestsByDid,
+);
+
+module.exports = router;
+
+/**
+ * @openapi
  *   /register/shareRequests/{did}:
  *   get:
  *     summary: Obtener la lista de todas las shareRequests de un emisor
@@ -319,6 +377,11 @@ router.delete(
  *         schema:
  *           type: string
  *         required: true
+ *       - name: did
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro

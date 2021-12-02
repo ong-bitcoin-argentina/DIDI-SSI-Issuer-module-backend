@@ -24,6 +24,7 @@ module.exports = {
       },
       BLOCKCHAIN: { code: 'NOT_EXIST_BLOCKCHAIN', message: 'No existe la blockchain elegida.' },
       GET: { code: 'REGISTER_GET', message: 'El registro no pudo ser obtenido.' },
+      SEND_SHARE_REQUEST: { code: 'REGISTER_GET', message: 'Error al enviar los pedidos de certificados de este emisor.' },
       GET_SHARE_REQUEST: { code: 'REGISTER_GET', message: 'No se pueden obtener los pedidos de certificados de este emisor.' },
       DID_EXISTS: { code: 'DID_EXISTS', message: 'Ya existe un registro con ese did.' },
       STATUS: { code: 'STATUS', message: 'El status no existe' },

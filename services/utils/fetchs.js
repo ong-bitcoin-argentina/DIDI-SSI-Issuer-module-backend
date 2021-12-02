@@ -20,6 +20,25 @@ const defaultFetch = async function defaultFetch(url, method, body) {
   }
 };
 
+const fetchWithAuth = async function fetchWithAuth(url, method, body, authToken) {
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      Authorization: authToken,
+      body: JSON.stringify(body),
+    });
+
+    const jsonResp = await response.json();
+    if (jsonResp.status === 'error') throw jsonResp;
+
+    return jsonResp.data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
 const sendRevokeToDidi = async function sendRevokeToDidi(did, token) {
   return defaultFetch(`${Constants.DIDI_API}/issuer`, 'DELETE', {
     token,
@@ -53,24 +72,14 @@ const sendDidToDidi = async function sendDidToDidi(did, name, token, description
   });
 };
 
+const sendShareRequestToDidi = async function sendShareRequestToDidi(did, jwt, token) {
+  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}/shareRequest`, 'POST', {
+    jwt,
+  }, token);
+};
+
 const getShareRequestsFromDidi = async function getShareRequestsFromDidi(token) {
-  try {
-    const response = await fetch(`${Constants.DIDI_API}/shareRequest/list`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${token}`,
-      },
-    });
-
-    const jsonResp = await response.json();
-    if (jsonResp.status === 'error') throw jsonResp;
-
-    return jsonResp.data;
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
+  return fetchWithAuth(`${Constants.DIDI_API}/shareRequest/list`, 'GET', undefined, token);
 };
 
 module.exports = {
@@ -78,5 +87,6 @@ module.exports = {
   sendRefreshToDidi,
   sendEditDataToDidi,
   sendDidToDidi,
+  sendShareRequestToDidi,
   getShareRequestsFromDidi,
 };

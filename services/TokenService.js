@@ -2,13 +2,14 @@
 const jwt = require('jsonwebtoken');
 const Constants = require('../constants/Constants');
 const Messages = require('../constants/Messages');
-const Register = require('../models/Register');
+const { getByDID } = require('../models/Register');
 const { createJWT } = require('./BlockchainService');
 const {
   missingUserId,
   missingToken,
   missingDid,
 } = require('../constants/serviceErrors');
+const { DIDI_SERVER_DID } = require('../constants/Constants');
 
 const now = function now() {
   return Math.floor(Date.now() / 1000);
@@ -40,13 +41,13 @@ module.exports.getTokenData = function getTokenData(token) {
 * Crea un token de autorizacion en didi-server, dado un emisor
 */
 module.exports.createIssuerAuthToken = async (did) => {
-  if (did) throw missingDid;
+  if (!did) throw missingDid;
   try {
-    const issuer = await Register.getByDid(did);
+    const issuer = await getByDID(did);
     if (!issuer) throw Messages.REGISTER.ERR.NOT_EXIST;
 
     const payload = { auth: 'Token de autorizacion en didi server' };
-    const token = await createJWT(did, issuer.privateKey, payload);
+    const token = await createJWT(did, issuer.private_key, payload, undefined, DIDI_SERVER_DID);
     return token;
   } catch (error) {
     // eslint-disable-next-line no-console

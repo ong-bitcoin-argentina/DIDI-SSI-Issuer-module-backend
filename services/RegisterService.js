@@ -4,7 +4,6 @@ const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
 const Image = require('../models/Image');
 const { createIssuerAuthToken } = require('./TokenService');
-const { getShareRequestsFromDidi } = require('./utils/fetchs');
 const Constants = require('../constants/Constants');
 const { BLOCKCHAIN_MANAGER_CODES } = require('../constants/Constants');
 const {
@@ -12,12 +11,15 @@ const {
   sendRefreshToDidi,
   sendEditDataToDidi,
   sendDidToDidi,
+  getShareRequestsFromDidi,
+  sendShareRequestToDidi,
 } = require('./utils/fetchs');
 
 const {
   INVALID_STATUS,
   GET,
   GET_SHARE_REQUEST,
+  SEND_SHARE_REQUEST,
   EDIT,
   CREATE,
   DID_EXISTS,
@@ -38,6 +40,7 @@ const {
   missingKey,
   missingFilter,
   missingDescription,
+  missingJwt,
 } = require('../constants/serviceErrors');
 
 /*
@@ -113,6 +116,19 @@ module.exports.getAll = async function getAll(filter) {
   } catch (err) {
     console.log(err);
     throw GET;
+  }
+};
+
+module.exports.sendShareReqToDidi = async function sendShareReqToDidi(did, jwt) {
+  if (!did) throw missingDid;
+  if (!jwt) throw missingJwt;
+  try {
+    const authToken = await createIssuerAuthToken(did);
+
+    return sendShareRequestToDidi(did, jwt, authToken);
+  } catch (err) {
+    console.log(err);
+    throw SEND_SHARE_REQUEST;
   }
 };
 

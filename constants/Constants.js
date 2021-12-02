@@ -40,10 +40,11 @@ const { MONGO_URI } = process.env;
 assert.ok(MONGO_URI, 'No esta definida la varibale MONGO_URI');
 
 // ETHR
-const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = process.env;
+const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY, DIDI_SERVER_DID } = process.env;
 
 assert.ok(ISSUER_SERVER_DID, 'No esta definida la varibale ISSUER_SERVER_DID');
 assert.ok(ISSUER_SERVER_PRIVATE_KEY, 'No esta definida la varibale ISSUER_SERVER_PRIVATE_KEY');
+assert.ok(DIDI_SERVER_DID, 'No esta definida la varibale DIDI_SERVER_DID');
 
 // Application insigths
 const DISABLE_TELEMETRY_CLIENT = process.env.DISABLE_TELEMETRY_CLIENT === 'true';
@@ -356,6 +357,7 @@ module.exports = {
 
   ISSUER_SERVER_DID,
   ISSUER_SERVER_PRIVATE_KEY,
+  DIDI_SERVER_DID,
   NAME,
   ISSUER_API_URL,
   MONGO_URL: MONGO_URI,

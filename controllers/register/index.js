@@ -5,6 +5,7 @@ const { updateByDid } = require('./updateByDid');
 const { retryByDid } = require('./retryByDid');
 const { refreshByDid } = require('./refreshByDid');
 const { removeByDid } = require('./removeByDid');
+const { createShareRequestsByDid } = require('./createShareRequestsByDid');
 const { readShareRequestsByDid } = require('./readShareRequestsByDid');
 
 module.exports = {
@@ -15,5 +16,6 @@ module.exports = {
   retryByDid,
   refreshByDid,
   removeByDid,
+  createShareRequestsByDid,
   readShareRequestsByDid,
 };
