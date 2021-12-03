@@ -46,9 +46,11 @@ module.exports.createIssuerAuthToken = async (did) => {
     const issuer = await getByDID(did);
     if (!issuer) throw Messages.REGISTER.ERR.NOT_EXIST;
 
+    // eslint-disable-next-line no-bitwise
+    const exp = ((new Date().getTime() + 600000) / 1000) | 0;
     const payload = { auth: 'Token de autorizacion en didi server' };
-    const token = await createJWT(did, issuer.private_key, payload, undefined, DIDI_SERVER_DID);
-    return token;
+
+    return createJWT(issuer.did, issuer.private_key, payload, exp, `did:ethr:${DIDI_SERVER_DID}`);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error);
