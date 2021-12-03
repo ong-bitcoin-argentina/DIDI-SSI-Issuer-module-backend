@@ -2,30 +2,14 @@
 const fetch = require('node-fetch');
 const Constants = require('../../constants/Constants');
 
-const defaultFetch = async function defaultFetch(url, method, body) {
+const defaultFetch = async function defaultFetch(url, method, body, authToken) {
   try {
     const response = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-
-    const jsonResp = await response.json();
-    if (jsonResp.status === 'error') throw jsonResp;
-
-    return jsonResp.data;
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
-};
-
-const fetchWithAuth = async function fetchWithAuth(url, method, body, authToken) {
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      Authorization: authToken,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authToken || null,
+      },
       body: JSON.stringify(body),
     });
 
@@ -72,14 +56,14 @@ const sendDidToDidi = async function sendDidToDidi(did, name, token, description
   });
 };
 
-const sendShareRequestToDidi = async function sendShareRequestToDidi(did, jwt, token) {
+const sendShareRequestToDidi = async function sendShareRequestToDidi(did, jwt, authToken) {
   return defaultFetch(`${Constants.DIDI_API}/issuer/${did}/shareRequest`, 'POST', {
     jwt,
-  }, token);
+  }, authToken);
 };
 
-const getShareRequestsFromDidi = async function getShareRequestsFromDidi(token) {
-  return fetchWithAuth(`${Constants.DIDI_API}/shareRequest/list`, 'GET', undefined, token);
+const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authToken) {
+  return defaultFetch(`${Constants.DIDI_API}/shareRequest/list`, 'GET', undefined, authToken);
 };
 
 module.exports = {
