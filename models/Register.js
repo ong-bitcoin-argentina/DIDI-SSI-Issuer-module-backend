@@ -139,3 +139,11 @@ Register.getCredentials = async function getCredentials(_id) {
   const key = await Encryption.decript(private_key);
   return { did, key };
 };
+
+Register.existsIssuer = async function existsIssuer(did) {
+  const register = await Register.findOne({ did });
+
+  if (!register) return false;
+
+  return true;
+};
