@@ -69,7 +69,6 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
   if (!description) throw missingDescription;
   try {
     // const blockchain = did.split(':')[2];
-
     // Verifico si esta bien creado el did y la key
     await validateDidAndKey(did, key);
 
@@ -77,7 +76,7 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
     // if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
 
     // Verifico que el did no exista
-    const byDIDExist = await Register.getByDID(did);
+    const byDIDExist = await Register.findOne({ did });
     if (byDIDExist) throw DID_EXISTS;
 
     /* Verifico que no exista el nombre en una misma blockchain
