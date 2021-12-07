@@ -403,4 +403,41 @@ router.get(
   register.readShareRequestsByDid,
 );
 
+/**
+ * @openapi
+ *   /register/shareRequests/{did}/{id}:
+ *   get:
+ *     summary: Obtiene un ShareRequest de didi-server segun un ID
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401:
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get(
+  '/shareRequests/:did/:id',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Admin],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  register.readShareRequestById,
+);
+
 module.exports = router;

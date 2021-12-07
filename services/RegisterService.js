@@ -13,6 +13,7 @@ const {
   sendDidToDidi,
   getShareRequestsFromDidi,
   sendShareRequestToDidi,
+  getShareRequestFromId,
 } = require('./utils/fetchs');
 
 const {
@@ -41,6 +42,7 @@ const {
   missingFilter,
   missingDescription,
   missingJwt,
+  missingId,
 } = require('../constants/serviceErrors');
 
 /*
@@ -128,6 +130,19 @@ module.exports.sendShareReqToDidi = async function sendShareReqToDidi(did, jwt) 
   } catch (err) {
     console.log(err);
     throw SEND_SHARE_REQUEST;
+  }
+};
+
+module.exports.getShareRequestById = async function getShareRequestById(id, did) {
+  if (!id) throw missingId;
+  if (!did) throw missingDid;
+  try {
+    const authToken = await createIssuerAuthToken(did);
+
+    return await getShareRequestFromId(id, authToken);
+  } catch (err) {
+    console.log(err);
+    throw GET_SHARE_REQUEST;
   }
 };
 

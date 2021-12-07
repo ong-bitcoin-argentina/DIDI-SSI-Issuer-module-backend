@@ -66,6 +66,10 @@ const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authTok
   return defaultFetch(`${Constants.DIDI_API}/shareRequest/list`, 'GET', undefined, authToken);
 };
 
+const getShareRequestFromId = async function getShareRequestFromId(id, authToken) {
+  return defaultFetch(`${Constants.DIDI_API}/issuer/shareRequest/${id}`, 'GET', undefined, authToken);
+};
+
 module.exports = {
   sendRevokeToDidi,
   sendRefreshToDidi,
@@ -73,4 +77,5 @@ module.exports = {
   sendDidToDidi,
   sendShareRequestToDidi,
   getShareRequestsFromDidi,
+  getShareRequestFromId,
 };
