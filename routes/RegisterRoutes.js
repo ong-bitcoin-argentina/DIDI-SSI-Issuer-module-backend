@@ -405,7 +405,7 @@ router.get(
 
 /**
  * @openapi
- *   /register/shareRequests/{did}/{id}:
+ *   /register/{did}/shareRequests/{id}:
  *   get:
  *     summary: Obtiene un ShareRequest de didi-server segun un ID
  *     parameters:
@@ -428,7 +428,7 @@ router.get(
  *         description: Error interno del servidor
  */
 router.get(
-  '/shareRequests/:did/:id',
+  '/:did/shareRequests/:id',
   Validator.validate([
     {
       name: 'token',

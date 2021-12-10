@@ -11,7 +11,7 @@ const readShareRequestById = async (req, res) => {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
-    return ResponseHandler.sendErr(res, err);
+    return ResponseHandler.sendErrWithStatus(res, err);
   }
 };
 
