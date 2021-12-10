@@ -109,7 +109,14 @@ Register.getAll = async function getAll(filter) {
 
 // obtener un registro por el did
 Register.getByDID = async function getByDID(did) {
-  return await Register.findOne({ did });
+  const register = await Register.findOne({ did });
+
+  if (!register) throw Messages.REGISTER.ERR.NOT_EXIST;
+
+  const privateKey = await Encryption.decript(register.private_key);
+  register.private_key = privateKey;
+
+  return register;
 };
 
 // obtener un registro por el id
@@ -131,4 +138,12 @@ Register.getCredentials = async function getCredentials(_id) {
 
   const key = await Encryption.decript(private_key);
   return { did, key };
+};
+
+Register.existsIssuer = async function existsIssuer(did) {
+  const register = await Register.findOne({ did });
+
+  if (!register) return false;
+
+  return true;
 };

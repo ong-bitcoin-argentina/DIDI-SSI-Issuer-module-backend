@@ -40,10 +40,11 @@ const { MONGO_URI } = process.env;
 assert.ok(MONGO_URI, 'No esta definida la varibale MONGO_URI');
 
 // ETHR
-const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = process.env;
+const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY, DIDI_SERVER_DID } = process.env;
 
 assert.ok(ISSUER_SERVER_DID, 'No esta definida la varibale ISSUER_SERVER_DID');
 assert.ok(ISSUER_SERVER_PRIVATE_KEY, 'No esta definida la varibale ISSUER_SERVER_PRIVATE_KEY');
+assert.ok(DIDI_SERVER_DID, 'No esta definida la varibale DIDI_SERVER_DID');
 
 // Application insigths
 const DISABLE_TELEMETRY_CLIENT = process.env.DISABLE_TELEMETRY_CLIENT === 'true';
@@ -113,6 +114,11 @@ const USER_TYPES = {
   Read_Delegates: 'Read_Delegates',
   Write_Delegates: 'Write_Delegates',
 
+  // Permisos para Presentaciones
+  Read_ShareRequest: 'Read_ShareRequest',
+  Write_ShareRequest: 'Write_ShareRequest',
+  Delete_ShareRequest: 'Delete_ShareRequest',
+
   // Permisos para Registro de DIDs
   Read_Dids_Registers: 'Read_Dids_Registers',
   Write_Dids_Registers: 'Write_Dids_Registers',
@@ -138,6 +144,9 @@ const {
   Delete_Certs,
   Read_Delegates,
   Write_Delegates,
+  Read_ShareRequest,
+  Write_ShareRequest,
+  Delete_ShareRequest,
   Read_Dids_Registers,
   Write_Dids_Registers,
   Read_Profiles,
@@ -164,6 +173,11 @@ const ALLOWED_ROLES = {
   // Permisos para Delegaciones
   Read_Delegates: [Read_Delegates, Write_Delegates],
   Write_Delegates: [Write_Delegates],
+
+  // Permisos para Presentaciones
+  Read_ShareRequest: [Read_ShareRequest, Write_ShareRequest],
+  Write_ShareRequest: [Write_ShareRequest],
+  Delete_ShareRequest: [Delete_ShareRequest],
 
   // Permisos para Registro de DIDs
   Read_Dids_Registers: [Read_Dids_Registers, Write_Dids_Registers, Read_Certs, Write_Certs],
@@ -210,6 +224,23 @@ const CERT_CATEGORY_MAPPING = {
   BENEFICIOS: 'benefit',
   LABORAL: 'work',
 };
+
+const CERT_CATEGORIES = [
+  'emailMain',
+  'mobilePhone',
+  'nationalId',
+  'legalAddress',
+  'realAddress',
+  'livingPlace',
+  'semillaIdTitular',
+  'semillaIdFamiliar',
+  'semillaEmprendimiento',
+  'semillaCrediticia',
+  'semillaSembTitular',
+  'semillaSembFamiliar',
+  'semillaSancorSalud',
+  'rondaFinalizada',
+];
 
 const BLOCKCHAINS = ['rsk', 'lacchain', 'bfa'];
 
@@ -287,6 +318,7 @@ module.exports = {
 
   CERT_CATEGORY_MAPPING,
   CERT_CATEGORY_TYPES,
+  CERT_CATEGORIES,
 
   ALLOWED_ROLES,
 
@@ -325,6 +357,7 @@ module.exports = {
 
   ISSUER_SERVER_DID,
   ISSUER_SERVER_PRIVATE_KEY,
+  DIDI_SERVER_DID,
   NAME,
   ISSUER_API_URL,
   MONGO_URL: MONGO_URI,

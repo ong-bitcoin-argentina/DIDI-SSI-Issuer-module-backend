@@ -3,6 +3,7 @@ const BlockchainService = require('./BlockchainService');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
 const Image = require('../models/Image');
+const { createIssuerAuthToken } = require('./TokenService');
 const Constants = require('../constants/Constants');
 const { BLOCKCHAIN_MANAGER_CODES } = require('../constants/Constants');
 const {
@@ -10,11 +11,16 @@ const {
   sendRefreshToDidi,
   sendEditDataToDidi,
   sendDidToDidi,
+  getShareRequestsFromDidi,
+  sendShareRequestToDidi,
+  getShareRequestFromId,
 } = require('./utils/fetchs');
 
 const {
   INVALID_STATUS,
   GET,
+  GET_SHARE_REQUEST,
+  SEND_SHARE_REQUEST,
   EDIT,
   CREATE,
   DID_EXISTS,
@@ -35,6 +41,8 @@ const {
   missingKey,
   missingFilter,
   missingDescription,
+  missingJwt,
+  missingId,
 } = require('../constants/serviceErrors');
 
 /*
@@ -63,7 +71,6 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
   if (!description) throw missingDescription;
   try {
     // const blockchain = did.split(':')[2];
-
     // Verifico si esta bien creado el did y la key
     await validateDidAndKey(did, key);
 
@@ -71,7 +78,7 @@ module.exports.newRegister = async function newRegister(did, key, name, token, d
     // if (!Constants.BLOCKCHAINS.includes(blockchain)) throw BLOCKCHAIN;
 
     // Verifico que el did no exista
-    const byDIDExist = await Register.getByDID(did);
+    const byDIDExist = await Register.existsIssuer(did);
     if (byDIDExist) throw DID_EXISTS;
 
     /* Verifico que no exista el nombre en una misma blockchain
@@ -110,6 +117,44 @@ module.exports.getAll = async function getAll(filter) {
   } catch (err) {
     console.log(err);
     throw GET;
+  }
+};
+
+module.exports.sendShareReqToDidi = async function sendShareReqToDidi(did, jwt) {
+  if (!did) throw missingDid;
+  if (!jwt) throw missingJwt;
+  try {
+    const authToken = await createIssuerAuthToken(did);
+
+    return sendShareRequestToDidi(did, jwt, authToken);
+  } catch (err) {
+    console.log(err);
+    throw SEND_SHARE_REQUEST;
+  }
+};
+
+module.exports.getShareRequestById = async function getShareRequestById(id, did) {
+  if (!id) throw missingId;
+  if (!did) throw missingDid;
+  try {
+    const authToken = await createIssuerAuthToken(did);
+
+    return await getShareRequestFromId(id, authToken);
+  } catch (err) {
+    console.log(err);
+    throw GET_SHARE_REQUEST;
+  }
+};
+
+module.exports.getShareRequestsByDid = async function getShareRequestsByDid(did) {
+  if (!did) throw missingDid;
+  try {
+    const authToken = await createIssuerAuthToken(did);
+
+    return await getShareRequestsFromDidi(authToken);
+  } catch (err) {
+    console.log(err);
+    throw GET_SHARE_REQUEST;
   }
 };
 

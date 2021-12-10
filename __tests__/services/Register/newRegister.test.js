@@ -10,16 +10,21 @@ const { data, errors, successResp } = require('./constants');
 
 describe('services/Register/newRegister.test.js', () => {
   const {
-    did, name, description, token, key, file, secondDidKey, secondDid, secondName,
+    did,
+    name,
+    description,
+    token,
+    key,
+    file,
+    secondDidKey,
+    secondDid,
+    secondName,
+    thirdDid,
+    thirdDidKey,
   } = data;
   beforeAll(async () => {
     await mongoose
-      .connect(MONGO_URL, {
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      });
+      .connect(MONGO_URL);
   });
   afterAll(async () => {
     await mongoose.connection.db.dropCollection('registers');
@@ -88,18 +93,6 @@ describe('services/Register/newRegister.test.js', () => {
     }
   });
 
-  test.skip('Expect newRegister to throw on existing name', async () => {
-    fetch.mockReturnValue(
-      Promise.resolve(successResp),
-    );
-    try {
-      await newRegister(secondDid, secondDidKey, name, token, description);
-    } catch (e) {
-      expect(e.code).toMatch(errors.name.code);
-      expect(e.message).toMatch(errors.name.message);
-    }
-  });
-
   test('Expect newRegister to success with image', async () => {
     fetch.mockReturnValue(
       Promise.resolve(successResp),
@@ -109,5 +102,17 @@ describe('services/Register/newRegister.test.js', () => {
     );
     expect(response.status).toBe('Creando');
     expect(response.did).toBe(secondDid);
+  });
+
+  test('Expect newRegister to throw on existing name', async () => {
+    fetch.mockReturnValue(
+      Promise.resolve(successResp),
+    );
+    try {
+      await newRegister(thirdDid, thirdDidKey, name, token, description);
+    } catch (e) {
+      expect(e.code).toMatch(errors.name.code);
+      expect(e.message).toMatch(errors.name.message);
+    }
   });
 });

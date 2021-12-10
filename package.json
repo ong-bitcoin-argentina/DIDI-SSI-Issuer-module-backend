@@ -4,7 +4,7 @@
 	"license": "SEE LICENSE IN LICENSE",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest",
+		"test": "jest --runInBand",
 		"lint": "eslint --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
 		"lint:fix": "eslint --fix --ext .js __tests__/ constants/ controllers/ models/ policies/ services/ routes/",
 		"start": "nodemon server.js"
@@ -18,7 +18,7 @@
 		"express"
 	],
 	"dependencies": {
-		"@proyecto-didi/didi-blockchain-manager": "1.2.0",
+		"@proyecto-didi/didi-blockchain-manager": "^2.0.2",
 		"@proyecto-didi/didi-ssi-logger": "0.0.7",
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
@@ -36,7 +36,7 @@
 		"jsonwebtoken": "8.5.1",
 		"lodash.pick": "4.4.0",
 		"mongo-sanitize": "1.1.0",
-		"mongoose": "5.9.2",
+		"mongoose": "^6.0.13",
 		"multer": "^1.4.3",
 		"node-fetch": "2.6.1",
 		"node-pre-gyp": "0.14.0",

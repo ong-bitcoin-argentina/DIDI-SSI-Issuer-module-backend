@@ -83,7 +83,7 @@ module.exports.validDelegate = async function validDelegate(registerId, otherDid
       did,
     } = await Register.getCredentials(registerId);
 
-    return await blockchainManager.validateDelegate(did, otherDid);
+    return await blockchainManager.validDelegate(did, otherDid);
   } catch (err) {
     console.log(err);
     throw Messages.DELEGATE.ERR.GET_DELEGATE;
@@ -101,7 +101,7 @@ module.exports.createVerifiableCredential = function createCertificate(
   if (!subjectPayload) throw missingPayload;
   if (!subjectDid) throw missingDid;
   try {
-    return blockchainManager.createCertificate(
+    return blockchainManager.createCredential(
       subjectDid, subjectPayload, expirationDate, issuerDid, issuerPkey,
     );
   } catch (err) {
@@ -137,7 +137,7 @@ module.exports.decodeJWT = function decodeJWT(jwt) {
 module.exports.verifyCertificate = function verifyCertificate(jwt) {
   if (!jwt) throw missingJwt;
   try {
-    return blockchainManager.verifyCertificate(jwt);
+    return blockchainManager.verifyCredential(jwt);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);

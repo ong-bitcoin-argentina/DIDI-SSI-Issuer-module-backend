@@ -11,12 +11,7 @@ describe('models/Register/generate.test.js', () => {
   let newRegister;
   beforeAll(async () => {
     await mongoose
-      .connect(MONGO_URL, {
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      });
+      .connect(MONGO_URL);
     newRegister = await Register.generate(did, key, name, description, imageId);
   });
   afterAll(async () => {
