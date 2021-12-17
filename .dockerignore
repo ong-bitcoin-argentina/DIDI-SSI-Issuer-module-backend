@@ -1,6 +1,12 @@
 node_modules
+coverage
+docker-compose
 npm-debug.log
 test
 .vscode
 .github
 .prettierrc
+.eslint*
+.travis.yml
+*.enc
+.env*
