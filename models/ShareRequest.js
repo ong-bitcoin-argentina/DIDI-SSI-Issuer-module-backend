@@ -16,6 +16,10 @@ const ShareRequestSchema = mongoose.Schema({
       of: ClaimsData,
     },
   },
+  createdOn: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 const ShareRequest = mongoose.model('ShareRequest', ShareRequestSchema);
