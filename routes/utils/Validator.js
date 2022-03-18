@@ -264,7 +264,7 @@ const _doValidate = function _doValidate(param, isHead) {
       for (const elem of templateDataSection) {
         if (elem.required && allNames.indexOf(elem.name) < 0) {
           // el campo esta en el template y es requerido, pero no esta
-          return Promise.reject(Messages.VALIDATION.MISSING_ELEMENT(elem.name));
+          return Promise.reject(Messages.VALIDATION.CERT_DATA.MISSING_ELEMENT(elem.name));
         }
       }
 
