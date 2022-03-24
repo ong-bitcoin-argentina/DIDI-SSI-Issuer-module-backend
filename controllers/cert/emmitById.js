@@ -189,7 +189,7 @@ const emmitById = async (req, res) => {
     console.log(err);
     if (err.message && cert) {
       const { data } = cert;
-      const newMessage = `(nombre: ${data.participant[0][1].value}, certificado: ${data.cert[0].value}): ${err.message}`;
+      const newMessage = `Certificado: ${data.cert[0].value} - Error: ${err.message}`;
       return ResponseHandler.sendErr(res, { ...err, message: newMessage });
     }
     return ResponseHandler.sendErr(res, err);
