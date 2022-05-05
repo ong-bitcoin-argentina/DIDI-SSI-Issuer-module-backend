@@ -8,6 +8,8 @@ const shareRequest = require('../controllers/shareRequest/index');
  *   /shareRequest:
  *   post:
  *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -54,6 +56,8 @@ router.post(
  *   /shareRequest/all:
  *   get:
  *     summary: Obtiene una lista con la informacion de los shareRequest
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -86,6 +90,8 @@ router.get(
  *   /shareRequest/{id}:
  *   get:
  *     summary: Devuelve un shareRequest dado un id.
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - name: id
  *         in: path
@@ -110,6 +116,8 @@ router.get(
  *   /shareRequest/{id}:
  *   delete:
  *     summary: Elimina un shareRequest segun su id
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token

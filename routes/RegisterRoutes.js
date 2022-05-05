@@ -310,9 +310,11 @@ router.delete(
 
 /**
  * @openapi
- *   register/shareRequest/{did}:
+ *   /register/shareRequests/{did}:
  *   post:
  *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -371,6 +373,8 @@ module.exports = router;
  *   /register/shareRequests/{did}:
  *   get:
  *     summary: Obtener la lista de todas las shareRequests de un emisor
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -408,6 +412,8 @@ router.get(
  *   /register/{did}/shareRequests/{id}:
  *   get:
  *     summary: Obtiene un ShareRequest de didi-server segun un ID
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
