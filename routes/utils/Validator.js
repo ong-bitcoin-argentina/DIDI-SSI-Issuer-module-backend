@@ -8,10 +8,13 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
+const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
+const { validateSchema: validateBodySchema } = require('@proyecto-didi/vc-validator/dist/validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
 
+const BlockchainService = require('../../services/BlockchainService');
 const TemplateService = require('../../services/TemplateService');
 const TokenService = require('../../services/TokenService');
 const UserService = require('../../services/UserService');
@@ -156,7 +159,7 @@ const _doValidate = function _doValidate(param, isHead) {
             if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 
             // si es de tipo checkbox, tiene opciones
-            const checkboxMissingOptions = !dataElement.options && dataElement.type === Constants.CERT_FIELD_TYPES.Checkbox;
+            const checkboxMissingOptions =							!dataElement.options && dataElement.type === Constants.CERT_FIELD_TYPES.Checkbox;
             if (checkboxMissingOptions) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
           }
         }
@@ -185,7 +188,7 @@ const _doValidate = function _doValidate(param, isHead) {
   // valida que los valores se correspondan al tipo
   const validateValueMatchesType = async function validateValueMatchesType(type, value, err) {
     const date = new Date(value);
-    const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
+    const regex =			/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
     switch (type) {
       case Constants.CERT_FIELD_TYPES.Boolean:
         if (value !== 'true' && value !== 'false') return Promise.reject(err);
@@ -498,4 +501,46 @@ module.exports.validateFile = function validateFile(req, res, next) {
     }
   }
   return next();
+};
+
+module.exports.validateSchema = async function validateSchema(req, res, next) {
+  try {
+    const { did } = req.params;
+    const { claims } = req.body;
+    const claimsMap = new Map(claims);
+    // valores mock de 'type' y 'iat' para validar el schema correctamente
+    const mockIat = 1516239022;
+    const mockAud = '0xaud';
+
+    const validation = validateBodySchema(shareReqSchema, {
+      ...req.body,
+      claims: { verifiable: claimsMap },
+      type: 'shareReq',
+      iat: mockIat,
+      aud: mockAud,
+      iss: did,
+    });
+    if (!validation.status && validation.errors.length) {
+      return ResponseHandler.sendErrWithStatus(
+        res,
+        Messages.SHARE_REQ.ERR.VALIDATION_ERROR(validation.errors.map((e) => e.message)),
+        400,
+      );
+    }
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 400);
+  }
+};
+
+module.exports.validateIssuer = async function validateIssuer(req, res, next) {
+  try {
+    const { did } = req.params;
+    if (!did) return ResponseHandler.sendErr(Messages.SHARE_REQ.ERR.DID_DOES_NOT_EXIST);
+    const isValidDelegate = await BlockchainService.validDelegateOnDidi(did);
+    if (!isValidDelegate) return ResponseHandler.sendErr(res, Messages.DELEGATE.ERR.NOT_EXIST);
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 401);
+  }
 };

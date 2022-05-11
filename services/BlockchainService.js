@@ -1,7 +1,5 @@
 /* eslint-disable no-console */
-const {
-  BlockchainManager,
-} = require('@proyecto-didi/didi-blockchain-manager');
+const { BlockchainManager } = require('@proyecto-didi/didi-blockchain-manager');
 const Constants = require('../constants/Constants');
 const Messages = require('../constants/Messages');
 const Register = require('../models/Register');
@@ -31,10 +29,7 @@ module.exports.addDelegate = async function addDelegate(registerId, otherDID) {
   if (!registerId) throw missingRegisterId;
   if (!otherDID) throw missingOtherDID;
   try {
-    const {
-      did,
-      key: privateKey,
-    } = await Register.getCredentials(registerId);
+    const { did, key: privateKey } = await Register.getCredentials(registerId);
     const credentials = {
       did,
       privateKey,
@@ -54,10 +49,7 @@ module.exports.removeDelegate = async function removeDelegate(otherDID) {
   if (!otherDID) throw missingOtherDID;
   try {
     const {
-      register: {
-        did,
-        private_key: privateKey,
-      },
+      register: { did, private_key: privateKey },
     } = await Delegate.getByDid(otherDID);
 
     const credentials = {
@@ -79,11 +71,19 @@ module.exports.validDelegate = async function validDelegate(registerId, otherDid
   if (!registerId) throw missingRegisterId;
   if (!otherDid) throw missingOtherDID;
   try {
-    const {
-      did,
-    } = await Register.getCredentials(registerId);
+    const { did } = await Register.getCredentials(registerId);
 
     return await blockchainManager.validDelegate(did, otherDid);
+  } catch (err) {
+    console.log(err);
+    throw Messages.DELEGATE.ERR.GET_DELEGATE;
+  }
+};
+
+module.exports.validDelegateOnDidi = async function validDelegateOnDidi(did) {
+  if (!did) throw missingDid;
+  try {
+    return await blockchainManager.validDelegate(Constants.DIDI_SERVER_DID, did);
   } catch (err) {
     console.log(err);
     throw Messages.DELEGATE.ERR.GET_DELEGATE;
@@ -94,16 +94,18 @@ module.exports.validDelegate = async function validDelegate(registerId, otherDid
  * Cenera un certificado asociando la informacion recibida
  */
 module.exports.createVerifiableCredential = function createCertificate(
-  subjectDid, subjectPayload, expirationDate, issuerDid, issuerPkey,
+  subjectDid,
+  subjectPayload,
+  expirationDate,
+  issuerDid,
+  issuerPkey,
 ) {
   if (!issuerDid) throw missingIssuerDid;
   if (!issuerPkey) throw missingPrivateKey;
   if (!subjectPayload) throw missingPayload;
   if (!subjectDid) throw missingDid;
   try {
-    return blockchainManager.createCredential(
-      subjectDid, subjectPayload, expirationDate, issuerDid, issuerPkey,
-    );
+    return blockchainManager.createCredential(subjectDid, subjectPayload, expirationDate, issuerDid, issuerPkey);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
@@ -114,9 +116,7 @@ module.exports.createVerifiableCredential = function createCertificate(
 /**
  * Crea un jwt a partir del payload con la informacion a codificar
  */
-module.exports.createJWT = function createJWT(
-  issuerDID, privateKey, payload, expiration, audienceDID,
-) {
+module.exports.createJWT = function createJWT(issuerDID, privateKey, payload, expiration, audienceDID) {
   if (!issuerDID) throw missingIssuerDid;
   if (!privateKey) throw missingPrivateKey;
   if (!payload) throw missingPayload;
