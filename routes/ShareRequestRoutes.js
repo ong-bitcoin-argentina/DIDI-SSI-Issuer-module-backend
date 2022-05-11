@@ -7,7 +7,7 @@ const shareRequest = require('../controllers/shareRequest/index');
  * @openapi
  *   /shareRequest:
  *   post:
- *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     summary: Registra un nuevo Share Request
  *     tags:
  *       - shareRequests
  *     parameters:
@@ -48,6 +48,8 @@ router.post(
     { name: 'claims', validate: [Constants.VALIDATION_TYPES.IS_ARRAY] },
   ]),
   Validator.checkValidationResult,
+  Validator.validateIssuer,
+  Validator.validateSchema,
   shareRequest.create,
 );
 
@@ -106,10 +108,7 @@ router.get(
  *       500:
  *         description: Error interno del servidor
  */
-router.get(
-  '/:id',
-  shareRequest.readById,
-);
+router.get('/:id', shareRequest.readById);
 
 /**
  * @openapi

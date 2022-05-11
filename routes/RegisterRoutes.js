@@ -84,7 +84,7 @@ router.post(
  *         schema:
  *           type: string
  *         required: true
-  *       - in: query
+ *       - in: query
  *         name: query
  *         schema:
  *           type: object
@@ -363,6 +363,8 @@ router.post(
     { name: 'claims', validate: [Constants.VALIDATION_TYPES.IS_ARRAY] },
   ]),
   Validator.checkValidationResult,
+  Validator.validateIssuer,
+  Validator.validateSchema,
   register.createShareRequestsByDid,
 );
 
