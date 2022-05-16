@@ -508,7 +508,7 @@ module.exports.validateSchema = async function validateSchema(req, res, next) {
     const { did } = req.params;
     const { claims } = req.body;
     const claimsMap = new Map(claims);
-    // valores mock de 'type' y 'iat' para validar el schema correctamente
+    // valores mock de 'aud' y 'iat' para validar el schema correctamente
     const mockIat = 1516239022;
     const mockAud = '0xaud';
 
