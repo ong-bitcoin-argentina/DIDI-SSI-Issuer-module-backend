@@ -137,6 +137,11 @@ module.exports = {
       CERT_TYPES: { code: 'SHARE_REQ_CERT_TYPES', message: 'Una categoria de credencial no es valida' },
     },
   },
+  SHARE_RES: {
+    ERR: {
+      NOT_EXIST: { code: 'SHARE_RES_NOT_EXISTS', message: 'No existe el pedido de certificados.' },
+    },
+  },
   TEMPLATE: {
     ERR: {
       CREATE: { code: 'TEMPLATE_CREATE', message: 'El modelo de certificado no pudo ser creado.' },
