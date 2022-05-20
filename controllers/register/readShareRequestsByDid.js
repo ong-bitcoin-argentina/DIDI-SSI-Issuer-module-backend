@@ -5,8 +5,9 @@ const readShareRequestsByDid = async (req, res) => {
   try {
     const { did } = req.params;
 
-    const shareRequestList = await RegisterService.getShareRequestsByDid(did);
-
+    const shareRequestList = await RegisterService.getShareRequestsByDid(did, {
+      iss: did,
+    });
     return ResponseHandler.sendRes(res, shareRequestList);
   } catch (err) {
     // eslint-disable-next-line no-console
