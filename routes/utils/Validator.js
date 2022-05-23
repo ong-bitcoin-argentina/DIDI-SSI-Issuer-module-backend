@@ -9,15 +9,17 @@
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
 const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
-const { validateSchema: validateBodySchema } = require('@proyecto-didi/vc-validator/dist/validator');
+const { validateCredential } = require('@proyecto-didi/vc-validator/dist/validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
 
-const BlockchainService = require('../../services/BlockchainService');
 const TemplateService = require('../../services/TemplateService');
 const TokenService = require('../../services/TokenService');
 const UserService = require('../../services/UserService');
+const { createJWT, verifyJWT, validDelegateOnDidi } = require('../../services/BlockchainService');
+
+const Register = require('../../models/Register');
 
 const {
   IS_PASSWORD,
@@ -506,20 +508,21 @@ module.exports.validateFile = function validateFile(req, res, next) {
 module.exports.validateSchema = async function validateSchema(req, res, next) {
   try {
     const { did } = req.params;
-    const { claims } = req.body;
+    const { claims, callback } = req.body;
     const claimsMap = new Map(claims);
-    // valores mock de 'aud' y 'iat' para validar el schema correctamente
-    const mockIat = 1516239022;
-    const mockAud = '0xaud';
 
-    const validation = validateBodySchema(shareReqSchema, {
-      ...req.body,
-      claims: { verifiable: claimsMap },
+    const payload = {
+      callback,
       type: 'shareReq',
-      iat: mockIat,
-      aud: mockAud,
-      iss: did,
-    });
+      claims: { verifiable: claimsMap },
+    };
+    const register = await Register.getByDID(did);
+    const jwt = await createJWT(register.did, register.private_key, payload, undefined, Constants.ISSUER_SERVER_DID);
+    const verified = await verifyJWT(jwt, Constants.ISSUER_SERVER_DID);
+    if (!verified.payload) {
+      return ResponseHandler.sendErr(res, Messages.SHARE_REQ.ERR.UNSUPPORTED_DID);
+    }
+    const validation = validateCredential(shareReqSchema, jwt);
     if (!validation.status && validation.errors.length) {
       return ResponseHandler.sendErrWithStatus(
         res,
@@ -537,7 +540,7 @@ module.exports.validateIssuer = async function validateIssuer(req, res, next) {
   try {
     const { did } = req.params;
     if (!did) return ResponseHandler.sendErr(Messages.SHARE_REQ.ERR.DID_DOES_NOT_EXIST);
-    const isValidDelegate = await BlockchainService.validDelegateOnDidi(did);
+    const isValidDelegate = await validDelegateOnDidi(did);
     if (!isValidDelegate) return ResponseHandler.sendErr(res, Messages.DELEGATE.ERR.NOT_EXIST);
     return next();
   } catch (e) {

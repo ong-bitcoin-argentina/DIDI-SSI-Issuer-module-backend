@@ -148,6 +148,7 @@ module.exports = {
         code: 'VALIDATION_ERROR',
       }),
       DID_DOES_NOT_EXIST: { code: 'DID_MISSING', message: 'Falta el parametro did' },
+      UNSUPPORTED_DID: { code: 'UNSUPPORTED_DID', message: 'El formato del parametro did no esta soportado' },
     },
   },
   TEMPLATE: {
