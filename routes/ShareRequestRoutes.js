@@ -8,6 +8,7 @@ const shareRequest = require('../controllers/shareRequest/index');
  *   /shareRequest:
  *   post:
  *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     deprecated: true
  *     parameters:
  *       - in: header
  *         name: token
@@ -100,10 +101,7 @@ router.get(
  *       500:
  *         description: Error interno del servidor
  */
-router.get(
-  '/:id',
-  shareRequest.readById,
-);
+router.get('/:id', shareRequest.readById);
 
 /**
  * @openapi

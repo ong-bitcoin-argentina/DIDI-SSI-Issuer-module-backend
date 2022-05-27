@@ -4,13 +4,20 @@ const { missingId } = require('../../../constants/serviceErrors');
 const { claims, name } = require('./constants');
 const { create, getById } = require('../../../services/ShareRequestService');
 const Messages = require('../../../constants/Messages');
+const { newRegister } = require('../../../services/RegisterService');
+const { data } = require('../Register/constants');
 
 describe('services/ShareRequest/getById.test.js', () => {
+  const {
+    fifthDid, name: registerName, description, token, fifthDidKey, file,
+  } = data;
   let shareReqId;
+  let registerId;
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
-    shareReqId = await create(name, claims);
+    registerId = await newRegister(fifthDid, fifthDidKey, registerName, token, description, file);
+    shareReqId = await create(name, claims, registerId);
   });
   afterAll(async () => {
     await mongoose.connection.db.dropCollection('sharerequests');
@@ -30,6 +37,7 @@ describe('services/ShareRequest/getById.test.js', () => {
     expect(shareReq).toBeDefined();
     expect.stringContaining(shareReq.name);
     expect.objectContaining(shareReq.claims);
+    expect.objectContaining(shareReq.registerId);
   });
 
   test('Expect getById to throw on invalid unexistent id', async () => {
