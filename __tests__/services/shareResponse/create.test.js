@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ShareResponse = require('../../../models/ShareResponse');
 
 const { create } = require('../../../services/ShareResponseService');
 const { MONGO_URL } = require('../../../constants/Constants');
@@ -11,20 +12,21 @@ describe('services/ShareRequest/create.test.js', () => {
       .connect(MONGO_URL);
   });
   afterAll(async () => {
-    await mongoose.connection.db.dropCollection('shareResponse');
+    await ShareResponse.findOneAndDelete(shareRespJWT);
     await mongoose.connection.close();
   });
 
   test('Expect create to create', async () => {
     const res = await create(shareRespJWT);
-    expect(res.shareResp).toBe(shareRespJWT);
+    expect(res.jwt).toBe(shareRespJWT);
   });
 
   test('Expect create to throw missing shareResp', async () => {
     try {
-      await create(shareRespJWT);
+      await create(undefined);
     } catch (e) {
-      expect(e.code).toMatch(missingShareResp);
+      expect(e.code).toMatch(missingShareResp.code);
+      expect(e.message).toMatch(missingShareResp.message);
     }
   });
 });

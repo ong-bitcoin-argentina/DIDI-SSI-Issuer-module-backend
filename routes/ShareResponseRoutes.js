@@ -6,11 +6,9 @@ const shareResponse = require('../controllers/shareResponse');
 // ToDo:check if we have to add more parameters
 /**
  * @openapi
- *   /shareResponses/{did}:
+ *   /shareResponse/{did}:
  *   post:
  *     summary: Manda un shareResponse a didi-server para ser guardado
- *     tags:
- *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -24,16 +22,14 @@ const shareResponse = require('../controllers/shareResponse');
  *           type : string
  *     requestBody:
  *       required:
- *         - shareResp
+ *         - jwt
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
- *               req:
+ *               jwt:
  *                 type: string
- *               vc:
- *                 type: array
  *     responses:
  *       200:
  *         description: Puede devolver ok o error en algun parametro
@@ -43,14 +39,14 @@ const shareResponse = require('../controllers/shareResponse');
  *         description: Error interno del servidor
  */
 router.post(
-  '/shareResponses/:did',
+  '/:did',
   Validator.validate([
     {
       name: 'token',
       validate: [Constants.USER_TYPES.Write_ShareRequest],
       isHead: true,
     },
-    { name: 'shareResp', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
   Validator.checkValidationResult,
   shareResponse.create,

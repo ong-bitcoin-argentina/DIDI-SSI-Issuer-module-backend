@@ -3,10 +3,10 @@ const ShareResponse = require('../models/ShareResponse');
 
 const { missingShareResp, missingId } = require('../constants/serviceErrors');
 
-module.exports.create = async (shareResp) => {
-  if (!shareResp) throw missingShareResp;
+module.exports.create = async (jwt) => {
+  if (!jwt) throw missingShareResp;
   try {
-    return ShareResponse.generate(shareResp);
+    return ShareResponse.generate(jwt);
   } catch (err) {
     console.log(err);
     return Promise.reject(err);

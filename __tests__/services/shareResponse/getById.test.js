@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const ShareResponse = require('../../../models/ShareResponse');
+
 const { MONGO_URL } = require('../../../constants/Constants');
 const { missingId } = require('../../../constants/serviceErrors');
 const { shareRespJWT } = require('./constants');
@@ -13,7 +15,7 @@ describe('services/ShareRequest/getById.test.js', () => {
     shareResp = await create(shareRespJWT);
   });
   afterAll(async () => {
-    await mongoose.connection.db.dropCollection('sharerequests');
+    await ShareResponse.findOneAndDelete(shareRespJWT);
     await mongoose.connection.close();
   });
 
@@ -22,6 +24,7 @@ describe('services/ShareRequest/getById.test.js', () => {
       await getById(undefined);
     } catch (e) {
       expect(e.code).toMatch(missingId.code);
+      expect(e.message).toMatch(missingId.message);
     }
   });
 

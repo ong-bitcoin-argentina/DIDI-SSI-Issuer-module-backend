@@ -5,7 +5,7 @@ const Messages = require('../constants/Messages');
 
 // toDo:check if we have to save other properties
 const ShareResponseSchema = mongoose.Schema({
-  shareResp: {
+  jwt: {
     type: String,
     require: true,
   },
@@ -18,9 +18,9 @@ const ShareResponseSchema = mongoose.Schema({
 const ShareResponse = mongoose.model('ShareResponse', ShareResponseSchema);
 module.exports = ShareResponse;
 
-ShareResponse.generate = async function generate(shareResp) {
+ShareResponse.generate = async function generate(jwt) {
   let shareResponse = new ShareResponse();
-  shareResponse.shareResp = shareResp;
+  shareResponse.jwt = jwt;
 
   try {
     // toDo: validate vc keys

@@ -3,9 +3,9 @@ const ShareResponseService = require('../../services/ShareResponseService');
 
 const create = async (req, res) => {
   try {
-    const { shareResp } = req.body;
+    const { jwt } = req.body;
     // Guardar el modelo
-    await ShareResponseService.create(shareResp);
+    await ShareResponseService.create(jwt);
     return ResponseHandler.sendRes(res, 'OK');
   } catch (err) {
     // eslint-disable-next-line no-console
