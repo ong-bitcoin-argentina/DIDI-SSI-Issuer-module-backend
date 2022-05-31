@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Constants = require('../constants/Constants');
 const Validator = require('./utils/Validator');
 const shareRequest = require('../controllers/shareRequest/index');
+const { halfHourLimiter } = require('../policies/RateLimit');
 
 /**
  * @openapi
@@ -50,6 +51,7 @@ router.post(
   Validator.checkValidationResult,
   Validator.validateIssuer,
   Validator.validateSchema,
+  halfHourLimiter,
   shareRequest.create,
 );
 
