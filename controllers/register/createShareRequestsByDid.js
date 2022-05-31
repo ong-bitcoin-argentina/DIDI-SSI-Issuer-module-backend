@@ -18,19 +18,14 @@ const createShareRequestsByDid = async (req, res) => {
     // Obtener el emisor a asociar con el modelo y completar el payload
     const register = await Register.getByDID(did);
     const payload = {
+      name,
       callback,
       type: 'shareReq',
       claims: shareReq.claims,
     };
 
     // Finalizar creacion de modelo
-    const jwt = await createJWT(
-      register.did,
-      register.private_key,
-      payload,
-      undefined,
-      DIDI_SERVER_DID,
-    );
+    const jwt = await createJWT(register.did, register.private_key, payload, undefined, DIDI_SERVER_DID);
 
     // Enviar modelo a didi-server para asociarlo con el emisor
     await sendShareReqToDidi(did, jwt);
