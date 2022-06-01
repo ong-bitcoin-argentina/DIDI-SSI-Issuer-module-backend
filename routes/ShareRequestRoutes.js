@@ -2,12 +2,15 @@ const router = require('express').Router();
 const Constants = require('../constants/Constants');
 const Validator = require('./utils/Validator');
 const shareRequest = require('../controllers/shareRequest/index');
+const { halfHourLimiter } = require('../policies/RateLimit');
 
 /**
  * @openapi
  *   /shareRequest:
  *   post:
- *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     summary: Registra un nuevo Share Request
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -46,6 +49,9 @@ router.post(
     { name: 'claims', validate: [Constants.VALIDATION_TYPES.IS_ARRAY] },
   ]),
   Validator.checkValidationResult,
+  Validator.validateIssuer,
+  Validator.validateSchema,
+  halfHourLimiter,
   shareRequest.create,
 );
 
@@ -54,6 +60,8 @@ router.post(
  *   /shareRequest/all:
  *   get:
  *     summary: Obtiene una lista con la informacion de los shareRequest
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -86,6 +94,8 @@ router.get(
  *   /shareRequest/{id}:
  *   get:
  *     summary: Devuelve un shareRequest dado un id.
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - name: id
  *         in: path
@@ -100,16 +110,15 @@ router.get(
  *       500:
  *         description: Error interno del servidor
  */
-router.get(
-  '/:id',
-  shareRequest.readById,
-);
+router.get('/:id', shareRequest.readById);
 
 /**
  * @openapi
  *   /shareRequest/{id}:
  *   delete:
  *     summary: Elimina un shareRequest segun su id
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token

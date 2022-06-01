@@ -3,6 +3,7 @@ const router = require('express').Router();
 const register = require('../controllers/register');
 const Validator = require('./utils/Validator');
 const Constants = require('../constants/Constants');
+const { halfHourLimiter } = require('../policies/RateLimit');
 
 /**
  * @openapi
@@ -84,7 +85,7 @@ router.post(
  *         schema:
  *           type: string
  *         required: true
-  *       - in: query
+ *       - in: query
  *         name: query
  *         schema:
  *           type: object
@@ -310,9 +311,11 @@ router.delete(
 
 /**
  * @openapi
- *   register/shareRequest/{did}:
+ *   /register/shareRequests/{did}:
  *   post:
  *     summary: Manda un shareRequest a didi-server para ser guardado
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -361,6 +364,9 @@ router.post(
     { name: 'claims', validate: [Constants.VALIDATION_TYPES.IS_ARRAY] },
   ]),
   Validator.checkValidationResult,
+  Validator.validateIssuer,
+  Validator.validateSchema,
+  halfHourLimiter,
   register.createShareRequestsByDid,
 );
 
@@ -371,6 +377,8 @@ module.exports = router;
  *   /register/shareRequests/{did}:
  *   get:
  *     summary: Obtener la lista de todas las shareRequests de un emisor
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
@@ -408,6 +416,8 @@ router.get(
  *   /register/{did}/shareRequests/{id}:
  *   get:
  *     summary: Obtiene un ShareRequest de didi-server segun un ID
+ *     tags:
+ *       - shareRequests
  *     parameters:
  *       - in: header
  *         name: token
