@@ -3,7 +3,6 @@ const Constants = require('../constants/Constants');
 const Validator = require('./utils/Validator');
 const shareResponse = require('../controllers/shareResponse');
 
-// ToDo:check if we have to add more parameters
 /**
  * @openapi
  *   /shareResponse/{did}:

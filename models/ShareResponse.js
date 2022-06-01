@@ -3,7 +3,6 @@
 const mongoose = require('mongoose');
 const Messages = require('../constants/Messages');
 
-// toDo:check if we have to save other properties
 const ShareResponseSchema = mongoose.Schema({
   jwt: {
     type: String,
@@ -23,7 +22,6 @@ ShareResponse.generate = async function generate(jwt) {
   shareResponse.jwt = jwt;
 
   try {
-    // toDo: validate vc keys
     shareResponse = await shareResponse.save();
 
     return Promise.resolve(shareResponse);
