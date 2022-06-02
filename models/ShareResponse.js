@@ -6,7 +6,7 @@ const Messages = require('../constants/Messages');
 const ShareResponseSchema = mongoose.Schema({
   jwt: {
     type: String,
-    require: true,
+    required: true,
   },
   createdOn: {
     type: Date,
