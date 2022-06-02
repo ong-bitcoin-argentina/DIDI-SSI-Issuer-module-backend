@@ -8,6 +8,8 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
+const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
+const { validateCredential } = require('@proyecto-didi/vc-validator/dist/validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
@@ -15,6 +17,9 @@ const ResponseHandler = require('./ResponseHandler');
 const TemplateService = require('../../services/TemplateService');
 const TokenService = require('../../services/TokenService');
 const UserService = require('../../services/UserService');
+const { createJWT, verifyJWT, validDelegateOnDidi } = require('../../services/BlockchainService');
+
+const Register = require('../../models/Register');
 
 const {
   IS_PASSWORD,
@@ -156,7 +161,7 @@ const _doValidate = function _doValidate(param, isHead) {
             if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 
             // si es de tipo checkbox, tiene opciones
-            const checkboxMissingOptions = !dataElement.options && dataElement.type === Constants.CERT_FIELD_TYPES.Checkbox;
+            const checkboxMissingOptions =							!dataElement.options && dataElement.type === Constants.CERT_FIELD_TYPES.Checkbox;
             if (checkboxMissingOptions) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
           }
         }
@@ -185,7 +190,7 @@ const _doValidate = function _doValidate(param, isHead) {
   // valida que los valores se correspondan al tipo
   const validateValueMatchesType = async function validateValueMatchesType(type, value, err) {
     const date = new Date(value);
-    const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
+    const regex =			/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
     switch (type) {
       case Constants.CERT_FIELD_TYPES.Boolean:
         if (value !== 'true' && value !== 'false') return Promise.reject(err);
@@ -498,4 +503,47 @@ module.exports.validateFile = function validateFile(req, res, next) {
     }
   }
   return next();
+};
+
+module.exports.validateSchema = async function validateSchema(req, res, next) {
+  try {
+    const { did } = req.params;
+    const { claims, callback } = req.body;
+    const claimsMap = new Map(claims);
+
+    const payload = {
+      callback,
+      type: 'shareReq',
+      claims: { verifiable: claimsMap },
+    };
+    const register = await Register.getByDID(did);
+    const jwt = await createJWT(register.did, register.private_key, payload, undefined, Constants.ISSUER_SERVER_DID);
+    const verified = await verifyJWT(jwt, Constants.ISSUER_SERVER_DID);
+    if (!verified.payload) {
+      return ResponseHandler.sendErr(res, Messages.SHARE_REQ.ERR.UNSUPPORTED_DID);
+    }
+    const validation = validateCredential(shareReqSchema, jwt);
+    if (!validation.status && validation.errors.length) {
+      return ResponseHandler.sendErrWithStatus(
+        res,
+        Messages.SHARE_REQ.ERR.VALIDATION_ERROR(validation.errors.map((e) => e.message)),
+        400,
+      );
+    }
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 400);
+  }
+};
+
+module.exports.validateIssuer = async function validateIssuer(req, res, next) {
+  try {
+    const { did } = req.params;
+    if (!did) return ResponseHandler.sendErr(Messages.SHARE_REQ.ERR.DID_DOES_NOT_EXIST);
+    const isValidDelegate = await validDelegateOnDidi(did);
+    if (!isValidDelegate) return ResponseHandler.sendErr(res, Messages.DELEGATE.ERR.NOT_EXIST);
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 401);
+  }
 };
