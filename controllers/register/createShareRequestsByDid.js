@@ -12,11 +12,10 @@ const createShareRequestsByDid = async (req, res) => {
 
     const claimsMap = new Map(claims);
 
-    // Guardar el modelo de pedido de certificados
-    const shareReq = await ShareRequestService.create(name, claimsMap);
-
     // Obtener el emisor a asociar con el modelo y completar el payload
     const register = await Register.getByDID(did);
+    // Guardar el modelo de pedido de certificados
+    const shareReq = await ShareRequestService.create(name, claimsMap, register.id);
     const payload = {
       name,
       callback,
