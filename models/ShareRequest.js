@@ -8,7 +8,7 @@ const Messages = require('../constants/Messages');
 const ShareRequestSchema = mongoose.Schema({
   name: {
     type: String,
-    require: true,
+    required: true,
   },
   claims: {
     verifiable: {

@@ -9,7 +9,9 @@
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
 const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
-const { validateCredential } = require('@proyecto-didi/vc-validator/dist/validator');
+const {
+  validateCredential,
+} = require('@proyecto-didi/vc-validator/dist/validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
@@ -503,6 +505,29 @@ module.exports.validateFile = function validateFile(req, res, next) {
     }
   }
   return next();
+};
+
+module.exports.validateUserToken = async function validateUserToken(req, res, next) {
+  try {
+    const jwt = req.header('token');
+	// posiblemente en AIDI llegue en Authorization
+    // const jwt = req.header("Authorization");
+    // const { did } = req.params;
+	
+    // esto es para DIDI server
+    // const authorizatedApp = await AppAuthService.findByDID(did);
+    // if (!authorizatedApp) throw APP_DID_NOT_FOUND(did);
+
+	// Ejemplo de Token de AIDI
+    const tokenAidi ='eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE2NTQwOTkxMDUsInN1YiI6ImRpZDpldGhyOjB4MThhMjA4ZmRmODY3MzQ4ZGIyM2UzYmRlM2QxZTNhYjRjZjYwZjllOSIsImNsYWltIjp7Im5hbWUiOiJSb25kYSJ9LCJpc3MiOiJkaWQ6ZXRocjoweDdmYWNhZGE3NDY5ZTJkMDExNTExNmMyYTM3ZjRlODhiMTg2N2UwOWYifQ.F-oh9FPGHBA96du2VwQ5q_QZ5cH7MoUDB4FCzI6P-1XeizN2Dn_bf0DwTDoXrhE_gSs207hkeKGG5g92WQYMcQE';
+
+    const verified = await verifyJWT(tokenAidi, Constants.DIDI_SERVER_DID);
+    console.log(verified);
+    if (!verified.payload) return ResponseHandler.sendErr(res, Messages.VALIDATION.INVALID_TOKEN);
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 401);
+  }
 };
 
 module.exports.validateSchema = async function validateSchema(req, res, next) {
