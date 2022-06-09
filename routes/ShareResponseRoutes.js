@@ -7,7 +7,7 @@ const shareResponse = require('../controllers/shareResponse');
  * @openapi
  *   /shareResponse/{did}:
  *   post:
- *     summary: Manda un shareResponse a didi-server para ser guardado
+ *     summary: Recibe un shareResponse para ser guardado
  *     parameters:
  *       - in: header
  *         name: token
