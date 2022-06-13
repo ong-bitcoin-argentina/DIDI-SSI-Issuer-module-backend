@@ -146,12 +146,12 @@ module.exports.getShareRequestById = async function getShareRequestById(id, did)
   }
 };
 
-module.exports.getShareRequestsByDid = async function getShareRequestsByDid(did) {
+module.exports.getShareRequestsByDid = async function getShareRequestsByDid(did, params) {
   if (!did) throw missingDid;
   try {
     const authToken = await createIssuerAuthToken(did);
 
-    return await getShareRequestsFromDidi(authToken);
+    return await getShareRequestsFromDidi(authToken, params);
   } catch (err) {
     console.log(err);
     throw GET_SHARE_REQUEST;
@@ -183,7 +183,12 @@ module.exports.editRegister = async function editRegister(did, body, file) {
     if (!newDelegate) await sendEditDataToDidi(did, body, url);
 
     return register.edit({
-      status, name, description, imageId, blockHash, expireOn,
+      status,
+      name,
+      description,
+      imageId,
+      blockHash,
+      expireOn,
     });
   } catch (err) {
     console.log(err);
@@ -233,7 +238,10 @@ module.exports.refreshRegister = async function refreshRegister(did, token) {
 
     // Modifico el estado a Pendiente
     return register.edit({
-      status: CREATING, blockHash: '', messageError: '', expireOn: undefined,
+      status: CREATING,
+      blockHash: '',
+      messageError: '',
+      expireOn: undefined,
     });
   } catch (err) {
     console.log(err);

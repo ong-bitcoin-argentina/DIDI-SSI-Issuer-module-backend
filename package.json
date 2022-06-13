@@ -20,6 +20,7 @@
 	"dependencies": {
 		"@proyecto-didi/didi-blockchain-manager": "^2.0.2",
 		"@proyecto-didi/didi-ssi-logger": "0.0.7",
+		"@proyecto-didi/vc-validator": "0.0.3",
 		"apollo-boost": "0.4.7",
 		"apollo-cache-inmemory": "1.6.5",
 		"bcrypt": "5.0.0",
@@ -42,9 +43,9 @@
 		"node-pre-gyp": "0.14.0",
 		"node-rsa": "1.0.7",
 		"nodemon": "2.0.2",
-		"web3": "1.2.6",
 		"swagger-jsdoc": "6.0.0",
-		"swagger-ui-express": "^4.1.6"
+		"swagger-ui-express": "^4.1.6",
+		"web3": "1.2.6"
 	},
 	"devDependencies": {
 		"commitizen": "^4.2.3",

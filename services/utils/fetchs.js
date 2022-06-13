@@ -41,7 +41,9 @@ const sendRefreshToDidi = async function sendRefreshToDidi(did, token) {
 const sendEditDataToDidi = async function sendEditDataToDidi(did, body, imageUrl) {
   const { name, description } = body;
   return defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, 'PATCH', {
-    name, description, imageUrl,
+    name,
+    description,
+    imageUrl,
   });
 };
 
@@ -57,13 +59,23 @@ const sendDidToDidi = async function sendDidToDidi(did, name, token, description
 };
 
 const sendShareRequestToDidi = async function sendShareRequestToDidi(did, jwt, authToken) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}/shareRequest`, 'POST', {
-    jwt,
-  }, authToken);
+  return defaultFetch(
+    `${Constants.DIDI_API}/issuer/${did}/shareRequest`,
+    'POST',
+    {
+      jwt,
+    },
+    authToken,
+  );
 };
 
-const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authToken) {
-  return defaultFetch(`${Constants.DIDI_API}/shareRequest/list`, 'GET', undefined, authToken);
+const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authToken, params) {
+  return defaultFetch(
+    `${Constants.DIDI_API}/shareRequest/list?${new URLSearchParams(params).toString()}`,
+    'GET',
+    undefined,
+    authToken,
+  );
 };
 
 const getShareRequestFromId = async function getShareRequestFromId(id, authToken) {

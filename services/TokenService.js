@@ -4,11 +4,7 @@ const Constants = require('../constants/Constants');
 const Messages = require('../constants/Messages');
 const { getByDID } = require('../models/Register');
 const { createJWT } = require('./BlockchainService');
-const {
-  missingUserId,
-  missingToken,
-  missingDid,
-} = require('../constants/serviceErrors');
+const { missingUserId, missingToken, missingDid } = require('../constants/serviceErrors');
 const { DIDI_SERVER_DID } = require('../constants/Constants');
 
 const now = function now() {
@@ -18,10 +14,13 @@ const now = function now() {
 // genera token firmado
 module.exports.generateToken = function generateToken(userId) {
   if (!userId) throw missingUserId;
-  const token = jwt.sign({
-    userId,
-    exp: now() + 60 * 60 * 60 * 60,
-  }, Constants.ISSUER_SERVER_PRIVATE_KEY);
+  const token = jwt.sign(
+    {
+      userId,
+      exp: now() + 60 * 60 * 60 * 60,
+    },
+    Constants.ISSUER_SERVER_PRIVATE_KEY,
+  );
   return token;
 };
 
@@ -38,8 +37,8 @@ module.exports.getTokenData = function getTokenData(token) {
 };
 
 /*
-* Crea un token de autorizacion en didi-server, dado un emisor
-*/
+ * Crea un token de autorizacion en didi-server, dado un emisor
+ */
 module.exports.createIssuerAuthToken = async (did) => {
   if (!did) throw missingDid;
   try {
@@ -50,7 +49,7 @@ module.exports.createIssuerAuthToken = async (did) => {
     const exp = ((new Date().getTime() + 600000) / 1000) | 0;
     const payload = { auth: 'Token de autorizacion en didi server' };
 
-    return createJWT(issuer.did, issuer.private_key, payload, exp, `did:ethr:${DIDI_SERVER_DID}`);
+    return createJWT(issuer.did, issuer.private_key, payload, exp, DIDI_SERVER_DID);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error);
