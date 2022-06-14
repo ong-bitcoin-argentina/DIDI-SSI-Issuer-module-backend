@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+const { validateMessageRes } = require('@proyecto-didi/vc-validator/dist/validator');
 const ShareResponse = require('../models/ShareResponse');
 
 const { missingShareResp, missingId } = require('../constants/serviceErrors');
@@ -6,6 +7,8 @@ const { missingShareResp, missingId } = require('../constants/serviceErrors');
 module.exports.create = async (jwt) => {
   if (!jwt) throw missingShareResp;
   try {
+    const validJwt = validateMessageRes(jwt);
+    if (!validJwt.status) throw validJwt;
     return ShareResponse.generate(jwt);
   } catch (err) {
     console.log(err);
