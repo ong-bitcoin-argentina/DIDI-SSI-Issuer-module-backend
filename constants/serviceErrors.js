@@ -59,6 +59,10 @@ module.exports = {
     code: '#service-missingId',
     message: 'Falta el parámetro ID.',
   },
+  missingShareResp: {
+    code: '#service-missingShareResp',
+    message: 'Falta el parámetro ShareResp.',
+  },
   missingData: {
     code: '#service-missingData',
     message: 'Falta el parámetro DATA.',

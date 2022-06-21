@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { MONGO_URL } = require('../../../constants/Constants');
 const { missingId } = require('../../../constants/serviceErrors');
-const { claims, name } = require('./constants');
+const { claims, name, registerId } = require('./constants');
 const { remove, create } = require('../../../services/ShareRequestService');
 const Messages = require('../../../constants/Messages');
 
@@ -10,7 +10,7 @@ describe('services/ShareRequest/remove.test.js', () => {
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
-    shareReqId = await create(name, claims);
+    shareReqId = await create(name, claims, registerId);
   });
   afterAll(async () => {
     await mongoose.connection.db.dropCollection('sharerequests');

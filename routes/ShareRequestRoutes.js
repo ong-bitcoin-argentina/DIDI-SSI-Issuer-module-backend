@@ -9,6 +9,7 @@ const { halfHourLimiter } = require('../policies/RateLimit');
  *   /shareRequest:
  *   post:
  *     summary: Registra un nuevo Share Request
+ *     deprecated: true
  *     tags:
  *       - shareRequests
  *     parameters:

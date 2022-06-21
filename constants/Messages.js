@@ -151,6 +151,11 @@ module.exports = {
       UNSUPPORTED_DID: { code: 'UNSUPPORTED_DID', message: 'El formato del parametro did no esta soportado' },
     },
   },
+  SHARE_RES: {
+    ERR: {
+      NOT_EXIST: { code: 'SHARE_RES_NOT_EXISTS', message: 'No existe el pedido de certificados.' },
+    },
+  },
   TEMPLATE: {
     ERR: {
       CREATE: { code: 'TEMPLATE_CREATE', message: 'El modelo de certificado no pudo ser creado.' },

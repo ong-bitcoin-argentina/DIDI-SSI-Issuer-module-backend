@@ -3,14 +3,21 @@
 const mongoose = require('mongoose');
 const { create, getAll } = require('../../../services/ShareRequestService');
 const { MONGO_URL } = require('../../../constants/Constants');
+const { newRegister } = require('../../../services/RegisterService');
 const { claims, name } = require('./constants');
+const { data } = require('../Register/constants');
 
 describe('services/ShareRequest/getAll.test.js', () => {
+  const {
+    fourthDid, name: registerName, description, token, fourthDidKey, file,
+  } = data;
+  let registerId;
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
+    registerId = await newRegister(fourthDid, fourthDidKey, registerName, token, description, file);
     for (let i = 0; i < 5; i++) {
-      await create(name, claims);
+      await create(name, claims, registerId);
     }
   });
   afterAll(async () => {
