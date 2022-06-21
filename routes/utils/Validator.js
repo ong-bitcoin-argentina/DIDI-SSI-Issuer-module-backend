@@ -513,8 +513,6 @@ module.exports.validateUserToken = async function validateUserToken(req, res, ne
     const jwt = req.header('token');
     const response = await verifyUserByToken(jwt);
     if (!response) throw Messages.USER.ERR.VALIDATE;
-    console.log(response);
-    if (!response === 'verificado') throw Messages.USER.ERR.GET;
     return next();
   } catch (e) {
     ResponseHandler.sendErrWithStatus(res, e, 401);
