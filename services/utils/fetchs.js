@@ -88,7 +88,9 @@ const sendPushNotification = async function sendPushNotification(title, message,
 /**
  * Verifica si el token de usuario existe en Didi Server
  */
-const verifyUserByToken = async (token) => defaultFetch(`${Constants.DIDI_API}/user/verifyToken`, 'POST', { jwt: token });
+const verifyUserByToken = async function verifyUserByToken(token) {
+  return defaultFetch(`${Constants.DIDI_API}/user/verifyToken`, 'POST', { jwt: token });
+};
 
 module.exports = {
   sendRevokeToDidi,
