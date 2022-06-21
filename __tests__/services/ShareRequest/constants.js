@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const claimsArray = [
   ['emailMain', {
     iss: [
@@ -40,8 +42,11 @@ const invalidClaims = new Map(invalidClaimsArray);
 
 const name = 'ShareRequestName';
 
+const registerId = new mongoose.Types.ObjectId();
+
 module.exports = {
   claims,
   name,
   invalidClaims,
+  registerId,
 };

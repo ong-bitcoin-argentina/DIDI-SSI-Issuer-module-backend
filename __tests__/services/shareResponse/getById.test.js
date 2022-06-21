@@ -3,7 +3,7 @@ const ShareResponse = require('../../../models/ShareResponse');
 
 const { MONGO_URL } = require('../../../constants/Constants');
 const { missingId } = require('../../../constants/serviceErrors');
-const { shareRespJWT } = require('./constants');
+const { validShareResponse } = require('./constants');
 const { create, getById } = require('../../../services/ShareResponseService');
 const Messages = require('../../../constants/Messages');
 
@@ -12,10 +12,10 @@ describe('services/ShareRequest/getById.test.js', () => {
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
-    shareResp = await create(shareRespJWT);
+    shareResp = await create(validShareResponse);
   });
   afterAll(async () => {
-    await ShareResponse.findOneAndDelete(shareRespJWT);
+    await ShareResponse.findOneAndDelete(validShareResponse);
     await mongoose.connection.close();
   });
 
