@@ -40,12 +40,8 @@ const shareResponse = require('../controllers/shareResponse');
  */
 router.post(
   '/:did',
+  Validator.validateUserToken,
   Validator.validate([
-    {
-      name: 'token',
-      validate: [Constants.USER_TYPES.Write_ShareRequest],
-      isHead: true,
-    },
     { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
     { name: 'shareRequestId', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
