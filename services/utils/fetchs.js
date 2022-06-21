@@ -82,6 +82,11 @@ const getShareRequestFromId = async function getShareRequestFromId(id, authToken
   return defaultFetch(`${Constants.DIDI_API}/issuer/shareRequest/${id}`, 'GET', undefined, authToken);
 };
 
+/**
+ * Verifica si el token de usuario existe en Didi Server
+ */
+const verifyUserByToken = async (token) => defaultFetch(`${Constants.DIDI_API}/user/verifyToken`, 'POST', { jwt: token });
+
 module.exports = {
   sendRevokeToDidi,
   sendRefreshToDidi,
@@ -90,4 +95,5 @@ module.exports = {
   sendShareRequestToDidi,
   getShareRequestsFromDidi,
   getShareRequestFromId,
+  verifyUserByToken,
 };
