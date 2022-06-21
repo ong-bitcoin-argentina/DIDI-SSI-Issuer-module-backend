@@ -36,7 +36,7 @@ const processCallbackShareResponseEmitter = async () => {
 };
 
 const callbackShareResponseEmitterJob = (frequency) => {
-  new CronJob(
+  const job = new CronJob(
     frequency,
     processCallbackShareResponseEmitter,
     null,
@@ -45,6 +45,7 @@ const callbackShareResponseEmitterJob = (frequency) => {
     null,
     true,
   );
+  job.start();
 };
 
 const processCallbackShareResponseCredentials = async () => {
@@ -70,7 +71,7 @@ const processCallbackShareResponseCredentials = async () => {
 };
 
 const callbackShareResponseCredentialsJob = (frequency) => {
-  new CronJob(
+  const job = new CronJob(
     frequency,
     processCallbackShareResponseCredentials,
     null,
@@ -79,6 +80,7 @@ const callbackShareResponseCredentialsJob = (frequency) => {
     null,
     true,
   );
+  job.start();
 };
 
 const processCallbackShareResponseRecived = async () => {
@@ -105,15 +107,16 @@ const processCallbackShareResponseRecived = async () => {
 };
 
 const callbackShareResponseRecivedJob = (frequency) => {
-  new CronJob(
+  const job = new CronJob(
     frequency,
     processCallbackShareResponseRecived,
     null,
-    true,
+    false,
     'America/Argentina/Buenos_Aires',
     null,
     true,
   );
+  job.start();
 };
 
 exports.permanentJob = () => {
