@@ -2,7 +2,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 const { CronJob } = require('cron');
-const { decodeJWT } = require('../services/BlockchainService');
 const ShareResponse = require('../models/ShareResponse');
 const { SHARERESPONSE_PROCESS_STATUS } = require('../constants/Constants');
 
