@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Constants = require('../constants/Constants');
 const Validator = require('./utils/Validator');
 const shareResponse = require('../controllers/shareResponse');
+const { halfHourLimiter } = require('../policies/RateLimit');
 
 /**
  * @openapi
@@ -44,6 +45,7 @@ router.post(
     { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
   Validator.checkValidationResult,
+  halfHourLimiter,
   shareResponse.create,
 );
 
