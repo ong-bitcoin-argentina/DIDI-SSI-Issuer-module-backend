@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { validateMessageRes } = require('@proyecto-didi/vc-validator/dist/validator');
+const { validateMessageRes } = require('@proyecto-didi/vc-validator/');
 const ShareResponse = require('../models/ShareResponse');
 
 const { missingShareResp, missingId } = require('../constants/serviceErrors');
