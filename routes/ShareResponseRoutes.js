@@ -42,12 +42,12 @@ const { halfHourLimiter } = require('../policies/RateLimit');
 router.post(
   '/:did',
   Validator.validateUserToken,
+  halfHourLimiter,
   Validator.validate([
     { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
     { name: 'shareRequestId', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
   Validator.checkValidationResult,
-  halfHourLimiter,
   shareResponse.create,
 );
 
