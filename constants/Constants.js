@@ -257,6 +257,13 @@ const STATUS_ALLOWED = Object.values(STATUS);
 
 const BLOCK_CHAIN_DEFAULT = 'rsk';
 
+const SHARERESPONSE_PROCESS_STATUS = {
+  RECEIVED: 'Recibido',
+  VERIFIED_CREDENTIALS: 'Credenciales Verificadas',
+  VERIFIED_EMITTER: 'Emisor Verificado',
+  PROCESSED: 'Procesado',
+};
+
 module.exports = {
   VERSION,
   API_VERSION: '1.0',
@@ -374,4 +381,5 @@ module.exports = {
 
   DISABLE_TELEMETRY_CLIENT,
   APP_INSIGTHS_IKEY,
+  SHARERESPONSE_PROCESS_STATUS,
 };

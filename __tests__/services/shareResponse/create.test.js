@@ -6,7 +6,7 @@ const { MONGO_URL } = require('../../../constants/Constants');
 const { missingShareResp } = require('../../../constants/serviceErrors');
 const { validShareResponse, invalidShareResponse } = require('./constants');
 
-describe('services/ShareRequest/create.test.js', () => {
+describe('services/ShareResponse/create.test.js', () => {
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
