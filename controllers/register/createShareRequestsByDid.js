@@ -12,25 +12,19 @@ const createShareRequestsByDid = async (req, res) => {
 
     const claimsMap = new Map(claims);
 
-    // Guardar el modelo de pedido de certificados
-    const shareReq = await ShareRequestService.create(name, claimsMap);
-
     // Obtener el emisor a asociar con el modelo y completar el payload
     const register = await Register.getByDID(did);
+    // Guardar el modelo de pedido de certificados
+    const shareReq = await ShareRequestService.create(name, claimsMap, register.id);
     const payload = {
+      name,
       callback,
       type: 'shareReq',
       claims: shareReq.claims,
     };
 
     // Finalizar creacion de modelo
-    const jwt = await createJWT(
-      register.did,
-      register.private_key,
-      payload,
-      undefined,
-      DIDI_SERVER_DID,
-    );
+    const jwt = await createJWT(register.did, register.private_key, payload, undefined, DIDI_SERVER_DID);
 
     // Enviar modelo a didi-server para asociarlo con el emisor
     await sendShareReqToDidi(did, jwt);

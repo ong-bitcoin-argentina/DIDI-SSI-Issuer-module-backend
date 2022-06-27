@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const { create } = require('../../../services/ShareRequestService');
 const { MONGO_URL } = require('../../../constants/Constants');
 const { missingClaims, missingName } = require('../../../constants/serviceErrors');
-const { claims, name, invalidClaims } = require('./constants');
+const {
+  claims, name, invalidClaims, registerId,
+} = require('./constants');
 const Messages = require('../../../constants/Messages');
 
 describe('services/ShareRequest/create.test.js', () => {
@@ -33,7 +35,7 @@ describe('services/ShareRequest/create.test.js', () => {
   });
 
   test('Expect create to success', async () => {
-    const shareReq = await create(name, claims);
+    const shareReq = await create(name, claims, registerId);
     expect(shareReq).toBeDefined();
     expect.stringContaining(shareReq.name);
     expect.objectContaining(shareReq.claims);
@@ -41,7 +43,7 @@ describe('services/ShareRequest/create.test.js', () => {
 
   test('Expect create to throw on invalid cert categorie', async () => {
     try {
-      await create(name, invalidClaims);
+      await create(name, invalidClaims, registerId);
     } catch (e) {
       expect(e.code).toMatch(Messages.SHARE_REQ.ERR.CERT_TYPES.code);
     }

@@ -5,6 +5,10 @@ const data = {
   secondDidKey: 'ee9f7f948def67ce0106aa533fc0082660d6fd45b8f1992a9900d9c06951fce8',
   thirdDid: 'did:ethr:lacchain:0x329b251a016d73f31cc072c64e81a254c4e2a580',
   thirdDidKey: '69fd338c80d2b8f58d779d9eb5478d7307b3e851a064438bfa472a3b787c9c50',
+  fourthDid: 'did:ethr:lacchain:0xe40fcd09a248124306e31e4162b329cec4f1c7cf',
+  fourthDidKey: '5241e0f10f06ca2056db2615b51dbd59e4fa2384dd089600aa3f3713999b1c7b',
+  fifthDid: 'did:ethr:lacchain:0x9a3be78001f41afd9ce8b6abd1af77fd4948d47a',
+  fifthDidKey: 'e8b8934de64a0f1dfe8cd1693a449a4e2e1a04d5f9d9b76066d7c888e0b93d7d',
 
   name: 'Issuer Name',
   secondName: 'Issuer Second Name',

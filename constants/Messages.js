@@ -24,8 +24,14 @@ module.exports = {
       },
       BLOCKCHAIN: { code: 'NOT_EXIST_BLOCKCHAIN', message: 'No existe la blockchain elegida.' },
       GET: { code: 'REGISTER_GET', message: 'El registro no pudo ser obtenido.' },
-      SEND_SHARE_REQUEST: { code: 'REGISTER_GET', message: 'Error al enviar los pedidos de certificados de este emisor.' },
-      GET_SHARE_REQUEST: { code: 'REGISTER_GET', message: 'No se pueden obtener los pedidos de certificados de este emisor.' },
+      SEND_SHARE_REQUEST: {
+        code: 'REGISTER_GET',
+        message: 'Error al enviar los pedidos de certificados de este emisor.',
+      },
+      GET_SHARE_REQUEST: {
+        code: 'REGISTER_GET',
+        message: 'No se pueden obtener los pedidos de certificados de este emisor.',
+      },
       DID_EXISTS: { code: 'DID_EXISTS', message: 'Ya existe un registro con ese did.' },
       STATUS: { code: 'STATUS', message: 'El status no existe' },
       RETRY: { code: 'RETRY', message: 'Hubo un error al intentar validar el registro.' },
@@ -35,7 +41,8 @@ module.exports = {
       },
       NOT_BLOCKCHAIN: {
         code: 'NOT_BLOCKCHAIN',
-        message: 'Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template.',
+        message:
+					'Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template.',
       },
       STATUS_NOT_VALID: {
         code: 'STATUS_NOT_VALID',
@@ -74,7 +81,8 @@ module.exports = {
       GET_NAME: { code: 'GET_NAME', message: 'No se pudo obtener el nombre del emisor.' },
       DELEGATE: {
         code: 'DELEGATE',
-        message: 'No se pudo realizar la delegación. Por favor, compruebe que el DID emisor tiene tokens disponibles para ejecutar la transacción en la blockchain',
+        message:
+					'No se pudo realizar la delegación. Por favor, compruebe que el DID emisor tiene tokens disponibles para ejecutar la transacción en la blockchain',
       },
       CREATE: { code: 'DELEGATE_CREATE', message: 'El delegado no pudo ser creado.' },
       GET: { code: 'DELEGATE_GET', message: 'El delegado no pudo ser obtenido.' },
@@ -135,6 +143,12 @@ module.exports = {
       NOT_EXIST: { code: 'SHARE_REQ_NOT_EXIST', message: 'No existe el pedido de certificados.' },
       DELETE: { code: 'SHARE_REQ_DELETE', message: 'El pedido de certificados no pudo ser borrado.' },
       CERT_TYPES: { code: 'SHARE_REQ_CERT_TYPES', message: 'Una categoria de credencial no es valida' },
+      VALIDATION_ERROR: (errors) => ({
+        message: `El formato del Share Request es invalido: ${errors}.`,
+        code: 'VALIDATION_ERROR',
+      }),
+      DID_DOES_NOT_EXIST: { code: 'DID_MISSING', message: 'Falta el parametro did' },
+      UNSUPPORTED_DID: { code: 'UNSUPPORTED_DID', message: 'El formato del parametro did no esta soportado' },
     },
   },
   SHARE_RES: {
@@ -168,7 +182,8 @@ module.exports = {
       DELETE: { code: 'TEMPLATE_DELETE', message: 'El modelo de certificado no pudo ser borrado.' },
       UNIQUE_NAME: {
         code: 'UNIQUE_NAME',
-        message: 'Error al Crear el Template: El nombre elegido ya existe. Por favor, vuelva a intentarlo con un nombre diferente.',
+        message:
+					'Error al Crear el Template: El nombre elegido ya existe. Por favor, vuelva a intentarlo con un nombre diferente.',
       },
     },
   },
