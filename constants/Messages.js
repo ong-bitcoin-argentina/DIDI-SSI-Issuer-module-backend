@@ -140,6 +140,24 @@ module.exports = {
   SHARE_RES: {
     ERR: {
       NOT_EXIST: { code: 'SHARE_RES_NOT_EXISTS', message: 'No existe el pedido de certificados.' },
+      VALIDATION_CREDENTIALS_ERROR: (errors) => ({
+        message: `El formato de las credenciales del Share Response es invalido: ${errors}.`,
+        code: 'VALIDATION_CREDENTIALS_ERROR',
+      }),
+      VALIDATION_JWT: { code: 'SHARE_RES_VALIDATION_JWT_ERROR', message: 'Error al verificar JWT del ShareReponse.' },
+      VALIDATION_TYPE: { code: 'SHARE_RES_VALIDATION_TYPE_ERROR', message: 'Error el tipo no corresponde a un ShareReponse.' },
+      VALIDATION_CREDENTIALS_NOT_CLAIMED: (data) => ({
+        code: 'SHARE_RES_VALIDATION_CREDENTIALS_NOT_CLAIMED',
+        message: `Error credencial ${data}, no solicitada en el ShareRequest.`,
+      }),
+      VALIDATION_CREDENTIALS_DIFERENCE: {
+        code: 'SHARE_RES_VALIDATION_CREDENTIALS_DIFERENCE',
+        message: 'Error Cantidad de certificados solicitados, difiere de los entregados',
+      },
+      VALIDATION_ISSUER_NOT_EXIST: {
+        code: 'SHARE_RES_ISSUER NOT EXIST',
+        message: 'Error El issuer no existe',
+      },
     },
   },
   TEMPLATE: {

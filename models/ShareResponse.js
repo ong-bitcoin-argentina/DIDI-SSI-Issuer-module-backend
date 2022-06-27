@@ -11,7 +11,7 @@ const ShareResponseSchema = mongoose.Schema({
   },
   process_status: {
     type: String,
-    enum: Object.keys(Constants.SHARERESPONSE_PROCESS_STATUS),
+    enum: Object.values(Constants.SHARERESPONSE_PROCESS_STATUS),
   },
   errorMessage: {
     type: String,
