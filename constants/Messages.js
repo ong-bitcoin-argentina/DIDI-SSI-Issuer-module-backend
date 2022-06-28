@@ -158,7 +158,10 @@ module.exports = {
         message: `El formato de las credenciales del Share Response es invalido: ${errors}.`,
         code: 'VALIDATION_CREDENTIALS_ERROR',
       }),
-      VALIDATION_JWT: { code: 'SHARE_RES_VALIDATION_JWT_ERROR', message: 'Error al verificar JWT del ShareReponse.' },
+      VALIDATION_JWT: (data) => ({
+        code: 'SHARE_RES_VALIDATION_JWT_ERROR',
+        message: `Error al verificar JWT del ShareReponse. ${data}`,
+      }),
       VALIDATION_TYPE: { code: 'SHARE_RES_VALIDATION_TYPE_ERROR', message: 'Error el tipo no corresponde a un ShareReponse.' },
       VALIDATION_CREDENTIALS_NOT_CLAIMED: (data) => ({
         code: 'SHARE_RES_VALIDATION_CREDENTIALS_NOT_CLAIMED',

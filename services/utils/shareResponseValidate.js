@@ -8,15 +8,24 @@ const {
   SHARE_RES: { ERR },
 } = require('../../constants/Messages');
 
-const validateFormat = async (shareResponse, verifyJWT = false) => {
+const decodeShareResponse = async (shareResponse) => {
   const { payload } = await BlockchainService.decodeJWT(shareResponse.jwt);
+  const req = await BlockchainService.decodeJWT(payload.req);
+  return { payload, req };
+};
+
+const validateFormat = async (shareResponse, payload, verifyJWT = false) => {
   if (!payload.type && payload.type !== 'shareResp') {
     throw ERR.VALIDATION_TYPE;
   }
 
   if (verifyJWT) {
-    const verified = await BlockchainService.verifyJWT(shareResponse.jwt, payload.aud);
-    if (!verified && !verified.payload) throw ERR.VALIDATION_JWT;
+    try {
+      const verified = await BlockchainService.verifyJWT(shareResponse.jwt, payload.aud);
+      if (!verified && !verified.payload) throw ERR.VALIDATION_JWT();
+    } catch (error) {
+      throw ERR.VALIDATION_JWT(error.message);
+    }
   }
 
   const validation = validateCredential(shareRespSchema, shareResponse.jwt);
@@ -27,9 +36,7 @@ const validateFormat = async (shareResponse, verifyJWT = false) => {
   return true;
 };
 
-const validateCredentialClaims = async (shareResponse) => {
-  const { payload } = await BlockchainService.decodeJWT(shareResponse.jwt);
-  const req = await BlockchainService.decodeJWT(payload.req);
+const validateCredentialClaims = async (payload, req) => {
   payload.vc.forEach((vc) => {
     Object.entries(vc.vc.credentialSubject).forEach(([key, value]) => {
       const require = Object.entries(vcSchemas[value.category]).find(
@@ -48,9 +55,7 @@ const validateCredentialClaims = async (shareResponse) => {
   return true;
 };
 
-const validateIssuer = async (shareResponse) => {
-  const { payload } = await BlockchainService.decodeJWT(shareResponse.jwt);
-  const req = await BlockchainService.decodeJWT(payload.req);
+const validateIssuer = async (payload, req) => {
   const callsIssuerModel = [];
   Object.entries(req.payload.claims.verifiable).forEach(([, claim]) => {
     Object.entries(claim.issuers).forEach(([, issuer]) => {
@@ -66,6 +71,7 @@ const validateIssuer = async (shareResponse) => {
 };
 
 module.exports = {
+  decodeShareResponse,
   validateFormat,
   validateCredentialClaims,
   validateIssuer,

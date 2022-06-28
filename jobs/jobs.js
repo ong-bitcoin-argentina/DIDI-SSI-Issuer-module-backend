@@ -97,8 +97,9 @@ const processCallbackShareResponseRecived = async () => {
     .limit(5);
   for (const shareResponse of shareResponses) {
     try {
-      await ShareResponseService.validateFormat(shareResponse);
-      await ShareResponseService.validateCredentialClaims(shareResponse);
+      const { payload, req } = await ShareResponseService.decodeShareResponse(shareResponse);
+      await ShareResponseService.validateFormat(shareResponse, payload);
+      await ShareResponseService.validateCredentialClaims(payload, req);
       await ShareResponseService.validateIssuer(shareResponse);
 
       await shareResponse.edit({

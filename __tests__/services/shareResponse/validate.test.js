@@ -1,7 +1,7 @@
-const { shareRespValidFormat } = require('./constants');
+const { shareRespValidFormat, invalidShareResponse } = require('./constants');
 const { validateFormat, validateCredentialClaims, validateIssuer } = require('../../../services/ShareResponseService');
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = require('../../../constants/Constants');
-const { createJWT } = require('../../../services/BlockchainService');
+const { createJWT, decodeJWT } = require('../../../services/BlockchainService');
 const RegisterModel = require('../../../models/Register');
 const {
   SHARE_RES: { ERR },
@@ -11,6 +11,8 @@ const serverDid = `did:ethr:${ISSUER_SERVER_DID}`;
 
 describe('services/ShareResponse/validate.test.js', () => {
   let validJWT;
+  let validJWTPayload;
+  let validReqDecoded;
   beforeAll(async () => {
     validJWT = await createJWT(
       serverDid,
@@ -19,48 +21,38 @@ describe('services/ShareResponse/validate.test.js', () => {
       ((new Date().getTime() + 60000)),
       'id:ethr:lacchain:0x36f6dc06d34b164aec5421c9071a0d07765d4ee1',
     );
+    const { payload } = await decodeJWT(validJWT);
+    validJWTPayload = payload;
+    validReqDecoded = await decodeJWT(validJWTPayload.req);
   });
 
   test('Expect validateFormat to success', async () => {
+    expect.assertions(1);
     const shareResponse = {
       jwt: validJWT,
       process_status: 'Recibido',
     };
-    const shareResponseResult = await validateFormat(shareResponse, true);
+    const shareResponseResult = await validateFormat(shareResponse, validJWTPayload, true);
     expect(shareResponseResult).toBe(true);
   });
 
   test('Expect validateCredentialClaims to success', async () => {
-    const shareResponse = {
-      jwt: validJWT,
-      process_status: 'Recibido',
-    };
-    const shareResponseResult = await validateCredentialClaims(shareResponse);
+    expect.assertions(1);
+    const shareResponseResult = await validateCredentialClaims(validJWTPayload, validReqDecoded);
     expect(shareResponseResult).toBe(true);
   });
 
   test('Expect validateIssuer to success', async () => {
-    const shareResponse = {
-      jwt: validJWT,
-      process_status: 'Recibido',
-    };
+    expect.assertions(1);
     RegisterModel.existsIssuer = (() => new Promise((resolve) => {
       resolve(true);
     }));
-    const shareResponseResult = await validateIssuer(shareResponse);
-    expect(shareResponseResult).toBe(true);
-  });
-
-  test('Expect validateFormat to success', async () => {
-    const shareResponse = {
-      jwt: validJWT,
-      process_status: 'Recibido',
-    };
-    const shareResponseResult = await validateFormat(shareResponse, true);
+    const shareResponseResult = await validateIssuer(validJWTPayload, validReqDecoded);
     expect(shareResponseResult).toBe(true);
   });
 
   test('Expect validateFormat an invalid credential', async () => {
+    expect.assertions(1);
     const invalidJWT = await createJWT(
       serverDid,
       ISSUER_SERVER_PRIVATE_KEY,
@@ -73,33 +65,29 @@ describe('services/ShareResponse/validate.test.js', () => {
       process_status: 'Recibido',
     };
     try {
-      await validateFormat(shareResponse);
+      const { payload } = await decodeJWT(invalidJWT);
+      await validateFormat(shareResponse, payload);
     } catch (e) {
       expect(e.code).toMatch(ERR.VALIDATION_CREDENTIALS_ERROR().code);
     }
   });
 
   test('Expect validateFormat an invalid aud', async () => {
-    shareRespValidFormat.aud = '';
-    const invalidJWT = await createJWT(
-      serverDid,
-      ISSUER_SERVER_PRIVATE_KEY,
-      shareRespValidFormat,
-      ((new Date().getTime() + 60000)),
-      'id:ethr:lacchain:0x36f6dc06d34b164aec5421c9071a0d07765d4ee1',
-    );
+    expect.assertions(1);
     const shareResponse = {
-      jwt: invalidJWT,
+      jwt: invalidShareResponse,
       process_status: 'Recibido',
     };
     try {
-      await validateFormat(shareResponse, true);
+      const { payload } = await decodeJWT(invalidShareResponse);
+      await validateFormat(shareResponse, payload, true);
     } catch (e) {
-      expect(e.code).toMatch(ERR.VALIDATION_JWT.code);
+      expect(e.code).toMatch(ERR.VALIDATION_JWT().code);
     }
   });
 
   test('Expect validateFormat an invalid type', async () => {
+    expect.assertions(1);
     shareRespValidFormat.type = '';
     const invalidJWT = await createJWT(
       serverDid,
@@ -113,13 +101,15 @@ describe('services/ShareResponse/validate.test.js', () => {
       process_status: 'Recibido',
     };
     try {
-      await validateFormat(shareResponse, true);
+      const { payload } = await decodeJWT(invalidJWT);
+      await validateFormat(shareResponse, payload, true);
     } catch (e) {
       expect(e.code).toMatch(ERR.VALIDATION_TYPE.code);
     }
   });
 
   test('Expect validateCredentialClaims with less VC than claims', async () => {
+    expect.assertions(1);
     shareRespValidFormat.vc.pop();
     const invalidJWT = await createJWT(
       serverDid,
@@ -128,27 +118,22 @@ describe('services/ShareResponse/validate.test.js', () => {
       ((new Date().getTime() + 60000)),
       'id:ethr:lacchain:0x36f6dc06d34b164aec5421c9071a0d07765d4ee1',
     );
-    const shareResponse = {
-      jwt: invalidJWT,
-      process_status: 'Recibido',
-    };
     try {
-      await validateCredentialClaims(shareResponse);
+      const { payload } = await decodeJWT(invalidJWT);
+      const req = await decodeJWT(payload.req);
+      await validateCredentialClaims(payload, req);
     } catch (e) {
       expect(e.code).toMatch(ERR.VALIDATION_CREDENTIALS_DIFERENCE.code);
     }
   });
 
   test('Expect validateIssuer with invalid issuer', async () => {
-    const shareResponse = {
-      jwt: validJWT,
-      process_status: 'Recibido',
-    };
+    expect.assertions(1);
     RegisterModel.existsIssuer = (() => new Promise((resolve) => {
       resolve(false);
     }));
     try {
-      await validateIssuer(shareResponse);
+      await validateIssuer(validJWTPayload, validReqDecoded);
     } catch (e) {
       expect(e.code).toMatch(ERR.VALIDATION_ISSUER_NOT_EXIST.code);
     }
