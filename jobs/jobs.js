@@ -61,11 +61,14 @@ const processCallbackShareResponseCredentials = async () => {
     .limit(5);
   for (const shareResponse of shareResponses) {
     try {
+      const { payload, req } = await ShareResponseService.decodeShareResponse(shareResponse);
+      await ShareResponseService.validateEmitter(payload, req);
+
       await shareResponse.edit({
         process_status: SHARERESPONSE_PROCESS_STATUS.VERIFIED_EMITTER,
       });
     } catch (error) {
-      await shareResponse.edit({ errorMessage: 'Error' });
+      await shareResponse.edit({ errorMessage: error.message });
       // eslint-disable-next-line no-console
       console.log(error);
     }

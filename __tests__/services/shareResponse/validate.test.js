@@ -1,8 +1,14 @@
 const { shareRespValidFormat, invalidShareResponse } = require('./constants');
-const { validateFormat, validateCredentialClaims, validateIssuer } = require('../../../services/ShareResponseService');
+const {
+  validateFormat,
+  validateCredentialClaims,
+  validateIssuer,
+  validateEmitter,
+} = require('../../../services/ShareResponseService');
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = require('../../../constants/Constants');
 const { createJWT, decodeJWT } = require('../../../services/BlockchainService');
 const RegisterModel = require('../../../models/Register');
+const DelegateModel = require('../../../models/Delegate');
 const {
   SHARE_RES: { ERR },
 } = require('../../../constants/Messages');
@@ -48,6 +54,15 @@ describe('services/ShareResponse/validate.test.js', () => {
       resolve(true);
     }));
     const shareResponseResult = await validateIssuer(validJWTPayload, validReqDecoded);
+    expect(shareResponseResult).toBe(true);
+  });
+
+  test('Expect validateEmitter to success', async () => {
+    expect.assertions(1);
+    DelegateModel.findOne = (() => new Promise((resolve) => {
+      resolve(true);
+    }));
+    const shareResponseResult = await validateEmitter(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
 
@@ -136,6 +151,18 @@ describe('services/ShareResponse/validate.test.js', () => {
       await validateIssuer(validJWTPayload, validReqDecoded);
     } catch (e) {
       expect(e.code).toMatch(ERR.VALIDATION_ISSUER_NOT_EXIST.code);
+    }
+  });
+
+  test('Expect validateEmitter with invalid delegate', async () => {
+    expect.assertions(1);
+    DelegateModel.findOne = (() => new Promise((resolve) => {
+      resolve(null);
+    }));
+    try {
+      await validateEmitter(validJWTPayload);
+    } catch (e) {
+      expect(e.code).toMatch(ERR.VALIDATION_ISSUER_IS_NOT_DELEGATE.code);
     }
   });
 });
