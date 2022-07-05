@@ -61,9 +61,7 @@ describe('services/ShareResponse/validate.test.js', () => {
 
   test('Expect saveIssuerCertificate to success', async () => {
     expect.assertions(1);
-    IssuerCertificateModel.generate = (() => new Promise((resolve) => {
-      resolve(true);
-    }));
+    IssuerCertificateModel.generate = (() => Promise.resolve(true));
     const shareResponseResult = await saveIssuerCertificate(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
@@ -72,7 +70,7 @@ describe('services/ShareResponse/validate.test.js', () => {
     expect.assertions(1);
     IssuerCertificateModel.generate = (() => new Promise(() => {
       // eslint-disable-next-line no-throw-literal
-      throw 'Error do not must call model';
+      throw new Error('Error do not must call model');
     }));
     validJWTPayload.vc = [];
     const shareResponseResult = await saveIssuerCertificate(validJWTPayload);
