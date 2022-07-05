@@ -26,10 +26,12 @@ const processCallbackShareResponseEmitter = async () => {
   // eslint-disable-next-line no-unused-vars
   for (const shareResponse of shareResponses) {
     try {
+      const { payload } = await ShareResponseService.decodeShareResponse(shareResponse);
+      await ShareResponseService.saveIssuerCertificate(payload);
       // eslint-disable-next-line no-underscore-dangle
       await shareResponse.edit({ process_status: SHARERESPONSE_PROCESS_STATUS.PROCESSED });
     } catch (error) {
-      await shareResponse.edit({ errorMessage: 'Error' });
+      await shareResponse.edit({ errorMessage: error.message });
       // eslint-disable-next-line no-console
       console.log(error);
     }

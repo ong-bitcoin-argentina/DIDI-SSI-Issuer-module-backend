@@ -4,11 +4,14 @@ const {
   validateCredentialClaims,
   validateIssuer,
   validateEmitter,
+  saveIssuerCertificate,
 } = require('../../../services/ShareResponseService');
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = require('../../../constants/Constants');
 const { createJWT, decodeJWT } = require('../../../services/BlockchainService');
 const RegisterModel = require('../../../models/Register');
 const DelegateModel = require('../../../models/Delegate');
+const IssuerCertificateModel = require('../../../models/IssuerCertificate');
+
 const {
   SHARE_RES: { ERR },
 } = require('../../../constants/Messages');
@@ -54,6 +57,26 @@ describe('services/ShareResponse/validate.test.js', () => {
       resolve(true);
     }));
     const shareResponseResult = await validateIssuer(validJWTPayload, validReqDecoded);
+    expect(shareResponseResult).toBe(true);
+  });
+
+  test('Expect saveIssuerCertificate to success', async () => {
+    expect.assertions(1);
+    IssuerCertificateModel.generate = (() => new Promise((resolve) => {
+      resolve(true);
+    }));
+    const shareResponseResult = await saveIssuerCertificate(validJWTPayload);
+    expect(shareResponseResult).toBe(true);
+  });
+
+  test('Expect saveIssuerCertificate without Certificates to success', async () => {
+    expect.assertions(1);
+    IssuerCertificateModel.generate = (() => new Promise(() => {
+      // eslint-disable-next-line no-throw-literal
+      throw 'Error do not must call model';
+    }));
+    validJWTPayload.vc = [];
+    const shareResponseResult = await saveIssuerCertificate(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
 
