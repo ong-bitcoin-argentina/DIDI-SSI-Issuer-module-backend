@@ -27,7 +27,7 @@ const processCallbackShareResponseEmitter = async () => {
   for (const shareResponse of shareResponses) {
     try {
       const { payload } = await ShareResponseService.decodeShareResponse(shareResponse);
-      await ShareResponseService.saveIssuerCredential(payload);
+      await ShareResponseService.saveIssuerCertificate(payload);
       // eslint-disable-next-line no-underscore-dangle
       await shareResponse.edit({ process_status: SHARERESPONSE_PROCESS_STATUS.PROCESSED });
     } catch (error) {

@@ -5,7 +5,7 @@ const { v1: shareRespSchema } = require('@proyecto-didi/vc-validator/dist/messag
 const BlockchainService = require('../BlockchainService');
 const RegisterModel = require('../../models/Register');
 const DelegateModel = require('../../models/Delegate');
-const IssuerCredentialModel = require('../../models/IssuerCredential');
+const IssuerCertificateModel = require('../../models/IssuerCertificate');
 const {
   SHARE_RES: { ERR },
 } = require('../../constants/Messages');
@@ -85,7 +85,7 @@ const validateEmitter = async (payload) => {
   return true;
 };
 
-const saveIssuerCredential = async (payload) => {
+const saveIssuerCertificate = async (payload) => {
   const data = [];
   payload.vc.forEach((vc) => {
     Object.entries(vc.vc.credentialSubject).forEach(([, cert]) => {
@@ -93,7 +93,7 @@ const saveIssuerCredential = async (payload) => {
     });
   });
   if (data.length > 0) {
-    await IssuerCredentialModel.generate(payload.iss, data);
+    await IssuerCertificateModel.generate(payload.iss, data);
   }
 
   return true;
@@ -105,5 +105,5 @@ module.exports = {
   validateCredentialClaims,
   validateIssuer,
   validateEmitter,
-  saveIssuerCredential,
+  saveIssuerCertificate,
 };
