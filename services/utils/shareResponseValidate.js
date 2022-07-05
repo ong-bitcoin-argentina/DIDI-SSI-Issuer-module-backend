@@ -4,6 +4,7 @@ const { schemasByName } = require('@proyecto-didi/vc-validator/dist/constants');
 const { v1: shareRespSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareResp-schema');
 const BlockchainService = require('../BlockchainService');
 const RegisterModel = require('../../models/Register');
+const DelegateModel = require('../../models/Delegate');
 const {
   SHARE_RES: { ERR },
 } = require('../../constants/Messages');
@@ -70,9 +71,23 @@ const validateIssuer = async (req) => {
   return true;
 };
 
+const validateEmitter = async (payload) => {
+  const callsDelegateModel = [];
+  Object.entries(payload.vc).forEach(([, vc]) => {
+    callsDelegateModel.push(DelegateModel.findOne({ did: vc.iss }));
+  });
+  const callsDelegateModelResult = await Promise.all(callsDelegateModel);
+  if (callsDelegateModelResult.some((result) => result === null)) {
+    throw ERR.VALIDATION_ISSUER_IS_NOT_DELEGATE;
+  }
+
+  return true;
+};
+
 module.exports = {
   decodeShareResponse,
   validateFormat,
   validateCredentialClaims,
   validateIssuer,
+  validateEmitter,
 };

@@ -175,6 +175,10 @@ module.exports = {
         code: 'SHARE_RES_ISSUER NOT EXIST',
         message: 'Error El issuer no existe',
       },
+      VALIDATION_ISSUER_IS_NOT_DELEGATE: {
+        code: 'SHARE_RES_ISSUER_IS_NOT_DELEGATE',
+        message: 'Error El issuer no es un delegado',
+      },
     },
   },
   TEMPLATE: {
