@@ -1,4 +1,4 @@
-const { validateCredential } = require('@proyecto-didi/vc-validator/dist/validator');
+const { validateCredential } = require('@proyecto-didi/vc-validator/');
 const vcSchemas = require('@proyecto-didi/vc-validator/dist/schemas');
 const { schemasByName } = require('@proyecto-didi/vc-validator/dist/constants');
 const { v1: shareRespSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareResp-schema');
@@ -56,7 +56,7 @@ const validateCredentialClaims = async (payload, req) => {
   return true;
 };
 
-const validateIssuer = async (payload, req) => {
+const validateIssuer = async (req) => {
   const callsIssuerModel = [];
   Object.entries(req.payload.claims.verifiable).forEach(([, claim]) => {
     Object.entries(claim.issuers).forEach(([, issuer]) => {

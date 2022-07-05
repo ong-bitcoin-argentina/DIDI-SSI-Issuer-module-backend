@@ -50,10 +50,9 @@ describe('services/ShareResponse/validate.test.js', () => {
 
   test('Expect validateIssuer to success', async () => {
     expect.assertions(1);
-    RegisterModel.existsIssuer = (() => new Promise((resolve) => {
-      resolve(true);
-    }));
-    const shareResponseResult = await validateIssuer(validJWTPayload, validReqDecoded);
+    RegisterModel.existsIssuer = (() => Promise.resolve(true));
+
+    const shareResponseResult = await validateIssuer(validReqDecoded);
     expect(shareResponseResult).toBe(true);
   });
 
@@ -144,11 +143,9 @@ describe('services/ShareResponse/validate.test.js', () => {
 
   test('Expect validateIssuer with invalid issuer', async () => {
     expect.assertions(1);
-    RegisterModel.existsIssuer = (() => new Promise((resolve) => {
-      resolve(false);
-    }));
+    RegisterModel.existsIssuer = (() => Promise.resolve(false));
     try {
-      await validateIssuer(validJWTPayload, validReqDecoded);
+      await validateIssuer(validReqDecoded);
     } catch (e) {
       expect(e.code).toMatch(ERR.VALIDATION_ISSUER_NOT_EXIST.code);
     }
