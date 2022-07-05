@@ -81,9 +81,7 @@ describe('services/ShareResponse/validate.test.js', () => {
 
   test('Expect validateEmitter to success', async () => {
     expect.assertions(1);
-    DelegateModel.findOne = (() => new Promise((resolve) => {
-      resolve(true);
-    }));
+    DelegateModel.findOne = (() => Promise.resolve(true));
     const shareResponseResult = await validateEmitter(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
@@ -176,9 +174,7 @@ describe('services/ShareResponse/validate.test.js', () => {
 
   test('Expect validateEmitter with invalid delegate', async () => {
     expect.assertions(1);
-    DelegateModel.findOne = (() => new Promise((resolve) => {
-      resolve(null);
-    }));
+    DelegateModel.findOne = (() => Promise.resolve(null));
     try {
       await validateEmitter(validJWTPayload);
     } catch (e) {
