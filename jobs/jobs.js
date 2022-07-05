@@ -105,7 +105,7 @@ const processCallbackShareResponseRecived = async () => {
       const { payload, req } = await ShareResponseService.decodeShareResponse(shareResponse);
       await ShareResponseService.validateFormat(shareResponse, payload);
       await ShareResponseService.validateCredentialClaims(payload, req);
-      await ShareResponseService.validateIssuer(shareResponse);
+      await ShareResponseService.validateIssuer(req);
 
       await shareResponse.edit({
         process_status: SHARERESPONSE_PROCESS_STATUS.VERIFIED_CREDENTIALS,
