@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 
 const Messages = require('../constants/Messages');
 
-const IssuerCertificateSchema = mongoose.Schema({
+const IssuerCredentialSchema = mongoose.Schema({
   did: {
     type: String,
     required: true,
     unique: true,
   },
-  certificate: [{
+  credential: [{
     createdOn: {
       type: Date,
       default: Date.now(),
@@ -23,19 +23,19 @@ const IssuerCertificateSchema = mongoose.Schema({
   },
 });
 
-const IssuerCertificate = mongoose.model('IssuerCertificate', IssuerCertificateSchema);
-module.exports = IssuerCertificate;
+const IssuerCredential = mongoose.model('IssuerCredential', IssuerCredentialSchema);
+module.exports = IssuerCredential;
 
-IssuerCertificate.generate = async function generate(did, data) {
+IssuerCredential.generate = async function generate(did, data) {
   let issuer;
   try {
-    issuer = await IssuerCertificate.findOne({ did });
+    issuer = await IssuerCredential.findOne({ did });
 
     if (!issuer) {
-      issuer = new IssuerCertificate();
+      issuer = new IssuerCredential();
       issuer.did = did;
     }
-    issuer.certificate.push({ data });
+    issuer.credential.push({ data });
 
     issuer = await issuer.save();
     return Promise.resolve(issuer);
@@ -45,10 +45,10 @@ IssuerCertificate.generate = async function generate(did, data) {
   }
 };
 
-IssuerCertificate.getByDid = async function getByDid(did) {
+IssuerCredential.getByDid = async function getByDid(did) {
   try {
     const query = { did };
-    const IssuerCert = await IssuerCertificate.findOne(query);
+    const IssuerCert = await IssuerCredential.findOne(query);
     if (!IssuerCert) throw Messages.SHARE_REQ.ERR.NOT_EXIST;
 
     return Promise.resolve(IssuerCert);
