@@ -4,13 +4,13 @@ const {
   validateCredentialClaims,
   validateIssuer,
   validateEmitter,
-  saveIssuerCertificate,
+  saveIssuerCredential,
 } = require('../../../services/ShareResponseService');
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = require('../../../constants/Constants');
 const { createJWT, decodeJWT } = require('../../../services/BlockchainService');
 const RegisterModel = require('../../../models/Register');
 const DelegateModel = require('../../../models/Delegate');
-const IssuerCertificateModel = require('../../../models/IssuerCertificate');
+const IssuerCredentialModel = require('../../../models/IssuerCredential');
 
 const {
   SHARE_RES: { ERR },
@@ -59,21 +59,18 @@ describe('services/ShareResponse/validate.test.js', () => {
     expect(shareResponseResult).toBe(true);
   });
 
-  test('Expect saveIssuerCertificate to success', async () => {
+  test('Expect saveIssuerCredential to success', async () => {
     expect.assertions(1);
-    IssuerCertificateModel.generate = (() => Promise.resolve(true));
-    const shareResponseResult = await saveIssuerCertificate(validJWTPayload);
+    IssuerCredentialModel.generate = (() => Promise.resolve(true));
+    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
 
-  test('Expect saveIssuerCertificate without Certificates to success', async () => {
+  test('Expect saveIssuerCredential without Certificates to success', async () => {
     expect.assertions(1);
-    IssuerCertificateModel.generate = (() => new Promise(() => {
-      // eslint-disable-next-line no-throw-literal
-      throw new Error('Error do not must call model');
-    }));
+    IssuerCredentialModel.generate = (() => Promise.reject(Error('Error do not must call model')));
     validJWTPayload.vc = [];
-    const shareResponseResult = await saveIssuerCertificate(validJWTPayload);
+    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
 
