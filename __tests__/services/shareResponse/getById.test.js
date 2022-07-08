@@ -5,14 +5,20 @@ const { MONGO_URL } = require('../../../constants/Constants');
 const { missingId } = require('../../../constants/serviceErrors');
 const { validShareResponse } = require('./constants');
 const { create, getById } = require('../../../services/ShareResponseService');
+const ShareRequestService = require('../../../services/ShareRequestService');
 const Messages = require('../../../constants/Messages');
+const {
+  claims, name, registerId,
+} = require('../ShareRequest/constants');
 
 describe('services/ShareRequest/getById.test.js', () => {
   let shareResp;
+  let shareReq;
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
-    shareResp = await create(validShareResponse);
+    shareReq = await ShareRequestService.create(name, claims, registerId);
+    shareResp = await create(validShareResponse, shareReq.id);
   });
   afterAll(async () => {
     await ShareResponse.findOneAndDelete(validShareResponse);

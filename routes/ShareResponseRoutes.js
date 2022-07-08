@@ -21,7 +21,8 @@ const shareResponse = require('../controllers/shareResponse');
  *           type : string
  *     requestBody:
  *       required:
- *         - jwt
+ *         - jw
+ *         - shareRequestId
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -46,6 +47,7 @@ router.post(
       isHead: true,
     },
     { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    { name: 'shareRequestId', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
   Validator.checkValidationResult,
   shareResponse.create,

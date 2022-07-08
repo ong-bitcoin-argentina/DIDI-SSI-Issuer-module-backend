@@ -1,13 +1,31 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 const mongoose = require('mongoose');
+
+const { ObjectId } = mongoose;
 const Messages = require('../constants/Messages');
 const Constants = require('../constants/Constants');
+
+const populateShareRequest = {
+  path: 'shareRequestId',
+  select: {
+    id: 1, name: 1, registerId: 1,
+  },
+  model: 'ShareRequest',
+};
 
 const ShareResponseSchema = mongoose.Schema({
   jwt: {
     type: String,
     required: true,
+  },
+  shareRequestId: {
+    type: ObjectId,
+    required: true,
+    ref: 'ShareRequest',
+  },
+  iss: {
+    type: String,
   },
   process_status: {
     type: String,
@@ -42,10 +60,12 @@ ShareResponseSchema.methods.edit = async function edit(body) {
 const ShareResponse = mongoose.model('ShareResponse', ShareResponseSchema);
 module.exports = ShareResponse;
 
-ShareResponse.generate = async function generate(jwt) {
+ShareResponse.generate = async function generate(jwt, shareRequestId, iss) {
   let shareResponse = new ShareResponse();
   shareResponse.jwt = jwt;
   shareResponse.process_status = Constants.SHARERESPONSE_PROCESS_STATUS.RECEIVED;
+  shareResponse.shareRequestId = shareRequestId;
+  shareResponse.iss = iss;
 
   try {
     shareResponse = await shareResponse.save();
@@ -60,7 +80,7 @@ ShareResponse.generate = async function generate(jwt) {
 ShareResponse.getById = async function getById(id) {
   try {
     const query = { _id: id };
-    const shareResponse = await ShareResponse.findOne(query);
+    const shareResponse = await ShareResponse.findOne(query).populate(populateShareRequest);
     if (!shareResponse) throw Messages.SHARE_RES.ERR.NOT_EXIST;
 
     return Promise.resolve(shareResponse);
