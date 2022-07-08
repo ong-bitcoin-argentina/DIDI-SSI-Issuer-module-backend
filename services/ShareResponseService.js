@@ -4,6 +4,8 @@ const ShareResponse = require('../models/ShareResponse');
 
 const { missingShareResp, missingId } = require('../constants/serviceErrors');
 
+module.exports = require('./utils/shareResponseValidate');
+
 module.exports.create = async (jwt) => {
   if (!jwt) throw missingShareResp;
   try {

@@ -89,6 +89,10 @@ const verifyUserByToken = async function verifyUserByToken(token) {
   return defaultFetch(`${Constants.DIDI_API}/user/verifyToken`, 'POST', { jwt: token });
 };
 
+const sendPushNotification = async function sendPushNotification(title, message, authToken) {
+  return defaultFetch(`${Constants.DIDI_API}/sendNotification`, 'POST', { title, message }, authToken);
+};
+
 module.exports = {
   sendRevokeToDidi,
   sendRefreshToDidi,
@@ -98,4 +102,5 @@ module.exports = {
   getShareRequestsFromDidi,
   getShareRequestFromId,
   verifyUserByToken,
+  sendPushNotification,
 };
