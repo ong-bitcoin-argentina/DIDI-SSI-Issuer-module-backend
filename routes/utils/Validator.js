@@ -8,10 +8,10 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
-const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
+const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator');
 const {
   validateCredential,
-} = require('@proyecto-didi/vc-validator/dist/validator');
+} = require('@proyecto-didi/vc-validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
