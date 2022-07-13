@@ -1,7 +1,7 @@
 const ResponseHandler = require('../../routes/utils/ResponseHandler');
 const ShareResponseService = require('../../services/ShareResponseService');
 
-const readAll = async (req, res) => {
+const readAll = async (_req, res) => {
   try {
     const ShareResponseList = await ShareResponseService.getAll();
 
