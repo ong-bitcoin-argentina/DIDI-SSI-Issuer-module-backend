@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Constants = require('../constants/Constants');
 const Validator = require('./utils/Validator');
 const shareResponse = require('../controllers/shareResponse');
+const { halfHourLimiter } = require('../policies/RateLimit');
 
 /**
  * @openapi
@@ -39,12 +40,9 @@ const shareResponse = require('../controllers/shareResponse');
  */
 router.post(
   '/:did',
+  Validator.validateUserToken,
+  halfHourLimiter,
   Validator.validate([
-    {
-      name: 'token',
-      validate: [Constants.USER_TYPES.Write_ShareRequest],
-      isHead: true,
-    },
     { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
   Validator.checkValidationResult,
