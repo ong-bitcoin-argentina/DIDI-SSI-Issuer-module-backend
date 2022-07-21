@@ -1,3 +1,7 @@
+const request = require('supertest');
+
+const app = require('../../server.js');
+
 const {
   getById,
   create,
@@ -14,6 +18,21 @@ const {
   missingCreds,
   missingTemplate,
 } = require('../../constants/serviceErrors');
+
+const id = 'undefined';
+
+/**
+ * getById
+ * Expect getById to throw on a missing id
+ * GET /cert/{id}:
+ */
+it.only('throw on a missing id', async () => {
+  const response = await request(app)
+    .get(`/cert/${id}`)
+    .send('undefinded')
+    .excpect(200);
+    console.log(response);
+});
 
 describe('Should be green', () => {
   /**

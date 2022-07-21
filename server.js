@@ -13,13 +13,10 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const cors = require('cors');
-const http = require('http');
 
 // serve all files from public dir
 const path = require('path');
 
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
 const Constants = require('./constants/Constants');
 const Messages = require('./constants/Messages');
 
@@ -36,8 +33,6 @@ const ShareRequestRoutes = require('./routes/ShareRequestRoutes');
 // inicializar cluster para workers, uno por cpu disponible
 
 const app = express();
-
-const server = http.createServer(app);
 
 const dir = path.join(__dirname, 'public');
 app.use(express.static(dir));
@@ -144,25 +139,4 @@ app.use('/profile', ProfileRoutes);
 app.use('/image', ImageRoutes);
 app.use('/shareRequest', ShareRequestRoutes);
 
-// forkear workers
-if (cluster.isMaster) {
-  console.log(Messages.INDEX.MSG.STARTING_WORKERS(numCPUs));
-
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('online', (worker) => {
-    console.log(Messages.INDEX.MSG.STARTED_WORKER(worker.process.pid));
-  });
-
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(Messages.INDEX.MSG.ENDED_WORKER(worker.process.pid, code, signal));
-    console.log(Messages.INDEX.MSG.STARTING_WORKER);
-    cluster.fork();
-  });
-} else {
-  server.listen(Constants.PORT);
-  console.log(Messages.INDEX.MSG.RUNNING_ON + Constants.PORT);
-}
+module.exports = app;
