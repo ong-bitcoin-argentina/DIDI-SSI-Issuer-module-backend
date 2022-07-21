@@ -180,3 +180,21 @@ module.exports.getSkeletonForEmmit = function getSkeletonForEmmit(template, wrap
   }
   return result;
 };
+
+// envia la credencial a didi-server para ser verificarla
+module.exports.verifyCredential = async function verifyCredential(jwt) {
+  if (!jwt) throw missingJwt;
+  try {
+    const response = await fetch(`${Constants.DIDI_API}/issuer/verifyCertificate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(jwt),
+    });
+
+    const jsonResp = await response.json();
+    return jsonResp.status === 'error' ? Promise.reject(jsonResp) : Promise.resolve(jsonResp.data);
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
