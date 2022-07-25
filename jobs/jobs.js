@@ -5,6 +5,7 @@ const { CronJob } = require('cron');
 const ShareResponseService = require('../services/ShareResponseService');
 const ShareResponseModel = require('../models/ShareResponse');
 const { SHARERESPONSE_PROCESS_STATUS } = require('../constants/Constants');
+const { verifyCredential } = require('../services/MouroService');
 
 const SECONDS = '0';
 const MINUTES = '*/2';
@@ -27,6 +28,10 @@ const processCallbackShareResponseEmitter = async () => {
   for (const shareResponse of shareResponses) {
     try {
       // eslint-disable-next-line no-underscore-dangle
+      const { payload } = await ShareResponseService.decodeShareResponse(shareResponse);
+      payload.vc.forEach(async (vc) => {
+        await verifyCredential(vc);
+      });
       await shareResponse.edit({ process_status: SHARERESPONSE_PROCESS_STATUS.PROCESSED });
     } catch (error) {
       await shareResponse.edit({ errorMessage: 'Error' });
@@ -104,7 +109,6 @@ const processCallbackShareResponseRecived = async () => {
       await ShareResponseService.validateFormat(shareResponse, payload);
       await ShareResponseService.validateCredentialClaims(payload, req);
       await ShareResponseService.validateIssuer(req);
-
       await shareResponse.edit({
         process_status: SHARERESPONSE_PROCESS_STATUS.VERIFIED_CREDENTIALS,
       });
