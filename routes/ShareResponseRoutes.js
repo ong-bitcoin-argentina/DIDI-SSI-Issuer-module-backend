@@ -22,7 +22,7 @@ const { halfHourLimiter } = require('../policies/RateLimit');
  *           type : string
  *     requestBody:
  *       required:
- *         - jw
+ *         - jwt
  *         - shareRequestId
  *       content:
  *         multipart/form-data:
