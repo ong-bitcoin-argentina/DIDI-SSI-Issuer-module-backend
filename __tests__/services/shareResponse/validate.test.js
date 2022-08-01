@@ -4,11 +4,14 @@ const {
   validateCredentialClaims,
   validateIssuer,
   validateEmitter,
+  saveIssuerCredential,
 } = require('../../../services/ShareResponseService');
 const { ISSUER_SERVER_DID, ISSUER_SERVER_PRIVATE_KEY } = require('../../../constants/Constants');
 const { createJWT, decodeJWT } = require('../../../services/BlockchainService');
 const RegisterModel = require('../../../models/Register');
 const DelegateModel = require('../../../models/Delegate');
+const IssuerCredentialModel = require('../../../models/IssuerCredential');
+
 const {
   SHARE_RES: { ERR },
 } = require('../../../constants/Messages');
@@ -53,6 +56,21 @@ describe('services/ShareResponse/validate.test.js', () => {
     RegisterModel.existsIssuer = (() => Promise.resolve(true));
 
     const shareResponseResult = await validateIssuer(validReqDecoded);
+    expect(shareResponseResult).toBe(true);
+  });
+
+  test('Expect saveIssuerCredential to success', async () => {
+    expect.assertions(1);
+    IssuerCredentialModel.generate = (() => Promise.resolve(true));
+    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
+    expect(shareResponseResult).toBe(true);
+  });
+
+  test('Expect saveIssuerCredential without Certificates to success', async () => {
+    expect.assertions(1);
+    IssuerCredentialModel.generate = (() => Promise.reject(Error('Error do not must call model')));
+    validJWTPayload.vc = [];
+    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
     expect(shareResponseResult).toBe(true);
   });
 
