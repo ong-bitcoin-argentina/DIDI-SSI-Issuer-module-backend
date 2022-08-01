@@ -23,6 +23,7 @@ const { halfHourLimiter } = require('../policies/RateLimit');
  *     requestBody:
  *       required:
  *         - jwt
+ *         - shareRequestId
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -44,6 +45,7 @@ router.post(
   halfHourLimiter,
   Validator.validate([
     { name: 'jwt', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
+    { name: 'shareRequestId', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
   ]),
   Validator.checkValidationResult,
   shareResponse.create,
