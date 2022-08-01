@@ -21,7 +21,7 @@ const shareResponse = require('../controllers/shareResponse');
  *           type : string
  *     requestBody:
  *       required:
- *         - jw
+ *         - jwt
  *         - shareRequestId
  *       content:
  *         multipart/form-data:
