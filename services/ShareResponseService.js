@@ -2,7 +2,6 @@
 const { validateMessageRes } = require('@proyecto-didi/vc-validator/');
 const ShareResponse = require('../models/ShareResponse');
 const ShareRequest = require('../models/ShareRequest');
-
 const { missingShareResp, missingId, missingDid } = require('../constants/serviceErrors');
 
 module.exports = require('./utils/shareResponseValidate');

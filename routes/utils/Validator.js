@@ -8,8 +8,10 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
-const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
-const { validateCredential } = require('@proyecto-didi/vc-validator/dist/validator');
+const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator');
+const {
+  validateCredential,
+} = require('@proyecto-didi/vc-validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
@@ -18,6 +20,7 @@ const TemplateService = require('../../services/TemplateService');
 const TokenService = require('../../services/TokenService');
 const UserService = require('../../services/UserService');
 const { createJWT, verifyJWT, validDelegateOnDidi } = require('../../services/BlockchainService');
+const { verifyUserByToken } = require('../../services/utils/fetchs');
 
 const Register = require('../../models/Register');
 
@@ -161,7 +164,7 @@ const _doValidate = function _doValidate(param, isHead) {
             if (invalidType) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TYPE(param.name));
 
             // si es de tipo checkbox, tiene opciones
-            const checkboxMissingOptions =							!dataElement.options && dataElement.type === Constants.CERT_FIELD_TYPES.Checkbox;
+            const checkboxMissingOptions = !dataElement.options && dataElement.type === Constants.CERT_FIELD_TYPES.Checkbox;
             if (checkboxMissingOptions) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.MISSING_CHECKBOX_OPTIONS(param.name));
           }
         }
@@ -190,7 +193,7 @@ const _doValidate = function _doValidate(param, isHead) {
   // valida que los valores se correspondan al tipo
   const validateValueMatchesType = async function validateValueMatchesType(type, value, err) {
     const date = new Date(value);
-    const regex =			/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
+    const regex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T(0[0-9]|1[0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9].[0-9][0-9][0-9]Z)/;
     switch (type) {
       case Constants.CERT_FIELD_TYPES.Boolean:
         if (value !== 'true' && value !== 'false') return Promise.reject(err);
@@ -503,6 +506,17 @@ module.exports.validateFile = function validateFile(req, res, next) {
     }
   }
   return next();
+};
+
+module.exports.validateUserToken = async function validateUserToken(req, res, next) {
+  try {
+    const jwt = req.header('token');
+    const response = await verifyUserByToken(jwt);
+    if (!response) throw Messages.USER.ERR.VALIDATE;
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 401);
+  }
 };
 
 module.exports.validateSchema = async function validateSchema(req, res, next) {

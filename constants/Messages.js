@@ -41,8 +41,7 @@ module.exports = {
       },
       NOT_BLOCKCHAIN: {
         code: 'NOT_BLOCKCHAIN',
-        message:
-					'Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template.',
+        message: 'Error al emitir la credencial. El template que utiliza la credencial NO tiene una blockchain asignada. Por favor, configure la blockchain de verificación en el template.',
       },
       STATUS_NOT_VALID: {
         code: 'STATUS_NOT_VALID',
@@ -81,8 +80,7 @@ module.exports = {
       GET_NAME: { code: 'GET_NAME', message: 'No se pudo obtener el nombre del emisor.' },
       DELEGATE: {
         code: 'DELEGATE',
-        message:
-					'No se pudo realizar la delegación. Por favor, compruebe que el DID emisor tiene tokens disponibles para ejecutar la transacción en la blockchain',
+        message: 'No se pudo realizar la delegación. Por favor, compruebe que el DID emisor tiene tokens disponibles para ejecutar la transacción en la blockchain',
       },
       CREATE: { code: 'DELEGATE_CREATE', message: 'El delegado no pudo ser creado.' },
       GET: { code: 'DELEGATE_GET', message: 'El delegado no pudo ser obtenido.' },
@@ -110,6 +108,10 @@ module.exports = {
       TYPE: { code: 'INVALID_TYPE', message: 'El tipo elegido para el usuario no es valido.' },
       DELETE: { code: 'USER_DELETE', message: 'El modelo de usuario no pudo ser borrado.' },
       EDIT: { code: 'USER_EDIT', message: 'El modelo de usuario no pudo ser editado.' },
+      VALIDATE: {
+        code: 'VALIDATE',
+        message: 'Error al validar información de usuario.',
+      },
     },
   },
   IMAGE: {
@@ -189,8 +191,7 @@ module.exports = {
       DELETE: { code: 'TEMPLATE_DELETE', message: 'El modelo de certificado no pudo ser borrado.' },
       UNIQUE_NAME: {
         code: 'UNIQUE_NAME',
-        message:
-					'Error al Crear el Template: El nombre elegido ya existe. Por favor, vuelva a intentarlo con un nombre diferente.',
+        message: 'Error al Crear el Template: El nombre elegido ya existe. Por favor, vuelva a intentarlo con un nombre diferente.',
       },
     },
   },
