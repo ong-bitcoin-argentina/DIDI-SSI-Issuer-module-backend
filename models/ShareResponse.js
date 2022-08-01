@@ -89,3 +89,28 @@ ShareResponse.getById = async function getById(id) {
     return Promise.reject(err);
   }
 };
+
+ShareResponse.getByDID = async function getByDID(did) {
+  try {
+    const query = { iss: did };
+    populateShareRequest.match = query;
+    const shareResponse = await ShareResponse.findOne({}).populate(populateShareRequest);
+    if (!shareResponse) throw Messages.SHARE_RES.ERR.NOT_EXIST;
+
+    return Promise.resolve(shareResponse);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
+ShareResponse.getAll = async function getAll() {
+  try {
+    const ShareResponses = await ShareResponse.find({})
+      .populate(populateShareRequest).sort({ createdOn: -1 });
+    return Promise.resolve(ShareResponses);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
