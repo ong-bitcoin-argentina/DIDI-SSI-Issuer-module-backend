@@ -74,21 +74,6 @@ describe('services/ShareResponse/validate.test.js', () => {
     expect(shareResponseResult).toBe(true);
   });
 
-  test('Expect saveIssuerCertificate to success', async () => {
-    expect.assertions(1);
-    IssuerCredentialModel.generate = (() => Promise.resolve(true));
-    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
-    expect(shareResponseResult).toBe(true);
-  });
-
-  test('Expect saveIssuerCredential without Certificates to success', async () => {
-    expect.assertions(1);
-    IssuerCredentialModel.generate = (() => Promise.reject(Error('Error do not must call model')));
-    validJWTPayload.vc = [];
-    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
-    expect(shareResponseResult).toBe(true);
-  });
-
   test('Expect validateEmitter to success', async () => {
     expect.assertions(1);
     DelegateModel.findOne = (() => Promise.resolve(true));
