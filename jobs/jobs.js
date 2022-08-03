@@ -28,7 +28,6 @@ const processCallbackShareResponseEmitter = async () => {
   for (const shareResponse of shareResponses) {
     try {
       const { payload } = await ShareResponseService.decodeShareResponse(shareResponse);
-      await ShareResponseService.saveIssuerCredential(payload);
       payload.vc.forEach(async (vc) => {
         await verifyCredential(vc);
       });
