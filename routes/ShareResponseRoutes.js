@@ -89,7 +89,7 @@ router.get(
 
 /**
  * @openapi
- *   /shareResponse/{did}:
+ *   /shareResponse/did/{did}:
  *   get:
  *     summary: Obtener la lista de todas las shareResponse de un emisor
  *     tags:
@@ -114,7 +114,7 @@ router.get(
  *         description: Error interno del servidor
  */
 router.get(
-  '/:did',
+  '/did/:did',
   Validator.validate([
     {
       name: 'token',
@@ -124,6 +124,45 @@ router.get(
   ]),
   Validator.checkValidationResult,
   shareResponse.readAllByDid,
+);
+
+/**
+ * @openapi
+ *   /shareResponse/{id}/decoded:
+ *   get:
+ *     summary: Obtener la informacion de un shareResponse decoded
+ *     tags:
+ *       - shareResponse
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401:
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get(
+  '/:id/decoded',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Read_ShareResponse],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  shareResponse.readByIdDecoded,
 );
 
 module.exports = router;

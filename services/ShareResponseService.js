@@ -30,6 +30,19 @@ module.exports.getById = async (id) => {
   }
 };
 
+module.exports.getByIdDecoded = async (id) => {
+  try {
+    const shareResp = await module.exports.getById(id);
+    const decoded = await module.exports.decodeShareResponse(shareResp);
+    const shareRespJSON = shareResp.toJSON();
+    shareRespJSON.decoded = decoded;
+    return Promise.resolve(shareRespJSON);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 module.exports.getByDID = async (did) => {
   if (!did) throw missingDid;
   try {
