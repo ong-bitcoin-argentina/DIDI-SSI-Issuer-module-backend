@@ -28,9 +28,6 @@ const processCallbackShareResponseEmitter = async () => {
   for (const shareResponse of shareResponses) {
     try {
       const { payload } = await ShareResponseService.decodeShareResponse(shareResponse);
-      await ShareResponseService.saveIssuerCredential(payload);
-      // eslint-disable-next-line no-underscore-dangle
-      const { payload } = await ShareResponseService.decodeShareResponse(shareResponse);
       payload.vc.forEach(async (vc) => {
         await verifyCredential(vc);
       });
