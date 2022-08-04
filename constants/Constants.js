@@ -119,6 +119,11 @@ const USER_TYPES = {
   Write_ShareRequest: 'Write_ShareRequest',
   Delete_ShareRequest: 'Delete_ShareRequest',
 
+  // Permisos para Respuestas a Presentaciones
+  Read_ShareResponse: 'Read_ShareResponse',
+  Write_ShareResponse: 'Write_ShareResponse',
+  Delete_ShareResponse: 'Delete_ShareResponse',
+
   // Permisos para Registro de DIDs
   Read_Dids_Registers: 'Read_Dids_Registers',
   Write_Dids_Registers: 'Write_Dids_Registers',
