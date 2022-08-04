@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 const mongoose = require('mongoose');
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const { ObjectId } = mongoose;
 const Messages = require('../constants/Messages');
@@ -39,6 +40,8 @@ const ShareResponseSchema = mongoose.Schema({
     default: Date.now(),
   },
 });
+
+ShareResponseSchema.plugin(AutoIncrement, { inc_field: 'id' });
 
 // edit ShareResponse
 ShareResponseSchema.methods.edit = async function edit(body) {
