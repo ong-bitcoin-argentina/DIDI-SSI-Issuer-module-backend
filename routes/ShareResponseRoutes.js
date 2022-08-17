@@ -124,4 +124,43 @@ router.get(
   shareResponse.readAllByDid,
 );
 
+/**
+ * @openapi
+ *   /shareResponse/searchCredentials/{term}:
+ *   get:
+ *     summary: Obtener dids y sus credenciales por diferentes criterios de busqueda
+ *     tags:
+ *       - shareResponse
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - name: term
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type : string
+ *     responses:
+ *       200:
+ *         description: Puede devolver ok o error en algun parametro
+ *       401:
+ *         description: Acción no autorizada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get(
+  '/searchCredentials/:term',
+  Validator.validate([
+    {
+      name: 'token',
+      validate: [Constants.USER_TYPES.Read_ShareResponse],
+      isHead: true,
+    },
+  ]),
+  Validator.checkValidationResult,
+  shareResponse.searchCredentials,
+);
+
 module.exports = router;
