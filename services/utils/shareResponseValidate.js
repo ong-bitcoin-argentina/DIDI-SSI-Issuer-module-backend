@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { validateCredential } = require('@proyecto-didi/vc-validator/');
 const vcSchemas = require('@proyecto-didi/vc-validator/dist/schemas');
 const { schemasByName } = require('@proyecto-didi/vc-validator/dist/constants');
@@ -99,6 +100,15 @@ const saveIssuerCredential = async (payload) => {
   return true;
 };
 
+const searchCredentials = async (term) => {
+  try {
+    return IssuerCredentialModel.searchCredentials(term);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 module.exports = {
   decodeShareResponse,
   validateFormat,
@@ -106,4 +116,5 @@ module.exports = {
   validateIssuer,
   validateEmitter,
   saveIssuerCredential,
+  searchCredentials,
 };
