@@ -3,7 +3,7 @@ const { getTranslateFromDidi } = require('./utils/fetchs');
 
 module.exports.getAll = async () => {
   try {
-    return getTranslateFromDidi();
+    return await getTranslateFromDidi();
   } catch (err) {
     console.log(err);
     return Promise.reject(err);
