@@ -361,7 +361,7 @@ const _doValidate = function _doValidate(param, isHead) {
       }
 
       // largo invalido
-      if ((Constants.PREVIEW_ELEMS_LENGTH[type] !== preview.length) & type !== "5" ) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);      
+      if ((Constants.PREVIEW_ELEMS_LENGTH[type] !== preview.length) && type !== "5" ) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);      
       const templateData = data.cert
         .concat(data.participant)
         .concat(data.others)
