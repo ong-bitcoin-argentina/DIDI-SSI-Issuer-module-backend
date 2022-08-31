@@ -125,7 +125,7 @@ router.get(
 );
 
 /**
- * @openapi 
+ * @openapi
  *   /shareResponse/{id}/decoded:
  *   get:
  *     summary: Obtener la informacion de un shareResponse decoded

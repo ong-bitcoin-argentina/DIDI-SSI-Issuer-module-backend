@@ -78,6 +78,15 @@ const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authTok
   );
 };
 
+const getTranslateFromDidi = async function getTranslateFromDidi() {
+  return defaultFetch(
+    `${Constants.DIDI_API}/translate`,
+    'GET',
+    undefined,
+    undefined,
+  );
+};
+
 const getShareRequestFromId = async function getShareRequestFromId(id, authToken) {
   return defaultFetch(`${Constants.DIDI_API}/issuer/shareRequest/${id}`, 'GET', undefined, authToken);
 };
@@ -103,4 +112,5 @@ module.exports = {
   getShareRequestFromId,
   verifyUserByToken,
   sendPushNotification,
+  getTranslateFromDidi,
 };

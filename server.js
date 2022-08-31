@@ -34,6 +34,7 @@ const ProfileRoutes = require('./routes/ProfileRoutes');
 const ImageRoutes = require('./routes/ImageRoutes');
 const ShareRequestRoutes = require('./routes/ShareRequestRoutes');
 const ShareResponseRoutes = require('./routes/ShareResponseRoutes');
+const TranslateRoutes = require('./routes/TranslateRoutes');
 
 const { permanentJob } = require('./jobs/jobs');
 // inicializar cluster para workers, uno por cpu disponible
@@ -147,6 +148,7 @@ app.use('/profile', ProfileRoutes);
 app.use('/image', ImageRoutes);
 app.use('/shareRequest', ShareRequestRoutes);
 app.use('/shareResponse', ShareResponseRoutes);
+app.use('/translate', TranslateRoutes);
 
 // forkear workers
 if (cluster.isMaster) {
