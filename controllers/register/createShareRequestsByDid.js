@@ -24,10 +24,20 @@ const createShareRequestsByDid = async (req, res) => {
     };
 
     // Finalizar creacion de modelo
-    const jwt = await createJWT(register.did, register.private_key, payload, undefined, DIDI_SERVER_DID);
+    const jwt = await createJWT(
+      register.did,
+      register.private_key,
+      payload,
+      undefined,
+      DIDI_SERVER_DID,
+    );
 
     // Enviar modelo a didi-server para asociarlo con el emisor
-    await sendShareReqToDidi(did, jwt);
+    const ret = await sendShareReqToDidi(did, jwt);
+
+    // Asociar id de shareRequest utilizado en server al shareRequest creado
+    // eslint-disable-next-line no-underscore-dangle
+    ShareRequestService.setRefId(shareReq._id, ret.id);
 
     return ResponseHandler.sendRes(res, jwt);
   } catch (err) {

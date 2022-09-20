@@ -18,6 +18,9 @@ describe('services/ShareRequest/getById.test.js', () => {
     await mongoose
       .connect(MONGO_URL);
     shareReq = await ShareRequestService.create(name, claims, registerId);
+    // eslint-disable-next-line no-underscore-dangle
+    await ShareRequestService.setRefId(shareReq._id, shareReq._id);
+    // eslint-disable-next-line no-underscore-dangle
     shareResp = await create(validShareResponse, shareReq.id);
   });
   afterAll(async () => {
@@ -35,9 +38,11 @@ describe('services/ShareRequest/getById.test.js', () => {
   });
 
   test('Expect getById to success', async () => {
-    const shareResponse = await getById(shareResp.id);
+    // eslint-disable-next-line no-underscore-dangle
+    const shareResponse = await getById(shareResp._id);
     expect(shareResponse).toBeDefined();
-    expect(shareResponse.id).toBe(shareResp.id);
+    // eslint-disable-next-line no-underscore-dangle
+    expect(shareResponse._id.toString()).toBe(shareResp._id.toString());
     expect(shareResp.shareResp).toBe(shareResp.shareResp);
   });
 
@@ -51,10 +56,11 @@ describe('services/ShareRequest/getById.test.js', () => {
   });
 
   test('Expect getByIdDecoded to success', async () => {
-    const shareResponse = await getByIdDecoded(shareResp.id);
+    // eslint-disable-next-line no-underscore-dangle
+    const shareResponse = await getByIdDecoded(shareResp._id);
     expect(shareResponse).toBeDefined();
     // eslint-disable-next-line no-underscore-dangle
-    expect(shareResponse._id.toString()).toBe(shareResp.id);
+    expect(shareResponse._id.toString()).toBe(shareResp._id.toString());
     expect(shareResp.shareResp).toBe(shareResp.shareResp);
   });
 

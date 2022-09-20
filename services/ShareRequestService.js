@@ -17,6 +17,21 @@ module.exports.create = async (name, claims, registerId) => {
   }
 };
 
+module.exports.setRefId = async (id, serverRegisterId) => {
+  if (!id) throw missingId;
+  if (!serverRegisterId) throw missingRegisterId;
+  try {
+    return ShareRequest.findOneAndUpdate({
+      _id: id,
+    }, {
+      referenceServerRequestId: serverRegisterId,
+    });
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
 module.exports.getAll = async () => {
   try {
     return ShareRequest.getAll();
