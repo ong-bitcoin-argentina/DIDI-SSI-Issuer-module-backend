@@ -22,15 +22,17 @@ describe('services/ShareRequest/getAll.test.js', () => {
   beforeAll(async () => {
     await mongoose
       .connect(MONGO_URL);
-    const register = await Register.getByDID(fourthDid);
-    if (!register) {
+    try {
+      const register = await Register.getByDID(fourthDid);
+      registerId = register.id;
+    } catch (error) {
       registerId = await newRegister(
         fourthDid, fourthDidKey, registerName, token, description, file,
       );
-    } else {
-      registerId = register.id;
     }
     shareReq = await ShareRequestService.create(name, claims, registerId);
+    // eslint-disable-next-line no-underscore-dangle
+    await ShareRequestService.setRefId(shareReq._id, shareReq._id);
     shareResp = await create(validShareResponse, shareReq.id);
   });
   afterAll(async () => {

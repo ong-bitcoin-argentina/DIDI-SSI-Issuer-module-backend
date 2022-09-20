@@ -69,8 +69,11 @@ describe('services/ShareResponse/validate.test.js', () => {
   test('Expect saveIssuerCredential without Certificates to success', async () => {
     expect.assertions(1);
     IssuerCredentialModel.generate = (() => Promise.reject(Error('Error do not must call model')));
-    validJWTPayload.vc = [];
-    const shareResponseResult = await saveIssuerCredential(validJWTPayload);
+    const validJWTCopy = {
+      ...validJWTPayload,
+    };
+    validJWTCopy.vc = [];
+    const shareResponseResult = await saveIssuerCredential(validJWTCopy);
     expect(shareResponseResult).toBe(true);
   });
 
@@ -140,11 +143,14 @@ describe('services/ShareResponse/validate.test.js', () => {
 
   test('Expect validateCredentialClaims with less VC than claims', async () => {
     expect.assertions(1);
-    shareRespValidFormat.vc.pop();
+    const shareRespCopy = {
+      ...shareRespValidFormat,
+    };
+    shareRespCopy.vc.pop();
     const invalidJWT = await createJWT(
       serverDid,
       ISSUER_SERVER_PRIVATE_KEY,
-      shareRespValidFormat,
+      shareRespCopy,
       ((new Date().getTime() + 60000)),
       'id:ethr:lacchain:0x36f6dc06d34b164aec5421c9071a0d07765d4ee1',
     );

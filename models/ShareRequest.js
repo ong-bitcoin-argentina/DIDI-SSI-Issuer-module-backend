@@ -32,6 +32,10 @@ const ShareRequestSchema = mongoose.Schema({
     required: true,
     ref: 'Register',
   },
+  referenceServerRequestId: {
+    type: ObjectId,
+    required: false,
+  },
   createdOn: {
     type: Date,
     default: Date.now(),
@@ -65,7 +69,9 @@ ShareRequest.generate = async function generate(name, claims, registerId) {
 
 ShareRequest.getAll = async function getAll() {
   try {
-    const shareRequests = await ShareRequest.find({}).populate(populateRegister).sort({ createdOn: -1 });
+    const shareRequests = await ShareRequest.find({}).populate(populateRegister).sort({
+      createdOn: -1,
+    });
     return Promise.resolve(shareRequests);
   } catch (err) {
     console.log(err);
@@ -76,6 +82,19 @@ ShareRequest.getAll = async function getAll() {
 ShareRequest.getById = async function getById(id) {
   try {
     const query = { _id: id };
+    const shareRequest = await ShareRequest.findOne(query).populate(populateRegister);
+    if (!shareRequest) throw Messages.SHARE_REQ.ERR.NOT_EXIST;
+
+    return Promise.resolve(shareRequest);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
+ShareRequest.getByServerId = async function getByServerId(id) {
+  try {
+    const query = { referenceServerRequestId: id };
     const shareRequest = await ShareRequest.findOne(query).populate(populateRegister);
     if (!shareRequest) throw Messages.SHARE_REQ.ERR.NOT_EXIST;
 

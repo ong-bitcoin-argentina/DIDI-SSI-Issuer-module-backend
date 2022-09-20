@@ -11,8 +11,8 @@ module.exports.create = async (jwt, shareRequestId) => {
   try {
     const validJwt = validateMessageRes(jwt);
     if (!validJwt.status) throw validJwt;
-    const shareRequest = await ShareRequest.getById(shareRequestId);
-    return ShareResponse.generate(jwt, shareRequestId, shareRequest.did);
+    const shareRequest = await ShareRequest.getByServerId(shareRequestId);
+    return ShareResponse.generate(jwt, shareRequest.id, shareRequest.did);
   } catch (err) {
     console.log(err);
     return Promise.reject(err);

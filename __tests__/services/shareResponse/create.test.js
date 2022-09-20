@@ -17,6 +17,8 @@ describe('services/ShareResponse/create.test.js', () => {
     await mongoose
       .connect(MONGO_URL);
     shareReq = await ShareRequestService.create(name, claims, registerId);
+    // eslint-disable-next-line no-underscore-dangle
+    ShareRequestService.setRefId(shareReq._id, shareReq._id);
   });
   afterAll(async () => {
     await ShareResponse.findOneAndDelete(validShareResponse);
