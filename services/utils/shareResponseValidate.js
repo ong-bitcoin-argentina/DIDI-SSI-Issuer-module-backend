@@ -46,12 +46,12 @@ const validateCredentialClaims = async (payload, req) => {
         (type) => type[1].v1.properties.vc.properties.credentialSubject.required[0] === key,
       );
       if (!vc.vc.credentialSubject[key] && schemasByName.has(key)
-      && !req.payload.claims.verifiable[require[0]]) {
+      && !req.payload.vc.some((v) => !!v.claims.verifiable[require[0]])) {
         throw ERR.VALIDATION_CREDENTIALS_NOT_CLAIMED(key);
       }
     });
   });
-  if (Object.entries(req.payload.claims.verifiable).length !== payload.vc.length) {
+  if (req.payload.vc.length !== payload.vc.length) {
     throw ERR.VALIDATION_CREDENTIALS_DIFERENCE;
   }
 
@@ -60,11 +60,14 @@ const validateCredentialClaims = async (payload, req) => {
 
 const validateIssuer = async (req) => {
   const callsIssuerModel = [];
-  Object.entries(req.payload.claims.verifiable).forEach(([, claim]) => {
-    Object.entries(claim.issuers).forEach(([, issuer]) => {
-      callsIssuerModel.push(RegisterModel.existsIssuer(issuer.did));
+  Object.entries(req.payload.vc).forEach(([, vc]) => {
+    Object.entries(vc.claims.verifiable).forEach(([, claim]) => {
+      Object.entries(claim.iss).forEach(([, issuer]) => {
+        callsIssuerModel.push(RegisterModel.existsIssuer(issuer.did));
+      });
     });
   });
+
   const callsIssuerModelResult = await Promise.all(callsIssuerModel);
   if (callsIssuerModelResult.some((result) => result === false)) {
     throw ERR.VALIDATION_ISSUER_NOT_EXIST;
