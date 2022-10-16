@@ -43,7 +43,7 @@ router.post(
   Validator.validate([
     {
       name: 'token',
-      validate: [Constants.USER_TYPES.Write_ShareRequest],
+      validate: [Constants.USER_TYPES.Write_Presentations],
       isHead: true,
     },
     { name: 'name', validate: [Constants.VALIDATION_TYPES.IS_STRING] },
@@ -82,7 +82,7 @@ router.get(
   Validator.validate([
     {
       name: 'token',
-      validate: [Constants.USER_TYPES.Read_ShareRequest],
+      validate: [Constants.USER_TYPES.Read_Presentations],
       isHead: true,
     },
   ]),
@@ -144,7 +144,7 @@ router.delete(
   Validator.validate([
     {
       name: 'token',
-      validate: [Constants.USER_TYPES.Delete_ShareRequest],
+      validate: [Constants.USER_TYPES.Delete_Presentations],
       isHead: true,
     },
   ]),
