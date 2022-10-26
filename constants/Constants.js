@@ -119,6 +119,11 @@ const USER_TYPES = {
   Write_ShareRequest: 'Write_ShareRequest',
   Delete_ShareRequest: 'Delete_ShareRequest',
 
+  // Permisos para Respuestas a Presentaciones
+  Read_ShareResponse: 'Read_ShareResponse',
+  Write_ShareResponse: 'Write_ShareResponse',
+  Delete_ShareResponse: 'Delete_ShareResponse',
+
   // Permisos para Registro de DIDs
   Read_Dids_Registers: 'Read_Dids_Registers',
   Write_Dids_Registers: 'Write_Dids_Registers',
@@ -257,6 +262,13 @@ const STATUS_ALLOWED = Object.values(STATUS);
 
 const BLOCK_CHAIN_DEFAULT = 'rsk';
 
+const SHARERESPONSE_PROCESS_STATUS = {
+  RECEIVED: 'Recibido',
+  VERIFIED_CREDENTIALS: 'Credenciales Verificadas',
+  VERIFIED_EMITTER: 'Emisor Verificado',
+  PROCESSED: 'Procesado',
+};
+
 module.exports = {
   VERSION,
   API_VERSION: '1.0',
@@ -374,4 +386,5 @@ module.exports = {
 
   DISABLE_TELEMETRY_CLIENT,
   APP_INSIGTHS_IKEY,
+  SHARERESPONSE_PROCESS_STATUS,
 };

@@ -41,7 +41,9 @@ const sendRefreshToDidi = async function sendRefreshToDidi(did, token) {
 const sendEditDataToDidi = async function sendEditDataToDidi(did, body, imageUrl) {
   const { name, description } = body;
   return defaultFetch(`${Constants.DIDI_API}/issuer/${did}`, 'PATCH', {
-    name, description, imageUrl,
+    name,
+    description,
+    imageUrl,
   });
 };
 
@@ -57,17 +59,47 @@ const sendDidToDidi = async function sendDidToDidi(did, name, token, description
 };
 
 const sendShareRequestToDidi = async function sendShareRequestToDidi(did, jwt, authToken) {
-  return defaultFetch(`${Constants.DIDI_API}/issuer/${did}/shareRequest`, 'POST', {
-    jwt,
-  }, authToken);
+  return defaultFetch(
+    `${Constants.DIDI_API}/issuer/${did}/shareRequest`,
+    'POST',
+    {
+      jwt,
+    },
+    authToken,
+  );
 };
 
-const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authToken) {
-  return defaultFetch(`${Constants.DIDI_API}/shareRequest/list`, 'GET', undefined, authToken);
+const getShareRequestsFromDidi = async function getShareRequestsFromDidi(authToken, params) {
+  return defaultFetch(
+    `${Constants.DIDI_API}/shareRequest/list?${new URLSearchParams(params).toString()}`,
+    'GET',
+    undefined,
+    authToken,
+  );
+};
+
+const getTranslateFromDidi = async function getTranslateFromDidi() {
+  return defaultFetch(
+    `${Constants.DIDI_API}/translate`,
+    'GET',
+    undefined,
+    undefined,
+  );
 };
 
 const getShareRequestFromId = async function getShareRequestFromId(id, authToken) {
   return defaultFetch(`${Constants.DIDI_API}/issuer/shareRequest/${id}`, 'GET', undefined, authToken);
+};
+
+/**
+ * Verifica si el token de usuario existe en Didi Server
+ */
+const verifyUserByToken = async function verifyUserByToken(token) {
+  return defaultFetch(`${Constants.DIDI_API}/user/verifyToken`, 'POST', { jwt: token });
+};
+
+const sendPushNotification = async function sendPushNotification(title, message, authToken) {
+  return defaultFetch(`${Constants.DIDI_API}/sendNotification`, 'POST', { title, message }, authToken);
 };
 
 module.exports = {
@@ -78,4 +110,7 @@ module.exports = {
   sendShareRequestToDidi,
   getShareRequestsFromDidi,
   getShareRequestFromId,
+  verifyUserByToken,
+  sendPushNotification,
+  getTranslateFromDidi,
 };

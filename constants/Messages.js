@@ -24,8 +24,14 @@ module.exports = {
       },
       BLOCKCHAIN: { code: 'NOT_EXIST_BLOCKCHAIN', message: 'No existe la blockchain elegida.' },
       GET: { code: 'REGISTER_GET', message: 'El registro no pudo ser obtenido.' },
-      SEND_SHARE_REQUEST: { code: 'REGISTER_GET', message: 'Error al enviar los pedidos de certificados de este emisor.' },
-      GET_SHARE_REQUEST: { code: 'REGISTER_GET', message: 'No se pueden obtener los pedidos de certificados de este emisor.' },
+      SEND_SHARE_REQUEST: {
+        code: 'REGISTER_GET',
+        message: 'Error al enviar los pedidos de certificados de este emisor.',
+      },
+      GET_SHARE_REQUEST: {
+        code: 'REGISTER_GET',
+        message: 'No se pueden obtener los pedidos de certificados de este emisor.',
+      },
       DID_EXISTS: { code: 'DID_EXISTS', message: 'Ya existe un registro con ese did.' },
       STATUS: { code: 'STATUS', message: 'El status no existe' },
       RETRY: { code: 'RETRY', message: 'Hubo un error al intentar validar el registro.' },
@@ -102,6 +108,10 @@ module.exports = {
       TYPE: { code: 'INVALID_TYPE', message: 'El tipo elegido para el usuario no es valido.' },
       DELETE: { code: 'USER_DELETE', message: 'El modelo de usuario no pudo ser borrado.' },
       EDIT: { code: 'USER_EDIT', message: 'El modelo de usuario no pudo ser editado.' },
+      VALIDATE: {
+        code: 'VALIDATE',
+        message: 'Error al validar información de usuario.',
+      },
     },
   },
   IMAGE: {
@@ -135,6 +145,42 @@ module.exports = {
       NOT_EXIST: { code: 'SHARE_REQ_NOT_EXIST', message: 'No existe el pedido de certificados.' },
       DELETE: { code: 'SHARE_REQ_DELETE', message: 'El pedido de certificados no pudo ser borrado.' },
       CERT_TYPES: { code: 'SHARE_REQ_CERT_TYPES', message: 'Una categoria de credencial no es valida' },
+      VALIDATION_ERROR: (errors) => ({
+        message: `El formato del Share Request es invalido: ${errors}.`,
+        code: 'VALIDATION_ERROR',
+      }),
+      DID_DOES_NOT_EXIST: { code: 'DID_MISSING', message: 'Falta el parametro did' },
+      UNSUPPORTED_DID: { code: 'UNSUPPORTED_DID', message: 'El formato del parametro did no esta soportado' },
+    },
+  },
+  SHARE_RES: {
+    ERR: {
+      NOT_EXIST: { code: 'SHARE_RES_NOT_EXISTS', message: 'No existe el pedido de certificados.' },
+      VALIDATION_CREDENTIALS_ERROR: (errors) => ({
+        message: `El formato de las credenciales del Share Response es invalido: ${errors}.`,
+        code: 'VALIDATION_CREDENTIALS_ERROR',
+      }),
+      VALIDATION_JWT: (data) => ({
+        code: 'SHARE_RES_VALIDATION_JWT_ERROR',
+        message: `Error al verificar JWT del ShareReponse. ${data}`,
+      }),
+      VALIDATION_TYPE: { code: 'SHARE_RES_VALIDATION_TYPE_ERROR', message: 'Error el tipo no corresponde a un ShareReponse.' },
+      VALIDATION_CREDENTIALS_NOT_CLAIMED: (data) => ({
+        code: 'SHARE_RES_VALIDATION_CREDENTIALS_NOT_CLAIMED',
+        message: `Error credencial ${data}, no solicitada en el ShareRequest.`,
+      }),
+      VALIDATION_CREDENTIALS_DIFERENCE: {
+        code: 'SHARE_RES_VALIDATION_CREDENTIALS_DIFERENCE',
+        message: 'Error Cantidad de certificados solicitados, difiere de los entregados',
+      },
+      VALIDATION_ISSUER_NOT_EXIST: {
+        code: 'SHARE_RES_ISSUER NOT EXIST',
+        message: 'Error El issuer no existe',
+      },
+      VALIDATION_ISSUER_IS_NOT_DELEGATE: {
+        code: 'SHARE_RES_ISSUER_IS_NOT_DELEGATE',
+        message: 'Error El issuer no es un delegado',
+      },
     },
   },
   TEMPLATE: {

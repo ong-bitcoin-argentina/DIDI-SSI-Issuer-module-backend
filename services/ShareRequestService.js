@@ -1,13 +1,31 @@
 /* eslint-disable no-console */
 const ShareRequest = require('../models/ShareRequest');
 
-const { missingId, missingName, missingClaims } = require('../constants/serviceErrors');
+const {
+  missingId, missingName, missingClaims, missingRegisterId,
+} = require('../constants/serviceErrors');
 
-module.exports.create = async (name, claims) => {
+module.exports.create = async (name, claims, registerId) => {
   if (!name) throw missingName;
   if (!claims) throw missingClaims;
+  if (!registerId) throw missingRegisterId;
   try {
-    return ShareRequest.generate(name, claims);
+    return ShareRequest.generate(name, claims, registerId);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
+  }
+};
+
+module.exports.setRefId = async (id, serverRegisterId) => {
+  if (!id) throw missingId;
+  if (!serverRegisterId) throw missingRegisterId;
+  try {
+    return ShareRequest.findOneAndUpdate({
+      _id: id,
+    }, {
+      referenceServerRequestId: serverRegisterId,
+    });
   } catch (err) {
     console.log(err);
     return Promise.reject(err);

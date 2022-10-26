@@ -8,6 +8,10 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 const { header, body, validationResult } = require('express-validator');
+const { v1: shareReqSchema } = require('@proyecto-didi/vc-validator/dist/messages/shareRequest-schema');
+const {
+  validateCredential,
+} = require('@proyecto-didi/vc-validator/dist/validator');
 const Messages = require('../../constants/Messages');
 const Constants = require('../../constants/Constants');
 const ResponseHandler = require('./ResponseHandler');
@@ -15,6 +19,10 @@ const ResponseHandler = require('./ResponseHandler');
 const TemplateService = require('../../services/TemplateService');
 const TokenService = require('../../services/TokenService');
 const UserService = require('../../services/UserService');
+const { createJWT, verifyJWT, validDelegateOnDidi } = require('../../services/BlockchainService');
+const { verifyUserByToken } = require('../../services/utils/fetchs');
+
+const Register = require('../../models/Register');
 
 const {
   IS_PASSWORD,
@@ -353,8 +361,7 @@ const _doValidate = function _doValidate(param, isHead) {
       }
 
       // largo invalido
-      if (Constants.PREVIEW_ELEMS_LENGTH[type] !== preview.length) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);
-
+      if ((Constants.PREVIEW_ELEMS_LENGTH[type] !== preview.length) && type !== "5" ) return Promise.reject(Messages.VALIDATION.TEMPLATE_DATA.INVALID_TEMPLATE_PREVIEW_TYPE);      
       const templateData = data.cert
         .concat(data.participant)
         .concat(data.others)
@@ -498,4 +505,58 @@ module.exports.validateFile = function validateFile(req, res, next) {
     }
   }
   return next();
+};
+
+module.exports.validateUserToken = async function validateUserToken(req, res, next) {
+  try {
+    const jwt = req.header('token');
+    const response = await verifyUserByToken(jwt);
+    if (!response) throw Messages.USER.ERR.VALIDATE;
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 401);
+  }
+};
+
+module.exports.validateSchema = async function validateSchema(req, res, next) {
+  try {
+    const { did } = req.params;
+    const { claims, callback } = req.body;
+    const claimsMap = new Map(claims);
+
+    const payload = {
+      callback,
+      type: 'shareReq',
+      claims: { verifiable: claimsMap },
+    };
+    const register = await Register.getByDID(did);
+    const jwt = await createJWT(register.did, register.private_key, payload, undefined, Constants.ISSUER_SERVER_DID);
+    const verified = await verifyJWT(jwt, Constants.ISSUER_SERVER_DID);
+    if (!verified.payload) {
+      return ResponseHandler.sendErr(res, Messages.SHARE_REQ.ERR.UNSUPPORTED_DID);
+    }
+    const validation = validateCredential(shareReqSchema, jwt);
+    if (!validation.status && validation.errors.length) {
+      return ResponseHandler.sendErrWithStatus(
+        res,
+        Messages.SHARE_REQ.ERR.VALIDATION_ERROR(validation.errors.map((e) => e.message)),
+        400,
+      );
+    }
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 400);
+  }
+};
+
+module.exports.validateIssuer = async function validateIssuer(req, res, next) {
+  try {
+    const { did } = req.params;
+    if (!did) return ResponseHandler.sendErr(Messages.SHARE_REQ.ERR.DID_DOES_NOT_EXIST);
+    const isValidDelegate = await validDelegateOnDidi(did);
+    if (!isValidDelegate) return ResponseHandler.sendErr(res, Messages.DELEGATE.ERR.NOT_EXIST);
+    return next();
+  } catch (e) {
+    ResponseHandler.sendErrWithStatus(res, e, 401);
+  }
 };
