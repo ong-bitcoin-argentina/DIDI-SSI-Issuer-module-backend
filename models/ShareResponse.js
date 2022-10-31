@@ -69,6 +69,7 @@ ShareResponse.generate = async function generate(jwt, shareRequestId, iss) {
   shareResponse.process_status = Constants.SHARERESPONSE_PROCESS_STATUS.RECEIVED;
   shareResponse.shareRequestId = shareRequestId;
   shareResponse.iss = iss;
+  shareResponse.createdOn = Date.now();
 
   try {
     shareResponse = await shareResponse.save();

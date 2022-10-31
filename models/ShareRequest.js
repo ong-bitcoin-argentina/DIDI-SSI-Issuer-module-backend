@@ -49,6 +49,7 @@ ShareRequest.generate = async function generate(name, claims, registerId) {
   let shareRequest = new ShareRequest();
   shareRequest.claims = { verifiable: {} };
   const claimsEntries = claims.entries();
+  shareRequest.createdOn = Date.now();
 
   try {
     for (const [key, value] of claimsEntries) {
