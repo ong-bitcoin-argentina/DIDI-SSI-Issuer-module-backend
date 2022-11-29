@@ -41,7 +41,7 @@
 		"mongoose": "^6.0.13",
 		"mongoose-sequence": "^5.3.1",
 		"multer": "^1.4.3",
-		"node-fetch": "2.6.1",
+		"node-fetch": "2.6.7",
 		"node-pre-gyp": "0.14.0",
 		"node-rsa": "1.0.7",
 		"nodemon": "2.0.2",
